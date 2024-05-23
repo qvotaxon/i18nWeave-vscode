@@ -52,4 +52,6 @@ jobs:
         run: pnpm run lint
 
       - name: Test
+        #skip ubuntu-latest because of $DISPLAY
+        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'windows-latest' }}
         run: pnpm run test
