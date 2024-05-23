@@ -14,34 +14,36 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Determine pnpm package cache path for os
-        id: pnpm-cache-path
-        run: |
-          if [ "${{ runner.os }}" = "Windows" ]; then
-            pnpm_cache_path="C:/pnpm/cache"
-          else
-            pnpm_cache_path="$HOME/.pnpm"
-          fi
-          echo "pnpm_cache_path=$pnpm_cache_path" >> $GITHUB_OUTPUT
-        shell: bash
-
-      - name: Cache pnpm packages
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.pnpm-cache-path.outputs.pnpm_cache_path }}
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/package.json') }}
-
-      - name: Setup Node.js
+      - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'pnpm'
+          node-version: 20
 
-      - name: pnpm install
-        run: pnpm install # pnpm ci is not supported yet
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache-path
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache-path.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Build
         run: pnpm run compile-tests
