@@ -5,12 +5,12 @@ import { ModuleContext } from '../interfaces/moduleContext';
 export class ModuleChainManager {
   private chains: { [chainType: number]: ActionModule | null } = {};
 
-  public registerChain(chainType: ChainType.Json, chain: ActionModule): void {
+  public registerChain(chainType: ChainType, chain: ActionModule): void {
     this.chains[chainType] = chain;
   }
 
   public executeChain(
-    chainType: ChainType.Json,
+    chainType: ChainType,
     moduleContext: ModuleContext
   ): void {
     const chain = this.chains[chainType];
