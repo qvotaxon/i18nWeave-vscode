@@ -2,6 +2,11 @@
   "name": "i18nweave",
   "displayName": "i18nWeave",
   "description": "Developer's i18n Companion",
+  "publisher": "qvotaxon",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qvotaxon/translation-file-watcher"
+  },
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.89.0"
@@ -10,31 +15,34 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "./dist/extension.js",
+  "main": "./out/extension.js",
   "contributes": {
-    "contributes": {
-      "configuration": {
-        "type": "object",
-        "properties": {
-          "myExtension.enableMissingi18nValueTranslation": {
-            "type": "boolean",
-            "default": true,
-            "description": "Enable missing i18n value translation"
-          }
+    "configuration": {
+      "type": "object",
+      "properties": {
+        "i18nWeave.enableJsonToPoConversion": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Json To Po Conversion"
         }
       }
-    }
+    },
+    "commands": [
+      {
+        "command": "i18nweave.helloWorld",
+        "title": "Hello World"
+      }
+    ]
   },
   "scripts": {
-    "vscode:prepublish": "pnpm run package",
-    "compile": "webpack",
-    "watch": "webpack --watch",
-    "package": "webpack --mode production --devtool hidden-source-map",
-    "compile-tests": "tsc -p . --outDir out",
-    "watch-tests": "tsc -p . -w --outDir out",
-    "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "package": "npx vsce package",
+    "publish": "npx vsce publish"
   },
   "devDependencies": {
     "@types/vscode": "^1.89.0",
@@ -44,9 +52,6 @@
     "@typescript-eslint/parser": "^7.7.1",
     "eslint": "^8.57.0",
     "typescript": "^5.4.5",
-    "ts-loader": "^9.5.1",
-    "webpack": "^5.91.0",
-    "webpack-cli": "^5.1.4",
     "@vscode/test-cli": "^0.0.9",
     "@vscode/test-electron": "^2.3.9"
   }

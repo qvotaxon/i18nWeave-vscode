@@ -1,15 +1,19 @@
+import { ChainType } from '../enums/chainType';
 import { ActionModule } from '../interfaces/actionModule';
 import { ModuleContext } from '../interfaces/moduleContext';
 
 export class ModuleChainManager {
-  private chains: { [pattern: string]: ActionModule | null } = {};
+  private chains: { [chainType: number]: ActionModule | null } = {};
 
-  public registerChain(pattern: string, chain: ActionModule): void {
-    this.chains[pattern] = chain;
+  public registerChain(chainType: ChainType.Json, chain: ActionModule): void {
+    this.chains[chainType] = chain;
   }
 
-  public executeChain(pattern: string, moduleContext: ModuleContext): void {
-    const chain = this.chains[pattern];
+  public executeChain(
+    chainType: ChainType.Json,
+    moduleContext: ModuleContext
+  ): void {
+    const chain = this.chains[chainType];
     if (chain) {
       chain.execute(moduleContext);
     }
