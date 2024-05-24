@@ -22,36 +22,39 @@ jobs:
         with:
           node-version: 20
 
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
-        with:
-          version: 8
-          run_install: false
-
-      - name: Get pnpm store directory
-        id: pnpm-cache-path
-        shell: bash
+      - name: Determine npm package cache path for os
+        id: npm-cache-path
         run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            npm_cache_path="C:/npm/cache"
+          else
+            npm_cache_path="$HOME/.npm"
+          fi
+          echo "npm_cache_path=$npm_cache_path" >> $GITHUB_OUTPUT
+        shell: bash
 
-      - uses: actions/cache@v4
-        name: Setup pnpm cache
+      - name: Cache npm packages
+        uses: actions/cache@v4
         with:
-          path: ${{ steps.pnpm-cache-path.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          path: ${{ steps.npm-cache-path.outputs.npm_cache_path }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/src/*.ts') }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: pnpm install
+        run: npm install
 
       - name: Build
-        run: pnpm run compile-tests
+        run: npm run compile
 
       - name: Lint
-        run: pnpm run lint
+        run: npm run lint
 
       - name: Test
         #skip ubuntu-latest because of $DISPLAY
         if: ${{ matrix.os == 'macos-latest' || matrix.os == 'windows-latest' }}
-        run: pnpm run test
+        run: npm run test
