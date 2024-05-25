@@ -1,55 +1,21 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+import { ExtensionContext, commands, window } from 'vscode';
+import FileWatcherCreator from './services/fileWatcherCreator';
 
-import { ExtensionContext, workspace, commands, window } from 'vscode';
-import { ChainType } from './enums/chainType';
-import ActionModule from './interfaces/actionModule';
-import ModuleContext from './interfaces/moduleContext';
-import I18nextJsonToPoConversionModule from './modules/i18nextJsonToPoConversion/i18nextJsonToPoConversionModule';
-import ModuleChainManager from './modules/moduleChainManager';
-import ReadJsonFileModule from './modules/readJsonFile/readJsonFileModule';
-import TranslationModule from './modules/translation/translationModule';
-import FilePathProcessor from './services/filePathProcessor';
-
-export function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) {
   console.log('Congratulations, your extension "i18nweave" is now active!');
 
-  const moduleChainManager = new ModuleChainManager();
+  const fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator();
 
-  function createJsonChain(): ActionModule {
-    const readJsonFileModule = new ReadJsonFileModule();
-    const translationModule = new TranslationModule();
-    const i18nextJsonToPoConversionModule =
-      new I18nextJsonToPoConversionModule();
+  //TODO: Come up with some way of determining the glob pattern for the json files dynamically
+  //The user should set the path to the most common root of their translation files
+  const jsonFileGlobPattern = `**/locales/**/*.json`;
 
-    readJsonFileModule.setNext(translationModule);
-    translationModule.setNext(i18nextJsonToPoConversionModule);
-
-    return readJsonFileModule;
-  }
-
-  moduleChainManager.registerChain(ChainType.Json, createJsonChain());
-
-  const jsonFileWatcher = workspace
-    .createFileSystemWatcher(
-      'c:/Users/j.vervloed/RGF/USG Portals React Web/portals-web/public/**/*.json'
-    )
-    .onDidChange((uri) => {
-      const extractedFileParts = FilePathProcessor.processFilePath(uri.fsPath);
-
-      const context: ModuleContext = {
-        inputPath: uri,
-        locale: extractedFileParts.locale,
-        outputPath: extractedFileParts.outputPath,
-      };
-      moduleChainManager.executeChain(ChainType.Json, context);
-    });
-
-  let disposable = commands.registerCommand('i18nweave.helloWorld', () => {
-    window.showInformationMessage('Hello World from i18nWeave!');
-  });
-
-  context.subscriptions.push(disposable, jsonFileWatcher);
+  const jsonFileWatchers =
+    await fileWatcherCreator.createFileWatcherForEachFileInGlobAsync(
+      jsonFileGlobPattern
+      // fileLockManager.isMasterLockEnabled
+    );
+  context.subscriptions.push(...jsonFileWatchers);
 }
 
 export function deactivate() {

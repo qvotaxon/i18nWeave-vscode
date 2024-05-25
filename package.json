@@ -37,13 +37,7 @@
           "description": "Enable Json To Po Conversion"
         }
       }
-    },
-    "commands": [
-      {
-        "command": "i18nweave.helloWorld",
-        "title": "Hello World"
-      }
-    ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
