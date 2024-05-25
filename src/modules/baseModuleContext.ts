@@ -1,10 +1,14 @@
 import { Uri } from 'vscode';
-import { ModuleContext } from '../interfaces/moduleContext';
+import ModuleContext from '../interfaces/moduleContext';
 
 export abstract class BaseModuleContext implements ModuleContext {
-  fileUri: Uri;
+  inputPath: Uri;
+  outputPath: Uri;
+  locale: string;
 
-  constructor(fileUri: Uri) {
-    this.fileUri = fileUri;
+  constructor(fileUri: Uri, outputPath: Uri, locale: string) {
+    this.inputPath = fileUri;
+    this.outputPath = outputPath;
+    this.locale = locale;
   }
 }

@@ -1,26 +1,23 @@
 import fs from 'fs';
 
 /**
- * A utility class for reading files asynchronously.
+ * Utility class for reading files asynchronously.
  */
-export class FileReader {
+export default class FileReader {
   /**
-   * Reads a file asynchronously and returns its content as a string.
+   * Reads the contents of a file asynchronously.
    * @param filePath - The path to the file to be read.
-   * @returns A Promise that resolves to the content of the file as a string.
-   * @throws If there was an error reading the file.
+   * @returns A promise that resolves with the contents of the file as a string.
    */
   public static async readFileAsync(filePath: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       fs.readFile(filePath, 'utf8', (err, data) => {
         if (err) {
-          reject(err);
+          reject(new Error(err.message));
         } else {
           resolve(data);
         }
       });
-    }).catch((err) => {
-      throw new Error(`Error reading file: ${err.message}`);
     });
   }
 }

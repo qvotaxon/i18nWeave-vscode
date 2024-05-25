@@ -1,6 +1,6 @@
-import { ModuleContext } from './moduleContext';
+import ModuleContext from './moduleContext';
 
-export interface ActionModule {
+export default interface ActionModule {
   setNext(module: ActionModule | null): void;
   execute(context: ModuleContext): Promise<void>;
 }
