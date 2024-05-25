@@ -8,12 +8,13 @@ export abstract class BaseActionModule implements ActionModule {
     this.nextModule = module;
   }
 
-  public execute(context: ModuleContext): void {
-    this.doExecute(context);
+  public async execute(context: ModuleContext): Promise<void> {
+    await this.doExecute(context);
+
     if (this.nextModule) {
-      this.nextModule.execute(context);
+      await this.nextModule.execute(context);
     }
   }
 
-  protected abstract doExecute(context: ModuleContext): void;
+  protected abstract doExecute(context: ModuleContext): Promise<void>;
 }

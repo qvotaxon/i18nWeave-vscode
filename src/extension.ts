@@ -5,28 +5,25 @@ import { ActionModule } from './interfaces/actionModule';
 import { TranslationModule } from './modules/translation/translationModule';
 import { ModuleChainManager } from './modules/moduleChainManager';
 import { ModuleContext } from './interfaces/moduleContext';
-import { JsonToPoConversionModule } from './modules/jsonToPoConversion/jsonToPoConversionModule';
+import { I18nextJsonToPoConversionModule } from './modules/i18nextJsonToPoConversion/i18nextJsonToPoConversionModule';
 import { ChainType } from './enums/chainType';
+import { ReadJsonFileModule } from './modules/readJsonFile/readJsonFileModule';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-  // Use the console to output diagnostic information (console.log) and errors (console.error)
-  // This line of code will only be executed once when your extension is activated
   console.log('Congratulations, your extension "i18nweave" is now active!');
 
   const moduleChainManager = new ModuleChainManager();
 
   function createJsonChain(): ActionModule {
-    const translateModule = new TranslationModule();
+    const readJsonFileModule = new ReadJsonFileModule();
+    const translationModule = new TranslationModule();
+    const i18nextJsonToPoConversionModule =
+      new I18nextJsonToPoConversionModule();
 
-    const config = vscode.workspace.getConfiguration('i18nWeave');
-    if (config.get('enableJsonToPoConversion')) {
-      const convertModule = new JsonToPoConversionModule();
-      translateModule.setNext(convertModule);
-    }
+    readJsonFileModule.setNext(translationModule);
+    translationModule.setNext(i18nextJsonToPoConversionModule);
 
-    return translateModule;
+    return readJsonFileModule;
   }
 
   moduleChainManager.registerChain(ChainType.Json, createJsonChain());
@@ -40,14 +37,9 @@ export function activate(context: vscode.ExtensionContext) {
       moduleChainManager.executeChain(ChainType.Json, context);
     });
 
-  // The command has been defined in the package.json file
-  // Now provide the implementation of the command with registerCommand
-  // The commandId parameter must match the command field in package.json
   let disposable = vscode.commands.registerCommand(
     'i18nweave.helloWorld',
     () => {
-      // The code you place here will be executed every time your command is executed
-      // Display a message box to the user
       vscode.window.showInformationMessage('Hello World from i18nWeave!');
     }
   );
@@ -55,5 +47,6 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(disposable, jsonFileWatcher);
 }
 
-// This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() {
+  // This method is called when your extension is deactivated
+}
