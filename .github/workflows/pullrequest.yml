@@ -57,4 +57,9 @@ jobs:
       - name: Test
         #skip ubuntu-latest because of $DISPLAY
         if: ${{ matrix.os == 'macos-latest' || matrix.os == 'windows-latest' }}
-        run: npm run test
+        run: npm run test -- --coverage --coverage-reporter=clover
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
