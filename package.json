@@ -3,6 +3,7 @@
   "displayName": "i18nWeave",
   "description": "Developer's i18n Companion",
   "publisher": "qvotaxon",
+  "license": "SEE LICENSE IN LICENSE.txt",
   "repository": {
     "type": "git",
     "url": "https://github.com/qvotaxon/translation-file-watcher"
@@ -14,7 +15,17 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "keywords": [
+    "i18n",
+    "translation",
+    "json",
+    "po",
+    "deepl",
+    "watcher"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "configuration": {
