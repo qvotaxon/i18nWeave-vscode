@@ -18,7 +18,7 @@ export default class FileWriter {
     return new Promise<void>((resolve, reject) => {
       fs.writeFile(filePath.fsPath, data, 'utf8', (err) => {
         if (err) {
-          reject(err);
+          reject(new Error(err.message));
         } else {
           resolve();
         }

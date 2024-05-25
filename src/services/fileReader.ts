@@ -13,7 +13,7 @@ export default class FileReader {
     return new Promise<string>((resolve, reject) => {
       fs.readFile(filePath, 'utf8', (err, data) => {
         if (err) {
-          reject(err);
+          reject(new Error(err.message));
         } else {
           resolve(data);
         }
