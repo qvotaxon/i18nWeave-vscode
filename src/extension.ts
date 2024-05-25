@@ -1,4 +1,4 @@
-import { ExtensionContext, commands, window } from 'vscode';
+import { ExtensionContext } from 'vscode';
 import FileWatcherCreator from './services/fileWatcherCreator';
 
 export async function activate(context: ExtensionContext) {
