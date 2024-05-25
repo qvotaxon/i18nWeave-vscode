@@ -1,14 +1,27 @@
 import { ChainType } from '../enums/chainType';
-import { ActionModule } from '../interfaces/actionModule';
-import { ModuleContext } from '../interfaces/moduleContext';
+import ActionModule from '../interfaces/actionModule';
+import ModuleContext from '../interfaces/moduleContext';
 
-export class ModuleChainManager {
+/**
+ * Manages the module chains for the i18nWeave extension.
+ */
+export default class ModuleChainManager {
   private chains: { [chainType: number]: ActionModule | null } = {};
 
-  public registerChain(chainType: ChainType, chain: ActionModule): void {
-    this.chains[chainType] = chain;
+  /**
+   * Registers a chain of modules for a specific chain type.
+   * @param chainType - The type of chain to register.
+   * @param module - The module to register.
+   */
+  public registerChain(chainType: ChainType, module: ActionModule): void {
+    this.chains[chainType] = module;
   }
 
+  /**
+   * Executes a module chain.
+   * @param chainType - The type of the chain to execute.
+   * @param moduleContext - The module context for the chain execution.
+   */
   public executeChain(
     chainType: ChainType,
     moduleContext: ModuleContext

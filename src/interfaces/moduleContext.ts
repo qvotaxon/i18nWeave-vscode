@@ -1,5 +1,7 @@
-import vscode from 'vscode';
+import { Uri } from 'vscode';
 
-export interface ModuleContext {
-  fileUri: vscode.Uri;
+export default interface ModuleContext {
+  inputPath: Uri;
+  outputPath: Uri;
+  locale: string;
 }
