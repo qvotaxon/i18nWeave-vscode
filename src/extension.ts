@@ -11,7 +11,7 @@ export async function activate(context: ExtensionContext) {
   const jsonFileGlobPattern = `**/locales/**/*.json`;
 
   const jsonFileWatchers =
-    await fileWatcherCreator.createFileWatcherForEachFileInGlobAsync(
+    await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
       jsonFileGlobPattern
       // fileLockManager.isMasterLockEnabled
     );
