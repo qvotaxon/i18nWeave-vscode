@@ -31,7 +31,7 @@ i18nWeave is a Visual Studio Code extension designed to streamline the managemen
 - **PO File Support**: You have the option to use PO files for managing translations. This feature enables seamless integration with your existing localization workflows.
 - **PO to i18n-next JSON Conversion**: Effortlessly convert PO files into the i18n-next JSON format and vice versa. This conversion facilitates compatibility with a variety of localization tools and libraries.
 - **Automatic Translations**: When you add a translation for one locale, translations for all other locales are automatically generated. The following translators have been (or will be) implemented:
-  - [DeepL](https://www.deepl.com/translator)
+  - [DeepL](https://www.deepl.com/translator) (requires an Api key)
   - [Google Translate](https://translate.google.com) (not implemented yet)
 
 <!-- ### Modes
