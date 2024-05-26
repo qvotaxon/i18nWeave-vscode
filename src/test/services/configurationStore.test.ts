@@ -71,6 +71,6 @@ suite('ConfigurationStore Tests', () => {
       .update('translationModule.enabled', undefined);
     assert.throws(() => {
       configurationStore.Initialize();
-    }, Error);
+    }, Error, 'Configuration not found.');
   });
 });
