@@ -2,46 +2,16 @@ import * as vscode from 'vscode';
 import FileChangeHandlerFactory from './fileChangeHandlerFactory';
 
 /**
- * Class responsible for creating file watchers.
+ * Class responsible for creating file watchers for files matching a given glob pattern.
  */
 export default class FileWatcherCreator {
   /**
-   * Creates a single file watcher for a given glob pattern.
-   * @param pattern - The glob pattern to watch for file changes.
-   * @param disableFlags - Optional disable flags that determine whether the file watcher should be disabled.
-   * @returns A promise that resolves to a `vscode.FileSystemWatcher` instance.
-   */
-  public createSingleFileWatcherForGlobAsync = async (
-    pattern: vscode.GlobPattern,
-    ...disableFlags: (() => boolean)[]
-  ): Promise<vscode.FileSystemWatcher> => {
-    return new Promise<vscode.FileSystemWatcher>((resolve, reject) => {
-      try {
-        const fileWatcher = vscode.workspace.createFileSystemWatcher(pattern);
-        const fileChangeHandlerFactory = new FileChangeHandlerFactory();
-
-        fileWatcher.onDidChange(async (uri) => {
-          if (!disableFlags.some((disableFlag) => disableFlag())) {
-            const fileChangeHandler =
-              fileChangeHandlerFactory.createFileChangeHandler(uri.fsPath);
-            await fileChangeHandler?.handleFileChangeAsync(uri);
-          }
-        });
-
-        resolve(fileWatcher);
-      } catch (error) {
-        reject(new Error(error as string));
-      }
-    });
-  };
-
-  /**
-   * Creates file watchers for each file in a given glob pattern.
-   * @param pattern - The glob pattern to search for files.
+   * Creates file watchers for files matching the specified glob pattern.
+   * @param pattern - The glob pattern to match files against.
    * @param disableFlags - Optional disable flags that determine whether the file watchers should be disabled.
-   * @returns A promise that resolves to an array of `vscode.FileSystemWatcher` instances.
+   * @returns A promise that resolves to an array of file system watchers.
    */
-  public async createFileWatcherForEachFileInGlobAsync(
+  public async createFileWatchersForFilesMatchingGlobAsync(
     pattern: string,
     ...disableFlags: (() => boolean)[]
   ): Promise<vscode.FileSystemWatcher[]> {
@@ -53,11 +23,19 @@ export default class FileWatcherCreator {
 
     await Promise.all(
       fileURIs.map(async (fileURI) => {
-        const filePath = fileURI.fsPath;
-        const fileWatcher = await this.createSingleFileWatcherForGlobAsync(
-          filePath,
-          ...disableFlags
-        );
+        const fsPath = fileURI.fsPath;
+        const fileChangeHandlerFactory = new FileChangeHandlerFactory();
+        const fileWatcher = vscode.workspace.createFileSystemWatcher(fsPath);
+        const fileChangeHandler =
+          fileChangeHandlerFactory.createFileChangeHandler(fsPath);
+
+        fileWatcher.onDidChange(async (uri) => {
+          const isEnabled = !disableFlags.some((disableFlag) => disableFlag());
+          if (isEnabled) {
+            await fileChangeHandler?.handleFileChangeAsync(uri);
+          }
+        });
+
         fileWatchers.push(fileWatcher);
       })
     );

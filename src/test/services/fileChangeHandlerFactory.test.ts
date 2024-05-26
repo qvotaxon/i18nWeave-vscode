@@ -12,12 +12,16 @@ suite('FileChangeHandlerFactory Tests', () => {
     assert.strictEqual(handler instanceof JsonFileChangeHandler, true);
   });
 
-  test('createFileChangeHandler should return undefined for unsupported file extension', () => {
+  test('createFileChangeHandler should throw an error for unsupported file extension', () => {
     const factory = new FileChangeHandlerFactory();
     const changeFileLocation = '/path/to/file.txt';
 
-    const handler = factory.createFileChangeHandler(changeFileLocation);
-
-    assert.strictEqual(handler, undefined);
+    assert.throws(
+      () => {
+        factory.createFileChangeHandler(changeFileLocation);
+      },
+      Error,
+      'Unsupported file extension'
+    );
   });
 });
