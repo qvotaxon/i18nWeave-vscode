@@ -84,7 +84,7 @@ This extension leans on at least the following libraries / packages.
 
 ## 🧾 Motivation
 
-After having worked with translation files in a large web application for a client for some time, I discovered that manually managing the JSON translation files that come with translating an application isn't easily manageable within a larger team. When multiple people add translation keys all over the place in the same files, merge conflicts tend to occur frequently. This not only costs valuable developer time but also affects developer satisfaction, as developers generally despise the tedious task of manually merging multiple JSON files line by line. It's as exciting as watching paint dry!
+After having worked with translation files in a large React web application for a client for some time, I discovered that manually managing the JSON translation files that come with translating an application isn't easily manageable within a larger team. When multiple people have to modify the same files by hand, merge conflicts tend to occur frequently. This not only costs valuable developer time but also affects developer satisfaction, as developers generally despise the tedious task of manually merging multiple JSON files line by line. It's as exciting as watching paint dry!
 
 I needed a way to have the translation files be consistent for every developer, regardless of who added them. There shouldn't be a need for manually editing JSON files to manage your translations.
 
@@ -94,11 +94,14 @@ I have designed the extension to be modular, allowing for the easy addition of f
 
 Now, you can say goodbye to those mind-numbing merge conflicts and hello to a more enjoyable and productive development experience. Let i18nWeave do the heavy lifting for you, so you can focus on what you do best - writing amazing code!
 
+<!--
 ## 🚀 About Me
 
 TODO
 
 - Tell a bit more About Me...
+
+-->
 
 <!-- ## License
 
