@@ -75,16 +75,80 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "configuration": {
-      "type": "object",
-      "properties": {
-        "i18nWeave.enableJsonToPoConversion": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable Json To Po Conversion"
+    "configuration": [
+      {
+        "id": "translationModule",
+        "title": "Translation Module",
+        "properties": {
+          "i18nWeave.translationModule.enabled": {
+            "type": "boolean",
+            "default": "",
+            "description": "Enable the translation module."
+          },
+          "i18nWeave.translationModule.googleTranslate.enabled": {
+            "type": "boolean",
+            "default": "",
+            "description": "Enable translation using DeepL."
+          },
+          "i18nWeave.translationModule.deepL.enabled": {
+            "type": "boolean",
+            "default": "",
+            "description": "Enable translation using DeepL."
+          },
+          "i18nWeave.translationModule.deepL.apiKey": {
+            "type": "string",
+            "default": "",
+            "description": "Your deepLApiKey."
+          },
+          "i18nWeave.translationModule.deepL.preserveFormatting": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Preserve formatting in translations. This will prevent DeepL from changing the formatting of the translation. This is useful for translations that contain code or other formatting that should not be changed."
+          },
+          "i18nWeave.translationModule.deepL.formality": {
+            "type": "string",
+            "default": "default",
+            "enum": [
+              "default",
+              "more",
+              "less",
+              "prefer_more",
+              "prefer_less"
+            ],
+            "enumDescriptions": [
+              "The DeepL default",
+              "For a more formal language",
+              "For a more informal language",
+              "For a more formal language if available, otherwise fallback to default formality",
+              "For a more informal language if available, otherwise fallback to default formality"
+            ],
+            "description": "Specify the formality preference for translations."
+          }
+        }
+      },
+      {
+        "id": "i18nextJsonToPoConversionModule",
+        "title": "i18next Json To Po Conversion Module",
+        "properties": {
+          "i18nWeave.i18nextJsonToPoConversionModule.enabled": {
+            "type": "boolean",
+            "default": "",
+            "description": "Enable the i18next Json To Po Conversion module."
+          }
+        }
+      },
+      {
+        "id": "debugging",
+        "title": "Debugging",
+        "properties": {
+          "i18nWeave.logging.enableVerboseLogging": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable / disable verbose logging to the Output Panel."
+          }
         }
       }
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
