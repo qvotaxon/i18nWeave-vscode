@@ -1,11 +1,15 @@
 import { ExtensionContext } from 'vscode';
 import FileWatcherCreator from './services/fileWatcherCreator';
-import ConfigurationStore from './services/configurationStore';
+import ConfigurationStoreManager from './services/configurationStoreManager';
+// import DebuggingOptions from './interfaces/debuggingOptions';
+// import I18nextJsonToPoConversionModuleOptions from './interfaces/i18nextJsonToPoConversionModuleOptions';
+// import TranslationModuleOptions from './interfaces/translationModuleOptions';
 
 export async function activate(context: ExtensionContext) {
   console.log('Congratulations, your extension "i18nweave" is now active!');
 
-  const configurationStore: ConfigurationStore = new ConfigurationStore();
+  const configurationStore: ConfigurationStoreManager =
+    new ConfigurationStoreManager();
   const fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator();
 
   //TODO: Come up with some way of determining the glob pattern for the json files dynamically

@@ -1,11 +1,21 @@
 import ActionModule from '../interfaces/actionModule';
 import ModuleContext from '../interfaces/moduleContext';
+import ConfigurationStoreManager from '../services/configurationStoreManager';
 
 /**
  * Represents a base class for action modules.
  */
 export abstract class BaseActionModule implements ActionModule {
+  protected configurationStore: ConfigurationStoreManager;
   private nextModule: ActionModule | null = null;
+
+  /**
+   *
+   */
+  constructor() {
+    this.configurationStore = new ConfigurationStoreManager();
+    this.configurationStore.Initialize();
+  }
 
   /**
    * Sets the next action module in the chain.
