@@ -1,14 +1,14 @@
 import { ExtensionContext } from 'vscode';
 import FileWatcherCreator from './services/fileWatcherCreator';
 import ConfigurationStoreManager from './services/configurationStoreManager';
-// import DebuggingOptions from './interfaces/debuggingOptions';
-// import I18nextJsonToPoConversionModuleOptions from './interfaces/i18nextJsonToPoConversionModuleOptions';
-// import TranslationModuleOptions from './interfaces/translationModuleOptions';
+import DebuggingConfiguration from './entities/configuration/debugging/debuggingConfiguration';
+import I18nextJsonToPoConversionModuleConfiguration from './entities/configuration/modules/I18nextJsonToPoConversionModule/i18nextJsonToPoConversionModuleConfiguration';
+import TranslationModuleConfiguration from './entities/configuration/modules/translationModule/translationModuleConfiguration';
 
 export async function activate(context: ExtensionContext) {
   console.log('Congratulations, your extension "i18nweave" is now active!');
 
-  const configurationStore: ConfigurationStoreManager =
+  const configurationStoreManager: ConfigurationStoreManager =
     new ConfigurationStoreManager();
   const fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator();
 
@@ -21,20 +21,35 @@ export async function activate(context: ExtensionContext) {
       jsonFileGlobPattern
     );
 
-  configurationStore.Initialize();
+  configurationStoreManager.Initialize();
 
   // Example code for using options pattern.
-  // setInterval(() => {
-  //   const translationModuleOptions =
-  //     configurationStore.Get<TranslationModuleOptions>('translationModule');
-  //   const debuggingOptions =
-  //     configurationStore.Get<DebuggingOptions>('debugging');
-  //   const i18nextJsonToPoConversionModuleOptions =
-  //     configurationStore.Get<I18nextJsonToPoConversionModuleOptions>(
-  //       'i18nextJsonToPoConversionModule'
-  //     );
-  //   console.log('yup, still running...');
-  // }, 5000);
+  setInterval(() => {
+    try {
+      const translationModuleOptions =
+        configurationStoreManager.getConfig<TranslationModuleConfiguration>(
+          'translationModule'
+        );
+      const debuggingOptions =
+        configurationStoreManager.getConfig<DebuggingConfiguration>(
+          'debugging'
+        );
+      const i18nextJsonToPoConversionModuleOptions =
+        configurationStoreManager.getConfig<I18nextJsonToPoConversionModuleConfiguration>(
+          'i18nextJsonToPoConversionModule'
+        );
+
+      const test = translationModuleOptions.deepL?.formality;
+      const test2 = translationModuleOptions.deepL?.apiKey;
+      const test3 = translationModuleOptions.deepL?.preserveFormatting;
+      const test4 = debuggingOptions.logging?.enableVerboseLogging;
+      const test5 = i18nextJsonToPoConversionModuleOptions.enabled;
+
+      console.log('yup, still running...');
+    } catch (error) {
+      console.error(error);
+    }
+  }, 5000);
 
   context.subscriptions.push(...jsonFileWatchers);
 }

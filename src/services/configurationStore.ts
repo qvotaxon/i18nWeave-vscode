@@ -14,6 +14,6 @@ export default class ConfigurationStore<T> {
   }
 
   update(userOptions: Partial<T>): void {
-    this.options = { ...userOptions };
+    this.options = { ...this.options, ...userOptions };
   }
 }

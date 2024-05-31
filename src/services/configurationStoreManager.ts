@@ -3,10 +3,12 @@ import ConfigurationStore from './configurationStore';
 import ExtensionConfiguration from '../entities/configuration/extensionConfiguration';
 
 /**
- * Represents a configuration store that manages the options for the extension.
+ * Represents a configuration store manager that manages the options for the extension.
  */
 export default class ConfigurationStoreManager {
-  private _configurationStore?: ConfigurationStore<ExtensionConfiguration>;
+  private _configurationStore:
+    | ConfigurationStore<ExtensionConfiguration>
+    | undefined;
 
   /**
    * Initializes the configuration store by updating the options and subscribing to configuration changes.
@@ -41,14 +43,27 @@ export default class ConfigurationStoreManager {
       const moduleOptions: any = {};
 
       for (const propertyKey in moduleProperties) {
-        const propertyValue = moduleProperties[propertyKey];
-        const configKey = propertyKey;
+        // const configKey = `i18nWeave.${moduleId}.${propertyKey}`;
+        const configKey = `${propertyKey}`;
         const configValue = config.get(configKey);
+        let internalPropertyKey = propertyKey
+          .replace('i18nWeave.' + moduleId + '.', '')
+          .replace('i18nWeave.', '');
 
         if (configValue !== undefined) {
-          moduleOptions[propertyKey] = configValue;
-        } else if (propertyValue.default !== undefined) {
-          moduleOptions[propertyKey] = propertyValue.default;
+          this.setNestedProperty(
+            moduleOptions,
+            internalPropertyKey,
+            configValue
+          );
+        } else if (
+          moduleProperties[internalPropertyKey].default !== undefined
+        ) {
+          this.setNestedProperty(
+            moduleOptions,
+            internalPropertyKey,
+            moduleProperties[internalPropertyKey].default
+          );
         } else {
           throw new Error(
             `Configuration value not found for key: ${configKey}`
@@ -56,7 +71,7 @@ export default class ConfigurationStoreManager {
         }
       }
 
-      (userConfigurationStore[moduleId] as any) = moduleOptions;
+      userConfigurationStore[moduleId] = moduleOptions;
     }
 
     this._configurationStore = new ConfigurationStore<ExtensionConfiguration>(
@@ -65,29 +80,48 @@ export default class ConfigurationStoreManager {
   }
 
   /**
+   * Recursively sets a nested property value in an object based on a dot-separated key.
+   * @param obj The object to set the property in.
+   * @param key The dot-separated key.
+   * @param value The value to set.
+   */
+  private setNestedProperty(obj: any, key: string, value: any): void {
+    const keys = key.split('.');
+    let current = obj;
+
+    for (let i = 0; i < keys.length - 1; i++) {
+      if (!current[keys[i]]) {
+        current[keys[i]] = {};
+      }
+      current = current[keys[i]];
+    }
+
+    current[keys[keys.length - 1]] = value;
+  }
+
+  /**
    * Gets the options from the configuration store.
    * @throws Error if the options are not initialized.
    * @returns The options from the configuration store.
    */
-  public GetConfigurationStore(): ConfigurationStore<ExtensionConfiguration> {
-    if (this._configurationStore === undefined) {
+  public getConfigurationStore(): ConfigurationStore<ExtensionConfiguration> {
+    if (!this._configurationStore) {
       throw new Error('Configuration Store not initialized.');
     }
     return this._configurationStore;
   }
 
   /**
-   * Gets a specific configuration from the configuration store.
-   * @param configurationKey - The key of the configuration to retrieve.
-   * @returns The configuration with the specified key.
+   * Gets a specific configuration object from the configuration store.
+   * @param key - The key of the configuration to retrieve.
+   * @returns The configuration object.
    */
-  public Get<T>(
-    configurationKey: keyof ExtensionConfiguration
-  ): ConfigurationStore<T> {
-    const configurationStore = this.GetConfigurationStore();
-
-    return new ConfigurationStore<T>(
-      configurationStore.get(configurationKey) as T as Partial<T>
-    );
+  public getConfig<T>(key: keyof ExtensionConfiguration): T {
+    const configurationStore = this.getConfigurationStore();
+    const config = configurationStore.get(key);
+    if (!config) {
+      throw new Error(`Configuration for key "${String(key)}" not found.`);
+    }
+    return config as T;
   }
 }
