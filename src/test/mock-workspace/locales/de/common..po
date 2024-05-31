@@ -1,0 +1,10 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: de\n"
+
+msgid "Startseite"
+msgstr "Startseite"
+
+msgid "Willkommen auf der Startseite"
+msgstr "Willkommen auf der Startseite"

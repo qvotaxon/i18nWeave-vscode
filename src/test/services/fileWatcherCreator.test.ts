@@ -1,44 +1,16 @@
 import * as assert from 'assert';
-import * as vscode from 'vscode';
 import FileWatcherCreator from '../../services/fileWatcherCreator';
 import * as mock from 'mock-fs';
 import JsonFileChangeHandler from '../../fileChangeHandlers/jsonFileChangeHandler';
 import { Uri } from 'vscode';
+import FileChangeHandlerFactory from '../../services/fileChangeHandlerFactory';
+import { verify } from 'crypto';
 
 suite('FileWatcherCreator Tests', () => {
-  let handleFileChangeAsyncCalled = false;
+  let tracker: assert.CallTracker;
 
   setup(() => {
-    mock.default({
-      '/path/to/file1.json': '{ "key": "value" }',
-      '/path/to/file2.json': '{ "key": "value" }',
-      '/path/node_modules': {
-        'file1.json': '{ "key": "value" }',
-        'file2.json': '{ "key": "value" }',
-      },
-    });
-
-    // Mock the behavior of vscode.workspace.findFiles
-    vscode.workspace.findFiles = (
-      include: vscode.GlobPattern,
-      exclude?: vscode.GlobPattern | null | undefined,
-      maxResults?: number
-    ) => {
-      const fileUris = [
-        vscode.Uri.file('/path/to/file1.json'),
-        vscode.Uri.file('/path/to/file2.json'),
-      ];
-      return Promise.resolve(fileUris);
-    };
-
-    const jsonFileChangeHandlerMock = new JsonFileChangeHandler();
-
-    jsonFileChangeHandlerMock.handleFileChangeAsync = (
-      changeFileLocation?: Uri | undefined
-    ): Promise<void> => {
-      handleFileChangeAsyncCalled = true;
-      return Promise.resolve();
-    };
+    tracker = new assert.CallTracker();
   });
 
   teardown(() => {
@@ -46,15 +18,20 @@ suite('FileWatcherCreator Tests', () => {
   });
 
   test('createFileWatchersForFilesMatchingGlobAsync should create file watchers for files matching the glob pattern', async () => {
+    const expectedFileWatchersCount = 6;
+
     const pattern = '**/*.json';
     const disableFlags: (() => boolean)[] = [];
 
-    const expectedFileWatchers: vscode.FileSystemWatcher[] = [
-      vscode.workspace.createFileSystemWatcher('/path/to/file1.json'),
-      vscode.workspace.createFileSystemWatcher('/path/to/file2.json'),
-    ];
-
     const fileWatcherCreator = new FileWatcherCreator();
+
+    const callsfunc = tracker.calls(
+      FileChangeHandlerFactory.prototype.createFileChangeHandler,
+      expectedFileWatchersCount
+    );
+
+    FileChangeHandlerFactory.prototype.createFileChangeHandler = callsfunc;
+    tracker.reset(callsfunc);
 
     const fileWatchers =
       await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
@@ -62,20 +39,24 @@ suite('FileWatcherCreator Tests', () => {
         ...disableFlags
       );
 
-    assert.ok(fileWatchers.length > 0);
-    assert.equal(fileWatchers.length, expectedFileWatchers.length);
+    assert.equal(fileWatchers.length, expectedFileWatchersCount);
+    tracker.verify();
   });
 
   test('createFileWatchersForFilesMatchingGlobAsync should disable file watchers based on disable flags', async () => {
+    const expectedFileWatchersCount = 6;
+
     const pattern = '**/*.json';
     const disableFlags: (() => boolean)[] = [() => true, () => false];
 
-    const expectedFileWatchers: vscode.FileSystemWatcher[] = [
-      vscode.workspace.createFileSystemWatcher('/path/to/file1.json'),
-      vscode.workspace.createFileSystemWatcher('/path/to/file2.json'),
-    ];
-
     const fileWatcherCreator = new FileWatcherCreator();
+
+    const callsfunc = tracker.calls(
+      JsonFileChangeHandler.prototype.handleFileChangeAsync
+    );
+    JsonFileChangeHandler.prototype.handleFileChangeAsync = callsfunc;
+
+    tracker.reset(callsfunc);
 
     const fileWatchers =
       await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
@@ -83,8 +64,7 @@ suite('FileWatcherCreator Tests', () => {
         ...disableFlags
       );
 
-    assert.ok(fileWatchers.length > 0);
-    assert.equal(fileWatchers.length, expectedFileWatchers.length);
-    assert.equal(handleFileChangeAsyncCalled, false);
+    assert.equal(fileWatchers.length, expectedFileWatchersCount);
+    assert.equal(tracker.getCalls(callsfunc).length, 0);
   });
 });
