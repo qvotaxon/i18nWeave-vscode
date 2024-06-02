@@ -17,7 +17,7 @@ export default class FileWatcherCreator {
   ): Promise<vscode.FileSystemWatcher[]> {
     const fileURIs = await vscode.workspace.findFiles(
       pattern,
-      '**/node_modules/**'
+      '**/{node_modules,.next}/**'
     );
     const fileWatchers: vscode.FileSystemWatcher[] = [];
 
