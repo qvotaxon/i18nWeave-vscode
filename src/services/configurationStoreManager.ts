@@ -6,19 +6,16 @@ import ExtensionConfiguration from '../entities/configuration/extensionConfigura
  * Represents a configuration store manager that manages the options for the extension.
  */
 export default class ConfigurationStoreManager {
-  private _configurationStore:
-    | ConfigurationStore<ExtensionConfiguration>
-    | undefined;
+  private _configurationStore: ConfigurationStore | undefined;
 
   /**
    * Initializes the configuration store by updating the options and subscribing to configuration changes.
    */
   public Initialize(): void {
     this.syncConfigurationStore();
-
-    vscode.workspace.onDidChangeConfiguration(() => {
-      this.syncConfigurationStore();
-    });
+    vscode.workspace.onDidChangeConfiguration(() =>
+      this.syncConfigurationStore()
+    );
   }
 
   /**
@@ -27,27 +24,24 @@ export default class ConfigurationStoreManager {
    */
   private syncConfigurationStore(): void {
     const userConfigurationStore: Partial<ExtensionConfiguration> = {};
+    const extension = vscode.extensions.getExtension('qvotaxon.i18nWeave');
 
-    const contributes =
-      vscode.extensions.getExtension('qvotaxon.i18nWeave')?.packageJSON
-        .contributes;
-    if (!contributes?.configuration) {
+    if (!extension?.packageJSON.contributes?.configuration) {
       throw new Error('Configuration not found.');
     }
+
     const config = vscode.workspace.getConfiguration();
+    const contributes = extension.packageJSON.contributes.configuration;
 
-    for (const moduleConfig of contributes.configuration) {
+    for (const moduleConfig of contributes) {
       const moduleId = moduleConfig.id as keyof ExtensionConfiguration;
-      const moduleProperties = moduleConfig.properties;
-
       const moduleOptions: any = {};
 
-      for (const propertyKey in moduleProperties) {
-        // const configKey = `i18nWeave.${moduleId}.${propertyKey}`;
+      for (const propertyKey in moduleConfig.properties) {
         const configKey = `${propertyKey}`;
         const configValue = config.get(configKey);
-        let internalPropertyKey = propertyKey
-          .replace('i18nWeave.' + moduleId + '.', '')
+        const internalPropertyKey = propertyKey
+          .replace(`i18nWeave.${moduleId}.`, '')
           .replace('i18nWeave.', '');
 
         if (configValue !== undefined) {
@@ -56,27 +50,26 @@ export default class ConfigurationStoreManager {
             internalPropertyKey,
             configValue
           );
-        } else if (
-          moduleProperties[internalPropertyKey].default !== undefined
-        ) {
-          this.setNestedProperty(
-            moduleOptions,
-            internalPropertyKey,
-            moduleProperties[internalPropertyKey].default
-          );
         } else {
-          throw new Error(
-            `Configuration value not found for key: ${configKey}`
-          );
+          const defaultValue = moduleConfig.properties[propertyKey].default;
+          if (defaultValue !== undefined) {
+            this.setNestedProperty(
+              moduleOptions,
+              internalPropertyKey,
+              defaultValue
+            );
+          } else {
+            throw new Error(
+              `Configuration value not found for key: ${configKey}`
+            );
+          }
         }
       }
 
       userConfigurationStore[moduleId] = moduleOptions;
     }
 
-    this._configurationStore = new ConfigurationStore<ExtensionConfiguration>(
-      userConfigurationStore
-    );
+    this._configurationStore = new ConfigurationStore(userConfigurationStore);
   }
 
   /**
@@ -90,10 +83,7 @@ export default class ConfigurationStoreManager {
     let current = obj;
 
     for (let i = 0; i < keys.length - 1; i++) {
-      if (!current.hasOwnProperty(keys[i])) {
-        current[keys[i]] = {};
-      }
-      current = current[keys[i]];
+      current = current[keys[i]] = current[keys[i]] || {};
     }
 
     current[keys[keys.length - 1]] = value;
@@ -104,7 +94,7 @@ export default class ConfigurationStoreManager {
    * @throws Error if the options are not initialized.
    * @returns The options from the configuration store.
    */
-  public getConfigurationStore(): ConfigurationStore<ExtensionConfiguration> {
+  public getConfigurationStore(): ConfigurationStore {
     if (!this._configurationStore) {
       throw new Error('Configuration Store not initialized.');
     }
@@ -117,8 +107,7 @@ export default class ConfigurationStoreManager {
    * @returns The configuration object.
    */
   public getConfig<T>(key: keyof ExtensionConfiguration): T {
-    const configurationStore = this.getConfigurationStore();
-    const config = configurationStore.get(key);
+    const config = this.getConfigurationStore().get(key);
     if (!config) {
       throw new Error(`Configuration for key "${String(key)}" not found.`);
     }

@@ -1,19 +1,26 @@
-export default class ConfigurationStore<T> {
-  private options: Partial<T> = {};
+import ExtensionConfiguration from '../entities/configuration/extensionConfiguration';
 
-  constructor(userOptions: Partial<T>) {
+export default class ConfigurationStore {
+  private options: Partial<ExtensionConfiguration> = {};
+
+  constructor(userOptions: Partial<ExtensionConfiguration>) {
     this.options = { ...userOptions };
   }
 
-  get<K extends keyof T>(key: K): T[K] | undefined {
+  get<K extends keyof ExtensionConfiguration>(
+    key: K
+  ): ExtensionConfiguration[K] | undefined {
     return this.options[key];
   }
 
-  set<K extends keyof T>(key: K, value: T[K]): void {
+  set<K extends keyof ExtensionConfiguration>(
+    key: K,
+    value: ExtensionConfiguration[K]
+  ): void {
     this.options[key] = value;
   }
 
-  update(userOptions: Partial<T>): void {
+  update(userOptions: Partial<ExtensionConfiguration>): void {
     this.options = { ...this.options, ...userOptions };
   }
 }
