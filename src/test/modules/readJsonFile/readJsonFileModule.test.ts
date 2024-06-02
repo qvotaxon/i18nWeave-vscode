@@ -35,6 +35,7 @@ suite('ReadJsonFileModule Tests', () => {
 
   test('doExecute should not assign the context.jsonContent if the file is empty', async () => {
     const inputPath = Uri.file('/path/to/emptyFile.json');
+    const readFileAsyncOriginal = FileReader.readFileAsync;
 
     FileReader.readFileAsync = async (filePath: string) => {
       assert.strictEqual(filePath, inputPath.fsPath);
@@ -52,10 +53,13 @@ suite('ReadJsonFileModule Tests', () => {
     await module.execute(context);
 
     assert.strictEqual(context.jsonContent, null);
+
+    FileReader.readFileAsync = readFileAsyncOriginal;
   });
 
   test('doExecute should not assign the context.jsonContent if the file is not found', async () => {
     const inputPath = Uri.file('/path/to/nonexistentFile.json');
+    const readFileAsyncOriginal = FileReader.readFileAsync;
 
     FileReader.readFileAsync = async (filePath: string) => {
       assert.strictEqual(filePath, inputPath.fsPath);
@@ -72,5 +76,7 @@ suite('ReadJsonFileModule Tests', () => {
     const module = new ReadJsonFileModule();
     assert.rejects(module.execute(context), Error, 'File not found');
     assert.strictEqual(context.jsonContent, null);
+
+    FileReader.readFileAsync = readFileAsyncOriginal;
   });
 });

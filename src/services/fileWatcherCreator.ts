@@ -17,11 +17,11 @@ export default class FileWatcherCreator {
   ): Promise<vscode.FileSystemWatcher[]> {
     const fileURIs = await vscode.workspace.findFiles(
       pattern,
-      '**/node_modules/**'
+      '**/{node_modules,.next}/**'
     );
     const fileWatchers: vscode.FileSystemWatcher[] = [];
 
-    await Promise.all(
+    return await Promise.all(
       fileURIs.map(async (fileURI) => {
         const fsPath = fileURI.fsPath;
         const fileChangeHandlerFactory = new FileChangeHandlerFactory();
@@ -38,8 +38,8 @@ export default class FileWatcherCreator {
 
         fileWatchers.push(fileWatcher);
       })
-    );
-
-    return fileWatchers;
+    ).then(() => {
+      return fileWatchers;
+    });
   }
 }

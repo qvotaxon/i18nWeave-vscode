@@ -1,11 +1,12 @@
 import { ExtensionContext } from 'vscode';
 import FileWatcherCreator from './services/fileWatcherCreator';
-import ConfigurationStore from './services/configurationStore';
+import ConfigurationStoreManager from './services/configurationStoreManager';
 
 export async function activate(context: ExtensionContext) {
   console.log('Congratulations, your extension "i18nweave" is now active!');
 
-  const configurationStore: ConfigurationStore = new ConfigurationStore();
+  const configurationStoreManager: ConfigurationStoreManager =
+    new ConfigurationStoreManager();
   const fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator();
 
   //TODO: Come up with some way of determining the glob pattern for the json files dynamically
@@ -17,20 +18,7 @@ export async function activate(context: ExtensionContext) {
       jsonFileGlobPattern
     );
 
-  configurationStore.Initialize();
-
-  // Example code for using options pattern.
-  // setInterval(() => {
-  //   const translationModuleOptions =
-  //     configurationStore.Get<TranslationModuleOptions>('translationModule');
-  //   const debuggingOptions =
-  //     configurationStore.Get<DebuggingOptions>('debugging');
-  //   const i18nextJsonToPoConversionModuleOptions =
-  //     configurationStore.Get<I18nextJsonToPoConversionModuleOptions>(
-  //       'i18nextJsonToPoConversionModule'
-  //     );
-  //   console.log('yup, still running...');
-  // }, 5000);
+  configurationStoreManager.Initialize();
 
   context.subscriptions.push(...jsonFileWatchers);
 }
