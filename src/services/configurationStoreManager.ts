@@ -83,10 +83,15 @@ export default class ConfigurationStoreManager {
     let current = obj;
 
     for (let i = 0; i < keys.length - 1; i++) {
-      current = current[keys[i]] = current[keys[i]] || {};
+      if (!current[keys[i]]) {
+        current[keys[i]] = {};
+      }
+      current = current[keys[i]];
     }
 
-    current[keys[keys.length - 1]] = value;
+    if (!current.hasOwnProperty(keys[keys.length - 1])) {
+      current[keys[keys.length - 1]] = value;
+    }
   }
 
   /**
