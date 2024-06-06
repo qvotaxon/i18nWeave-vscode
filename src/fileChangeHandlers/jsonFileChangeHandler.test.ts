@@ -7,14 +7,10 @@ import { ChainType } from '../enums/chainType';
 import FilePathProcessor from '../services/filePathProcessor';
 
 suite('JsonFileChangeHandler Tests', () => {
-  let moduleChainManager: ModuleChainManager;
   let jsonFileChangeHandler: JsonFileChangeHandler;
 
   setup(() => {
-    moduleChainManager = new ModuleChainManager();
-
     jsonFileChangeHandler = JsonFileChangeHandler.create();
-    JsonFileChangeHandler.moduleChainManager = moduleChainManager;
   });
 
   test('handleFileChangeAsync should return if changeFileLocation is undefined', async () => {
@@ -32,7 +28,10 @@ suite('JsonFileChangeHandler Tests', () => {
     const processFilePathStub = sinon.stub().returns(extractedFileParts);
     sinon.replace(FilePathProcessor, 'processFilePath', processFilePathStub);
 
-    const executeChainStub = sinon.stub(moduleChainManager, 'executeChain');
+    const executeChainStub = sinon.stub(
+      JsonFileChangeHandler.moduleChainManager,
+      'executeChain'
+    );
 
     await jsonFileChangeHandler.handleFileChangeAsync(changeFileLocation);
 

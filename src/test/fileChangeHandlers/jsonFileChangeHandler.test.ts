@@ -5,6 +5,8 @@ import JsonFileChangeHandler from '../../fileChangeHandlers/jsonFileChangeHandle
 import ModuleChainManager from '../../modules/moduleChainManager';
 import ReadJsonFileModule from '../../modules/readJsonFile/readJsonFileModule';
 import TranslationModule from '../../modules/translation/translationModule';
+import { Uri } from 'vscode';
+import FilePathProcessor from '../../services/filePathProcessor';
 
 suite('JsonFileChangeHandler', () => {
   test('should initialize moduleChainManager and register chain', () => {
@@ -59,5 +61,44 @@ suite('JsonFileChangeHandler', () => {
     );
     assert.ok(readJsonFileModuleSpy.calledOnce);
     assert.ok(translationModuleSpy.calledOnce);
+  });
+
+  test('should handle file change asynchronously', async () => {
+    const changeFileLocation = Uri.file('/path/to/changed/file.json');
+    const extractedFileParts = {
+      locale: 'en',
+      outputPath: Uri.parse('/path/to/output'),
+    };
+
+    const processFilePathStub = sinon
+      .stub(FilePathProcessor, 'processFilePath')
+      .returns(extractedFileParts);
+
+    const moduleChainManagerExecuteChainStub = sinon.stub(
+      JsonFileChangeHandler.moduleChainManager,
+      'executeChain'
+    );
+
+    await JsonFileChangeHandler.create().handleFileChangeAsync(
+      changeFileLocation
+    );
+
+    sinon.assert.calledOnceWithExactly(
+      processFilePathStub,
+      changeFileLocation.fsPath
+    );
+
+    sinon.assert.calledOnceWithExactly(
+      moduleChainManagerExecuteChainStub,
+      ChainType.Json,
+      {
+        inputPath: changeFileLocation,
+        locale: extractedFileParts.locale,
+        outputPath: extractedFileParts.outputPath,
+      }
+    );
+
+    processFilePathStub.restore();
+    moduleChainManagerExecuteChainStub.restore();
   });
 });
