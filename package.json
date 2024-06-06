@@ -159,8 +159,8 @@
     "test": "vscode-test",
     "package": "npx vsce package",
     "publish": "npx vsce publish",
-    "testcoverage:clover": "npm run test -- --coverage --coverage-reporter=clover",
-    "testcoverage:lcov": "npm run test -- --coverage --coverage-reporter=lcov"
+    "test:clover": "npm run test -- --coverage --coverage-reporter=clover",
+    "test:lcov": "npm run test -- --coverage --coverage-reporter=lcov"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",

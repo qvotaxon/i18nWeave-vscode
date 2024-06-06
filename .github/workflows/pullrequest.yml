@@ -61,7 +61,7 @@ jobs:
       - name: Test
         #skip ubuntu-latest because of $DISPLAY
         if: ${{ matrix.os == 'macos-latest' || matrix.os == 'windows-latest' }}
-        run: npm run test -- --coverage --coverage-reporter=clover
+        run: npm run test:clover
 
       - name: Upload coverage reports to Codecov
         #only upload coverage reports for windows-latest
