@@ -78,15 +78,26 @@ export default class ConfigurationStoreManager {
    * @param key The dot-separated key.
    * @param value The value to set.
    */
+  /**
+   * Recursively sets a nested property value in an object based on a dot-separated key.
+   * @param obj The object to set the property in.
+   * @param key The dot-separated key.
+   * @param value The value to set.
+   */
   private setNestedProperty(obj: any, key: string, value: any): void {
     const keys = key.split('.');
     let current = obj;
 
     for (let i = 0; i < keys.length - 1; i++) {
-      current = current[keys[i]] = current[keys[i]] || {};
+      if (!current[keys[i]]) {
+        current[keys[i]] = {};
+      }
+      current = current[keys[i]];
     }
 
-    current[keys[keys.length - 1]] = value;
+    if (!Object.hasOwn(current, keys[keys.length - 1])) {
+      current[keys[keys.length - 1]] = value;
+    }
   }
 
   /**

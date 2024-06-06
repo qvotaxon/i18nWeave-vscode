@@ -14,7 +14,8 @@ export default class JsonFileChangeHandler implements FileChangeHandler {
   private static translationModule: TranslationModule;
   private static i18nextJsonToPoConversionModule: I18nextJsonToPoConversionModule;
 
-  static moduleChainManager: ModuleChainManager = new ModuleChainManager();
+  static readonly moduleChainManager: ModuleChainManager =
+    new ModuleChainManager();
 
   private constructor(
     readJsonFileModule: ReadJsonFileModule,
