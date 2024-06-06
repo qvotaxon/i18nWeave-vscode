@@ -2,7 +2,6 @@ import * as assert from 'assert';
 import * as sinon from 'sinon';
 import { Uri } from 'vscode';
 import JsonFileChangeHandler from './jsonFileChangeHandler';
-import ModuleChainManager from '../modules/moduleChainManager';
 import { ChainType } from '../enums/chainType';
 import FilePathProcessor from '../services/filePathProcessor';
 
