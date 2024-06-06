@@ -3,26 +3,22 @@ import * as fs from 'fs';
 import { Uri } from 'vscode';
 import FileWriter from '../../services/fileWriter';
 import * as mock from 'mock-fs';
+import path from 'path';
 
 suite('FileWriter Tests', () => {
-  setup(() => {
-    mock.default({
-      '/path/to/file.txt': 'Hello, World!',
-    });
-  });
-
   teardown(() => {
     mock.restore();
   });
 
   test('writeToFileAsync should write data to a file', async () => {
-    const filePath = Uri.file('/path/to/file.txt');
-    const data = 'Hello, World!';
+    const relativePath = path.join(__dirname, '..', '..', 'test', 'test.json');
+    const filePath = Uri.file(relativePath);
+    const data = { test: 'test' };
 
-    await FileWriter.writeToFileAsync(filePath, data);
+    await FileWriter.writeToFileAsync(filePath, JSON.stringify(data));
 
     const fileContent = fs.readFileSync(filePath.fsPath, 'utf8');
-    assert.strictEqual(fileContent, data);
+    assert.strictEqual(fileContent, JSON.stringify(data));
   });
 
   test('writeToFileAsync should reject with an error if there is a problem', async () => {

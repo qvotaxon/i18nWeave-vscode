@@ -12,7 +12,7 @@ export default class FileChangeHandlerFactory {
       // return new PoFileChangeHandler();
 
       case 'json':
-        return new JsonFileChangeHandler();
+        return JsonFileChangeHandler.create();
       default:
         throw new Error('Unsupported file extension');
       //   default:
