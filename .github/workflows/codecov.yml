@@ -18,3 +18,5 @@ coverage:
     project: true
 github_checks:
   annotations: true
+ignore:
+  - "src/enums/*.ts"
