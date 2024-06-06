@@ -67,5 +67,6 @@ jobs:
         #only upload coverage reports for windows-latest
         if: ${{ matrix.os == 'windows-latest' }}
         uses: codecov/codecov-action@v4.0.1
+        exclude: src/enums/**/
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
