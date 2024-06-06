@@ -9,35 +9,55 @@ import ReadJsonFileModule from '../modules/readJsonFile/readJsonFileModule';
 import TranslationModule from '../modules/translation/translationModule';
 import FilePathProcessor from '../services/filePathProcessor';
 
-/**
- * Handles changes to JSON files and executes a chain of modules to process the changes.
- */
 export default class JsonFileChangeHandler implements FileChangeHandler {
-  moduleChainManager: ModuleChainManager;
+  private static readJsonFileModule: ReadJsonFileModule;
+  private static translationModule: TranslationModule;
+  private static i18nextJsonToPoConversionModule: I18nextJsonToPoConversionModule;
 
-  constructor() {
-    this.moduleChainManager = new ModuleChainManager();
+  static moduleChainManager: ModuleChainManager = new ModuleChainManager();
 
-    this.moduleChainManager.registerChain(
+  private constructor(
+    readJsonFileModule: ReadJsonFileModule,
+    translationModule: TranslationModule,
+    i18nextJsonToPoConversionModule: I18nextJsonToPoConversionModule
+  ) {
+    JsonFileChangeHandler.readJsonFileModule = readJsonFileModule;
+    JsonFileChangeHandler.translationModule = translationModule;
+    JsonFileChangeHandler.i18nextJsonToPoConversionModule =
+      i18nextJsonToPoConversionModule;
+
+    JsonFileChangeHandler.moduleChainManager.registerChain(
       ChainType.Json,
       this.createJsonChain()
     );
   }
 
-  /**
-   * Creates a chain of modules for processing JSON files.
-   * @returns The first module in the chain.
-   */
-  createJsonChain(): ActionModule {
+  public static readonly create = (): JsonFileChangeHandler => {
     const readJsonFileModule = new ReadJsonFileModule();
     const translationModule = new TranslationModule();
     const i18nextJsonToPoConversionModule =
       new I18nextJsonToPoConversionModule();
 
-    readJsonFileModule.setNext(translationModule);
-    translationModule.setNext(i18nextJsonToPoConversionModule);
+    this.readJsonFileModule = readJsonFileModule;
+    this.translationModule = translationModule;
+    this.i18nextJsonToPoConversionModule = i18nextJsonToPoConversionModule;
 
-    return readJsonFileModule;
+    return new JsonFileChangeHandler(
+      readJsonFileModule,
+      translationModule,
+      i18nextJsonToPoConversionModule
+    );
+  };
+
+  createJsonChain(): ActionModule {
+    JsonFileChangeHandler.readJsonFileModule.setNext(
+      JsonFileChangeHandler.translationModule
+    );
+    JsonFileChangeHandler.translationModule.setNext(
+      JsonFileChangeHandler.i18nextJsonToPoConversionModule
+    );
+
+    return JsonFileChangeHandler.readJsonFileModule;
   }
 
   /**
@@ -61,6 +81,9 @@ export default class JsonFileChangeHandler implements FileChangeHandler {
       locale: extractedFileParts.locale,
       outputPath: extractedFileParts.outputPath,
     };
-    this.moduleChainManager.executeChain(ChainType.Json, context);
+    JsonFileChangeHandler.moduleChainManager.executeChain(
+      ChainType.Json,
+      context
+    );
   }
 }
