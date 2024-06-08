@@ -28,7 +28,7 @@ suite('I18nextJsonToPoConversionModule Tests', () => {
       locale,
     };
 
-    await module.execute(context);
+    await module.executeAsync(context);
 
     let expectedOutput = i18next2po(locale, jsonContent, {
       compatibilityJSON: 'v3',
@@ -51,7 +51,7 @@ suite('I18nextJsonToPoConversionModule Tests', () => {
       locale,
     };
 
-    await module.execute(context);
+    await module.executeAsync(context);
 
     expectedOutput = i18next2po(locale, jsonContent, {
       compatibilityJSON: 'v3',
@@ -85,9 +85,8 @@ suite('I18nextJsonToPoConversionModule Tests', () => {
       locale,
     };
 
-    await module.execute(context);
+    await module.executeAsync(context);
 
-    // Check that the output file does not exist
     assert.rejects(FileReader.readFileAsync(outputPath.fsPath));
   });
 });

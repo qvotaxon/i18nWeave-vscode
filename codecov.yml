@@ -23,4 +23,5 @@ github_checks:
   annotations: true
 
 ignore:
-  - "src/enums/*.ts"
+  - 'src/enums/*.ts'
+  - 'src/extension.ts'

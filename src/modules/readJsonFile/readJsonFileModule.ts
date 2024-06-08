@@ -12,7 +12,9 @@ export default class ReadJsonFileModule extends BaseActionModule {
    * @param context The context object for the readJsonFile module.
    * @returns A Promise that resolves when the execution is complete.
    */
-  protected async doExecute(context: ReadJsonFileModuleContext): Promise<void> {
+  protected async doExecuteAsync(
+    context: ReadJsonFileModuleContext
+  ): Promise<void> {
     console.log(`Reading Json file contents: ${context.inputPath.fsPath}`);
 
     const jsonContent = await FileReader.readFileAsync(

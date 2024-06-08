@@ -19,17 +19,19 @@ export abstract class BaseActionModule implements ActionModule {
    * Executes the action module.
    * @param context The module context.
    */
-  public async execute(context: ModuleContext): Promise<void> {
-    await this.doExecute(context);
+  public async executeAsync(context: ModuleContext): Promise<void> {
+    const result = await this.doExecuteAsync(context);
 
     if (this.nextModule) {
-      await this.nextModule.execute(context);
+      return await this.nextModule.executeAsync(context);
     }
+
+    return result;
   }
 
   /**
    * Performs the execution logic of the action module.
    * @param context The module context.
    */
-  protected abstract doExecute(context: ModuleContext): Promise<void>;
+  protected abstract doExecuteAsync(context: ModuleContext): Promise<void>;
 }

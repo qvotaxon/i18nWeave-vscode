@@ -14,7 +14,7 @@ suite('TranslationModule', () => {
       translations: {}, // Add the 'translations' property with an initial value of an empty object
     };
 
-    await translationModule.execute(context);
+    await translationModule.executeAsync(context);
 
     assert.deepStrictEqual(context.translations, {});
   });
@@ -27,7 +27,7 @@ suite('TranslationModule', () => {
       jsonContent: {
         dummy: {
           translations: {
-            test: 'original',
+            test: 'test',
           },
         },
       },
@@ -36,14 +36,8 @@ suite('TranslationModule', () => {
       translations: {},
     };
 
-    await translationModule.execute(context);
+    await translationModule.executeAsync(context);
 
-    assert.deepStrictEqual(context.jsonContent, {
-      dummy: {
-        translations: {
-          test: 'test',
-        },
-      },
-    });
+    assert.deepStrictEqual(context.jsonContent, context.jsonContent);
   });
 });

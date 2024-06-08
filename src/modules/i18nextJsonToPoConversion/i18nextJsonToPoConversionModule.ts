@@ -12,7 +12,7 @@ export default class I18nextJsonToPoConversionModule extends BaseActionModule {
    * @param context - The context for the conversion.
    * @returns A Promise that resolves when the conversion is complete.
    */
-  protected async doExecute(
+  protected async doExecuteAsync(
     context: I18nextJsonToPoConversionModuleContext
   ): Promise<void> {
     console.log(`Converting json to po using : ${context.inputPath.fsPath}`);

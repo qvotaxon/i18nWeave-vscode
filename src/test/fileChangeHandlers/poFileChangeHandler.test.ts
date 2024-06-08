@@ -1,70 +1,62 @@
 import * as assert from 'assert';
 import sinon from 'sinon';
 import { ChainType } from '../../enums/chainType';
-import JsonFileChangeHandler from '../../fileChangeHandlers/jsonFileChangeHandler';
+import PoFileChangeHandler from '../../fileChangeHandlers/poFileChangeHandler';
 import ModuleChainManager from '../../modules/moduleChainManager';
-import ReadJsonFileModule from '../../modules/readJsonFile/readJsonFileModule';
-import TranslationModule from '../../modules/translation/translationModule';
+import ReadPoFileModule from '../../modules/readPoFile/readPoFileModule';
 import { Uri } from 'vscode';
 import FilePathProcessor from '../../services/filePathProcessor';
 
-suite('JsonFileChangeHandler', () => {
+suite('PoFileChangeHandler', () => {
   test('should initialize moduleChainManager and register chain', () => {
-    const moduleChainManager = JsonFileChangeHandler.moduleChainManager;
+    const moduleChainManager = PoFileChangeHandler.moduleChainManager;
     const registerChainSpy = sinon.spy(moduleChainManager, 'registerChain');
-    const jsonFileChangeHandler = JsonFileChangeHandler.create();
+    const poFileChangeHandler = PoFileChangeHandler.create();
 
     const expectedModuleChainManagerChains = {
       chains: {
-        [ChainType.Json]: {
-          nextModule: {
-            nextModule: { nextModule: null },
-          },
+        [ChainType.Po]: {
+          nextModule: { nextModule: null },
         },
       },
     };
 
     assert.equal(
-      JSON.stringify(JsonFileChangeHandler.moduleChainManager),
+      JSON.stringify(PoFileChangeHandler.moduleChainManager),
       JSON.stringify(expectedModuleChainManagerChains)
     );
     assert.ok(registerChainSpy.calledOnce);
     assert.ok(
       registerChainSpy.calledWithExactly(
-        ChainType.Json,
-        jsonFileChangeHandler.createJsonChain()
+        ChainType.Po,
+        poFileChangeHandler.createPoChain()
       )
     );
   });
 
   test('should set static module instances', () => {
-    const jsonFileChangeHandler = JsonFileChangeHandler.create();
+    const poFileChangeHandler = PoFileChangeHandler.create();
 
-    assert.ok(jsonFileChangeHandler);
+    assert.ok(poFileChangeHandler);
   });
 
-  test('should create a new instance of JsonFileChangeHandler', () => {
-    const readJsonFileModuleSpy = sinon.spy(
-      ReadJsonFileModule.prototype,
-      'setNext'
-    );
-    const translationModuleSpy = sinon.spy(
-      TranslationModule.prototype,
+  test('should create a new instance of PoFileChangeHandler', () => {
+    const readPoFileModuleSpy = sinon.spy(
+      ReadPoFileModule.prototype,
       'setNext'
     );
 
-    const jsonFileChangeHandler = JsonFileChangeHandler.create();
+    const poFileChangeHandler = PoFileChangeHandler.create();
 
-    assert.ok(jsonFileChangeHandler instanceof JsonFileChangeHandler);
+    assert.ok(poFileChangeHandler instanceof PoFileChangeHandler);
     assert.ok(
-      JsonFileChangeHandler.moduleChainManager instanceof ModuleChainManager
+      PoFileChangeHandler.moduleChainManager instanceof ModuleChainManager
     );
-    assert.ok(readJsonFileModuleSpy.calledOnce);
-    assert.ok(translationModuleSpy.calledOnce);
+    assert.ok(readPoFileModuleSpy.calledOnce);
   });
 
   test('should handle file change asynchronously', async () => {
-    const changeFileLocation = Uri.file('/path/to/changed/file.json');
+    const changeFileLocation = Uri.file('/path/to/changed/file.po');
     const extractedFileParts = {
       locale: 'en',
       outputPath: Uri.parse('/path/to/output'),
@@ -75,10 +67,10 @@ suite('JsonFileChangeHandler', () => {
       .returns(extractedFileParts);
 
     const moduleChainManagerExecuteChainStub = sinon
-      .stub(JsonFileChangeHandler.moduleChainManager, 'executeChain')
+      .stub(PoFileChangeHandler.moduleChainManager, 'executeChain')
       .returns(Promise.resolve());
 
-    await JsonFileChangeHandler.create().handleFileChangeAsync(
+    await PoFileChangeHandler.create().handleFileChangeAsync(
       changeFileLocation
     );
 
@@ -89,7 +81,7 @@ suite('JsonFileChangeHandler', () => {
 
     sinon.assert.calledOnceWithExactly(
       moduleChainManagerExecuteChainStub,
-      ChainType.Json,
+      ChainType.Po,
       {
         inputPath: changeFileLocation,
         locale: extractedFileParts.locale,
