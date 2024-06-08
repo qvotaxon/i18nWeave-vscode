@@ -33,7 +33,7 @@ export async function activate(
         ).enabled
     );
 
-  configurationStoreManager.Initialize();
+  configurationStoreManager.initialize();
 
   context.subscriptions.push(...jsonFileWatchers, ...poFileWatchers);
 }

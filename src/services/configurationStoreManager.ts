@@ -6,12 +6,12 @@ import ExtensionConfiguration from '../entities/configuration/extensionConfigura
  * Represents a configuration store manager that manages the options for the extension.
  */
 export default class ConfigurationStoreManager {
-  private _configurationStore: ConfigurationStore | undefined;
+  private _configurationStore?: ConfigurationStore;
 
   /**
    * Initializes the configuration store by updating the options and subscribing to configuration changes.
    */
-  public Initialize(): void {
+  public initialize(): void {
     this.syncConfigurationStore();
     vscode.workspace.onDidChangeConfiguration(() =>
       this.syncConfigurationStore()
@@ -22,10 +22,8 @@ export default class ConfigurationStoreManager {
    * Updates the options based on the current workspace configuration.
    * @throws Error if the configuration is not found or a configuration value is missing.
    */
-  private syncConfigurationStore(): void {
-    const userConfigurationStore: Partial<ExtensionConfiguration> = {};
+  public syncConfigurationStore(): void {
     const extension = vscode.extensions.getExtension('qvotaxon.i18nWeave');
-
     if (!extension?.packageJSON.contributes?.configuration) {
       throw new Error('Configuration not found.');
     }
@@ -33,41 +31,37 @@ export default class ConfigurationStoreManager {
     const config = vscode.workspace.getConfiguration();
     const contributes = extension.packageJSON.contributes.configuration;
 
-    for (const moduleConfig of contributes) {
-      const moduleId = moduleConfig.id as keyof ExtensionConfiguration;
-      const moduleOptions: any = {};
+    const userConfigurationStore: Partial<ExtensionConfiguration> =
+      contributes.reduce((acc: any, moduleConfig: any) => {
+        const moduleId = moduleConfig.id as keyof ExtensionConfiguration;
+        const moduleOptions: any = {};
 
-      for (const propertyKey in moduleConfig.properties) {
-        const configKey = `${propertyKey}`;
-        const configValue = config.get(configKey);
-        const internalPropertyKey = propertyKey
-          .replace(`i18nWeave.${moduleId}.`, '')
-          .replace('i18nWeave.', '');
+        for (const propertyKey in moduleConfig.properties) {
+          const configKey = propertyKey;
+          const configValue = config.get(configKey);
+          const internalPropertyKey = propertyKey
+            .replace(`i18nWeave.${moduleId}.`, '')
+            .replace('i18nWeave.', '');
 
-        if (configValue !== undefined) {
           this.setNestedProperty(
             moduleOptions,
             internalPropertyKey,
-            configValue
+            configValue ?? moduleConfig.properties[propertyKey].default
           );
-        } else {
-          const defaultValue = moduleConfig.properties[propertyKey].default;
-          if (defaultValue !== undefined) {
-            this.setNestedProperty(
-              moduleOptions,
-              internalPropertyKey,
-              defaultValue
-            );
-          } else {
+
+          if (
+            configValue === undefined &&
+            moduleConfig.properties[propertyKey].default === undefined
+          ) {
             throw new Error(
               `Configuration value not found for key: ${configKey}`
             );
           }
         }
-      }
 
-      userConfigurationStore[moduleId] = moduleOptions;
-    }
+        acc[moduleId] = moduleOptions;
+        return acc;
+      }, {} as Partial<ExtensionConfiguration>);
 
     this._configurationStore = new ConfigurationStore(userConfigurationStore);
   }
@@ -78,26 +72,16 @@ export default class ConfigurationStoreManager {
    * @param key The dot-separated key.
    * @param value The value to set.
    */
-  /**
-   * Recursively sets a nested property value in an object based on a dot-separated key.
-   * @param obj The object to set the property in.
-   * @param key The dot-separated key.
-   * @param value The value to set.
-   */
   private setNestedProperty(obj: any, key: string, value: any): void {
     const keys = key.split('.');
     let current = obj;
 
-    for (let i = 0; i < keys.length - 1; i++) {
-      if (!current[keys[i]]) {
-        current[keys[i]] = {};
-      }
-      current = current[keys[i]];
-    }
+    keys.slice(0, -1).forEach((k) => {
+      current[k] = current[k] || {};
+      current = current[k];
+    });
 
-    if (!Object.hasOwn(current, keys[keys.length - 1])) {
-      current[keys[keys.length - 1]] = value;
-    }
+    current[keys[keys.length - 1]] = value;
   }
 
   /**
