@@ -15,7 +15,7 @@ suite('ModuleChainManager Tests', () => {
   test('registerChain should register a module for a specific chain type', () => {
     const chainType = ChainType.Json;
     const actionModule: ActionModule = {
-      execute: async (context: ModuleContext): Promise<void> => {},
+      executeAsync: async (context: ModuleContext): Promise<void> => {},
       setNext: function (module: ActionModule | null): void {
         throw new Error('Function not implemented.');
       },
@@ -36,7 +36,7 @@ suite('ModuleChainManager Tests', () => {
     };
     let isExecuted = false;
     const actionModule: ActionModule = {
-      execute: async (context: ModuleContext): Promise<void> => {
+      executeAsync: async (context: ModuleContext): Promise<void> => {
         assert.strictEqual(context, moduleContext);
         isExecuted = true;
       },
@@ -60,7 +60,7 @@ suite('ModuleChainManager Tests', () => {
     };
     let isExecuted = false;
     const actionModule: ActionModule = {
-      execute: async (context: ModuleContext): Promise<void> => {
+      executeAsync: async (context: ModuleContext): Promise<void> => {
         isExecuted = true;
       },
       setNext: function (module: ActionModule | null): void {

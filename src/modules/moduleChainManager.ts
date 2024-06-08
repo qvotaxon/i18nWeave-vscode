@@ -22,13 +22,13 @@ export default class ModuleChainManager {
    * @param chainType - The type of the chain to execute.
    * @param moduleContext - The module context for the chain execution.
    */
-  public executeChain(
+  public async executeChain(
     chainType: ChainType,
     moduleContext: ModuleContext
-  ): void {
+  ): Promise<void> {
     const chain = this.chains[chainType];
     if (chain) {
-      chain.execute(moduleContext);
+      return await chain.executeAsync(moduleContext);
     }
   }
 }
