@@ -74,10 +74,9 @@ suite('JsonFileChangeHandler', () => {
       .stub(FilePathProcessor, 'processFilePath')
       .returns(extractedFileParts);
 
-    const moduleChainManagerExecuteChainStub = sinon.stub(
-      JsonFileChangeHandler.moduleChainManager,
-      'executeChain'
-    );
+    const moduleChainManagerExecuteChainStub = sinon
+      .stub(JsonFileChangeHandler.moduleChainManager, 'executeChain')
+      .returns(Promise.resolve());
 
     await JsonFileChangeHandler.create().handleFileChangeAsync(
       changeFileLocation
