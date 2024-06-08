@@ -21,15 +21,6 @@ export default class FileLockStoreStore {
   }
 
   /**
-   * Checks if a file lock exists for the specified URI.
-   * @param uri - The URI of the file.
-   * @returns `true` if a file lock exists, `false` otherwise.
-   */
-  hasFileLock(uri: Uri): boolean {
-    return this.fileLocks.has(uri.fsPath);
-  }
-
-  /**
    * Adds a file lock for the specified URI.
    * @param uri - The URI of the file.
    */
@@ -43,5 +34,14 @@ export default class FileLockStoreStore {
    */
   delete(uri: Uri): void {
     this.fileLocks.delete(uri.fsPath);
+  }
+
+  /**
+   * Checks if a file lock exists for the specified URI.
+   * @param uri - The URI of the file.
+   * @returns `true` if a file lock exists, `false` otherwise.
+   */
+  hasFileLock(uri: Uri): boolean {
+    return this.fileLocks.has(uri.fsPath);
   }
 }
