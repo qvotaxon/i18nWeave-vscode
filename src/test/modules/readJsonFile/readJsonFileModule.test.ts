@@ -28,7 +28,7 @@ suite('ReadJsonFileModule Tests', () => {
     };
 
     const module = new ReadJsonFileModule();
-    await module.execute(context);
+    await module.executeAsync(context);
 
     assert.deepStrictEqual(context.jsonContent, jsonContent);
   });
@@ -50,7 +50,7 @@ suite('ReadJsonFileModule Tests', () => {
     };
 
     const module = new ReadJsonFileModule();
-    await module.execute(context);
+    await module.executeAsync(context);
 
     assert.strictEqual(context.jsonContent, null);
 
@@ -74,7 +74,7 @@ suite('ReadJsonFileModule Tests', () => {
     };
 
     const module = new ReadJsonFileModule();
-    assert.rejects(module.execute(context), Error, 'File not found');
+    assert.rejects(module.executeAsync(context), Error, 'File not found');
     assert.strictEqual(context.jsonContent, null);
 
     FileReader.readFileAsync = readFileAsyncOriginal;

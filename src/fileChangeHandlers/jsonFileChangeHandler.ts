@@ -8,6 +8,7 @@ import ModuleChainManager from '../modules/moduleChainManager';
 import ReadJsonFileModule from '../modules/readJsonFile/readJsonFileModule';
 import TranslationModule from '../modules/translation/translationModule';
 import FilePathProcessor from '../services/filePathProcessor';
+import FileLockStoreStore from '../services/fileLockStore';
 
 export default class JsonFileChangeHandler implements FileChangeHandler {
   private static readJsonFileModule: ReadJsonFileModule;
@@ -82,9 +83,17 @@ export default class JsonFileChangeHandler implements FileChangeHandler {
       locale: extractedFileParts.locale,
       outputPath: extractedFileParts.outputPath,
     };
-    JsonFileChangeHandler.moduleChainManager.executeChain(
-      ChainType.Json,
-      context
-    );
+
+    FileLockStoreStore.getInstance().add(extractedFileParts.outputPath);
+
+    JsonFileChangeHandler.moduleChainManager
+      .executeChain(ChainType.Json, context)
+      .finally(() => {
+        setTimeout(() => {
+          FileLockStoreStore.getInstance().delete(
+            extractedFileParts.outputPath
+          );
+        }, 200);
+      });
   }
 }
