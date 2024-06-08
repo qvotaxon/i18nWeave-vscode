@@ -18,7 +18,7 @@ export default class FileWriter {
     try {
       await fs.promises.writeFile(filePath.fsPath, data, 'utf8');
     } catch (err) {
-      throw new Error(err.message);
+      throw new Error((err as Error).message);
     }
   }
 }
