@@ -15,8 +15,6 @@ export default class FileChangeHandlerFactory {
         return JsonFileChangeHandler.create();
       default:
         throw new Error('Unsupported file extension');
-      //   default:
-      // return new CodeFileChangeHandler();
     }
   }
 }
