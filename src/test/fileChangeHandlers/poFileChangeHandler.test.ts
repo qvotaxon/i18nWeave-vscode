@@ -6,8 +6,19 @@ import ModuleChainManager from '../../modules/moduleChainManager';
 import ReadPoFileModule from '../../modules/readPoFile/readPoFileModule';
 import { Uri } from 'vscode';
 import FilePathProcessor from '../../services/filePathProcessor';
+import FileLockStoreStore from '../../services/fileLockStore';
 
 suite('PoFileChangeHandler', () => {
+  let clock: sinon.SinonFakeTimers;
+
+  setup(() => {
+    clock = sinon.useFakeTimers();
+  });
+
+  teardown(() => {
+    clock.restore();
+  });
+
   test('should initialize moduleChainManager and register chain', () => {
     const moduleChainManager = PoFileChangeHandler.moduleChainManager;
     const registerChainSpy = sinon.spy(moduleChainManager, 'registerChain');
@@ -70,6 +81,16 @@ suite('PoFileChangeHandler', () => {
       .stub(PoFileChangeHandler.moduleChainManager, 'executeChain')
       .returns(Promise.resolve());
 
+    const fileLockStoreAddStub = sinon.stub(
+      FileLockStoreStore.getInstance(),
+      'add'
+    );
+
+    const fileLockStoreDeleteStub = sinon.stub(
+      FileLockStoreStore.getInstance(),
+      'delete'
+    );
+
     await PoFileChangeHandler.create().handleFileChangeAsync(
       changeFileLocation
     );
@@ -89,7 +110,21 @@ suite('PoFileChangeHandler', () => {
       }
     );
 
+    sinon.assert.calledOnceWithExactly(
+      fileLockStoreAddStub,
+      extractedFileParts.outputPath
+    );
+
+    clock.tick(250);
+
+    sinon.assert.calledOnceWithExactly(
+      fileLockStoreDeleteStub,
+      extractedFileParts.outputPath
+    );
+
     processFilePathStub.restore();
     moduleChainManagerExecuteChainStub.restore();
+    fileLockStoreAddStub.restore();
+    fileLockStoreDeleteStub.restore();
   });
 });

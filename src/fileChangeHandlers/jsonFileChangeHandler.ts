@@ -64,6 +64,7 @@ export default class JsonFileChangeHandler implements FileChangeHandler {
 
   /**
    * Handles the asynchronous file change event.
+   *
    * @param changeFileLocation - The location of the changed file.
    * @returns A promise that resolves when the file change is handled.
    */
@@ -86,14 +87,13 @@ export default class JsonFileChangeHandler implements FileChangeHandler {
 
     FileLockStoreStore.getInstance().add(extractedFileParts.outputPath);
 
-    JsonFileChangeHandler.moduleChainManager
-      .executeChain(ChainType.Json, context)
-      .finally(() => {
-        setTimeout(() => {
-          FileLockStoreStore.getInstance().delete(
-            extractedFileParts.outputPath
-          );
-        }, 250);
-      });
+    JsonFileChangeHandler.moduleChainManager.executeChain(
+      ChainType.Json,
+      context
+    );
+
+    setTimeout(() => {
+      FileLockStoreStore.getInstance().delete(extractedFileParts.outputPath);
+    }, 250);
   }
 }
