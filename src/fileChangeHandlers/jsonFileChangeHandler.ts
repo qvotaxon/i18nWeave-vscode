@@ -93,7 +93,7 @@ export default class JsonFileChangeHandler implements FileChangeHandler {
           FileLockStoreStore.getInstance().delete(
             extractedFileParts.outputPath
           );
-        }, 200);
+        }, 250);
       });
   }
 }
