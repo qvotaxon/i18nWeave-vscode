@@ -3,15 +3,13 @@ import FileWatcherCreator from './services/fileWatcherCreator';
 import ConfigurationStoreManager from './services/configurationStoreManager';
 import I18nextJsonToPoConversionModuleConfiguration from './entities/configuration/modules/I18nextJsonToPoConversionModule/i18nextJsonToPoConversionModuleConfiguration';
 
-export async function activate(context: ExtensionContext) {
-  console.log('Congratulations, your extension "i18nweave" is now active!');
+export async function activate(
+  context: ExtensionContext,
+  configurationStoreManager: ConfigurationStoreManager = new ConfigurationStoreManager(),
+  fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator()
+) {
+  console.log('i18nWeave is now active!');
 
-  const configurationStoreManager: ConfigurationStoreManager =
-    new ConfigurationStoreManager();
-  const fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator();
-
-  //TODO: Come up with some way of determining the glob pattern for the json files dynamically
-  //The user should set the path to the most common root of their translation files
   const jsonFileGlobPattern = `**/locales/**/*.json`;
   const poFileGlobPattern = `**/locales/**/*.po`;
 
