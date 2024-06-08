@@ -58,7 +58,7 @@ jobs:
       #- name: Lint
       #  run: npm run lint
 
-      - name: Test & Lint
+      - name: Lint & Test
         #skip ubuntu-latest because of $DISPLAY
         if: ${{ matrix.os == 'macos-latest' || matrix.os == 'windows-latest' }}
         run: npm run test:clover
