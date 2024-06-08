@@ -48,7 +48,7 @@ suite('Extension Test Suite', () => {
         .calledTwice,
       true
     );
-    assert.doesNotThrow(() => mockConfigurationStoreManager.Initialize());
+    assert.doesNotThrow(() => mockConfigurationStoreManager.initialize());
   });
 
   test('Deactivate extension', () => {
@@ -91,9 +91,9 @@ suite('Extension Test Suite', () => {
     );
 
     assert.strictEqual(
-      mockConfigurationStoreManager.Initialize.calledOnce,
+      mockConfigurationStoreManager.initialize.calledOnce,
       true
     );
-    assert.doesNotThrow(() => mockConfigurationStoreManager.Initialize());
+    assert.doesNotThrow(() => mockConfigurationStoreManager.initialize());
   });
 });
