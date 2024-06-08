@@ -87,7 +87,6 @@ suite('I18nextJsonToPoConversionModule Tests', () => {
 
     await module.executeAsync(context);
 
-    // Check that the output file does not exist
     assert.rejects(FileReader.readFileAsync(outputPath.fsPath));
   });
 });
