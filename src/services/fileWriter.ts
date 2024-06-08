@@ -15,14 +15,10 @@ export default class FileWriter {
     filePath: Uri,
     data: string | NodeJS.ArrayBufferView
   ): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      fs.writeFile(filePath.fsPath, data, 'utf8', (err) => {
-        if (err) {
-          reject(new Error(err.message));
-        } else {
-          resolve();
-        }
-      });
-    });
+    try {
+      await fs.promises.writeFile(filePath.fsPath, data, 'utf8');
+    } catch (err) {
+      throw new Error((err as Error).message);
+    }
   }
 }
