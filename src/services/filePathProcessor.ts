@@ -21,10 +21,8 @@ export default class FilePathProcessor {
       );
     }
 
-    const isPOFile = filePath.endsWith('.po');
     const commonPath = filePath.replace(/\.po$|\.json$/, '');
-
-    return isPOFile
+    return filePath.endsWith('.po')
       ? Uri.file(`${commonPath}.json`)
       : Uri.file(`${commonPath}.po`);
   }
