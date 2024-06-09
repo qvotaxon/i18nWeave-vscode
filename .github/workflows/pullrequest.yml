@@ -9,6 +9,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+
 jobs:
   build:
     name: Build & Test
@@ -21,43 +22,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Determine npm package cache path for os
-        id: npm-cache-path
-        run: |
-          if [ "${{ runner.os }}" = "Windows" ]; then
-            npm_cache_path="C:/npm/cache"
-          else
-            npm_cache_path="$HOME/.npm"
-          fi
-          echo "npm_cache_path=$npm_cache_path" >> $GITHUB_OUTPUT
-        shell: bash
-
-      - name: Cache npm packages
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.npm-cache-path.outputs.npm_cache_path }}
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/src/*.ts') }}
-
-      - name: Get VS Code versions
-        run: curl --output vscode-stable-versions.json https://update.code.visualstudio.com/api/releases/stable
-      - uses: actions/cache@v4
-        name: Cache vscode binary
-        with:
-          path: .vscode-test/
-          key: ${{ runner.os }}-vscode-test-${{ hashFiles('vscode-stable-versions.json') }}
-          restore-keys: |
-            ${{ runner.os }}-vscode-test-${{ hashFiles('vscode-stable-versions.json') }}
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
           cache: 'npm'
+
+      - name: Cache VS Code Versions
+        id: cache-vscode
+        uses: actions/cache@v4
+        with:
+          path: .vscode-test/
+          key: ${{ runner.os }}-vscode-test-${{ hashFiles('**/src/*.ts', 'vscode-stable-versions.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vscode-test-
+
+      - name: Get VS Code Versions
+        if: steps.cache-vscode.outputs.cache-hit != 'true'
+        run: curl --output vscode-stable-versions.json https://update.code.visualstudio.com/api/releases/stable
 
       - name: Install dependencies
         run: npm install
@@ -69,13 +51,11 @@ jobs:
       #  run: npm run lint
 
       - name: Lint & Test
-        #skip ubuntu-latest because of $DISPLAY
-        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'windows-latest' }}
+        if: matrix.os == 'macos-latest' || matrix.os == 'windows-latest'
         run: npm run test:clover
 
       - name: Upload coverage reports to Codecov
-        #only upload coverage reports for windows-latest
-        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'windows-latest' }}
+        if: matrix.os == 'macos-latest' || matrix.os == 'windows-latest'
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
