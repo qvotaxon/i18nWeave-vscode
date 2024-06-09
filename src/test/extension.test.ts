@@ -29,6 +29,10 @@ suite('Extension Test Suite', () => {
     mockConfigurationStoreManager.getConfig.returns({
       enabled: true,
     } as I18nextJsonToPoConversionModuleConfiguration);
+
+    sinon
+      .stub(ConfigurationStoreManager, 'getInstance')
+      .returns(mockConfigurationStoreManager);
   });
 
   teardown(() => {
@@ -36,11 +40,7 @@ suite('Extension Test Suite', () => {
   });
 
   test('Activate extension', async () => {
-    await activate(
-      context,
-      mockConfigurationStoreManager,
-      mockFileWatcherCreator
-    );
+    await activate(context, mockFileWatcherCreator);
 
     assert.strictEqual(context.subscriptions.length, 0);
     assert.strictEqual(
@@ -69,11 +69,7 @@ suite('Extension Test Suite', () => {
       fileWatchers as unknown as FileSystemWatcher[]
     );
 
-    await activate(
-      context,
-      mockConfigurationStoreManager,
-      mockFileWatcherCreator
-    );
+    await activate(context, mockFileWatcherCreator);
 
     assert.strictEqual(
       mockFileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync.getCalls()
@@ -84,11 +80,7 @@ suite('Extension Test Suite', () => {
   });
 
   test('Initialize configuration store manager', async () => {
-    await activate(
-      context,
-      mockConfigurationStoreManager,
-      mockFileWatcherCreator
-    );
+    await activate(context, mockFileWatcherCreator);
 
     assert.strictEqual(
       mockConfigurationStoreManager.initialize.calledOnce,

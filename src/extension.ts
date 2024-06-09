@@ -2,23 +2,34 @@ import { ExtensionContext } from 'vscode';
 import FileWatcherCreator from './services/fileWatcherCreator';
 import ConfigurationStoreManager from './services/configurationStoreManager';
 import I18nextJsonToPoConversionModuleConfiguration from './entities/configuration/modules/I18nextJsonToPoConversionModule/i18nextJsonToPoConversionModuleConfiguration';
+import I18nextScannerModuleConfiguration from './entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
 
 export async function activate(
   context: ExtensionContext,
-  configurationStoreManager: ConfigurationStoreManager = new ConfigurationStoreManager(),
   fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator()
 ) {
   console.log('i18nWeave is now active!');
 
+  const typeScriptFileGlobPattern = '**/{apps,libs}/**/*.{tsx,ts}';
   const jsonFileGlobPattern = `**/locales/**/*.json`;
   const poFileGlobPattern = `**/locales/**/*.po`;
+
+  const typeScriptFileWatchers =
+    await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
+      typeScriptFileGlobPattern,
+      () =>
+        false ===
+        ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+          'i18nextScannerModule'
+        ).enabled
+    );
 
   const jsonFileWatchers =
     await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
       jsonFileGlobPattern,
       () =>
         false ===
-        configurationStoreManager.getConfig<I18nextJsonToPoConversionModuleConfiguration>(
+        ConfigurationStoreManager.getInstance().getConfig<I18nextJsonToPoConversionModuleConfiguration>(
           'i18nextJsonToPoConversionModule'
         ).enabled
     );
@@ -28,14 +39,18 @@ export async function activate(
       poFileGlobPattern,
       () =>
         false ===
-        configurationStoreManager.getConfig<I18nextJsonToPoConversionModuleConfiguration>(
+        ConfigurationStoreManager.getInstance().getConfig<I18nextJsonToPoConversionModuleConfiguration>(
           'i18nextJsonToPoConversionModule'
         ).enabled
     );
 
-  configurationStoreManager.initialize();
+  ConfigurationStoreManager.getInstance().initialize();
 
-  context.subscriptions.push(...jsonFileWatchers, ...poFileWatchers);
+  context.subscriptions.push(
+    ...typeScriptFileWatchers,
+    ...jsonFileWatchers,
+    ...poFileWatchers
+  );
 }
 
 export function deactivate() {
