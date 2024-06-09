@@ -1,17 +1,18 @@
 ![Downloads](https://img.shields.io/visual-studio-marketplace/d/qvotaxon.i18nweave-vscode?logo=github&branch=main)
+![Latest version](https://img.shields.io/github/package-json/v/qvotaxon/i18nweave-vscode)
 
 [![Build](https://github.com/qvotaxon/i18nWeave-vscode/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/qvotaxon/i18nWeave-vscode/actions/workflows/build.yml)
 [![CodeQL](https://github.com/qvotaxon/i18nWeave-vscode/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/qvotaxon/i18nWeave-vscode/actions/workflows/github-code-scanning/codeql)
 [![codecov](https://codecov.io/github/qvotaxon/i18nWeave-vscode/graph/badge.svg?token=GJVSSQ0WRS)](https://codecov.io/github/qvotaxon/i18nWeave-vscode)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=qvotaxon_i18nWeave-vscode&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=qvotaxon_i18nWeave-vscode)
-![Open Issues](https://img.shields.io/github/issues/qvotaxon/i18nweave-vscode?logo=github&branch=main)
-![Closed Issues](https://img.shields.io/github/issues-closed/qvotaxon/i18nweave-vscode?logo=github&branch=main)
 
-[![Languages](https://img.shields.io/github/languages/top/qvotaxon/i18nweave-vscode?logo=github&branch=main)](https://github.com/qvotaxon/i18nweave-vscode/releases)
-![Contributors](https://img.shields.io/github/contributors/qvotaxon/i18nweave-vscode?logo=github&branch=main)
+[![Contributors](https://img.shields.io/github/contributors/qvotaxon/i18nweave-vscode?logo=github&branch=main)](https://github.com/qvotaxon/i18nweave-vscode/graphs/contributors)
+[![Open Issues](https://img.shields.io/github/issues/qvotaxon/i18nweave-vscode?logo=github&branch=main)](https://github.com/qvotaxon/i18nweave-vscode/issues)
+[![Closed Issues](https://img.shields.io/github/issues-closed/qvotaxon/i18nweave-vscode?logo=github&branch=main)](https://github.com/qvotaxon/i18nweave-vscode/issues?q=is%3Aissue+is%3Aclosed)
 
-[![License](https://img.shields.io/github/license/qvotaxon/i18nweave-vscode?logo=github)](https://github.com/qvotaxon/i18nweave-vscode/releases)
-![Latest version](https://img.shields.io/github/package-json/v/qvotaxon/i18nweave-vscode)
+[![License](https://img.shields.io/github/license/qvotaxon/i18nweave-vscode?logo=github)](https://github.com/qvotaxon/i18nweave-vscode/blob/main/LICENSE.txt)
+
+<!-- [![Languages](https://img.shields.io/github/languages/top/qvotaxon/i18nweave-vscode?logo=github&branch=main)](https://github.com/qvotaxon/i18nweave-vscode/releases) -->
 
 # i18nWeave - Developer's i18n Companion
 
