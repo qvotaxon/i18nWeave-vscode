@@ -43,6 +43,15 @@ jobs:
           path: ${{ steps.npm-cache-path.outputs.npm_cache_path }}
           key: ${{ runner.os }}-npm-${{ hashFiles('**/src/*.ts') }}
 
+      - name: Get VS Code versions
+        run: curl --output vscode-stable-versions.json https://update.code.visualstudio.com/api/releases/stable
+      - uses: actions/cache@v4
+        with:
+          path: .vscode-test/
+          key: ${{ runner.os }}-vscode-test-${{ hashFiles('vscode-stable-versions.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vscode-test-${{ hashFiles('vscode-stable-versions.json') }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
