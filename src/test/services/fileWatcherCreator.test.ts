@@ -1,48 +1,97 @@
 import * as assert from 'assert';
+import * as vscode from 'vscode';
+import sinon from 'sinon';
 import FileWatcherCreator from '../../services/fileWatcherCreator';
-import JsonFileChangeHandler from '../../fileChangeHandlers/jsonFileChangeHandler';
+import FileChangeHandlerFactory from '../../services/fileChangeHandlerFactory';
+import FileLockStoreStore from '../../services/fileLockStore';
 
-const EXPECTED_FILE_WATCHERS = 6;
-
-suite('FileWatcherCreator Tests', () => {
-  let tracker: assert.CallTracker;
+suite('FileWatcherCreator', () => {
+  let fileWatcherCreator: FileWatcherCreator;
+  let findFilesStub: sinon.SinonStub;
+  let createFileSystemWatcherStub: sinon.SinonStub;
+  let hasFileLockStub: sinon.SinonStub;
+  let handleFileChangeAsyncStub: sinon.SinonStub;
 
   setup(() => {
-    tracker = new assert.CallTracker();
-  });
-
-  test('createFileWatchersForFilesMatchingGlobAsync should create file watchers for files matching the glob pattern', async () => {
-    const pattern = '**/*.json';
-    const disableFlags: (() => boolean)[] = [];
-
-    const fileWatcherCreator = new FileWatcherCreator();
-    const fileWatchers =
-      await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
-        pattern,
-        ...disableFlags
-      );
-
-    assert.strictEqual(fileWatchers.length, EXPECTED_FILE_WATCHERS);
-  });
-
-  test('createFileWatchersForFilesMatchingGlobAsync should disable file watchers based on disable flags', async () => {
-    const pattern = '**/*.json';
-    const disableFlags: (() => boolean)[] = [() => true, () => false];
-
-    const fileWatcherCreator = new FileWatcherCreator();
-
-    const callsfunc = tracker.calls(
-      JsonFileChangeHandler.prototype.handleFileChangeAsync
+    fileWatcherCreator = new FileWatcherCreator();
+    findFilesStub = sinon.stub(vscode.workspace, 'findFiles');
+    createFileSystemWatcherStub = sinon.stub(
+      vscode.workspace,
+      'createFileSystemWatcher'
     );
-    JsonFileChangeHandler.prototype.handleFileChangeAsync = callsfunc;
+    hasFileLockStub = sinon.stub(
+      FileLockStoreStore.getInstance(),
+      'hasFileLock'
+    );
+    handleFileChangeAsyncStub = sinon.stub().resolves();
+    sinon
+      .stub(FileChangeHandlerFactory.prototype, 'createFileChangeHandler')
+      .returns({
+        handleFileChangeAsync: handleFileChangeAsyncStub,
+      });
+  });
 
-    const fileWatchers =
+  teardown(() => {
+    sinon.restore();
+  });
+
+  suite('createFileWatchersForFilesMatchingGlobAsync', () => {
+    test('should create file watchers for files matching the specified glob pattern', async () => {
+      const mockUri = { fsPath: 'path/to/file' } as vscode.Uri;
+      findFilesStub.resolves([mockUri]);
+      const mockFileWatcher = {
+        onDidChange: sinon.stub(),
+      } as any;
+      createFileSystemWatcherStub.returns(mockFileWatcher);
+      hasFileLockStub.returns(false);
+
+      const fileWatchers =
+        await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
+          '**/*.ts'
+        );
+
+      assert.strictEqual(fileWatchers.length, 1);
+      assert.strictEqual(fileWatchers[0], mockFileWatcher);
+      sinon.assert.calledOnce(createFileSystemWatcherStub);
+      sinon.assert.calledOnce(findFilesStub);
+      sinon.assert.calledOnce(mockFileWatcher.onDidChange);
+    });
+
+    test('should handle file change when not disabled and file lock does not exist', async () => {
+      const mockUri = { fsPath: 'path/to/file' } as vscode.Uri;
+      findFilesStub.resolves([mockUri]);
+      const mockFileWatcher = {
+        onDidChange: (callback: (uri: vscode.Uri) => Promise<void>) => {
+          callback(mockUri);
+        },
+      } as unknown as vscode.FileSystemWatcher;
+      createFileSystemWatcherStub.returns(mockFileWatcher);
+      hasFileLockStub.returns(false);
+
       await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
-        pattern,
-        ...disableFlags
+        '**/*.ts'
       );
 
-    assert.strictEqual(tracker.getCalls(callsfunc).length, 0);
-    assert.strictEqual(fileWatchers.length, EXPECTED_FILE_WATCHERS);
+      sinon.assert.calledOnce(handleFileChangeAsyncStub);
+    });
+
+    test('should not handle file change when disabled', async () => {
+      const mockUri = { fsPath: 'path/to/file' } as vscode.Uri;
+      findFilesStub.resolves([mockUri]);
+      const mockFileWatcher = {
+        onDidChange: (callback: (uri: vscode.Uri) => Promise<void>) => {
+          callback(mockUri);
+        },
+      } as unknown as vscode.FileSystemWatcher;
+      createFileSystemWatcherStub.returns(mockFileWatcher);
+      hasFileLockStub.returns(false);
+
+      await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
+        '**/*.ts',
+        () => true
+      );
+
+      sinon.assert.notCalled(handleFileChangeAsyncStub);
+    });
   });
 });
