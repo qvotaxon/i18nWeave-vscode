@@ -1,6 +1,7 @@
 ![Downloads](https://img.shields.io/visual-studio-marketplace/d/qvotaxon.i18nweave-vscode?logo=github&branch=main)
 
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/qvotaxon/i18nweave-vscode/pullrequest.yml?logo=github&branch=main)
+[![Build](https://github.com/qvotaxon/i18nWeave-vscode/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/qvotaxon/i18nWeave-vscode/actions/workflows/build.yml)
+[![CodeQL](https://github.com/qvotaxon/i18nWeave-vscode/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/qvotaxon/i18nWeave-vscode/actions/workflows/github-code-scanning/codeql)
 [![codecov](https://codecov.io/github/qvotaxon/i18nWeave-vscode/graph/badge.svg?token=GJVSSQ0WRS)](https://codecov.io/github/qvotaxon/i18nWeave-vscode)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=qvotaxon_i18nWeave-vscode&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=qvotaxon_i18nWeave-vscode)
 ![Open Issues](https://img.shields.io/github/issues/qvotaxon/i18nweave-vscode?logo=github&branch=main)
