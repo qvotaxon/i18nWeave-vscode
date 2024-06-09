@@ -16,8 +16,16 @@ coverage:
     changes: false
     default_rules:
       flag_coverage_not_uploaded_behavior: include
-    patch: true
-    project: true
+    patch:
+        default:
+            target: 85%
+            threshold: 5%
+    project:
+        default:
+            # basic
+            target: 85 #default
+            threshold: 0%
+            base: auto
 
 github_checks:
   annotations: true
