@@ -1,5 +1,6 @@
 import JsonFileChangeHandler from '../fileChangeHandlers/jsonFileChangeHandler';
 import PoFileChangeHandler from '../fileChangeHandlers/poFileChangeHandler';
+import TypeScriptFileChangeHandler from '../fileChangeHandlers/typeScriptFileChangeHandler';
 import FileChangeHandler from '../interfaces/fileChangeHandler';
 
 export default class FileChangeHandlerFactory {
@@ -9,6 +10,9 @@ export default class FileChangeHandlerFactory {
     const fileExt = changeFileLocation.split('.').pop();
 
     switch (fileExt) {
+      case 'ts':
+      case 'tsx':
+        return TypeScriptFileChangeHandler.create();
       case 'po':
         return PoFileChangeHandler.create();
       case 'json':

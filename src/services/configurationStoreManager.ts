@@ -6,7 +6,22 @@ import ExtensionConfiguration from '../entities/configuration/extensionConfigura
  * Represents a configuration store manager that manages the options for the extension.
  */
 export default class ConfigurationStoreManager {
+  private static _instance: ConfigurationStoreManager;
   private _configurationStore?: ConfigurationStore;
+
+  private constructor() {
+    // Private constructor to prevent instantiation
+  }
+
+  /**
+   * Returns the singleton instance of ConfigurationStoreManager.
+   */
+  public static getInstance(): ConfigurationStoreManager {
+    if (!ConfigurationStoreManager._instance) {
+      ConfigurationStoreManager._instance = new ConfigurationStoreManager();
+    }
+    return ConfigurationStoreManager._instance;
+  }
 
   /**
    * Initializes the configuration store by updating the options and subscribing to configuration changes.
