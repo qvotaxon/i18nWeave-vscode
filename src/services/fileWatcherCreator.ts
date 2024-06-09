@@ -22,25 +22,26 @@ export default class FileWatcherCreator {
     );
     const fileWatchers: vscode.FileSystemWatcher[] = [];
 
-    return await Promise.all(
+    await Promise.all(
       fileURIs.map(async (fileURI) => {
         const fsPath = fileURI.fsPath;
-        const fileChangeHandlerFactory = new FileChangeHandlerFactory();
         const fileWatcher = vscode.workspace.createFileSystemWatcher(fsPath);
         const fileChangeHandler =
-          fileChangeHandlerFactory.createFileChangeHandler(fsPath);
+          new FileChangeHandlerFactory().createFileChangeHandler(fsPath);
 
         fileWatcher.onDidChange(async (uri) => {
-          const disabled = disableFlags.some((disableFlag) => disableFlag());
-          if (!disabled && !FileLockStoreStore.getInstance().hasFileLock(uri)) {
+          if (
+            !disableFlags.some((flag) => flag()) &&
+            !FileLockStoreStore.getInstance().hasFileLock(uri)
+          ) {
             await fileChangeHandler?.handleFileChangeAsync(uri);
           }
         });
 
         fileWatchers.push(fileWatcher);
       })
-    ).then(() => {
-      return fileWatchers;
-    });
+    );
+
+    return fileWatchers;
   }
 }
