@@ -1,4 +1,3 @@
-import assert from 'assert';
 import sinon from 'sinon';
 import I18nextScannerModule from '../../../modules/i18nextScanner/i18nextScannerModule';
 import I18nextScannerModuleContext from '../../../modules/i18nextScanner/i18nextScannerModuleContext';

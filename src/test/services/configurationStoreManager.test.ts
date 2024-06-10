@@ -123,7 +123,6 @@ suite('ConfigurationStoreManager', () => {
     });
   });
 
-  // TODO: isolate this test
   suite('getConfigurationStore', () => {
     let mockConfigStore: ConfigurationStore;
 
