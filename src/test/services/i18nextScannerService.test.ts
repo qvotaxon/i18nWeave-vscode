@@ -1,7 +1,5 @@
 import * as assert from 'assert';
-import path from 'path';
 import sinon from 'sinon';
-import vfs from 'vinyl-fs';
 
 import GeneralConfiguration from '../../entities/configuration/general/generalConfiguration';
 import ConfigurationStoreManager from '../../services/configurationStoreManager';

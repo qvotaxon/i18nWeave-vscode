@@ -1,5 +1,4 @@
 import * as assert from 'assert';
-import ActionModule from '../../interfaces/actionModule';
 import ModuleContext from '../../interfaces/moduleContext';
 import sinon from 'sinon';
 import { BaseActionModule } from '../../modules/baseActionModule';
