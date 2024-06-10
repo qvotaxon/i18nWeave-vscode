@@ -7,6 +7,6 @@ export default class I18nextScannerModule extends BaseActionModule {
   protected async doExecuteAsync(
     context: I18nextScannerModuleContext
   ): Promise<void> {
-    await I18nextScannerService.getInstance().scanCodeAsync();
+    await I18nextScannerService.getInstance().scanCode();
   }
 }

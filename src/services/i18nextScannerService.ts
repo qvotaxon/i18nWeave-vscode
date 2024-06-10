@@ -1,8 +1,43 @@
-import I18nextScanner from 'i18next-scanner';
-import vfs from 'vinyl-fs';
 import sort from 'gulp-sort';
-import ConfigurationStoreManager from './configurationStoreManager';
+import I18nextScanner from 'i18next-scanner';
+import path from 'path';
+import vfs from 'vinyl-fs';
+
 import GeneralConfiguration from '../entities/configuration/general/generalConfiguration';
+import ConfigurationStoreManager from './configurationStoreManager';
+
+type I18nextScannerOptions = {
+  compatibilityJSON: string;
+  debug: boolean;
+  removeUnusedKeys: boolean;
+  sort: boolean;
+  func: {
+  list: string[];
+  extensions: string[];
+  };
+  lngs: string[];
+  ns: string[];
+  defaultLng: string;
+  defaultNs: string;
+  defaultValue: string;
+  resource: {
+  loadPath: string;
+  savePath: string;
+  jsonIndent: number;
+  lineEnding: string;
+  };
+  nsSeparator: string;
+  keySeparator: string;
+  pluralSeparator: string;
+  contextSeparator: string;
+  contextDefaultValues: any[];
+  interpolation: {
+  prefix: string;
+  suffix: string;
+  };
+  metadata: any;
+  allowDynamicKeys: boolean;
+};
 
 /**
  * Service for scanning code using i18next-scanner.
@@ -25,22 +60,19 @@ export default class I18nextScannerService {
 
   /**
    * Scan code for translation keys in the code file for which the path is provided.
-   * @param codeFilePath The path to the code file to be scanned.
    * @returns A promise resolving to the scan results.
    */
-  public async scanCodeAsync(): Promise<any> {
+  public scanCode(): void {
     const packageJsonAbsoluteFolderPath =
       ConfigurationStoreManager.getInstance().getConfig<GeneralConfiguration>(
         'general'
       ).pathsConfiguration.packageJsonAbsoluteFolderPath;
 
-    //TODO: Fix path to run on all os's
-    const fixedPackageJsonAbsoluteFolderPath = StringUtils.replaceAll(
-      packageJsonAbsoluteFolderPath,
-      '\\',
-      '/'
+    const fixedPackageJsonAbsoluteFolderPath = path.normalize(
+      packageJsonAbsoluteFolderPath
     );
-    const options = {
+
+    const options: I18nextScannerOptions = {
       compatibilityJSON: 'v3',
       debug: true,
       removeUnusedKeys: true,
@@ -73,6 +105,10 @@ export default class I18nextScannerService {
       allowDynamicKeys: false,
     };
 
+    this.executeScanner(options, fixedPackageJsonAbsoluteFolderPath);
+  }
+
+  private executeScanner = (options: I18nextScannerOptions, fixedPackageJsonAbsoluteFolderPath: string) => {
     vfs
       .src(
         [
@@ -82,22 +118,10 @@ export default class I18nextScannerService {
           `!libs/**/*.spec.{ts,tsx}`,
           `!node_modules/**`,
         ],
-        {
-          cwd: fixedPackageJsonAbsoluteFolderPath,
-        }
+        {cwd: fixedPackageJsonAbsoluteFolderPath}
       )
       .pipe(sort())
       .pipe(I18nextScanner(options))
       .pipe(vfs.dest('./'));
-  }
-}
-
-class StringUtils {
-  // SiwachGaurav's version from http://stackoverflow.com/questions/1144783/replacing-all-occurrences-of-a-string-in-javascript
-  static replaceAll(str: string, find: string, replace: string): string {
-    return str.replace(
-      new RegExp(find.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'),
-      replace
-    );
-  }
+  };
 }
