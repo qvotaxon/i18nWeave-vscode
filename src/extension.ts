@@ -1,8 +1,6 @@
 import { ExtensionContext } from 'vscode';
 import FileWatcherCreator from './services/fileWatcherCreator';
 import ConfigurationStoreManager from './services/configurationStoreManager';
-import I18nextJsonToPoConversionModuleConfiguration from './entities/configuration/modules/I18nextJsonToPoConversionModule/i18nextJsonToPoConversionModuleConfiguration';
-import I18nextScannerModuleConfiguration from './entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
 
 export async function activate(
   context: ExtensionContext,
@@ -14,35 +12,23 @@ export async function activate(
   const jsonFileGlobPattern = `**/locales/**/*.json`;
   const poFileGlobPattern = `**/locales/**/*.po`;
 
-  const typeScriptFileWatchers =
-    await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
-      typeScriptFileGlobPattern,
-      () =>
-        false ===
-        ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
-          'i18nextScannerModule'
-        ).enabled
-    );
+  const typeScriptFileWatchers = await createWatchersForPattern(
+    typeScriptFileGlobPattern,
+    'i18nextScannerModule',
+    fileWatcherCreator
+  );
 
-  const jsonFileWatchers =
-    await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
-      jsonFileGlobPattern,
-      () =>
-        false ===
-        ConfigurationStoreManager.getInstance().getConfig<I18nextJsonToPoConversionModuleConfiguration>(
-          'i18nextJsonToPoConversionModule'
-        ).enabled
-    );
+  const jsonFileWatchers = await createWatchersForPattern(
+    jsonFileGlobPattern,
+    'i18nextJsonToPoConversionModule',
+    fileWatcherCreator
+  );
 
-  const poFileWatchers =
-    await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
-      poFileGlobPattern,
-      () =>
-        false ===
-        ConfigurationStoreManager.getInstance().getConfig<I18nextJsonToPoConversionModuleConfiguration>(
-          'i18nextJsonToPoConversionModule'
-        ).enabled
-    );
+  const poFileWatchers = await createWatchersForPattern(
+    poFileGlobPattern,
+    'i18nextJsonToPoConversionModule',
+    fileWatcherCreator
+  );
 
   ConfigurationStoreManager.getInstance().initialize();
 
@@ -50,6 +36,17 @@ export async function activate(
     ...typeScriptFileWatchers,
     ...jsonFileWatchers,
     ...poFileWatchers
+  );
+}
+
+async function createWatchersForPattern(
+  globPattern: string,
+  configKey: 'i18nextScannerModule' | 'i18nextJsonToPoConversionModule',
+  fileWatcherCreator: FileWatcherCreator
+) {
+  return await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
+    globPattern,
+    () => false === ConfigurationStoreManager.getInstance().getConfig<any>(configKey).enabled
   );
 }
 
