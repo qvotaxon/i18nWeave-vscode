@@ -86,7 +86,7 @@ suite('JsonFileChangeHandler', () => {
       .returns(extractedFileParts);
 
     const moduleChainManagerExecuteChainStub = sinon
-      .stub(JsonFileChangeHandler.moduleChainManager, 'executeChain')
+      .stub(JsonFileChangeHandler.moduleChainManager, 'executeChainAsync')
       .returns(Promise.resolve());
 
     const fileLockStoreAddStub = sinon.stub(

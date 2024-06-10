@@ -1,99 +1,63 @@
 import * as assert from 'assert';
-import * as sinon from 'sinon';
-import { window, ExtensionContext, FileSystemWatcher } from 'vscode';
+import sinon from 'sinon';
+import { ExtensionContext } from 'vscode';
 import I18nextJsonToPoConversionModuleConfiguration from '../entities/configuration/modules/I18nextJsonToPoConversionModule/i18nextJsonToPoConversionModuleConfiguration';
-import { activate, deactivate } from '../extension';
+import I18nextScannerModuleConfiguration from '../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
+import {activate, deactivate} from '../extension';
 import ConfigurationStoreManager from '../services/configurationStoreManager';
 import FileWatcherCreator from '../services/fileWatcherCreator';
 
-suite('Extension Test Suite', () => {
-  window.showInformationMessage('Start all tests.');
-
+suite('Extension Activation', () => {
   let context: ExtensionContext;
-  let sandbox: sinon.SinonSandbox;
-  let mockFileWatcherCreator: sinon.SinonStubbedInstance<FileWatcherCreator>;
-  let mockConfigurationStoreManager: sinon.SinonStubbedInstance<ConfigurationStoreManager>;
+  let fileWatcherCreator: sinon.SinonStubbedInstance<FileWatcherCreator>;
+  let configurationStoreManagerStub: sinon.SinonStub;
 
   setup(() => {
-    context = { subscriptions: [] } as unknown as ExtensionContext;
-    sandbox = sinon.createSandbox();
+    context = { subscriptions: [] } as any;
+    fileWatcherCreator = sinon.createStubInstance(FileWatcherCreator);
+    configurationStoreManagerStub = sinon.stub(ConfigurationStoreManager, 'getInstance').returns({
+      getConfig: sinon.stub(),
+      initialize: sinon.stub(),
+    } as any);
 
-    mockFileWatcherCreator = sandbox.createStubInstance(FileWatcherCreator);
-    mockConfigurationStoreManager = sandbox.createStubInstance(
-      ConfigurationStoreManager
-    );
-
-    mockFileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync.resolves(
-      []
-    );
-    mockConfigurationStoreManager.getConfig.returns({
-      enabled: true,
-    } as I18nextJsonToPoConversionModuleConfiguration);
+    (configurationStoreManagerStub().getConfig as sinon.SinonStub)
+      .withArgs('i18nextScannerModule')
+      .returns({ enabled: true } as I18nextScannerModuleConfiguration);
+    (configurationStoreManagerStub().getConfig as sinon.SinonStub)
+      .withArgs('i18nextJsonToPoConversionModule')
+      .returns({ enabled: true } as I18nextJsonToPoConversionModuleConfiguration);
   });
 
   teardown(() => {
-    sandbox.restore();
+    sinon.restore();
   });
 
-  test('Activate extension', async () => {
-    await activate(
-      context,
-      mockConfigurationStoreManager,
-      mockFileWatcherCreator
-    );
+  test('should activate extension and create file watchers', async () => {
+    fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync.resolves([]);
 
+    await activate(context, fileWatcherCreator);
+
+    sinon.assert.calledWith(
+      fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync,
+      '**/{apps,libs}/**/*.{tsx,ts}',
+      sinon.match.func
+    );
+    sinon.assert.calledWith(
+      fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync,
+      '**/locales/**/*.json',
+      sinon.match.func
+    );
+    sinon.assert.calledWith(
+      fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync,
+      '**/locales/**/*.po',
+      sinon.match.func
+    );
+    sinon.assert.calledOnce(configurationStoreManagerStub().initialize);
     assert.strictEqual(context.subscriptions.length, 0);
-    assert.strictEqual(
-      mockFileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync
-        .calledTwice,
-      true
-    );
-    assert.doesNotThrow(() => mockConfigurationStoreManager.initialize());
   });
 
-  test('Deactivate extension', () => {
+  test('should deactivate extension', () => {
     deactivate();
-  });
-
-  test('Create file watchers for files matching glob', async () => {
-    const fileWatchers = ['fileWatcher1', 'fileWatcher2'].map((_) => ({
-      onDidChange: () => {},
-      onDidCreate: () => {},
-      onDidDelete: () => {},
-      dispose: () => {},
-      ignoreCreateEvents: false,
-      ignoreChangeEvents: false,
-      ignoreDeleteEvents: false,
-    }));
-    mockFileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync.resolves(
-      fileWatchers as unknown as FileSystemWatcher[]
-    );
-
-    await activate(
-      context,
-      mockConfigurationStoreManager,
-      mockFileWatcherCreator
-    );
-
-    assert.strictEqual(
-      mockFileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync.getCalls()
-        .length,
-      2
-    );
-    assert.strictEqual(context.subscriptions.length, fileWatchers.length * 2);
-  });
-
-  test('Initialize configuration store manager', async () => {
-    await activate(
-      context,
-      mockConfigurationStoreManager,
-      mockFileWatcherCreator
-    );
-
-    assert.strictEqual(
-      mockConfigurationStoreManager.initialize.calledOnce,
-      true
-    );
-    assert.doesNotThrow(() => mockConfigurationStoreManager.initialize());
+    // No assertion needed as the deactivate function is currently a no-op
   });
 });

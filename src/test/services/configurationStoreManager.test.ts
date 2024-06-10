@@ -9,13 +9,11 @@ import GoogleTranslateConfiguration from '../../entities/configuration/modules/t
 import DeepLConfiguration from '../../entities/configuration/modules/translationModule/deepLConfiguration';
 
 suite('ConfigurationStoreManager', () => {
-  let configurationStoreManager: ConfigurationStoreManager;
   let getConfigurationStub: sinon.SinonStub;
   let getExtensionStub: sinon.SinonStub;
   let onDidChangeConfigurationStub: sinon.SinonStub;
 
   setup(() => {
-    configurationStoreManager = new ConfigurationStoreManager();
     getConfigurationStub = sinon.stub(vscode.workspace, 'getConfiguration');
     getExtensionStub = sinon.stub(vscode.extensions, 'getExtension');
     onDidChangeConfigurationStub = sinon.stub(
@@ -31,11 +29,11 @@ suite('ConfigurationStoreManager', () => {
   suite('initialize', () => {
     test('should call syncConfigurationStore and subscribe to configuration changes', () => {
       const syncConfigurationStoreStub = sinon.stub(
-        configurationStoreManager,
+        ConfigurationStoreManager.getInstance(),
         'syncConfigurationStore'
       );
 
-      configurationStoreManager.initialize();
+      ConfigurationStoreManager.getInstance().initialize();
 
       sinon.assert.calledOnce(syncConfigurationStoreStub);
       sinon.assert.calledOnce(onDidChangeConfigurationStub);
@@ -62,7 +60,7 @@ suite('ConfigurationStoreManager', () => {
       getExtensionStub.returns(undefined);
 
       assert.throws(() => {
-        configurationStoreManager['syncConfigurationStore']();
+        ConfigurationStoreManager.getInstance()['syncConfigurationStore']();
       }, /Configuration not found./);
     });
 
@@ -84,7 +82,7 @@ suite('ConfigurationStoreManager', () => {
       getExtensionStub.returns({ packageJSON: mockContributes });
 
       assert.throws(() => {
-        configurationStoreManager['syncConfigurationStore']();
+        ConfigurationStoreManager.getInstance()['syncConfigurationStore']();
       }, /Configuration value not found for key: i18nWeave.translationModule.enabled/);
     });
 
@@ -92,12 +90,12 @@ suite('ConfigurationStoreManager', () => {
       const getMockConfig = { get: sinon.stub().returns('configValue') };
       getConfigurationStub.returns(getMockConfig);
 
-      configurationStoreManager['syncConfigurationStore']();
+      ConfigurationStoreManager.getInstance()['syncConfigurationStore']();
 
       const options = { translationModule: { enabled: 'configValue' } };
       const expectedConfigStore = new ConfigurationStore(options as any);
       assert.deepEqual(
-        configurationStoreManager.getConfigurationStore(),
+        ConfigurationStoreManager.getInstance().getConfigurationStore(),
         expectedConfigStore
       );
     });
@@ -109,7 +107,11 @@ suite('ConfigurationStoreManager', () => {
       const key = 'level1.level2.level3';
       const value = 'testValue';
 
-      configurationStoreManager['setNestedProperty'](obj, key, value);
+      ConfigurationStoreManager.getInstance()['setNestedProperty'](
+        obj,
+        key,
+        value
+      );
 
       assert.deepEqual(obj, {
         level1: {
@@ -122,18 +124,26 @@ suite('ConfigurationStoreManager', () => {
   });
 
   suite('getConfigurationStore', () => {
+    let mockConfigStore: ConfigurationStore;
+
+    setup(() => {
+      mockConfigStore = new ConfigurationStore({});
+      ConfigurationStoreManager.getInstance()['_configurationStore'] =
+        mockConfigStore;
+    });
+
     test('should throw an error if configuration store is not initialized', () => {
+      ConfigurationStoreManager.getInstance()['_configurationStore'] =
+        undefined;
+
       assert.throws(() => {
-        configurationStoreManager.getConfigurationStore();
+        ConfigurationStoreManager.getInstance().getConfigurationStore();
       }, /Configuration Store not initialized./);
     });
 
     test('should return the configuration store if initialized', () => {
-      const mockConfigStore = new ConfigurationStore({});
-      configurationStoreManager['_configurationStore'] = mockConfigStore;
-
       assert.strictEqual(
-        configurationStoreManager.getConfigurationStore(),
+        ConfigurationStoreManager.getInstance().getConfigurationStore(),
         mockConfigStore
       );
     });
@@ -142,10 +152,11 @@ suite('ConfigurationStoreManager', () => {
   suite('getConfig', () => {
     test('should throw an error if configuration for key is not found', () => {
       const mockConfigStore = new ConfigurationStore({});
-      configurationStoreManager['_configurationStore'] = mockConfigStore;
+      ConfigurationStoreManager.getInstance()['_configurationStore'] =
+        mockConfigStore;
 
       assert.throws(() => {
-        configurationStoreManager.getConfig(
+        ConfigurationStoreManager.getInstance().getConfig(
           'nonExistentKey' as keyof ExtensionConfiguration
         );
       }, /Configuration for key "nonExistentKey" not found./);
@@ -159,10 +170,11 @@ suite('ConfigurationStoreManager', () => {
       const mockConfigStore = new ConfigurationStore({
         translationModule: translationModuleConfiguration,
       });
-      configurationStoreManager['_configurationStore'] = mockConfigStore;
+      ConfigurationStoreManager.getInstance()['_configurationStore'] =
+        mockConfigStore;
 
       const result =
-        configurationStoreManager.getConfig<TranslationModuleConfiguration>(
+        ConfigurationStoreManager.getInstance().getConfig<TranslationModuleConfiguration>(
           'translationModule'
         );
       assert.strictEqual(result, translationModuleConfiguration);

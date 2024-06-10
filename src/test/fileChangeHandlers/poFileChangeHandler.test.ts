@@ -78,7 +78,7 @@ suite('PoFileChangeHandler', () => {
       .returns(extractedFileParts);
 
     const moduleChainManagerExecuteChainStub = sinon
-      .stub(PoFileChangeHandler.moduleChainManager, 'executeChain')
+      .stub(PoFileChangeHandler.moduleChainManager, 'executeChainAsync')
       .returns(Promise.resolve());
 
     const fileLockStoreAddStub = sinon.stub(
