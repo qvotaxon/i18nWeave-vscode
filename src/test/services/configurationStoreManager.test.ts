@@ -124,24 +124,31 @@ suite('ConfigurationStoreManager', () => {
   });
 
   // TODO: isolate this test
-  // suite('getConfigurationStore', () => {
-  //   test('should throw an error if configuration store is not initialized', () => {
-  //     assert.throws(() => {
-  //       ConfigurationStoreManager.getInstance().getConfigurationStore();
-  //     }, /Configuration Store not initialized./);
-  //   });
+  suite('getConfigurationStore', () => {
+    let mockConfigStore: ConfigurationStore;
 
-  //   test('should return the configuration store if initialized', () => {
-  //     const mockConfigStore = new ConfigurationStore({});
-  //     ConfigurationStoreManager.getInstance()['_configurationStore'] =
-  //       mockConfigStore;
+    setup(() => {
+      mockConfigStore = new ConfigurationStore({});
+      ConfigurationStoreManager.getInstance()['_configurationStore'] =
+        mockConfigStore;
+    });
 
-  //     assert.strictEqual(
-  //       ConfigurationStoreManager.getInstance().getConfigurationStore(),
-  //       mockConfigStore
-  //     );
-  //   });
-  // });
+    test('should throw an error if configuration store is not initialized', () => {
+      ConfigurationStoreManager.getInstance()['_configurationStore'] =
+        undefined;
+
+      assert.throws(() => {
+        ConfigurationStoreManager.getInstance().getConfigurationStore();
+      }, /Configuration Store not initialized./);
+    });
+
+    test('should return the configuration store if initialized', () => {
+      assert.strictEqual(
+        ConfigurationStoreManager.getInstance().getConfigurationStore(),
+        mockConfigStore
+      );
+    });
+  });
 
   suite('getConfig', () => {
     test('should throw an error if configuration for key is not found', () => {
