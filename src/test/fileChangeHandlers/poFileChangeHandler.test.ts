@@ -1,12 +1,13 @@
 import * as assert from 'assert';
 import sinon from 'sinon';
+import { Uri } from 'vscode';
+
 import { ChainType } from '../../enums/chainType';
 import PoFileChangeHandler from '../../fileChangeHandlers/poFileChangeHandler';
 import ModuleChainManager from '../../modules/moduleChainManager';
 import ReadPoFileModule from '../../modules/readPoFile/readPoFileModule';
-import { Uri } from 'vscode';
-import FilePathProcessor from '../../services/filePathProcessor';
 import FileLockStoreStore from '../../services/fileLockStore';
+import FilePathProcessor from '../../services/filePathProcessor';
 
 suite('PoFileChangeHandler', () => {
   let clock: sinon.SinonFakeTimers;

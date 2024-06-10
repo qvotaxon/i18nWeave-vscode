@@ -1,6 +1,7 @@
 import { ExtensionContext } from 'vscode';
-import FileWatcherCreator from './services/fileWatcherCreator';
+
 import ConfigurationStoreManager from './services/configurationStoreManager';
+import FileWatcherCreator from './services/fileWatcherCreator';
 
 export async function activate(
   context: ExtensionContext,
@@ -46,7 +47,9 @@ async function createWatchersForPattern(
 ) {
   return await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
     globPattern,
-    () => false === ConfigurationStoreManager.getInstance().getConfig<any>(configKey).enabled
+    () =>
+      false ===
+      ConfigurationStoreManager.getInstance().getConfig<any>(configKey).enabled
   );
 }
 

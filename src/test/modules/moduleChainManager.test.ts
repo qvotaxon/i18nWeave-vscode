@@ -1,9 +1,10 @@
 import assert from 'assert';
+import { Uri } from 'vscode';
+
 import { ChainType } from '../../enums/chainType';
 import ActionModule from '../../interfaces/actionModule';
 import ModuleContext from '../../interfaces/moduleContext';
 import ModuleChainManager from '../../modules/moduleChainManager';
-import { Uri } from 'vscode';
 
 suite('ModuleChainManager Tests', () => {
   let moduleChainManager: ModuleChainManager;

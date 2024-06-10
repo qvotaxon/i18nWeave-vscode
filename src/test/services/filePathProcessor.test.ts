@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import { Uri } from 'vscode';
+
 import FilePathProcessor from '../../services/filePathProcessor';
 import { ExtractedFileParts } from '../../types/extractedFileParts';
 

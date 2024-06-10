@@ -1,9 +1,10 @@
 import * as assert from 'assert';
-import { Uri } from 'vscode';
-import FileReader from '../../../services/fileReader';
 import * as mock from 'mock-fs';
-import { ReadPoFileModuleContext } from '../../../modules/readPoFile/readPoFileModuleContext';
+import { Uri } from 'vscode';
+
 import ReadPoFileModule from '../../../modules/readPoFile/readPoFileModule';
+import { ReadPoFileModuleContext } from '../../../modules/readPoFile/readPoFileModuleContext';
+import FileReader from '../../../services/fileReader';
 
 suite('ReadPoFileModule Tests', () => {
   setup(() => {

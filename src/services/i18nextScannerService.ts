@@ -12,8 +12,8 @@ type I18nextScannerOptions = {
   removeUnusedKeys: boolean;
   sort: boolean;
   func: {
-  list: string[];
-  extensions: string[];
+    list: string[];
+    extensions: string[];
   };
   lngs: string[];
   ns: string[];
@@ -21,10 +21,10 @@ type I18nextScannerOptions = {
   defaultNs: string;
   defaultValue: string;
   resource: {
-  loadPath: string;
-  savePath: string;
-  jsonIndent: number;
-  lineEnding: string;
+    loadPath: string;
+    savePath: string;
+    jsonIndent: number;
+    lineEnding: string;
   };
   nsSeparator: string;
   keySeparator: string;
@@ -32,8 +32,8 @@ type I18nextScannerOptions = {
   contextSeparator: string;
   contextDefaultValues: any[];
   interpolation: {
-  prefix: string;
-  suffix: string;
+    prefix: string;
+    suffix: string;
   };
   metadata: any;
   allowDynamicKeys: boolean;
@@ -108,7 +108,10 @@ export default class I18nextScannerService {
     this.executeScanner(options, fixedPackageJsonAbsoluteFolderPath);
   }
 
-  private executeScanner = (options: I18nextScannerOptions, fixedPackageJsonAbsoluteFolderPath: string) => {
+  private executeScanner = (
+    options: I18nextScannerOptions,
+    fixedPackageJsonAbsoluteFolderPath: string
+  ) => {
     vfs
       .src(
         [
@@ -118,7 +121,7 @@ export default class I18nextScannerService {
           `!libs/**/*.spec.{ts,tsx}`,
           `!node_modules/**`,
         ],
-        {cwd: fixedPackageJsonAbsoluteFolderPath}
+        { cwd: fixedPackageJsonAbsoluteFolderPath }
       )
       .pipe(sort())
       .pipe(I18nextScanner(options))

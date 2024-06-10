@@ -1,4 +1,5 @@
 import sinon from 'sinon';
+
 import I18nextScannerModule from '../../../modules/i18nextScanner/i18nextScannerModule';
 import I18nextScannerModuleContext from '../../../modules/i18nextScanner/i18nextScannerModuleContext';
 import I18nextScannerService from '../../../services/i18nextScannerService';
@@ -12,7 +13,9 @@ suite('I18nextScannerModule', () => {
     scannerModule = new I18nextScannerModule();
     scannerServiceStub = sinon.createStubInstance(I18nextScannerService);
     scannerServiceScanCodeStub = scannerServiceStub.scanCode = sinon.stub();
-    sinon.stub(I18nextScannerService, 'getInstance').returns(scannerServiceStub);
+    sinon
+      .stub(I18nextScannerService, 'getInstance')
+      .returns(scannerServiceStub);
   });
 
   teardown(() => {

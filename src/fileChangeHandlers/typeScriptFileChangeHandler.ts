@@ -1,14 +1,16 @@
 import { Uri } from 'vscode';
-import FileChangeHandler from '../interfaces/fileChangeHandler';
-import ModuleChainManager from '../modules/moduleChainManager';
-import I18nextScannerModule from '../modules/i18nextScanner/i18nextScannerModule';
+
 import { ChainType } from '../enums/chainType';
 import ActionModule from '../interfaces/actionModule';
+import FileChangeHandler from '../interfaces/fileChangeHandler';
 import ModuleContext from '../interfaces/moduleContext';
+import I18nextScannerModule from '../modules/i18nextScanner/i18nextScannerModule';
+import ModuleChainManager from '../modules/moduleChainManager';
 
 export default class TypeScriptFileChangeHandler implements FileChangeHandler {
   private static i18nextScannerModule: I18nextScannerModule;
-  private static moduleChainManager: ModuleChainManager = new ModuleChainManager();
+  private static moduleChainManager: ModuleChainManager =
+    new ModuleChainManager();
 
   private constructor(i18nextScannerModule: I18nextScannerModule) {
     TypeScriptFileChangeHandler.i18nextScannerModule = i18nextScannerModule;

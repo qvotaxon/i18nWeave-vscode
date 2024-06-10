@@ -1,8 +1,9 @@
+import { po2i18next } from 'gettext-converter';
+import stringify from 'json-stable-stringify';
+
 import FileWriter from '../../services/fileWriter';
 import { BaseActionModule } from '../baseActionModule';
-import { po2i18next } from 'gettext-converter';
 import PoToI18nextJsonConversionModuleContext from './poToI18nextJsonConversionModuleContext';
-import stringify from 'json-stable-stringify';
 
 /**
  * Module for converting PO to JSON using i18next library.

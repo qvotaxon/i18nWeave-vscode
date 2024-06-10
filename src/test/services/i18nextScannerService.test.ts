@@ -36,7 +36,9 @@ suite('I18nextScannerService', () => {
       } as GeneralConfiguration['pathsConfiguration'];
       getConfigStub.returns({ pathsConfiguration });
 
-      const executeScannerStub = scannerService['executeScanner'] = sinon.stub().resolves();
+      const executeScannerStub = (scannerService['executeScanner'] = sinon
+        .stub()
+        .resolves());
 
       scannerService.scanCode();
 

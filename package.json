@@ -185,6 +185,7 @@
     "test:lcov": "npm run test -- --coverage --coverage-reporter=lcov"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/json-stable-stringify": "^1.0.36",
     "@types/mocha": "^10.0.6",
     "@types/mock-fs": "^4.13.4",
@@ -197,6 +198,7 @@
     "@vscode/test-electron": "^2.3.9",
     "eslint": "^8.57.0",
     "mock-fs": "^5.2.0",
+    "prettier": "^3.3.1",
     "sinon": "^18.0.0",
     "typescript": "^5.4.5"
   },

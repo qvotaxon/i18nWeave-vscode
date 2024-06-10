@@ -1,6 +1,7 @@
 import * as assert from 'assert';
-import ModuleContext from '../../interfaces/moduleContext';
 import sinon from 'sinon';
+
+import ModuleContext from '../../interfaces/moduleContext';
 import { BaseActionModule } from '../../modules/baseActionModule';
 
 class TestActionModule extends BaseActionModule {

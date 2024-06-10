@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import { Uri } from 'vscode';
+
 import FileLockStoreStore from '../../services/fileLockStore';
 
 suite('FileLockStoreStore', () => {

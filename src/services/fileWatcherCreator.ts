@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+
 import FileChangeHandlerFactory from './fileChangeHandlerFactory';
 import FileLockStoreStore from './fileLockStore';
 
@@ -23,15 +24,15 @@ export default class FileWatcherCreator {
     const fileWatchers: vscode.FileSystemWatcher[] = [];
 
     await Promise.all(
-      fileURIs.map(async (fileURI) => {
+      fileURIs.map(async fileURI => {
         const fsPath = fileURI.fsPath;
         const fileWatcher = vscode.workspace.createFileSystemWatcher(fsPath);
         const fileChangeHandler =
           new FileChangeHandlerFactory().createFileChangeHandler(fsPath);
 
-        fileWatcher.onDidChange(async (uri) => {
+        fileWatcher.onDidChange(async uri => {
           if (
-            !disableFlags.some((flag) => flag()) &&
+            !disableFlags.some(flag => flag()) &&
             !FileLockStoreStore.getInstance().hasFileLock(uri)
           ) {
             await fileChangeHandler?.handleFileChangeAsync(uri);
