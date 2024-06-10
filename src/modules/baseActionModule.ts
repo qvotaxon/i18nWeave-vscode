@@ -20,13 +20,11 @@ export abstract class BaseActionModule implements ActionModule {
    * @param context The module context.
    */
   public async executeAsync(context: ModuleContext): Promise<void> {
-    const result = await this.doExecuteAsync(context);
+    await this.doExecuteAsync(context);
 
     if (this.nextModule) {
-      return await this.nextModule.executeAsync(context);
+      await this.nextModule.executeAsync(context);
     }
-
-    return result;
   }
 
   /**
