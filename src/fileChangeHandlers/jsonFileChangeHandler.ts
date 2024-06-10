@@ -1,4 +1,5 @@
 import { Uri } from 'vscode';
+
 import { ChainType } from '../enums/chainType';
 import ActionModule from '../interfaces/actionModule';
 import FileChangeHandler from '../interfaces/fileChangeHandler';
@@ -7,8 +8,8 @@ import I18nextJsonToPoConversionModule from '../modules/i18nextJsonToPoConversio
 import ModuleChainManager from '../modules/moduleChainManager';
 import ReadJsonFileModule from '../modules/readJsonFile/readJsonFileModule';
 import TranslationModule from '../modules/translation/translationModule';
-import FilePathProcessor from '../services/filePathProcessor';
 import FileLockStoreStore from '../services/fileLockStore';
+import FilePathProcessor from '../services/filePathProcessor';
 
 export default class JsonFileChangeHandler implements FileChangeHandler {
   private static readJsonFileModule: ReadJsonFileModule;

@@ -1,4 +1,5 @@
 import { Uri } from 'vscode';
+
 import ModuleContext from '../interfaces/moduleContext';
 
 export abstract class BaseModuleContext implements ModuleContext {

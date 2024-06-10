@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import { Uri } from 'vscode';
+
 import TranslationModule from '../../../modules/translation/translationModule';
 
 suite('TranslationModule', () => {

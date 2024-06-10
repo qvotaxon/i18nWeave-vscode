@@ -1,7 +1,8 @@
 import * as assert from 'assert';
-import { Uri } from 'vscode';
-import FileReader from '../../services/fileReader';
 import * as mock from 'mock-fs';
+import { Uri } from 'vscode';
+
+import FileReader from '../../services/fileReader';
 
 suite('FileReader Tests', () => {
   setup(() => {

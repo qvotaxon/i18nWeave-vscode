@@ -1,13 +1,14 @@
 import * as assert from 'assert';
 import sinon from 'sinon';
+import { Uri } from 'vscode';
+
 import { ChainType } from '../../enums/chainType';
 import JsonFileChangeHandler from '../../fileChangeHandlers/jsonFileChangeHandler';
 import ModuleChainManager from '../../modules/moduleChainManager';
 import ReadJsonFileModule from '../../modules/readJsonFile/readJsonFileModule';
 import TranslationModule from '../../modules/translation/translationModule';
-import { Uri } from 'vscode';
-import FilePathProcessor from '../../services/filePathProcessor';
 import FileLockStoreStore from '../../services/fileLockStore';
+import FilePathProcessor from '../../services/filePathProcessor';
 
 suite('JsonFileChangeHandler', () => {
   let clock: sinon.SinonFakeTimers;

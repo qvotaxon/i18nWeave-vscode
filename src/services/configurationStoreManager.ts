@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
-import ConfigurationStore from './configurationStore';
+
 import ExtensionConfiguration from '../entities/configuration/extensionConfiguration';
+import ConfigurationStore from './configurationStore';
 
 /**
  * Represents a configuration store manager that manages the options for the extension.
@@ -91,7 +92,7 @@ export default class ConfigurationStoreManager {
     const keys = key.split('.');
     let current = obj;
 
-    keys.slice(0, -1).forEach((k) => {
+    keys.slice(0, -1).forEach(k => {
       current[k] = current[k] || {};
       current = current[k];
     });

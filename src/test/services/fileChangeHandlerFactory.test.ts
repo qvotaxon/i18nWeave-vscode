@@ -1,8 +1,9 @@
 import * as assert from 'assert';
-import FileChangeHandlerFactory from '../../services/fileChangeHandlerFactory';
+
 import JsonFileChangeHandler from '../../fileChangeHandlers/jsonFileChangeHandler';
 import PoFileChangeHandler from '../../fileChangeHandlers/poFileChangeHandler';
 import TypeScriptFileChangeHandler from '../../fileChangeHandlers/typeScriptFileChangeHandler';
+import FileChangeHandlerFactory from '../../services/fileChangeHandlerFactory';
 
 suite('FileChangeHandlerFactory Tests', () => {
   test('createFileChangeHandler should return an instance of JsonFileChangeHandler for json file', () => {

@@ -1,9 +1,10 @@
 import * as assert from 'assert';
 import sinon from 'sinon';
 import { ExtensionContext } from 'vscode';
+
 import I18nextJsonToPoConversionModuleConfiguration from '../entities/configuration/modules/I18nextJsonToPoConversionModule/i18nextJsonToPoConversionModuleConfiguration';
 import I18nextScannerModuleConfiguration from '../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
-import {activate, deactivate} from '../extension';
+import { activate, deactivate } from '../extension';
 import ConfigurationStoreManager from '../services/configurationStoreManager';
 import FileWatcherCreator from '../services/fileWatcherCreator';
 
@@ -15,17 +16,21 @@ suite('Extension Activation', () => {
   setup(() => {
     context = { subscriptions: [] } as any;
     fileWatcherCreator = sinon.createStubInstance(FileWatcherCreator);
-    configurationStoreManagerStub = sinon.stub(ConfigurationStoreManager, 'getInstance').returns({
-      getConfig: sinon.stub(),
-      initialize: sinon.stub(),
-    } as any);
+    configurationStoreManagerStub = sinon
+      .stub(ConfigurationStoreManager, 'getInstance')
+      .returns({
+        getConfig: sinon.stub(),
+        initialize: sinon.stub(),
+      } as any);
 
     (configurationStoreManagerStub().getConfig as sinon.SinonStub)
       .withArgs('i18nextScannerModule')
       .returns({ enabled: true } as I18nextScannerModuleConfiguration);
     (configurationStoreManagerStub().getConfig as sinon.SinonStub)
       .withArgs('i18nextJsonToPoConversionModule')
-      .returns({ enabled: true } as I18nextJsonToPoConversionModuleConfiguration);
+      .returns({
+        enabled: true,
+      } as I18nextJsonToPoConversionModuleConfiguration);
   });
 
   teardown(() => {

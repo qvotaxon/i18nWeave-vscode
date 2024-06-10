@@ -1,13 +1,14 @@
 import { Uri } from 'vscode';
+
 import { ChainType } from '../enums/chainType';
 import ActionModule from '../interfaces/actionModule';
 import FileChangeHandler from '../interfaces/fileChangeHandler';
 import ModuleContext from '../interfaces/moduleContext';
 import ModuleChainManager from '../modules/moduleChainManager';
-import FilePathProcessor from '../services/filePathProcessor';
 import PoToI18nextJsonConversionModule from '../modules/poToI18nextJsonConversion/poToI18nextJsonConversionModule';
 import ReadPoFileModule from '../modules/readPoFile/readPoFileModule';
 import FileLockStoreStore from '../services/fileLockStore';
+import FilePathProcessor from '../services/filePathProcessor';
 
 export default class PoFileChangeHandler implements FileChangeHandler {
   private static readPoFileModule: ReadPoFileModule;
@@ -76,7 +77,10 @@ export default class PoFileChangeHandler implements FileChangeHandler {
 
     FileLockStoreStore.getInstance().add(extractedFileParts.outputPath);
 
-    PoFileChangeHandler.moduleChainManager.executeChainAsync(ChainType.Po, context);
+    PoFileChangeHandler.moduleChainManager.executeChainAsync(
+      ChainType.Po,
+      context
+    );
 
     setTimeout(() => {
       FileLockStoreStore.getInstance().delete(extractedFileParts.outputPath);

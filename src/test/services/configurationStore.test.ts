@@ -1,4 +1,5 @@
 import * as assert from 'assert';
+
 import ConfigurationStore from '../../services/configurationStore';
 
 suite('ConfigurationStore Tests', () => {

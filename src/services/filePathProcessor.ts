@@ -1,4 +1,5 @@
 import { Uri } from 'vscode';
+
 import { ExtractedFileParts } from '../types/extractedFileParts';
 
 /**

@@ -1,6 +1,7 @@
 import * as assert from 'assert';
-import { Uri, workspace } from 'vscode';
 import { i18next2po } from 'gettext-converter';
+import { Uri, workspace } from 'vscode';
+
 import I18nextJsonToPoConversionModule from '../../../modules/i18nextJsonToPoConversion/i18nextJsonToPoConversionModule';
 import FileReader from '../../../services/fileReader';
 
