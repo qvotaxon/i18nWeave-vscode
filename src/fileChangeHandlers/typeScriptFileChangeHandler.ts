@@ -8,46 +8,37 @@ import ModuleContext from '../interfaces/moduleContext';
 
 export default class TypeScriptFileChangeHandler implements FileChangeHandler {
   private static i18nextScannerModule: I18nextScannerModule;
-
-  static readonly moduleChainManager: ModuleChainManager =
-    new ModuleChainManager();
+  private static moduleChainManager: ModuleChainManager = new ModuleChainManager();
 
   private constructor(i18nextScannerModule: I18nextScannerModule) {
     TypeScriptFileChangeHandler.i18nextScannerModule = i18nextScannerModule;
-
     TypeScriptFileChangeHandler.moduleChainManager.registerChain(
       ChainType.TypeScript,
       this.createTypeScriptChain()
     );
   }
 
-  public static readonly create = (): TypeScriptFileChangeHandler => {
+  public static create(): TypeScriptFileChangeHandler {
     const i18nextScannerModule = new I18nextScannerModule();
-
-    this.i18nextScannerModule = i18nextScannerModule;
-
     return new TypeScriptFileChangeHandler(i18nextScannerModule);
-  };
+  }
 
-  createTypeScriptChain(): ActionModule {
+  private createTypeScriptChain(): ActionModule {
     return TypeScriptFileChangeHandler.i18nextScannerModule;
   }
 
-  async handleFileChangeAsync(
-    changeFileLocation?: Uri | undefined
-  ): Promise<void> {
+  public async handleFileChangeAsync(changeFileLocation?: Uri): Promise<void> {
     if (!changeFileLocation) {
-      return Promise.resolve();
+      return;
     }
 
-    //TODO: //fix the requirement of the modulecontext. Not all modules will need it.
     const context: ModuleContext = {
       inputPath: changeFileLocation,
       locale: '',
       outputPath: changeFileLocation,
     };
 
-    TypeScriptFileChangeHandler.moduleChainManager.executeChain(
+    await TypeScriptFileChangeHandler.moduleChainManager.executeChainAsync(
       ChainType.TypeScript,
       context
     );

@@ -76,7 +76,7 @@ export default class PoFileChangeHandler implements FileChangeHandler {
 
     FileLockStoreStore.getInstance().add(extractedFileParts.outputPath);
 
-    PoFileChangeHandler.moduleChainManager.executeChain(ChainType.Po, context);
+    PoFileChangeHandler.moduleChainManager.executeChainAsync(ChainType.Po, context);
 
     setTimeout(() => {
       FileLockStoreStore.getInstance().delete(extractedFileParts.outputPath);

@@ -46,7 +46,7 @@ suite('ModuleChainManager Tests', () => {
     };
     moduleChainManager.registerChain(chainType, actionModule);
 
-    moduleChainManager.executeChain(chainType, moduleContext);
+    moduleChainManager.executeChainAsync(chainType, moduleContext);
 
     assert.strictEqual(isExecuted, true);
   });
@@ -69,7 +69,7 @@ suite('ModuleChainManager Tests', () => {
     };
     moduleChainManager.registerChain(ChainType.Json, actionModule);
 
-    moduleChainManager.executeChain(nonExistingChainType, moduleContext);
+    moduleChainManager.executeChainAsync(nonExistingChainType, moduleContext);
 
     assert.strictEqual(isExecuted, false);
   });

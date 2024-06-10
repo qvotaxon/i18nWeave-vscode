@@ -87,7 +87,7 @@ export default class JsonFileChangeHandler implements FileChangeHandler {
 
     FileLockStoreStore.getInstance().add(extractedFileParts.outputPath);
 
-    JsonFileChangeHandler.moduleChainManager.executeChain(
+    JsonFileChangeHandler.moduleChainManager.executeChainAsync(
       ChainType.Json,
       context
     );
