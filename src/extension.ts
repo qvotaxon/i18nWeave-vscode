@@ -1,3 +1,5 @@
+import Sentry from '@sentry/node';
+import { nodeProfilingIntegration } from '@sentry/profiling-node';
 import { ExtensionContext } from 'vscode';
 
 import ConfigurationStoreManager from './services/configurationStoreManager';
@@ -8,6 +10,30 @@ export async function activate(
   fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator()
 ) {
   console.log('i18nWeave is now active!');
+
+  Sentry.init({
+    dsn: 'https://ab1a5dba41e42eb2f3b2c32b4432da37@o4507423909216256.ingest.de.sentry.io/4507426153955408',
+    integrations: [nodeProfilingIntegration()],
+    // Performance Monitoring
+    tracesSampleRate: 1.0, //  Capture 100% of the transactions
+
+    // Set sampling rate for profiling - this is relative to tracesSampleRate
+    profilesSampleRate: 1.0,
+  });
+
+  Sentry.startSpan(
+    {
+      op: 'test',
+      name: 'My First Test Span',
+    },
+    () => {
+      try {
+        throw new Error('This is a test error');
+      } catch (e) {
+        Sentry.captureException(e);
+      }
+    }
+  );
 
   const typeScriptFileGlobPattern = '**/{apps,libs}/**/*.{tsx,ts}';
   const jsonFileGlobPattern = `**/locales/**/*.json`;
