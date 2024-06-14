@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node';
 import { Uri } from 'vscode';
 
 import { ChainType } from '../enums/chainType';
@@ -30,19 +31,27 @@ export default class TypeScriptFileChangeHandler implements FileChangeHandler {
   }
 
   public async handleFileChangeAsync(changeFileLocation?: Uri): Promise<void> {
-    if (!changeFileLocation) {
-      return;
-    }
+    await Sentry.startSpan(
+      {
+        op: 'typeScript.handleFileChange',
+        name: 'TypeScript File Change Handler',
+      },
+      async () => {
+        if (!changeFileLocation) {
+          return;
+        }
 
-    const context: ModuleContext = {
-      inputPath: changeFileLocation,
-      locale: '',
-      outputPath: changeFileLocation,
-    };
+        const context: ModuleContext = {
+          inputPath: changeFileLocation,
+          locale: '',
+          outputPath: changeFileLocation,
+        };
 
-    await TypeScriptFileChangeHandler.moduleChainManager.executeChainAsync(
-      ChainType.TypeScript,
-      context
+        await TypeScriptFileChangeHandler.moduleChainManager.executeChainAsync(
+          ChainType.TypeScript,
+          context
+        );
+      }
     );
   }
 }

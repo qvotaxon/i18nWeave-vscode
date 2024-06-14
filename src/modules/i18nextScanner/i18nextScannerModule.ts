@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/node';
+
 import I18nextScannerService from '../../services/i18nextScannerService';
 import { BaseActionModule } from '../baseActionModule';
 import I18nextScannerModuleContext from './i18nextScannerModuleContext';
@@ -13,6 +15,14 @@ export default class I18nextScannerModule extends BaseActionModule {
   protected async doExecuteAsync(
     context: I18nextScannerModuleContext
   ): Promise<void> {
-    I18nextScannerService.getInstance().scanCode();
+    await Sentry.startSpan(
+      {
+        op: 'typeScript.scanCodeFori18next',
+        name: 'TypeScript i18next Scanner Module',
+      },
+      async () => {
+        I18nextScannerService.getInstance().scanCode();
+      }
+    );
   }
 }

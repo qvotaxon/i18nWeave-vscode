@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node';
 import sort from 'gulp-sort';
 import I18nextScanner from 'i18next-scanner';
 import path from 'path';
@@ -63,49 +64,57 @@ export default class I18nextScannerService {
    * @returns A promise resolving to the scan results.
    */
   public scanCode(): void {
-    const packageJsonAbsoluteFolderPath =
-      ConfigurationStoreManager.getInstance().getConfig<GeneralConfiguration>(
-        'general'
-      ).pathsConfiguration.packageJsonAbsoluteFolderPath;
+    Sentry.startSpan(
+      {
+        op: 'typeScript.scanCodeFori18next',
+        name: 'TypeScript i18next Scanner Module',
+      },
+      () => {
+        const packageJsonAbsoluteFolderPath =
+          ConfigurationStoreManager.getInstance().getConfig<GeneralConfiguration>(
+            'general'
+          ).pathsConfiguration.packageJsonAbsoluteFolderPath;
 
-    const fixedPackageJsonAbsoluteFolderPath = path.normalize(
-      packageJsonAbsoluteFolderPath
+        const fixedPackageJsonAbsoluteFolderPath = path.normalize(
+          packageJsonAbsoluteFolderPath
+        );
+
+        const options: I18nextScannerOptions = {
+          compatibilityJSON: 'v3',
+          debug: true,
+          removeUnusedKeys: true,
+          sort: true,
+          func: {
+            list: ['I18nKey', 't'],
+            extensions: ['.ts', '.tsx'],
+          },
+          lngs: ['nl', 'en', 'de', 'pl'],
+          ns: ['common', 'onboarding', 'validation'],
+          defaultLng: 'nl',
+          defaultNs: 'common',
+          defaultValue: '',
+          resource: {
+            loadPath: `${fixedPackageJsonAbsoluteFolderPath}/public/locales/{{lng}}/{{ns}}.json`,
+            savePath: `${fixedPackageJsonAbsoluteFolderPath}/public/locales/{{lng}}/{{ns}}.json`,
+            jsonIndent: 4,
+            lineEnding: 'CRLF',
+          },
+          nsSeparator: ':',
+          keySeparator: '.',
+          pluralSeparator: '_',
+          contextSeparator: ':',
+          contextDefaultValues: [],
+          interpolation: {
+            prefix: '{{',
+            suffix: '}}',
+          },
+          metadata: {},
+          allowDynamicKeys: false,
+        };
+
+        this.executeScanner(options, fixedPackageJsonAbsoluteFolderPath);
+      }
     );
-
-    const options: I18nextScannerOptions = {
-      compatibilityJSON: 'v3',
-      debug: true,
-      removeUnusedKeys: true,
-      sort: true,
-      func: {
-        list: ['I18nKey', 't'],
-        extensions: ['.ts', '.tsx'],
-      },
-      lngs: ['nl', 'en', 'de', 'pl'],
-      ns: ['common', 'onboarding', 'validation'],
-      defaultLng: 'nl',
-      defaultNs: 'common',
-      defaultValue: '',
-      resource: {
-        loadPath: `${fixedPackageJsonAbsoluteFolderPath}/public/locales/{{lng}}/{{ns}}.json`,
-        savePath: `${fixedPackageJsonAbsoluteFolderPath}/public/locales/{{lng}}/{{ns}}.json`,
-        jsonIndent: 4,
-        lineEnding: 'CRLF',
-      },
-      nsSeparator: ':',
-      keySeparator: '.',
-      pluralSeparator: '_',
-      contextSeparator: ':',
-      contextDefaultValues: [],
-      interpolation: {
-        prefix: '{{',
-        suffix: '}}',
-      },
-      metadata: {},
-      allowDynamicKeys: false,
-    };
-
-    this.executeScanner(options, fixedPackageJsonAbsoluteFolderPath);
   }
 
   private executeScanner = (
