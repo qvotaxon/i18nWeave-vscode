@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/node';
+
 import FileReader from '../../services/fileReader';
 import { BaseActionModule } from '../baseActionModule';
 import { ReadPoFileModuleContext } from './readPoFileModuleContext';
@@ -15,12 +17,22 @@ export default class ReadPoFileModule extends BaseActionModule {
   protected async doExecuteAsync(
     context: ReadPoFileModuleContext
   ): Promise<void> {
-    console.log(`Reading PO file contents: ${context.inputPath.fsPath}`);
+    await Sentry.startSpan(
+      {
+        op: 'po.readPoFile',
+        name: 'Read PO File Module',
+      },
+      async () => {
+        console.log(`Reading PO file contents: ${context.inputPath.fsPath}`);
 
-    const poContent = await FileReader.readFileAsync(context.inputPath.fsPath);
+        const poContent = await FileReader.readFileAsync(
+          context.inputPath.fsPath
+        );
 
-    if (poContent) {
-      context.poContent = poContent;
-    }
+        if (poContent) {
+          context.poContent = poContent;
+        }
+      }
+    );
   }
 }

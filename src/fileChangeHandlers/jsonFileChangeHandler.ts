@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node';
 import { Uri } from 'vscode';
 
 import { ChainType } from '../enums/chainType';
@@ -72,29 +73,39 @@ export default class JsonFileChangeHandler implements FileChangeHandler {
   async handleFileChangeAsync(
     changeFileLocation?: Uri | undefined
   ): Promise<void> {
-    if (!changeFileLocation) {
-      return Promise.resolve();
-    }
+    await Sentry.startSpan(
+      {
+        op: 'json.handleFileChange',
+        name: 'Json File Change Handler',
+      },
+      async () => {
+        if (!changeFileLocation) {
+          return Promise.resolve();
+        }
 
-    const extractedFileParts = FilePathProcessor.processFilePath(
-      changeFileLocation.fsPath
+        const extractedFileParts = FilePathProcessor.processFilePath(
+          changeFileLocation.fsPath
+        );
+
+        const context: ModuleContext = {
+          inputPath: changeFileLocation,
+          locale: extractedFileParts.locale,
+          outputPath: extractedFileParts.outputPath,
+        };
+
+        FileLockStoreStore.getInstance().add(extractedFileParts.outputPath);
+
+        JsonFileChangeHandler.moduleChainManager.executeChainAsync(
+          ChainType.Json,
+          context
+        );
+
+        setTimeout(() => {
+          FileLockStoreStore.getInstance().delete(
+            extractedFileParts.outputPath
+          );
+        }, 250);
+      }
     );
-
-    const context: ModuleContext = {
-      inputPath: changeFileLocation,
-      locale: extractedFileParts.locale,
-      outputPath: extractedFileParts.outputPath,
-    };
-
-    FileLockStoreStore.getInstance().add(extractedFileParts.outputPath);
-
-    JsonFileChangeHandler.moduleChainManager.executeChainAsync(
-      ChainType.Json,
-      context
-    );
-
-    setTimeout(() => {
-      FileLockStoreStore.getInstance().delete(extractedFileParts.outputPath);
-    }, 250);
   }
 }
