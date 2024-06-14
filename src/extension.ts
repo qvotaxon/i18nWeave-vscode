@@ -1,7 +1,18 @@
+import * as Sentry from '@sentry/node';
 import { ExtensionContext } from 'vscode';
 
 import ConfigurationStoreManager from './services/configurationStoreManager';
 import FileWatcherCreator from './services/fileWatcherCreator';
+
+function initializeSentry() {
+  Sentry.init({
+    dsn: 'https://188de1d08857e4d1a5e59d8a9da5da1a@o4507423909216256.ingest.de.sentry.io/4507431475019856',
+    integrations: Sentry.getDefaultIntegrations({}),
+    tracesSampleRate: 1.0,
+    profilesSampleRate: 1.0,
+  });
+}
+initializeSentry();
 
 export async function activate(
   context: ExtensionContext,
@@ -9,35 +20,39 @@ export async function activate(
 ) {
   console.log('i18nWeave is now active!');
 
-  const typeScriptFileGlobPattern = '**/{apps,libs}/**/*.{tsx,ts}';
-  const jsonFileGlobPattern = `**/locales/**/*.json`;
-  const poFileGlobPattern = `**/locales/**/*.po`;
+  try {
+    const typeScriptFileGlobPattern = '**/{apps,libs}/**/*.{tsx,ts}';
+    const jsonFileGlobPattern = `**/locales/**/*.json`;
+    const poFileGlobPattern = `**/locales/**/*.po`;
 
-  const typeScriptFileWatchers = await createWatchersForPattern(
-    typeScriptFileGlobPattern,
-    'i18nextScannerModule',
-    fileWatcherCreator
-  );
+    const typeScriptFileWatchers = await createWatchersForPattern(
+      typeScriptFileGlobPattern,
+      'i18nextScannerModule',
+      fileWatcherCreator
+    );
 
-  const jsonFileWatchers = await createWatchersForPattern(
-    jsonFileGlobPattern,
-    'i18nextJsonToPoConversionModule',
-    fileWatcherCreator
-  );
+    const jsonFileWatchers = await createWatchersForPattern(
+      jsonFileGlobPattern,
+      'i18nextJsonToPoConversionModule',
+      fileWatcherCreator
+    );
 
-  const poFileWatchers = await createWatchersForPattern(
-    poFileGlobPattern,
-    'i18nextJsonToPoConversionModule',
-    fileWatcherCreator
-  );
+    const poFileWatchers = await createWatchersForPattern(
+      poFileGlobPattern,
+      'i18nextJsonToPoConversionModule',
+      fileWatcherCreator
+    );
 
-  ConfigurationStoreManager.getInstance().initialize();
+    ConfigurationStoreManager.getInstance().initialize();
 
-  context.subscriptions.push(
-    ...typeScriptFileWatchers,
-    ...jsonFileWatchers,
-    ...poFileWatchers
-  );
+    context.subscriptions.push(
+      ...typeScriptFileWatchers,
+      ...jsonFileWatchers,
+      ...poFileWatchers
+    );
+  } catch (e) {
+    Sentry.captureException(e);
+  }
 }
 
 async function createWatchersForPattern(
