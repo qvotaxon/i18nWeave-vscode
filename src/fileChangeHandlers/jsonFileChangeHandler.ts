@@ -12,8 +12,10 @@ import ReadJsonFileModule from '../modules/readJsonFile/readJsonFileModule';
 import TranslationModule from '../modules/translation/translationModule';
 import FileLockStoreStore from '../services/fileLockStore';
 import FilePathProcessor from '../services/filePathProcessor';
+import FileWatcherCreator from '../services/fileWatcherCreator';
 
 export default class JsonFileChangeHandler implements FileChangeHandler {
+  private static fileWatcherCreator: FileWatcherCreator;
   private static readJsonFileModule: ReadJsonFileModule;
   private static translationModule: TranslationModule;
   private static i18nextJsonToPoConversionModule: I18nextJsonToPoConversionModule;
@@ -22,10 +24,12 @@ export default class JsonFileChangeHandler implements FileChangeHandler {
     new ModuleChainManager();
 
   private constructor(
+    fileWatcherCreator: FileWatcherCreator,
     readJsonFileModule: ReadJsonFileModule,
     translationModule: TranslationModule,
     i18nextJsonToPoConversionModule: I18nextJsonToPoConversionModule
   ) {
+    JsonFileChangeHandler.fileWatcherCreator = fileWatcherCreator;
     JsonFileChangeHandler.readJsonFileModule = readJsonFileModule;
     JsonFileChangeHandler.translationModule = translationModule;
     JsonFileChangeHandler.i18nextJsonToPoConversionModule =
@@ -38,6 +42,7 @@ export default class JsonFileChangeHandler implements FileChangeHandler {
   }
 
   public static readonly create = (): JsonFileChangeHandler => {
+    const fileWatcherCreator = new FileWatcherCreator();
     const readJsonFileModule = new ReadJsonFileModule();
     const translationModule = new TranslationModule();
     const i18nextJsonToPoConversionModule =
@@ -48,6 +53,7 @@ export default class JsonFileChangeHandler implements FileChangeHandler {
     this.i18nextJsonToPoConversionModule = i18nextJsonToPoConversionModule;
 
     return new JsonFileChangeHandler(
+      fileWatcherCreator,
       readJsonFileModule,
       translationModule,
       i18nextJsonToPoConversionModule
@@ -104,15 +110,14 @@ export default class JsonFileChangeHandler implements FileChangeHandler {
           context
         );
 
-        const fileWatcher = vscode.workspace
-          .createFileSystemWatcher(extractedFileParts.outputPath.fsPath)
-          .onDidChange(() => {
+        JsonFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
+          extractedFileParts.outputPath.fsPath,
+          () => {
             FileLockStoreStore.getInstance().delete(
               extractedFileParts.outputPath
             );
-
-            fileWatcher.dispose();
-          });
+          }
+        );
       }
     );
   }

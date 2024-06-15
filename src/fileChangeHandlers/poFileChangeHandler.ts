@@ -11,8 +11,10 @@ import PoToI18nextJsonConversionModule from '../modules/poToI18nextJsonConversio
 import ReadPoFileModule from '../modules/readPoFile/readPoFileModule';
 import FileLockStoreStore from '../services/fileLockStore';
 import FilePathProcessor from '../services/filePathProcessor';
+import FileWatcherCreator from '../services/fileWatcherCreator';
 
 export default class PoFileChangeHandler implements FileChangeHandler {
+  private static fileWatcherCreator: FileWatcherCreator;
   private static readPoFileModule: ReadPoFileModule;
   private static poToI18nextJsonConversionModule: PoToI18nextJsonConversionModule;
 
@@ -20,9 +22,11 @@ export default class PoFileChangeHandler implements FileChangeHandler {
     new ModuleChainManager();
 
   private constructor(
+    fileWatcherCreator: FileWatcherCreator,
     readPoFileModule: ReadPoFileModule,
     poToI18nextJsonConversionModule: PoToI18nextJsonConversionModule
   ) {
+    PoFileChangeHandler.fileWatcherCreator = fileWatcherCreator;
     PoFileChangeHandler.readPoFileModule = readPoFileModule;
     PoFileChangeHandler.poToI18nextJsonConversionModule =
       poToI18nextJsonConversionModule;
@@ -34,6 +38,7 @@ export default class PoFileChangeHandler implements FileChangeHandler {
   }
 
   public static readonly create = (): PoFileChangeHandler => {
+    const fileWatcherCreator = new FileWatcherCreator();
     const readPoFileModule = new ReadPoFileModule();
     const poToI18nextJsonConversionModule =
       new PoToI18nextJsonConversionModule();
@@ -42,6 +47,7 @@ export default class PoFileChangeHandler implements FileChangeHandler {
     this.poToI18nextJsonConversionModule = poToI18nextJsonConversionModule;
 
     return new PoFileChangeHandler(
+      fileWatcherCreator,
       readPoFileModule,
       poToI18nextJsonConversionModule
     );
@@ -93,15 +99,14 @@ export default class PoFileChangeHandler implements FileChangeHandler {
           context
         );
 
-        const fileWatcher = vscode.workspace
-          .createFileSystemWatcher(extractedFileParts.outputPath.fsPath)
-          .onDidChange(() => {
+        PoFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
+          extractedFileParts.outputPath.fsPath,
+          () => {
             FileLockStoreStore.getInstance().delete(
               extractedFileParts.outputPath
             );
-
-            fileWatcher.dispose();
-          });
+          }
+        );
       }
     );
   }

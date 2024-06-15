@@ -8,18 +8,9 @@ import ModuleChainManager from '../../modules/moduleChainManager';
 import ReadPoFileModule from '../../modules/readPoFile/readPoFileModule';
 import FileLockStoreStore from '../../services/fileLockStore';
 import FilePathProcessor from '../../services/filePathProcessor';
+import FileWatcherCreator from '../../services/fileWatcherCreator';
 
 suite('PoFileChangeHandler', () => {
-  let clock: sinon.SinonFakeTimers;
-
-  setup(() => {
-    clock = sinon.useFakeTimers();
-  });
-
-  teardown(() => {
-    clock.restore();
-  });
-
   test('should initialize moduleChainManager and register chain', () => {
     const moduleChainManager = PoFileChangeHandler.moduleChainManager;
     const registerChainSpy = sinon.spy(moduleChainManager, 'registerChain');
@@ -78,6 +69,11 @@ suite('PoFileChangeHandler', () => {
       .stub(FilePathProcessor, 'processFilePath')
       .returns(extractedFileParts);
 
+    const fileWatcherCreatorCreateFileWatcherForFileStub = sinon.stub(
+      FileWatcherCreator.prototype,
+      'createFileWatcherForFile'
+    );
+
     const moduleChainManagerExecuteChainStub = sinon
       .stub(PoFileChangeHandler.moduleChainManager, 'executeChainAsync')
       .returns(Promise.resolve());
@@ -85,11 +81,6 @@ suite('PoFileChangeHandler', () => {
     const fileLockStoreAddStub = sinon.stub(
       FileLockStoreStore.getInstance(),
       'add'
-    );
-
-    const fileLockStoreDeleteStub = sinon.stub(
-      FileLockStoreStore.getInstance(),
-      'delete'
     );
 
     await PoFileChangeHandler.create().handleFileChangeAsync(
@@ -116,16 +107,11 @@ suite('PoFileChangeHandler', () => {
       extractedFileParts.outputPath
     );
 
-    clock.tick(250);
-
-    sinon.assert.calledOnceWithExactly(
-      fileLockStoreDeleteStub,
-      extractedFileParts.outputPath
-    );
+    sinon.assert.calledOnce(fileWatcherCreatorCreateFileWatcherForFileStub);
 
     processFilePathStub.restore();
     moduleChainManagerExecuteChainStub.restore();
     fileLockStoreAddStub.restore();
-    fileLockStoreDeleteStub.restore();
+    fileWatcherCreatorCreateFileWatcherForFileStub.restore();
   });
 });
