@@ -34,11 +34,7 @@ export default class FileLockStoreStore {
    * @param uri - The URI of the file.
    */
   delete(uri: Uri): void {
-    const lockCount = this.fileLocks.get(uri.fsPath);
-    if (lockCount === undefined) {
-      return;
-    }
-
+    const lockCount = this.fileLocks.get(uri.fsPath) || 0;
     if (lockCount > 1) {
       this.fileLocks.set(uri.fsPath, lockCount - 1);
     } else {
