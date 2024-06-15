@@ -50,8 +50,8 @@ export async function activate(
       ...jsonFileWatchers,
       ...poFileWatchers
     );
-  } catch (e) {
-    Sentry.captureException(e);
+  } catch (error) {
+    Sentry.captureException(error);
   }
 }
 

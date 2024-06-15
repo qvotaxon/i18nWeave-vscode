@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/node';
+import vscode from 'vscode';
 import { Uri } from 'vscode';
 
 import { ChainType } from '../enums/chainType';
@@ -68,7 +69,10 @@ export default class PoFileChangeHandler implements FileChangeHandler {
         name: 'Po File Change Handler',
       },
       async () => {
-        if (!changeFileLocation) {
+        if (
+          !changeFileLocation ||
+          FileLockStoreStore.getInstance().hasFileLock(changeFileLocation)
+        ) {
           return Promise.resolve();
         }
 
@@ -89,11 +93,15 @@ export default class PoFileChangeHandler implements FileChangeHandler {
           context
         );
 
-        setTimeout(() => {
-          FileLockStoreStore.getInstance().delete(
-            extractedFileParts.outputPath
-          );
-        }, 250);
+        const fileWatcher = vscode.workspace
+          .createFileSystemWatcher(extractedFileParts.outputPath.fsPath)
+          .onDidChange(() => {
+            FileLockStoreStore.getInstance().delete(
+              extractedFileParts.outputPath
+            );
+
+            fileWatcher.dispose();
+          });
       }
     );
   }

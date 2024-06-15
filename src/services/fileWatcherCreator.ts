@@ -31,10 +31,7 @@ export default class FileWatcherCreator {
           new FileChangeHandlerFactory().createFileChangeHandler(fsPath);
 
         fileWatcher.onDidChange(async uri => {
-          if (
-            !disableFlags.some(flag => flag()) &&
-            !FileLockStoreStore.getInstance().hasFileLock(uri)
-          ) {
+          if (!disableFlags.some(flag => flag())) {
             await fileChangeHandler?.handleFileChangeAsync(uri);
           }
         });

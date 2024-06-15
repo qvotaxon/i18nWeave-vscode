@@ -1,3 +1,4 @@
+import Sentry from '@sentry/node';
 import fs from 'fs';
 import { Uri } from 'vscode';
 
@@ -18,7 +19,7 @@ export default class FileWriter {
     try {
       await fs.promises.writeFile(filePath.fsPath, data, 'utf8');
     } catch (err) {
-      throw new Error((err as Error).message);
+      Sentry.captureException(err);
     }
   }
 }

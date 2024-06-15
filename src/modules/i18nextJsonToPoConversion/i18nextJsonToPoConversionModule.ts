@@ -27,10 +27,18 @@ export default class I18nextJsonToPoConversionModule extends BaseActionModule {
           `Converting json to po using : ${context.inputPath.fsPath}`
         );
         if (context.jsonContent) {
-          const res = i18next2po(context.locale, context.jsonContent, {
-            compatibilityJSON: 'v3',
-          });
-          await FileWriter.writeToFileAsync(context.outputPath, res);
+          try {
+            const res = i18next2po(context.locale, context.jsonContent, {
+              compatibilityJSON: 'v3',
+            });
+            await FileWriter.writeToFileAsync(context.outputPath, res);
+          } catch (error) {
+            if (error instanceof SyntaxError) {
+              Sentry.captureException(error);
+            } else {
+              Sentry.captureException(error, { extra: { context } });
+            }
+          }
         }
       }
     );

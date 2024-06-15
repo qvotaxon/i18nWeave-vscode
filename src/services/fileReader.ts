@@ -1,3 +1,4 @@
+import Sentry from '@sentry/node';
 import fs from 'fs';
 
 /**
@@ -12,8 +13,9 @@ export default class FileReader {
   public static async readFileAsync(filePath: string): Promise<string> {
     try {
       return await fs.promises.readFile(filePath, 'utf8');
-    } catch (err) {
-      throw new Error((err as Error).message);
+    } catch (error) {
+      Sentry.captureException(error);
+      return Promise.reject(error);
     }
   }
 }
