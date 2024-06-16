@@ -7,8 +7,8 @@ on:
       - main
 
 permissions:
-  contents: write
   pull-requests: write
+  # todo: remove
   id-token: write
   attestations: write
 
@@ -33,34 +33,49 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - name: Cache VS Code Versions
-        id: cache-vscode
-        uses: actions/cache@v4
-        with:
-          path: .vscode-test/
-          key: ${{ runner.os }}-vscode-test-${{ hashFiles('**/src/*.ts', 'vscode-stable-versions.json') }}
-          restore-keys: |
-            ${{ runner.os }}-vscode-test-
+      # - name: Cache VS Code Versions
+      #   id: cache-vscode
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: .vscode-test/
+      #     key: ${{ runner.os }}-vscode-test-${{ hashFiles('**/src/*.ts', 'vscode-stable-versions.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-vscode-test-
 
-      - name: Get VS Code Versions
-        if: steps.cache-vscode.outputs.cache-hit != 'true'
-        run: curl --output vscode-stable-versions.json https://update.code.visualstudio.com/api/releases/stable
+      # - name: Get VS Code Versions
+      #   if: steps.cache-vscode.outputs.cache-hit != 'true'
+      #   run: curl --output vscode-stable-versions.json https://update.code.visualstudio.com/api/releases/stable
 
       - name: Install dependencies
         run: npm install
 
       - name: Build
-        run: npm run compile:sourcemaps
+        run: npm run compile #:sourcemaps
 
-      - name: Lint & Test
-        if: matrix.os == 'macos-latest' || matrix.os == 'windows-latest'
-        run: npm run test:clover
+      # - name: Lint & Test
+      #   if: matrix.os == 'macos-latest' || matrix.os == 'windows-latest'
+      #   run: npm run test:clover
 
-      - name: Upload coverage reports to Codecov
-        if: matrix.os == 'macos-latest' || matrix.os == 'windows-latest'
-        uses: codecov/codecov-action@v4.0.1
+      # - name: Upload coverage reports to Codecov
+      #   if: matrix.os == 'macos-latest' || matrix.os == 'windows-latest'
+      #   uses: codecov/codecov-action@v4.0.1
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+
+      # todo: remvoe below lines
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          path: 'out'
+          format: 'spdx-json'
+          output-file: 'sbom.spdx.json'
+
+      - name: Attest SBOM
+        uses: actions/attest-sbom@v1
+        with:
+          subject-path: '${{ github.workspace }}/out'
+          sbom-path: 'sbom.spdx.json'
 
       # - name: Upload extension
       #   if: github.ref == 'refs/heads/main' && matrix.os == 'ubuntu-latest'
