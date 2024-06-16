@@ -50,7 +50,7 @@ jobs:
         run: npm install
 
       - name: Build
-        run: npm run compile
+        run: npm run compile:sourcemaps
 
       - name: Lint & Test
         if: matrix.os == 'macos-latest' || matrix.os == 'windows-latest'
@@ -62,18 +62,13 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      - name: Create Pre-release extension
-        if: github.ref == 'refs/heads/main' && matrix.os == 'ubuntu-latest'
-        # if: matrix.os == 'ubuntu-latest'
-        run: npx vsce package -o i18nWeave-vscode.vsix --pre-release
-
-      - name: Upload extension
-        if: github.ref == 'refs/heads/main' && matrix.os == 'ubuntu-latest'
-        # if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: i18nWeave-vscode
-          path: i18nWeave-vscode.vsix
+      # - name: Upload extension
+      #   if: github.ref == 'refs/heads/main' && matrix.os == 'ubuntu-latest'
+      #   # if: matrix.os == 'ubuntu-latest'
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: i18nWeave-vscode
+      #     path: i18nWeave-vscode.vsix
 
       # - name: Upload Release Artifact
       #   if: github.ref == 'refs/heads/main'
