@@ -17,9 +17,6 @@ jobs:
         with:
           name: i18nWeave-vscode-${{ github.run_number }}-ubuntu-latest
 
-      - name: Create Pre-release extension
-        run: npx vsce package -o i18nWeave-vscode-${{ github.run_number }}.vsix --pre-release
-
       - name: Upload extension
         uses: actions/upload-artifact@v2
         with:
