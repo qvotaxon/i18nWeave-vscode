@@ -9,6 +9,8 @@ on:
 
 permissions:
   contents: write
+  id-token: write
+  attestations: write
 
 jobs:
   release:
@@ -46,3 +48,24 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload ${{steps.release.outputs.tag_name}} i18nWeave-vscode-${{steps.release.outputs.tag_name}}.vsix
+
+      - name: Attest Build Provenance
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/attest-build-provenance@v1.3.1
+        with:
+          subject-path: i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix
+
+      - name: Generate SBOM
+        if: ${{ steps.release.outputs.release_created }}
+        uses: anchore/sbom-action@v0
+        with:
+          path: 'out'
+          format: 'spdx-json'
+          output-file: 'sbom.spdx.json'
+
+      - name: Attest SBOM
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/attest-sbom@v1
+        with:
+          subject-path: '${{ github.workspace }}/out'
+          sbom-path: 'sbom.spdx.json'
