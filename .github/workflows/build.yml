@@ -9,7 +9,10 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  id-token: write
+  attestations: write
 
+# Should have a look at the matrices and which steps run on which OS.
 jobs:
   build:
     name: Build & Test
@@ -49,9 +52,6 @@ jobs:
       - name: Build
         run: npm run compile
 
-      #- name: Lint
-      #  run: npm run lint
-
       - name: Lint & Test
         if: matrix.os == 'macos-latest' || matrix.os == 'windows-latest'
         run: npm run test:clover
@@ -61,3 +61,29 @@ jobs:
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+
+      # For now everything below is placed should eventually be moved to a separate release workflow.
+      # I couldn't get it to work. :'(
+      - name: Release Please Action
+        if: github.ref == 'refs/heads/main'
+        uses: google-github-actions/release-please-action@v4.1.0
+        id: release
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_KEY }}
+          release-type: node
+
+      - name: Create Pre-release extension
+        if: github.ref == 'refs/heads/main'
+        run: npx vsce package -o i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix --pre-release
+
+      - name: Upload Release Artifact
+        if: github.ref == 'refs/heads/main' && steps.release.outputs.release_created
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload ${{ steps.release.outputs.tag_name }} i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix
+
+      - name: Attest Build Provenance
+        if: github.ref == 'refs/heads/main'
+        uses: actions/attest-build-provenance@v1.3.1
+        with:
+          subject-path: i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix
