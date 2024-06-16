@@ -93,7 +93,7 @@ I needed a way to have the translation files be consistent for every developer, 
 
 I couldn't really find a good solution to my problem, so, I decided to take matters into my own hands and create i18nWeave, a versatile Visual Studio Code extension designed to streamline the management of translation files within your development projects. With its intuitive features, i18nWeave simplifies the process of handling translation keys, providing flexibility and efficiency in your workflow.
 
-I have designed the extension to be modular, allowing for the easy addition of functionalities. These functionalities, referred to as modules, can be easily enabled or disabled through the configuration settings. Currently, the extension includes a translation key extraction module, a PO to JSON file converter module, and a JSON to PO file converter module, see [Features](#features).
+I have designed the extension to be modular, allowing for the easy addition of functionalities. These functionalities, referred to as modules, can be easily enabled or disabled through the configuration settings. Currently, the extension includes a translation key extraction module, a PO to JSON file converter module, and a JSON to PO file converter module, see [Features](#-features).
 
 Now, you can say goodbye to those mind-numbing merge conflicts and hello to a more enjoyable and productive development experience. Let i18nWeave do the heavy lifting for you, so you can focus on what you do best - writing amazing code!
 
