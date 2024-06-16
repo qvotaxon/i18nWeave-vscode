@@ -29,7 +29,7 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - uses: google-github-actions/release-please-action@v4.1.0
+      - uses: googleapis/release-please-action@v4
         id: release
         with:
           token: ${{ secrets.RELEASE_PLEASE_KEY }}
