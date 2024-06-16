@@ -63,14 +63,10 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - uses: google-github-actions/release-please-action@v4.1.0
+        if: matrix.os == 'ubuntu-latest'
         id: release
         with:
-          # this assumes that you have created a personal access token
-          # (PAT) and configured it as a GitHub action secret named
-          # `MY_RELEASE_PLEASE_TOKEN` (this secret name is not important).
           token: ${{ secrets.RELEASE_PLEASE_KEY }}
-          # this is a built-in strategy in release-please, see "Action Inputs"
-          # for more options
           release-type: node
 
       - name: Create Pre-release extension
@@ -82,5 +78,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          #TODO: Change version below
         run: gh release upload ${{ steps.release.outputs.tag_name }} i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix
