@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  workflow_run:
+    workflows: ['Build & Test']
+    types:
+      - completed
+
+jobs:
+  release:
+    name: Release
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download VSIX Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: i18nWeave-vscode-${{ github.run_number }}-ubuntu-latest
+
+      - name: Create Pre-release extension
+        run: npx vsce package -o i18nWeave-vscode-${{ github.run_number }}.vsix --pre-release
+
+      - name: Upload extension
+        uses: actions/upload-artifact@v2
+        with:
+          name: i18nWeave-vscode-${{ github.run_number }}-${{ github.run_number }}-ubuntu-latest
+          path: i18nWeave-vscode-${{ github.run_number }}.vsix
+
+      - name: Upload Release Artifact
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload ${{ github.run_number }} i18nWeave-vscode-${{ github.run_number }}.vsix
