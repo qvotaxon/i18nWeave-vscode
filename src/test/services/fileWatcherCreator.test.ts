@@ -95,4 +95,26 @@ suite('FileWatcherCreator', () => {
       sinon.assert.notCalled(handleFileChangeAsyncStub);
     });
   });
+
+  suite('createFileWatcherForFile', () => {
+    test('should create a file watcher for the specified pattern', () => {
+      const mockUri = { fsPath: 'path/to/file' } as vscode.Uri;
+      const mockFileWatcher = {
+        onDidChange: (callback: (uri: vscode.Uri) => Promise<void>) => {
+          callback(mockUri);
+        },
+      } as unknown as vscode.FileSystemWatcher;
+      createFileSystemWatcherStub.returns(mockFileWatcher);
+
+      const pattern = '**/*.ts';
+      const onDidChange = sinon.stub();
+      const fileWatcher = fileWatcherCreator.createFileWatcherForFile(
+        pattern,
+        onDidChange
+      );
+
+      assert.ok(fileWatcher);
+      assert.ok(createFileSystemWatcherStub.calledOnceWith(pattern));
+    });
+  });
 });

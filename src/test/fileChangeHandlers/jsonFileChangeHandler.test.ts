@@ -9,18 +9,9 @@ import ReadJsonFileModule from '../../modules/readJsonFile/readJsonFileModule';
 import TranslationModule from '../../modules/translation/translationModule';
 import FileLockStoreStore from '../../services/fileLockStore';
 import FilePathProcessor from '../../services/filePathProcessor';
+import FileWatcherCreator from '../../services/fileWatcherCreator';
 
 suite('JsonFileChangeHandler', () => {
-  let clock: sinon.SinonFakeTimers;
-
-  setup(() => {
-    clock = sinon.useFakeTimers();
-  });
-
-  teardown(() => {
-    clock.restore();
-  });
-
   test('should initialize moduleChainManager and register chain', () => {
     const moduleChainManager = JsonFileChangeHandler.moduleChainManager;
     const registerChainSpy = sinon.spy(moduleChainManager, 'registerChain');
@@ -86,6 +77,11 @@ suite('JsonFileChangeHandler', () => {
       .stub(FilePathProcessor, 'processFilePath')
       .returns(extractedFileParts);
 
+    const fileWatcherCreatorCreateFileWatcherForFileStub = sinon.stub(
+      FileWatcherCreator.prototype,
+      'createFileWatcherForFile'
+    );
+
     const moduleChainManagerExecuteChainStub = sinon
       .stub(JsonFileChangeHandler.moduleChainManager, 'executeChainAsync')
       .returns(Promise.resolve());
@@ -93,11 +89,6 @@ suite('JsonFileChangeHandler', () => {
     const fileLockStoreAddStub = sinon.stub(
       FileLockStoreStore.getInstance(),
       'add'
-    );
-
-    const fileLockStoreDeleteStub = sinon.stub(
-      FileLockStoreStore.getInstance(),
-      'delete'
     );
 
     await JsonFileChangeHandler.create().handleFileChangeAsync(
@@ -124,16 +115,11 @@ suite('JsonFileChangeHandler', () => {
       extractedFileParts.outputPath
     );
 
-    clock.tick(250);
-
-    sinon.assert.calledOnceWithExactly(
-      fileLockStoreDeleteStub,
-      extractedFileParts.outputPath
-    );
+    sinon.assert.calledOnce(fileWatcherCreatorCreateFileWatcherForFileStub);
 
     processFilePathStub.restore();
     moduleChainManagerExecuteChainStub.restore();
     fileLockStoreAddStub.restore();
-    fileLockStoreDeleteStub.restore();
+    fileWatcherCreatorCreateFileWatcherForFileStub.restore();
   });
 });

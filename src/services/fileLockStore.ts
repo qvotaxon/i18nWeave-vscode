@@ -5,7 +5,7 @@ import { Uri } from 'vscode';
  */
 export default class FileLockStoreStore {
   private static instance: FileLockStoreStore;
-  private fileLocks: Set<string> = new Set<string>();
+  private fileLocks: Map<string, number> = new Map<string, number>();
 
   private constructor() {}
 
@@ -25,7 +25,8 @@ export default class FileLockStoreStore {
    * @param uri - The URI of the file.
    */
   add(uri: Uri): void {
-    this.fileLocks.add(uri.fsPath);
+    const lockCount = this.fileLocks.get(uri.fsPath) || 0;
+    this.fileLocks.set(uri.fsPath, lockCount + 1);
   }
 
   /**
@@ -33,7 +34,12 @@ export default class FileLockStoreStore {
    * @param uri - The URI of the file.
    */
   delete(uri: Uri): void {
-    this.fileLocks.delete(uri.fsPath);
+    const lockCount = this.fileLocks.get(uri.fsPath) || 0;
+    if (lockCount > 1) {
+      this.fileLocks.set(uri.fsPath, lockCount - 1);
+    } else {
+      this.fileLocks.delete(uri.fsPath);
+    }
   }
 
   /**

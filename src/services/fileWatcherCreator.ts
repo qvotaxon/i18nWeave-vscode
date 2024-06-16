@@ -1,12 +1,22 @@
 import * as vscode from 'vscode';
 
 import FileChangeHandlerFactory from './fileChangeHandlerFactory';
-import FileLockStoreStore from './fileLockStore';
 
 /**
  * Class responsible for creating file watchers for files matching a given glob pattern.
  */
 export default class FileWatcherCreator {
+  public createFileWatcherForFile(
+    pattern: string,
+    onDidChange: (e: vscode.Uri) => any
+  ) {
+    const fileWatcher = vscode.workspace.createFileSystemWatcher(pattern);
+
+    fileWatcher.onDidChange(onDidChange);
+
+    return fileWatcher;
+  }
+
   /**
    * Creates file watchers for files matching the specified glob pattern.
    * @param pattern - The glob pattern to match files against.
@@ -31,10 +41,7 @@ export default class FileWatcherCreator {
           new FileChangeHandlerFactory().createFileChangeHandler(fsPath);
 
         fileWatcher.onDidChange(async uri => {
-          if (
-            !disableFlags.some(flag => flag()) &&
-            !FileLockStoreStore.getInstance().hasFileLock(uri)
-          ) {
+          if (!disableFlags.some(flag => flag())) {
             await fileChangeHandler?.handleFileChangeAsync(uri);
           }
         });
