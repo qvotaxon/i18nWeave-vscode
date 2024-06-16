@@ -26,7 +26,8 @@ jobs:
       - name: Download VSIX Artifact
         uses: actions/download-artifact@v4
         with:
-          name: i18nWeave-vscode-${{ github.run_number }}-ubuntu-latest
+          name: i18nWeave-vscode-${{ github.run_number }}
+          path: i18nWeave-vscode-${{ steps.release.outputs.tag_name }}
 
       # - name: Upload extension
       #   uses: actions/upload-artifact@v4

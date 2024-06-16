@@ -62,28 +62,12 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      # For now everything below is placed should eventually be moved to a separate release workflow.
-      # I couldn't get it to work. :'(
-      - name: Release Please Action
-        if: github.ref == 'refs/heads/main'
-        uses: google-github-actions/release-please-action@v4.1.0
-        id: release
-        with:
-          token: ${{ secrets.RELEASE_PLEASE_KEY }}
-          release-type: node
-
       - name: Create Pre-release extension
-        if: github.ref == 'refs/heads/main' && steps.release.outputs.release_created
-        run: npx vsce package -o i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix --pre-release
+        if: github.ref == 'refs/heads/main'
+        run: npx vsce package -o i18nWeave-vscode-${{ github.run_number }}.vsix --pre-release
 
       - name: Upload Release Artifact
-        if: github.ref == 'refs/heads/main' && steps.release.outputs.release_created
+        if: github.ref == 'refs/heads/main'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload ${{ steps.release.outputs.tag_name }} i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix
-
-      - name: Attest Build Provenance
-        if: github.ref == 'refs/heads/main' && steps.release.outputs.release_created
-        uses: actions/attest-build-provenance@v1.3.1
-        with:
-          subject-path: i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix
+        run: gh release upload ${{ github.run_number }} i18nWeave-vscode-${{ github.run_number }}.vsix
