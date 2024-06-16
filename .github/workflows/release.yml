@@ -3,6 +3,7 @@ name: Release
 on:
   workflow_run:
     workflows: ['Build & Test']
+    # branches: [main]
     types:
       - completed
 
@@ -24,10 +25,11 @@ jobs:
           release-type: node
 
       - name: Download VSIX Artifact
+        if: ${{ steps.release.outputs.release_created }}
         uses: actions/download-artifact@v4
         with:
-          name: i18nWeave-vscode-${{ github.run_number }}
-          path: i18nWeave-vscode-${{ steps.release.outputs.tag_name }}
+          name: i18nWeave-vscode
+          path: i18nWeave-vscode-${{steps.release.outputs.tag_name}}.vsix
 
       # - name: Upload extension
       #   uses: actions/upload-artifact@v4
@@ -55,4 +57,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
           #TODO: Change version below
-        run: gh release upload ${{ steps.release.outputs.tag_name }} i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix
+        run: gh release upload ${{steps.release.outputs.tag_name}} i18nWeave-vscode-${{steps.release.outputs.tag_name}}.vsix
