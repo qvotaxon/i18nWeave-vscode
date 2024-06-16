@@ -65,7 +65,7 @@ jobs:
       - name: Create Pre-release extension
         if: github.ref == 'refs/heads/main' && matrix.os == 'ubuntu-latest'
         # if: matrix.os == 'ubuntu-latest'
-        run: npx vsce package -o i18nWeave-vscode-${{ github.run_number }}.vsix --pre-release
+        run: npx vsce package -o i18nWeave-vscode.vsix --pre-release
 
       - name: Upload extension
         if: github.ref == 'refs/heads/main' && matrix.os == 'ubuntu-latest'
