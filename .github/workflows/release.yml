@@ -29,7 +29,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: i18nWeave-vscode
-          path: i18nWeave-vscode-${{steps.release.outputs.tag_name}}.vsix
+          path: i18nWeave-vscode.vsix
 
       # - name: Upload extension
       #   uses: actions/upload-artifact@v4
@@ -40,7 +40,7 @@ jobs:
       # - name: Upload Release Artifact
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   run: gh release upload ${{ github.run_number }} i18nWeave-vscode-${{ github.run_number }}.vsix
+      #   run: gh release upload ${{ github.run_number }} i18nWeave-vscode-${{ gi.vsix
 
       # - name: Create Pre-release extension
       #   run: npx vsce package -o i18nWeave-vscode-${{steps.release.outputs.tag_name}}.vsix --pre-release
@@ -57,4 +57,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
           #TODO: Change version below
-        run: gh release upload ${{steps.release.outputs.tag_name}} i18nWeave-vscode-${{steps.release.outputs.tag_name}}.vsix
+        run: gh release upload i18nweave-vscode.vsix i18nWeave-vscode.vsix
