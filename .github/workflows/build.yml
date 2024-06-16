@@ -62,13 +62,25 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
+      - uses: google-github-actions/release-please-action@v4.1.0
+        id: release
+        with:
+          # this assumes that you have created a personal access token
+          # (PAT) and configured it as a GitHub action secret named
+          # `MY_RELEASE_PLEASE_TOKEN` (this secret name is not important).
+          token: ${{ secrets.RELEASE_PLEASE_KEY }}
+          # this is a built-in strategy in release-please, see "Action Inputs"
+          # for more options
+          release-type: node
+
       - name: Create Pre-release extension
         if: matrix.os == 'ubuntu-latest'
-        run: npx vsce package -o i18nWeave-vscode-${{ github.run_number }}.vsix --pre-release
+        run: npx vsce package -o i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix --pre-release
 
-      - name: Upload VSIX Artifact
-        if: matrix.os == 'ubuntu-latest' # Only upload artifact on Ubuntu where release job runs
-        uses: actions/upload-artifact@v4
-        with:
-          name: i18nWeave-vscode-${{ github.run_number }}-${{ matrix.os }}
-          path: i18nWeave-vscode-${{ github.run_number }}.vsix
+      - name: Upload Release Artifact
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          #TODO: Change version below
+        run: gh release upload ${{ steps.release.outputs.tag_name }} i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix
