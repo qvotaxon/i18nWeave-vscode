@@ -24,16 +24,16 @@ jobs:
           # for more options
           release-type: node
 
-  #    - name: Download VSIX Artifact
-  #      if: ${{ steps.release.outputs.release_created }}
-  #      uses: actions/download-artifact@v4
-  #      with:
-       - name: Download artifact
-         id: download-artifact
-         uses: dawidd6/action-download-artifact@v6
-         with:
-           name: i18nWeave-vscode
-  #        path: i18nWeave-vscode.vsix
+      #    - name: Download VSIX Artifact
+      #      if: ${{ steps.release.outputs.release_created }}
+      #      uses: actions/download-artifact@v4
+      #      with:
+      - name: Download artifact
+        id: download-artifact
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          name: i18nWeave-vscode
+      #        path: i18nWeave-vscode.vsix
 
       # - name: Upload extension
       #   uses: actions/upload-artifact@v4
