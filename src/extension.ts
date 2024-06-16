@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/node';
 import { ExtensionContext } from 'vscode';
 
 import ConfigurationStoreManager from './services/configurationStoreManager';
+import FileContentStore from './services/fileContentStore';
 import FileWatcherCreator from './services/fileWatcherCreator';
 
 function initializeSentry() {
@@ -24,6 +25,10 @@ export async function activate(
     const typeScriptFileGlobPattern = '**/{apps,libs}/**/*.{tsx,ts}';
     const jsonFileGlobPattern = `**/locales/**/*.json`;
     const poFileGlobPattern = `**/locales/**/*.po`;
+
+    await FileContentStore.getInstance().initializeInitialFileContentsAsync(
+      typeScriptFileGlobPattern
+    );
 
     const typeScriptFileWatchers = await createWatchersForPattern(
       typeScriptFileGlobPattern,

@@ -7,6 +7,7 @@ import FileChangeHandler from '../interfaces/fileChangeHandler';
 import ModuleContext from '../interfaces/moduleContext';
 import I18nextScannerModule from '../modules/i18nextScanner/i18nextScannerModule';
 import ModuleChainManager from '../modules/moduleChainManager';
+import FileContentStore from '../services/fileContentStore';
 
 export default class TypeScriptFileChangeHandler implements FileChangeHandler {
   private static i18nextScannerModule: I18nextScannerModule;
@@ -38,6 +39,14 @@ export default class TypeScriptFileChangeHandler implements FileChangeHandler {
       },
       async () => {
         if (!changeFileLocation) {
+          return;
+        }
+
+        if (
+          !FileContentStore.fileChangeContainsTranslationKeys(
+            changeFileLocation.fsPath
+          )
+        ) {
           return;
         }
 
