@@ -1,3 +1,4 @@
 {
-  "prerelease": true
+  "prerelease": true,
+  ".": "1.4.1"
 }
