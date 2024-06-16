@@ -4,6 +4,13 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.4.0](https://github.com/qvotaxon/i18nWeave-vscode/compare/v1.3.1...v1.4.0) (2024-06-16)
+
+
+### Features
+
+* simplify indentation in codecov.yml ([#66](https://github.com/qvotaxon/i18nWeave-vscode/issues/66)) ([03dfc81](https://github.com/qvotaxon/i18nWeave-vscode/commit/03dfc8177669c7ce3660fc63debdd0ae35a768a0))
+
 ## [1.3.1](https://github.com/qvotaxon/i18nWeave-vscode/compare/v1.3.0...v1.3.1) (2024-06-16)
 
 
