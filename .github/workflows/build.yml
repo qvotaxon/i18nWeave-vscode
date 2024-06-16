@@ -21,6 +21,9 @@ jobs:
     env:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
     steps:
+      - name: Attest Build Provenance
+        uses: actions/attest-build-provenance@v1.3.1
+
       - name: Checkout
         uses: actions/checkout@v4
 
