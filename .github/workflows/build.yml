@@ -61,3 +61,38 @@ jobs:
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  release:
+    needs: build
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/release-please-action@v4.1.0
+        id: release
+        with:
+          # this assumes that you have created a personal access token
+          # (PAT) and configured it as a GitHub action secret named
+          # `MY_RELEASE_PLEASE_TOKEN` (this secret name is not important).
+          token: ${{ secrets.RELEASE_PLEASE_KEY }}
+          # this is a built-in strategy in release-please, see "Action Inputs"
+          # for more options
+          release-type: node
+
+      - name: Create Pre-release extension
+        run: npx vsce package -o i18nWeave-vscode-${{steps.release.outputs.tag_name}}.vsix --pre-release
+
+      - name: Upload extension
+        uses: actions/upload-artifact@v4
+        with:
+          name: i18nWeave-vscode-
+          path: i18nWeave-vscode-${{steps.release.outputs.tag_name}}.vsix
+
+      - name: Upload Release Artifact
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          #TODO: Change version below
+        run: gh release upload ${{ steps.release.outputs.tag_name }} i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix
+
+      # Add your release steps here
