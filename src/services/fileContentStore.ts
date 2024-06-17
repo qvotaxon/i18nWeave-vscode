@@ -3,9 +3,8 @@ import { GlobPattern, ProgressLocation, window, workspace } from 'vscode';
 
 export default class FileContentStore {
   private static instance: FileContentStore;
-  //TODO: remove current file / old files contents from cache after save to prevent invalid / outdated entries.
-  private static previousFileContents: string[] = [];
-  private static currentFileContents: string[] = [];
+  public static readonly previousFileContents: string[] = [];
+  public static readonly currentFileContents: string[] = [];
 
   public getCurrentFileContents = () => FileContentStore.currentFileContents;
   public getPreviousFileContents = () => FileContentStore.previousFileContents;
@@ -33,7 +32,7 @@ export default class FileContentStore {
           );
 
           fileUris.forEach(fileUri => {
-            FileContentStore.initializeFileContent(fileUri.fsPath);
+            FileContentStore.updatePreviousFileContents(fileUri.fsPath);
           });
         } catch (error) {
           console.error('Error initializing initial file contents:', error);
@@ -54,7 +53,7 @@ export default class FileContentStore {
     return translationKeys.length > 0;
   }
 
-  public static initializeFileContent(fsPath: string) {
+  public static updatePreviousFileContents(fsPath: string) {
     const fileContent = fs.readFileSync(fsPath, { encoding: 'utf8' });
     FileContentStore.previousFileContents[fsPath as keyof object] = fileContent;
   }
