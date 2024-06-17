@@ -6,12 +6,15 @@ import I18nextJsonToPoConversionModuleConfiguration from '../entities/configurat
 import I18nextScannerModuleConfiguration from '../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
 import { activate, deactivate } from '../extension';
 import ConfigurationStoreManager from '../services/configurationStoreManager';
+import FileContentStore from '../services/fileContentStore';
 import FileWatcherCreator from '../services/fileWatcherCreator';
 
 suite('Extension Activation', () => {
   let context: ExtensionContext;
   let fileWatcherCreator: sinon.SinonStubbedInstance<FileWatcherCreator>;
   let configurationStoreManagerStub: sinon.SinonStub;
+
+  let fileContentStoreStub: sinon.SinonStubbedInstance<FileContentStore>;
 
   setup(() => {
     context = { subscriptions: [] } as any;
@@ -31,6 +34,9 @@ suite('Extension Activation', () => {
       .returns({
         enabled: true,
       } as I18nextJsonToPoConversionModuleConfiguration);
+
+    fileContentStoreStub = sinon.createStubInstance(FileContentStore);
+    sinon.stub(FileContentStore, 'getInstance').returns(fileContentStoreStub);
   });
 
   teardown(() => {
