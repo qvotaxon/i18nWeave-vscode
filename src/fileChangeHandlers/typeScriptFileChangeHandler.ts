@@ -11,7 +11,8 @@ import FileContentStore from '../services/fileContentStore';
 
 export default class TypeScriptFileChangeHandler implements FileChangeHandler {
   private static i18nextScannerModule: I18nextScannerModule;
-  private static moduleChainManager: ModuleChainManager =
+
+  static readonly moduleChainManager: ModuleChainManager =
     new ModuleChainManager();
 
   private constructor(i18nextScannerModule: I18nextScannerModule) {
@@ -43,7 +44,7 @@ export default class TypeScriptFileChangeHandler implements FileChangeHandler {
         }
 
         if (
-          !FileContentStore.fileChangeContainsTranslationKeys(
+          !FileContentStore.getInstance().fileChangeContainsTranslationKeys(
             changeFileLocation.fsPath
           )
         ) {

@@ -38,10 +38,15 @@ suite('TypeScriptFileChangeHandler', () => {
   });
 
   suite('handleFileChangeAsync', () => {
+    let fileContentStoreStub: sinon.SinonStubbedInstance<FileContentStore>;
+
+    setup(() => {
+      fileContentStoreStub = sinon.createStubInstance(FileContentStore);
+      sinon.stub(FileContentStore, 'getInstance').returns(fileContentStoreStub);
+    });
+
     test('should not execute chain if changeFileLocation is undefined', async () => {
-      sinon
-        .stub(FileContentStore, 'fileChangeContainsTranslationKeys')
-        .returns(true);
+      fileContentStoreStub.fileChangeContainsTranslationKeys.returns(true);
 
       const executeChainStub =
         moduleChainManagerStub.executeChainAsync as sinon.SinonStub;
@@ -50,9 +55,7 @@ suite('TypeScriptFileChangeHandler', () => {
     });
 
     test('should execute chain if changeFileLocation is provided', async () => {
-      sinon
-        .stub(FileContentStore, 'fileChangeContainsTranslationKeys')
-        .returns(true);
+      fileContentStoreStub.fileChangeContainsTranslationKeys.returns(true);
 
       const executeChainStub =
         moduleChainManagerStub.executeChainAsync as sinon.SinonStub;
@@ -77,9 +80,7 @@ suite('TypeScriptFileChangeHandler', () => {
         moduleChainManagerStub.executeChainAsync as sinon.SinonStub;
       const uri = vscode.Uri.file('path/to/file.ts');
 
-      sinon
-        .stub(FileContentStore, 'fileChangeContainsTranslationKeys')
-        .returns(false);
+      fileContentStoreStub.fileChangeContainsTranslationKeys.returns(false);
 
       await handler.handleFileChangeAsync(uri);
 
@@ -87,9 +88,7 @@ suite('TypeScriptFileChangeHandler', () => {
     });
 
     test('should execute chain if changeFileLocation contains translation keys', async () => {
-      sinon
-        .stub(FileContentStore, 'fileChangeContainsTranslationKeys')
-        .returns(true);
+      fileContentStoreStub.fileChangeContainsTranslationKeys.returns(true);
 
       const executeChainStub =
         moduleChainManagerStub.executeChainAsync as sinon.SinonStub;
