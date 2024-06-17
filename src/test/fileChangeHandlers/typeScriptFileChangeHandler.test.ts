@@ -1,4 +1,5 @@
 import assert from 'assert';
+import fs from 'fs';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
@@ -12,10 +13,12 @@ import FileContentStore from '../../services/fileContentStore';
 
 suite('TypeScriptFileChangeHandler', () => {
   let moduleChainManagerStub: sinon.SinonStubbedInstance<ModuleChainManager>;
+  let readFileSyncStub: sinon.SinonStub;
   let handler: TypeScriptFileChangeHandler;
 
   setup(() => {
     moduleChainManagerStub = sinon.createStubInstance(ModuleChainManager);
+    readFileSyncStub = sinon.stub(fs, 'readFileSync');
     handler = TypeScriptFileChangeHandler.create();
 
     const pathsConfiguration = {
