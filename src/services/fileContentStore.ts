@@ -1,49 +1,26 @@
 import fs from 'fs';
-import {
-  ExtensionContext,
-  GlobPattern,
-  ProgressLocation,
-  window,
-  workspace,
-} from 'vscode';
+import { GlobPattern, ProgressLocation, window, workspace } from 'vscode';
 
-/**
- * Manages the content of files and their state for the VSCode extension.
- */
 export default class FileContentStore {
   private static instance: FileContentStore;
-  private previousFileContents: Map<string, string> = new Map();
-  private currentFileContents: Map<string, string> = new Map();
-  private fileModificationTimes: Map<string, Date> = new Map();
-  private context?: ExtensionContext;
+  //TODO: remove current file / old files contents from cache after save to prevent invalid / outdated entries.
+  private static previousFileContents: string[] = [];
+  private static currentFileContents: string[] = [];
 
-  private constructor() {
-    this.loadCacheFromState();
-  }
+  public getCurrentFileContents = () => FileContentStore.currentFileContents;
+  public getPreviousFileContents = () => FileContentStore.previousFileContents;
 
-  /**
-   * Returns the singleton instance of FileContentStore.
-   */
-  public static getInstance(
-    context?: ExtensionContext | undefined
-  ): FileContentStore {
+  private constructor() {}
+
+  public static getInstance(): FileContentStore {
     if (!FileContentStore.instance) {
-      if (!context) {
-        throw new Error('Extension context not provided');
-      }
-
       FileContentStore.instance = new FileContentStore();
-      FileContentStore.instance.context = context;
     }
     return FileContentStore.instance;
   }
 
-  /**
-   * Initializes the initial file contents asynchronously based on the given pattern.
-   * @param pattern - Glob pattern to match files.
-   */
   public async initializeInitialFileContentsAsync(pattern: GlobPattern) {
-    await window.withProgress(
+    window.withProgress(
       {
         location: ProgressLocation.Window,
         title: 'Initializing file caches',
@@ -52,13 +29,12 @@ export default class FileContentStore {
         try {
           const fileUris = await workspace.findFiles(
             pattern,
-            '**/{node_modules,.git,.next}/**'
+            '**​/{node_modules,.git,.next}/**'
           );
 
-          for (const fileUri of fileUris) {
-            await this.updatePreviousFileContents(fileUri.fsPath);
-          }
-          this.saveCacheToState();
+          fileUris.forEach(fileUri => {
+            FileContentStore.initializeFileContent(fileUri.fsPath);
+          });
         } catch (error) {
           console.error('Error initializing initial file contents:', error);
           window.showErrorMessage('Error initializing initial file contents');
@@ -67,137 +43,82 @@ export default class FileContentStore {
     );
   }
 
-  /**
-   * Checks if the file changes contain translation keys.
-   * @param fsPath - The file system path of the file.
-   */
-  public fileChangeContainsTranslationKeys(fsPath: string): boolean {
-    const previousData = this.previousFileContents.get(fsPath) || '';
-    const currentData = this.currentFileContents.get(fsPath) || '';
-    const changedLines = this.getChangedLines(currentData, previousData);
-    const translationKeys = this.extractTranslationKeys(changedLines);
+  public static fileChangeContainsTranslationKeys(fsPath: string): boolean {
+    const changedLines = FileContentStore.getChangedLines(
+      FileContentStore.currentFileContents[fsPath as keyof object],
+      FileContentStore.previousFileContents[fsPath as keyof object]
+    );
+    const translationKeys =
+      FileContentStore.extractTranslationKeys(changedLines);
+
     return translationKeys.length > 0;
   }
 
-  /**
-   * Updates the previous file contents for a given file path if it has changed.
-   * @param fsPath - The file system path of the file.
-   */
-  public async updatePreviousFileContents(fsPath: string) {
-    const stats = await fs.promises.stat(fsPath);
-    const lastModified = stats.mtime;
+  public static initializeFileContent(fsPath: string) {
+    const fileContent = fs.readFileSync(fsPath, { encoding: 'utf8' });
+    FileContentStore.previousFileContents[fsPath as keyof object] = fileContent;
+  }
+
+  public static updateCurrentFileContents(fsPath: string) {
+    const fileContent = fs.readFileSync(fsPath, { encoding: 'utf8' });
+    FileContentStore.currentFileContents[fsPath as keyof object] = fileContent;
+  }
+
+  public static storeFileState(fsPath: string) {
+    const previousData =
+      FileContentStore.previousFileContents[fsPath as keyof object] || '';
 
     if (
-      this.fileModificationTimes.get(fsPath)?.getTime() !==
-      lastModified.getTime()
+      FileContentStore.currentFileContents[fsPath as keyof object] !==
+      previousData
     ) {
-      const fileContent = await fs.promises.readFile(fsPath, {
-        encoding: 'utf8',
-      });
-      this.previousFileContents.set(fsPath, fileContent);
-      this.fileModificationTimes.set(fsPath, lastModified);
+      FileContentStore.previousFileContents[fsPath as keyof object] =
+        FileContentStore.currentFileContents[fsPath as keyof object];
     }
   }
 
-  /**
-   * Updates the current file contents for a given file path if it has changed.
-   * @param fsPath - The file system path of the file.
-   */
-  public async updateCurrentFileContents(fsPath: string) {
-    const stats = await fs.promises.stat(fsPath);
-    const lastModified = stats.mtime;
-
-    if (
-      this.fileModificationTimes.get(fsPath)?.getTime() !==
-      lastModified.getTime()
-    ) {
-      const fileContent = await fs.promises.readFile(fsPath, {
-        encoding: 'utf8',
-      });
-      this.currentFileContents.set(fsPath, fileContent);
-      this.fileModificationTimes.set(fsPath, lastModified);
-    }
-  }
-
-  /**
-   * Stores the current file state if it has changed.
-   * @param fsPath - The file system path of the file.
-   */
-  public storeFileState(fsPath: string) {
-    const previousData = this.previousFileContents.get(fsPath) || '';
-    const currentData = this.currentFileContents.get(fsPath) || '';
-
-    if (currentData !== previousData) {
-      this.previousFileContents.set(fsPath, currentData);
-    }
-  }
-
-  private getChangedLines(currentData: string, previousData: string): string[] {
+  private static getChangedLines = (
+    currentData: string,
+    previousData: string
+  ): string[] => {
     const currentLines = currentData.split('\n');
-    const previousLines = previousData.split('\n');
+    const previousLines = previousData?.split('\n') ?? [];
 
     const changedLines: string[] = [];
 
     const currentLineSet = new Set(currentLines.map(line => line.trim()));
     const previousLineSet = new Set(previousLines.map(line => line.trim()));
 
-    for (const line of currentLines) {
-      if (!previousLineSet.has(line.trim())) {
-        changedLines.push(line);
+    for (const element of currentLines) {
+      const currentLine = element.trim();
+
+      if (!previousLineSet.has(currentLine)) {
+        changedLines.push(element);
       }
     }
 
-    for (const line of previousLines) {
-      if (!currentLineSet.has(line.trim())) {
-        changedLines.push(line);
+    for (const element of previousLines) {
+      const previousLine = element.trim();
+
+      if (!currentLineSet.has(previousLine)) {
+        changedLines.push(element);
       }
     }
 
     return changedLines;
-  }
+  };
 
-  private extractTranslationKeys(lines: string[]): string[] {
+  private static extractTranslationKeys = (lines: string[]) => {
     const translationKeys: string[] = [];
     const keyRegex = /(?:I18nKey|t)\(\s*['"`](.*?)['"`]\s*\)?/g;
 
-    for (const line of lines) {
+    lines.forEach((line: string) => {
       let match;
       while ((match = keyRegex.exec(line)) !== null) {
         translationKeys.push(match[1]);
       }
-    }
+    });
 
     return translationKeys;
-  }
-
-  /**
-   * Saves the current cache to VSCode state.
-   */
-  private saveCacheToState() {
-    const cacheData = {
-      previousFileContents: Array.from(this.previousFileContents.entries()),
-      currentFileContents: Array.from(this.currentFileContents.entries()),
-      fileModificationTimes: Array.from(
-        this.fileModificationTimes.entries()
-      ).map(([key, value]) => [key, value.toISOString()]),
-    };
-    this.context!.globalState.update('fileCache', JSON.stringify(cacheData));
-  }
-
-  /**
-   * Loads the cache from VSCode state.
-   */
-  private loadCacheFromState() {
-    const cacheDataString = this.context!.globalState.get<string>('fileCache');
-    if (cacheDataString) {
-      const cacheData = JSON.parse(cacheDataString);
-      this.previousFileContents = new Map(cacheData.previousFileContents);
-      this.currentFileContents = new Map(cacheData.currentFileContents);
-      this.fileModificationTimes = new Map(
-        cacheData.fileModificationTimes.map(
-          ([key, value]: [string, string]) => [key, new Date(value)]
-        )
-      );
-    }
-  }
+  };
 }

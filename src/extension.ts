@@ -26,9 +26,9 @@ export async function activate(
     const jsonFileGlobPattern = `**/locales/**/*.json`;
     const poFileGlobPattern = `**/locales/**/*.po`;
 
-    await FileContentStore.getInstance(
-      context
-    ).initializeInitialFileContentsAsync(typeScriptFileGlobPattern);
+    await FileContentStore.getInstance().initializeInitialFileContentsAsync(
+      typeScriptFileGlobPattern
+    );
 
     const typeScriptFileWatchers = await createWatchersForPattern(
       typeScriptFileGlobPattern,
