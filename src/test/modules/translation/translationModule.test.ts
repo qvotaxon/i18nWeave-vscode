@@ -1,44 +1,71 @@
-import * as assert from 'assert';
-import { Uri } from 'vscode';
+import sinon from 'sinon';
+import vscode from 'vscode';
 
 import TranslationModule from '../../../modules/translation/translationModule';
+import { TranslationModuleContext } from '../../../modules/translation/translationModuleContext';
+import ConfigurationStoreManager from '../../../services/configurationStoreManager';
+import TranslationService from '../../../services/translationService';
 
 suite('TranslationModule', () => {
-  test('should create an empty translations object if jsonContent exists', async () => {
-    const inputPath = Uri.file('/path/to/input.json');
-    const translationModule = new TranslationModule();
-    const context = {
-      inputPath,
-      jsonContent: {},
-      outputPath: Uri.file(''),
-      locale: '',
-      translations: {}, // Add the 'translations' property with an initial value of an empty object
+  let translationModule: TranslationModule;
+  let context: TranslationModuleContext;
+
+  setup(() => {
+    translationModule = new TranslationModule();
+    context = {
+      jsonContent: {
+        /* mock JSON content */
+      },
+      locale: 'en',
+      outputPath: { fsPath: '/path/to/output/file' } as unknown as vscode.Uri,
+      inputPath: { fsPath: '/path/to/input/file' } as unknown as vscode.Uri,
     };
-
-    await translationModule.executeAsync(context);
-
-    assert.deepStrictEqual(context.translations, {});
   });
 
-  test('should update jsonContent with translatedJsonContent if jsonContent exists', async () => {
-    const inputPath = Uri.file('/path/to/input.json');
-    const translationModule = new TranslationModule();
-    const context = {
-      inputPath,
-      jsonContent: {
-        dummy: {
-          translations: {
-            test: 'test',
-          },
-        },
-      },
-      outputPath: Uri.file(''),
-      locale: '',
-      translations: {},
-    };
+  teardown(() => {
+    sinon.restore();
+  });
+
+  test('should translate other i18n files if enabled and jsonContent exists', async () => {
+    const getConfigStub = sinon.stub(
+      ConfigurationStoreManager.getInstance(),
+      'getConfig'
+    );
+    getConfigStub.withArgs('translationModule').returns({ enabled: true });
+
+    const translateOtherI18nFilesStub = sinon.stub(
+      TranslationService.getInstance(),
+      'translateOtherI18nFiles'
+    );
 
     await translationModule.executeAsync(context);
 
-    assert.deepStrictEqual(context.jsonContent, context.jsonContent);
+    sinon.assert.calledOnce(getConfigStub);
+    sinon.assert.calledWith(getConfigStub, 'translationModule');
+    sinon.assert.calledOnce(translateOtherI18nFilesStub);
+    sinon.assert.calledWith(
+      translateOtherI18nFilesStub,
+      '/path/to/input/file',
+      context.jsonContent
+    );
+  });
+
+  test('should not translate other i18n files if disabled', async () => {
+    const getConfigStub = sinon.stub(
+      ConfigurationStoreManager.getInstance(),
+      'getConfig'
+    );
+    getConfigStub.withArgs('translationModule').returns({ enabled: false });
+
+    const translateOtherI18nFilesStub = sinon.stub(
+      TranslationService.getInstance(),
+      'translateOtherI18nFiles'
+    );
+
+    await translationModule.executeAsync(context);
+
+    sinon.assert.calledOnce(getConfigStub);
+    sinon.assert.calledWith(getConfigStub, 'translationModule');
+    sinon.assert.notCalled(translateOtherI18nFilesStub);
   });
 });
