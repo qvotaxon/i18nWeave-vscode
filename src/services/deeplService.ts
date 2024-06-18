@@ -124,7 +124,7 @@ export default class DeeplService {
    * Retrieves the DeepL API key from the configuration.
    * @returns {string} The API key.
    */
-  private static getApiKey(): string {
+  public static getApiKey(): string {
     const apiKey =
       ConfigurationStoreManager.getInstance().getConfig<TranslationModuleConfiguration>(
         'translationModule'
