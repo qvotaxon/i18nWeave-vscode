@@ -4,6 +4,13 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.1.0-alpha](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.0.1-alpha...v0.1.0-alpha) (2024-06-18)
+
+
+### Features
+
+* integrate DeepL translation service ([#91](https://github.com/qvotaxon/i18nWeave-vscode/issues/91)) ([a5c4dc4](https://github.com/qvotaxon/i18nWeave-vscode/commit/a5c4dc46e19777e7402d1a629ed215d4304707ab))
+
 ## [0.0.1-alpha](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.0.1-alpha...v0.0.1-alpha) (2024-06-18)
 
 
