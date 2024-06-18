@@ -9,7 +9,7 @@ import ConfigurationStoreManager from './configurationStoreManager';
  */
 export default class DeeplService {
   private static instance: DeeplService;
-  private static translator: deepl.Translator | undefined;
+  public static translator: deepl.Translator | undefined;
   private static previousApiKey: string | undefined;
 
   private constructor() {}
