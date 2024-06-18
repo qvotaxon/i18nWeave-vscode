@@ -7,8 +7,12 @@
       "release-type": "node",
       "bump-minor-pre-major": false,
       "bump-patch-for-minor-pre-major": false,
-      "draft": false,
-      "prerelease": false
+      "draft": true,
+      "prerelease": true,
+      "pull-request-footer": "This PR was auto-generated.",
+      "pull-request-header": "Release PR",
+      "prerelease-type": "alpha",
+      "changelog-type": "github"
     }
   }
 }
