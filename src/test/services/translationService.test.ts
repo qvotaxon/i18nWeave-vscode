@@ -1,25 +1,39 @@
-import * as assert from 'assert';
-import fs, { Dirent } from 'fs';
+import assert from 'assert';
+import fs from 'fs';
 import sinon from 'sinon';
 
+import TranslationModuleConfiguration from '../../entities/configuration/modules/translationModule/translationModuleConfiguration';
+import ConfigurationStore from '../../services/configurationStore';
+import ConfigurationStoreManager from '../../services/configurationStoreManager';
 import DeeplService from '../../services/deeplService';
 import TranslationService from '../../services/translationService';
 
 suite('TranslationService', () => {
   let translationService: TranslationService;
-  let fsReadFileSyncStub: sinon.SinonStub;
-  let fsWriteFileSyncStub: sinon.SinonStub;
-  let getOtherTranslationFilesPathsStub: sinon.SinonStub;
+  let readFileSyncStub: sinon.SinonStub;
+  let readdirSyncStub: sinon.SinonStub;
+  let statSyncStub: sinon.SinonStub;
+  let writeFileSyncStub: sinon.SinonStub;
   let fetchTranslationStub: sinon.SinonStub;
 
   setup(() => {
+    const translationModuleConfiguration = new TranslationModuleConfiguration();
+    translationModuleConfiguration.enabled = true;
+    translationModuleConfiguration.deepL.apiKey = 'api-key';
+    translationModuleConfiguration.deepL.enabled = true;
+
+    const mockConfigStore = new ConfigurationStore({
+      translationModule: translationModuleConfiguration,
+    });
+    ConfigurationStoreManager.getInstance()['_configurationStore'] =
+      mockConfigStore;
+
     translationService = TranslationService.getInstance();
-    fsReadFileSyncStub = sinon.stub(fs, 'readFileSync');
-    fsWriteFileSyncStub = sinon.stub(fs, 'writeFileSync');
-    getOtherTranslationFilesPathsStub = sinon.stub(
-      translationService,
-      'getOtherTranslationFilesPaths'
-    );
+
+    readFileSyncStub = sinon.stub(fs, 'readFileSync');
+    readdirSyncStub = sinon.stub(fs, 'readdirSync');
+    statSyncStub = sinon.stub(fs, 'statSync');
+    writeFileSyncStub = sinon.stub(fs, 'writeFileSync');
     fetchTranslationStub = sinon.stub(
       DeeplService.getInstance(),
       'fetchTranslation'
@@ -39,116 +53,161 @@ suite('TranslationService', () => {
   });
 
   suite('getOtherTranslationFilesPaths', () => {
-    test('should return an array of file paths for other translation files', () => {
-      const fileLocation = '/path/to/file.json';
-      const parentDirectory = '/path/to';
+    test('should return paths of other translation files', () => {
+      const fileLocation = 'C:\\projects\\translations\\en\\file.json';
+      const parentDirectory = 'C:\\projects\\translations';
+      const directory = 'C:\\projects\\translations\\en';
       const fileName = 'file.json';
-      const filePath1 = '/path/to/translation1.json';
-      const filePath2 = '/path/to/translation2.json';
-      const filePath3 = '/path/to/translation3.json';
 
-      sinon
-        .stub(fs, 'readdirSync')
-        .returns(fs.readdirSync('.', { withFileTypes: true }));
-      sinon
-        .stub(fs, 'statSync')
-        .returns({ isDirectory: () => true } as fs.Stats);
-      sinon
-        .stub(fs, 'readdirSync')
-        .withArgs(parentDirectory)
-        .returns([fileName as unknown as Dirent]);
-      sinon
-        .stub(fs, 'readdirSync')
-        .withArgs(parentDirectory + '/' + fileName)
-        .returns([fileName as unknown as Dirent]);
+      readdirSyncStub.withArgs(parentDirectory).returns(['en', 'fr']);
+      statSyncStub
+        .withArgs(`${parentDirectory}\\en`)
+        .returns({ isDirectory: () => true });
+      statSyncStub
+        .withArgs(`${parentDirectory}\\fr`)
+        .returns({ isDirectory: () => true });
+      readdirSyncStub.withArgs(`${parentDirectory}\\en`).returns(['file.json']);
+      readdirSyncStub.withArgs(`${parentDirectory}\\fr`).returns(['file.json']);
 
       const result =
         translationService.getOtherTranslationFilesPaths(fileLocation);
 
-      assert.deepStrictEqual(result, [filePath1, filePath2, filePath3]);
+      assert.deepStrictEqual(result, [
+        'C:\\projects\\translations\\fr\\file.json',
+      ]);
+    });
+
+    test('should exclude the original file from the result', () => {
+      const fileLocation = 'C:\\projects\\translations\\en\\file.json';
+      const parentDirectory = 'C:\\projects\\translations';
+      const directory = 'C:\\projects\\translations\\en';
+      const fileName = 'file.json';
+
+      readdirSyncStub.withArgs(parentDirectory).returns(['en', 'fr']);
+      statSyncStub
+        .withArgs(`${parentDirectory}\\en`)
+        .returns({ isDirectory: () => true });
+      statSyncStub
+        .withArgs(`${parentDirectory}\\fr`)
+        .returns({ isDirectory: () => true });
+      readdirSyncStub.withArgs(`${parentDirectory}\\en`).returns(['file.json']);
+      readdirSyncStub.withArgs(`${parentDirectory}\\fr`).returns(['file.json']);
+
+      const result =
+        translationService.getOtherTranslationFilesPaths(fileLocation);
+
+      assert.deepStrictEqual(result, [
+        'C:\\projects\\translations\\fr\\file.json',
+      ]);
     });
   });
 
   suite('translateOtherI18nFiles', () => {
     test('should translate missing keys in other i18n files', async () => {
-      const fileLocation = '/path/to/file.json';
-      const changedFileContent = '{"key1": "value1", "key2": "value2"}';
-      const filePath1 = '/path/to/translation1.json';
-      const filePath2 = '/path/to/translation2.json';
-      const filePath3 = '/path/to/translation3.json';
-      const existingTranslations1 = { key1: '', key3: '' };
-      const existingTranslations2 = { key2: '', key4: '' };
-      const existingTranslations3 = { key3: '', key5: '' };
-      const translatedValue1 = 'translatedValue1';
-      const translatedValue2 = 'translatedValue2';
-      const translatedValue3 = 'translatedValue3';
+      const fileLocation = 'C:\\projects\\translations\\en\\file.json';
+      const changedFileContent = JSON.stringify({ key1: 'value1' });
 
-      fsReadFileSyncStub
-        .withArgs(fileLocation, 'utf-8')
-        .returns(changedFileContent);
-      fsReadFileSyncStub
-        .withArgs(filePath1, 'utf-8')
-        .returns(JSON.stringify(existingTranslations1));
-      fsReadFileSyncStub
-        .withArgs(filePath2, 'utf-8')
-        .returns(JSON.stringify(existingTranslations2));
-      fsReadFileSyncStub
-        .withArgs(filePath3, 'utf-8')
-        .returns(JSON.stringify(existingTranslations3));
+      readdirSyncStub
+        .withArgs('C:\\projects\\translations')
+        .returns(['en', 'fr']);
+      statSyncStub
+        .withArgs('C:\\projects\\translations\\en')
+        .returns({ isDirectory: () => true });
+      statSyncStub
+        .withArgs('C:\\projects\\translations\\fr')
+        .returns({ isDirectory: () => true });
+      readdirSyncStub
+        .withArgs('C:\\projects\\translations\\en')
+        .returns(['file.json']);
+      readdirSyncStub
+        .withArgs('C:\\projects\\translations\\fr')
+        .returns(['file.json']);
 
-      getOtherTranslationFilesPathsStub
-        .withArgs(fileLocation)
-        .returns([filePath1, filePath2, filePath3]);
-
-      fetchTranslationStub
-        .withArgs('value1', 'locale1')
-        .resolves(translatedValue1);
-      fetchTranslationStub
-        .withArgs('value2', 'locale2')
-        .resolves(translatedValue2);
-      fetchTranslationStub
-        .withArgs('value2', 'locale3')
-        .resolves(translatedValue3);
+      readFileSyncStub
+        .withArgs('C:\\projects\\translations\\fr\\file.json', 'utf-8')
+        .returns(JSON.stringify({ key1: '' }));
+      fetchTranslationStub.withArgs('value1', 'fr').resolves('valeur1');
 
       await translationService.translateOtherI18nFiles(
         fileLocation,
         changedFileContent
       );
 
-      sinon.assert.calledWith(
-        fsWriteFileSyncStub,
-        filePath1,
-        JSON.stringify(
-          {
-            key1: translatedValue1,
-            key3: '',
-          },
-          null,
-          2
+      assert(
+        writeFileSyncStub.calledWith(
+          'C:\\projects\\translations\\fr\\file.json',
+          JSON.stringify({ key1: 'valeur1' }, null, 2)
         )
       );
-      sinon.assert.calledWith(
-        fsWriteFileSyncStub,
-        filePath2,
-        JSON.stringify(
-          {
-            key2: translatedValue2,
-            key4: '',
-          },
-          null,
-          2
-        )
+    });
+
+    test('should not update keys that are not missing', async () => {
+      const fileLocation = 'C:\\projects\\translations\\en\\file.json';
+      const changedFileContent = JSON.stringify({ key1: 'value1' });
+
+      readdirSyncStub
+        .withArgs('C:\\projects\\translations')
+        .returns(['en', 'fr']);
+      statSyncStub
+        .withArgs('C:\\projects\\translations\\en')
+        .returns({ isDirectory: () => true });
+      statSyncStub
+        .withArgs('C:\\projects\\translations\\fr')
+        .returns({ isDirectory: () => true });
+      readdirSyncStub
+        .withArgs('C:\\projects\\translations\\en')
+        .returns(['file.json']);
+      readdirSyncStub
+        .withArgs('C:\\projects\\translations\\fr')
+        .returns(['file.json']);
+
+      readFileSyncStub
+        .withArgs('C:\\projects\\translations\\fr\\file.json', 'utf-8')
+        .returns(JSON.stringify({ key1: 'existingValue' }));
+      fetchTranslationStub.withArgs('value1', 'fr').resolves('valeur1');
+
+      await translationService.translateOtherI18nFiles(
+        fileLocation,
+        changedFileContent
       );
-      sinon.assert.calledWith(
-        fsWriteFileSyncStub,
-        filePath3,
-        JSON.stringify(
-          {
-            key3: '',
-            key5: translatedValue3,
-          },
-          null,
-          2
+
+      assert(writeFileSyncStub.notCalled);
+    });
+
+    test('should handle nested missing keys', async () => {
+      const fileLocation = 'C:\\projects\\translations\\en\\file.json';
+      const changedFileContent = JSON.stringify({ key1: { subKey: 'value1' } });
+
+      readdirSyncStub
+        .withArgs('C:\\projects\\translations')
+        .returns(['en', 'fr']);
+      statSyncStub
+        .withArgs('C:\\projects\\translations\\en')
+        .returns({ isDirectory: () => true });
+      statSyncStub
+        .withArgs('C:\\projects\\translations\\fr')
+        .returns({ isDirectory: () => true });
+      readdirSyncStub
+        .withArgs('C:\\projects\\translations\\en')
+        .returns(['file.json']);
+      readdirSyncStub
+        .withArgs('C:\\projects\\translations\\fr')
+        .returns(['file.json']);
+
+      readFileSyncStub
+        .withArgs('C:\\projects\\translations\\fr\\file.json', 'utf-8')
+        .returns(JSON.stringify({ key1: { subKey: '' } }));
+      fetchTranslationStub.withArgs('value1', 'fr').resolves('valeur1');
+
+      await translationService.translateOtherI18nFiles(
+        fileLocation,
+        changedFileContent
+      );
+
+      assert(
+        writeFileSyncStub.calledWith(
+          'C:\\projects\\translations\\fr\\file.json',
+          JSON.stringify({ key1: { subKey: 'valeur1' } }, null, 2)
         )
       );
     });
