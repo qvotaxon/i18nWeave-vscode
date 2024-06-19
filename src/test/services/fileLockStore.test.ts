@@ -1,8 +1,7 @@
 import * as assert from 'assert';
-import { file } from 'mock-fs/lib/filesystem';
 import { Uri } from 'vscode';
 
-import FileLockStoreStore from '../../services/fileLockStore';
+import FileLockStoreStore from '../../lib/stores/fileLock/fileLockStore';
 
 suite('FileLockStoreStore', () => {
   let fileLockStore: FileLockStoreStore;

@@ -5,7 +5,7 @@ import { ExtractedFileParts } from '../types/extractedFileParts';
 /**
  * The FilePathProcessor class is responsible for processing file paths and extracting locale and output path information.
  */
-export default class FilePathProcessor {
+export default class FilePathUtilities {
   private static extractLocale(filePath: string): string {
     const localePattern = /\\locales\\([^\\]+)\\/;
     const match = localePattern.exec(filePath);

@@ -2,11 +2,11 @@ import assert from 'assert';
 import fs from 'fs';
 import sinon from 'sinon';
 
-import TranslationModuleConfiguration from '../../entities/configuration/modules/translationModule/translationModuleConfiguration';
-import ConfigurationStore from '../../services/configurationStore';
-import ConfigurationStoreManager from '../../services/configurationStoreManager';
-import DeeplService from '../../services/deeplService';
-import TranslationService from '../../services/translationService';
+import TranslationModuleConfiguration from '../../lib/entities/configuration/modules/translationModule/translationModuleConfiguration';
+import DeeplService from '../../lib/services/translate/deeplService';
+import TranslationService from '../../lib/services/translate/translationService';
+import ConfigurationStore from '../../lib/stores/configuration/configurationStore';
+import ConfigurationStoreManager from '../../lib/stores/configuration/configurationStoreManager';
 
 suite('TranslationService', () => {
   let translationService: TranslationService;

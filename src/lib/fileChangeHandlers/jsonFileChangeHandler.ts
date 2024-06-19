@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/node';
-import vscode from 'vscode';
 import { Uri } from 'vscode';
 
 import { ChainType } from '../enums/chainType';
@@ -10,9 +9,9 @@ import I18nextJsonToPoConversionModule from '../modules/i18nextJsonToPoConversio
 import ModuleChainManager from '../modules/moduleChainManager';
 import ReadJsonFileModule from '../modules/readJsonFile/readJsonFileModule';
 import TranslationModule from '../modules/translation/translationModule';
-import FileLockStoreStore from '../services/fileLockStore';
-import FilePathProcessor from '../services/filePathProcessor';
-import FileWatcherCreator from '../services/fileWatcherCreator';
+import FileWatcherCreator from '../services/fileChange/fileWatcherCreator';
+import FileLockStoreStore from '../stores/fileLock/fileLockStore';
+import FilePathUtilities from '../utilities/filePathUtilities';
 
 export default class JsonFileChangeHandler implements FileChangeHandler {
   private static fileWatcherCreator: FileWatcherCreator;
@@ -93,7 +92,7 @@ export default class JsonFileChangeHandler implements FileChangeHandler {
           return Promise.resolve();
         }
 
-        const extractedFileParts = FilePathProcessor.processFilePath(
+        const extractedFileParts = FilePathUtilities.processFilePath(
           changeFileLocation.fsPath
         );
 

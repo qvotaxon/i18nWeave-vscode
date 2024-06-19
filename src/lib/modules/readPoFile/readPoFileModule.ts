@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/node';
 
-import FileReader from '../../services/fileReader';
+import FileReader from '../../services/fileIo/fileReader';
 import { BaseActionModule } from '../baseActionModule';
 import { ReadPoFileModuleContext } from './readPoFileModuleContext';
 

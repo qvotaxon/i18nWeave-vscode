@@ -1,7 +1,7 @@
-import JsonFileChangeHandler from '../fileChangeHandlers/jsonFileChangeHandler';
-import PoFileChangeHandler from '../fileChangeHandlers/poFileChangeHandler';
-import TypeScriptFileChangeHandler from '../fileChangeHandlers/typeScriptFileChangeHandler';
-import FileChangeHandler from '../interfaces/fileChangeHandler';
+import JsonFileChangeHandler from '../../fileChangeHandlers/jsonFileChangeHandler';
+import PoFileChangeHandler from '../../fileChangeHandlers/poFileChangeHandler';
+import TypeScriptFileChangeHandler from '../../fileChangeHandlers/typeScriptFileChangeHandler';
+import FileChangeHandler from '../../interfaces/fileChangeHandler';
 
 export default class FileChangeHandlerFactory {
   public createFileChangeHandler(

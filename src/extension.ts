@@ -1,9 +1,9 @@
 import * as Sentry from '@sentry/node';
 import { ExtensionContext } from 'vscode';
 
-import ConfigurationStoreManager from './services/configurationStoreManager';
-import FileContentStore from './services/fileContentStore';
-import FileWatcherCreator from './services/fileWatcherCreator';
+import FileWatcherCreator from './lib/services/fileChange/fileWatcherCreator';
+import ConfigurationStoreManager from './lib/stores/configuration/configurationStoreManager';
+import FileContentStore from './lib/stores/fileContent/fileContentStore';
 
 function initializeSentry() {
   Sentry.init({

@@ -1,6 +1,6 @@
 import TranslationModuleConfiguration from '../../entities/configuration/modules/translationModule/translationModuleConfiguration';
-import ConfigurationStoreManager from '../../services/configurationStoreManager';
-import TranslationService from '../../services/translationService';
+import TranslationService from '../../services/translate/translationService';
+import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
 import { BaseActionModule } from '../baseActionModule';
 import { TranslationModuleContext } from './translationModuleContext';
 

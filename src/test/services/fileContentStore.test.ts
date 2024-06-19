@@ -3,7 +3,7 @@ import fs from 'fs';
 import sinon from 'sinon';
 import { window, workspace } from 'vscode';
 
-import FileContentStore from '../../services/fileContentStore';
+import FileContentStore from '../../lib/stores/fileContent/fileContentStore';
 
 suite('FileContentStore', () => {
   let fileContentStore: FileContentStore;

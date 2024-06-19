@@ -1,10 +1,10 @@
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import TranslationModule from '../../../modules/translation/translationModule';
-import { TranslationModuleContext } from '../../../modules/translation/translationModuleContext';
-import ConfigurationStoreManager from '../../../services/configurationStoreManager';
-import TranslationService from '../../../services/translationService';
+import TranslationModule from '../../../lib/modules/translation/translationModule';
+import { TranslationModuleContext } from '../../../lib/modules/translation/translationModuleContext';
+import TranslationService from '../../../lib/services/translate/translationService';
+import ConfigurationStoreManager from '../../../lib/stores/configuration/configurationStoreManager';
 
 suite('TranslationModule', () => {
   let translationModule: TranslationModule;

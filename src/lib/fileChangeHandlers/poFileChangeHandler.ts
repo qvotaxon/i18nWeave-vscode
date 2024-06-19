@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/node';
-import vscode from 'vscode';
 import { Uri } from 'vscode';
 
 import { ChainType } from '../enums/chainType';
@@ -9,9 +8,9 @@ import ModuleContext from '../interfaces/moduleContext';
 import ModuleChainManager from '../modules/moduleChainManager';
 import PoToI18nextJsonConversionModule from '../modules/poToI18nextJsonConversion/poToI18nextJsonConversionModule';
 import ReadPoFileModule from '../modules/readPoFile/readPoFileModule';
-import FileLockStoreStore from '../services/fileLockStore';
-import FilePathProcessor from '../services/filePathProcessor';
-import FileWatcherCreator from '../services/fileWatcherCreator';
+import FileWatcherCreator from '../services/fileChange/fileWatcherCreator';
+import FileLockStoreStore from '../stores/fileLock/fileLockStore';
+import FilePathUtilities from '../utilities/filePathUtilities';
 
 export default class PoFileChangeHandler implements FileChangeHandler {
   private static fileWatcherCreator: FileWatcherCreator;
@@ -82,7 +81,7 @@ export default class PoFileChangeHandler implements FileChangeHandler {
           return Promise.resolve();
         }
 
-        const extractedFileParts = FilePathProcessor.processFilePath(
+        const extractedFileParts = FilePathUtilities.processFilePath(
           changeFileLocation.fsPath
         );
 
