@@ -7,7 +7,7 @@ import FileChangeHandler from '../interfaces/fileChangeHandler';
 import ModuleContext from '../interfaces/moduleContext';
 import I18nextScannerModule from '../modules/i18nextScanner/i18nextScannerModule';
 import ModuleChainManager from '../modules/moduleChainManager';
-import FileContentStore from '../services/fileContentStore';
+import FileContentStore from '../stores/fileContent/fileContentStore';
 
 export default class TypeScriptFileChangeHandler implements FileChangeHandler {
   private static i18nextScannerModule: I18nextScannerModule;

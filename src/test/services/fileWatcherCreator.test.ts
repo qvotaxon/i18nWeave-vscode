@@ -2,9 +2,9 @@ import * as assert from 'assert';
 import sinon from 'sinon';
 import * as vscode from 'vscode';
 
-import FileChangeHandlerFactory from '../../services/fileChangeHandlerFactory';
-import FileLockStoreStore from '../../services/fileLockStore';
-import FileWatcherCreator from '../../services/fileWatcherCreator';
+import FileChangeHandlerFactory from '../../lib/services/fileChange/fileChangeHandlerFactory';
+import FileWatcherCreator from '../../lib/services/fileChange/fileWatcherCreator';
+import FileLockStoreStore from '../../lib/stores/fileLock/fileLockStore';
 
 suite('FileWatcherCreator', () => {
   let fileWatcherCreator: FileWatcherCreator;

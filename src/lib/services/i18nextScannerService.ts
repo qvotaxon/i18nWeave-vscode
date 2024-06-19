@@ -5,7 +5,7 @@ import path from 'path';
 import vfs from 'vinyl-fs';
 
 import GeneralConfiguration from '../entities/configuration/general/generalConfiguration';
-import ConfigurationStoreManager from './configurationStoreManager';
+import ConfigurationStoreManager from '../stores/configuration/configurationStoreManager';
 
 type I18nextScannerOptions = {
   compatibilityJSON: string;

@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/node';
 import { po2i18next } from 'gettext-converter';
 import stringify from 'json-stable-stringify';
 
-import FileWriter from '../../services/fileWriter';
+import FileWriter from '../../services/fileIo/fileWriter';
 import { BaseActionModule } from '../baseActionModule';
 import PoToI18nextJsonConversionModuleContext from './poToI18nextJsonConversionModuleContext';
 

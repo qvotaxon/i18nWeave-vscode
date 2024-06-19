@@ -2,13 +2,13 @@ import * as assert from 'assert';
 import sinon from 'sinon';
 import { Uri } from 'vscode';
 
-import { ChainType } from '../../enums/chainType';
-import PoFileChangeHandler from '../../fileChangeHandlers/poFileChangeHandler';
-import ModuleChainManager from '../../modules/moduleChainManager';
-import ReadPoFileModule from '../../modules/readPoFile/readPoFileModule';
-import FileLockStoreStore from '../../services/fileLockStore';
-import FilePathProcessor from '../../services/filePathProcessor';
-import FileWatcherCreator from '../../services/fileWatcherCreator';
+import { ChainType } from '../../lib/enums/chainType';
+import PoFileChangeHandler from '../../lib/fileChangeHandlers/poFileChangeHandler';
+import ModuleChainManager from '../../lib/modules/moduleChainManager';
+import ReadPoFileModule from '../../lib/modules/readPoFile/readPoFileModule';
+import FileWatcherCreator from '../../lib/services/fileChange/fileWatcherCreator';
+import FileLockStoreStore from '../../lib/stores/fileLock/fileLockStore';
+import filePathUtilities from '../../lib/utilities/filePathUtilities';
 
 suite('PoFileChangeHandler', () => {
   test('should initialize moduleChainManager and register chain', () => {
@@ -66,7 +66,7 @@ suite('PoFileChangeHandler', () => {
     };
 
     const processFilePathStub = sinon
-      .stub(FilePathProcessor, 'processFilePath')
+      .stub(filePathUtilities, 'processFilePath')
       .returns(extractedFileParts);
 
     const fileWatcherCreatorCreateFileWatcherForFileStub = sinon.stub(

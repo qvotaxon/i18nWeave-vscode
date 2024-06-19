@@ -2,12 +2,12 @@ import * as assert from 'assert';
 import sinon from 'sinon';
 import { ExtensionContext } from 'vscode';
 
-import I18nextJsonToPoConversionModuleConfiguration from '../entities/configuration/modules/I18nextJsonToPoConversionModule/i18nextJsonToPoConversionModuleConfiguration';
-import I18nextScannerModuleConfiguration from '../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
 import { activate, deactivate } from '../extension';
-import ConfigurationStoreManager from '../services/configurationStoreManager';
-import FileContentStore from '../services/fileContentStore';
-import FileWatcherCreator from '../services/fileWatcherCreator';
+import I18nextJsonToPoConversionModuleConfiguration from '../lib/entities/configuration/modules/I18nextJsonToPoConversionModule/i18nextJsonToPoConversionModuleConfiguration';
+import I18nextScannerModuleConfiguration from '../lib/entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
+import FileWatcherCreator from '../lib/services/fileChange/fileWatcherCreator';
+import ConfigurationStoreManager from '../lib/stores/configuration/configurationStoreManager';
+import FileContentStore from '../lib/stores/fileContent/fileContentStore';
 
 suite('Extension Activation', () => {
   let context: ExtensionContext;

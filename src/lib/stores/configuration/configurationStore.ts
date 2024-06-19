@@ -1,4 +1,4 @@
-import ExtensionConfiguration from '../entities/configuration/extensionConfiguration';
+import ExtensionConfiguration from '../../entities/configuration/extensionConfiguration';
 
 export default class ConfigurationStore {
   private options: Partial<ExtensionConfiguration> = {};

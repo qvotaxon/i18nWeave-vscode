@@ -2,12 +2,10 @@ import * as assert from 'assert';
 import sinon from 'sinon';
 import * as vscode from 'vscode';
 
-import ExtensionConfiguration from '../../entities/configuration/extensionConfiguration';
-import DeepLConfiguration from '../../entities/configuration/modules/translationModule/deepLConfiguration';
-import GoogleTranslateConfiguration from '../../entities/configuration/modules/translationModule/googleTranslateConfiguration';
-import TranslationModuleConfiguration from '../../entities/configuration/modules/translationModule/translationModuleConfiguration';
-import ConfigurationStore from '../../services/configurationStore';
-import ConfigurationStoreManager from '../../services/configurationStoreManager';
+import ExtensionConfiguration from '../../lib/entities/configuration/extensionConfiguration';
+import TranslationModuleConfiguration from '../../lib/entities/configuration/modules/translationModule/translationModuleConfiguration';
+import ConfigurationStore from '../../lib/stores/configuration/configurationStore';
+import ConfigurationStoreManager from '../../lib/stores/configuration/configurationStoreManager';
 
 suite('ConfigurationStoreManager', () => {
   let getConfigurationStub: sinon.SinonStub;

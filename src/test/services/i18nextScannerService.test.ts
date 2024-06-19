@@ -1,9 +1,9 @@
 import * as assert from 'assert';
 import sinon from 'sinon';
 
-import GeneralConfiguration from '../../entities/configuration/general/generalConfiguration';
-import ConfigurationStoreManager from '../../services/configurationStoreManager';
-import I18nextScannerService from '../../services/i18nextScannerService';
+import GeneralConfiguration from '../../lib/entities/configuration/general/generalConfiguration';
+import I18nextScannerService from '../../lib/services/i18nextScannerService';
+import ConfigurationStoreManager from '../../lib/stores/configuration/configurationStoreManager';
 
 suite('I18nextScannerService', () => {
   let scannerService: I18nextScannerService;

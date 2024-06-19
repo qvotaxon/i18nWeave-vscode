@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-import ExtensionConfiguration from '../entities/configuration/extensionConfiguration';
+import ExtensionConfiguration from '../../entities/configuration/extensionConfiguration';
 import ConfigurationStore from './configurationStore';
 
 /**
