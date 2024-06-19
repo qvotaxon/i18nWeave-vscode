@@ -1,8 +1,8 @@
 import * as assert from 'assert';
 import sinon from 'sinon';
 
-import ModuleContext from '../../lib/interfaces/moduleContext';
-import { BaseActionModule } from '../../lib/modules/baseActionModule';
+import ModuleContext from '../interfaces/moduleContext';
+import { BaseActionModule } from './baseActionModule';
 
 class TestActionModule extends BaseActionModule {
   public doExecuteAsync = sinon.stub().resolves();

@@ -1,8 +1,8 @@
 import * as assert from 'assert';
 import { Uri } from 'vscode';
 
-import { ExtractedFileParts } from '../../lib/types/extractedFileParts';
-import FilePathUtilities from '../../lib/utilities/filePathUtilities';
+import { ExtractedFileParts } from '../types/extractedFileParts';
+import FilePathUtilities from './filePathUtilities';
 
 suite('FilePathUtilities', () => {
   suite('extractLocale', () => {

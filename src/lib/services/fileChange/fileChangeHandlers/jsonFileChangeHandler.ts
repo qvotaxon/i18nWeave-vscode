@@ -1,17 +1,17 @@
 import * as Sentry from '@sentry/node';
 import { Uri } from 'vscode';
 
-import { ChainType } from '../enums/chainType';
-import ActionModule from '../interfaces/actionModule';
-import FileChangeHandler from '../interfaces/fileChangeHandler';
-import ModuleContext from '../interfaces/moduleContext';
-import I18nextJsonToPoConversionModule from '../modules/i18nextJsonToPoConversion/i18nextJsonToPoConversionModule';
-import ModuleChainManager from '../modules/moduleChainManager';
-import ReadJsonFileModule from '../modules/readJsonFile/readJsonFileModule';
-import TranslationModule from '../modules/translation/translationModule';
-import FileWatcherCreator from '../services/fileChange/fileWatcherCreator';
-import FileLockStoreStore from '../stores/fileLock/fileLockStore';
-import FilePathUtilities from '../utilities/filePathUtilities';
+import { ChainType } from '../../../enums/chainType';
+import ActionModule from '../../../interfaces/actionModule';
+import FileChangeHandler from '../../../interfaces/fileChangeHandler';
+import ModuleContext from '../../../interfaces/moduleContext';
+import I18nextJsonToPoConversionModule from '../../../modules/i18nextJsonToPoConversion/i18nextJsonToPoConversionModule';
+import ModuleChainManager from '../../../modules/moduleChainManager';
+import ReadJsonFileModule from '../../../modules/readJsonFile/readJsonFileModule';
+import TranslationModule from '../../../modules/translation/translationModule';
+import FileLockStoreStore from '../../../stores/fileLock/fileLockStore';
+import FilePathUtilities from '../../../utilities/filePathUtilities';
+import FileWatcherCreator from '../fileWatcherCreator';
 
 export default class JsonFileChangeHandler implements FileChangeHandler {
   private static fileWatcherCreator: FileWatcherCreator;

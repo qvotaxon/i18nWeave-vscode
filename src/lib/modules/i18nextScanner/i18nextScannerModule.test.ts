@@ -1,8 +1,8 @@
 import sinon from 'sinon';
 
-import I18nextScannerModule from '../../../lib/modules/i18nextScanner/i18nextScannerModule';
-import I18nextScannerModuleContext from '../../../lib/modules/i18nextScanner/i18nextScannerModuleContext';
-import I18nextScannerService from '../../../lib/services/i18nextScannerService';
+import I18nextScannerService from '../../services/i18nextScannerService';
+import I18nextScannerModule from './i18nextScannerModule';
+import I18nextScannerModuleContext from './i18nextScannerModuleContext';
 
 suite('I18nextScannerModule', () => {
   let scannerModule: I18nextScannerModule;

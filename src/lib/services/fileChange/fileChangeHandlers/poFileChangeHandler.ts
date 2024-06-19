@@ -1,16 +1,16 @@
 import * as Sentry from '@sentry/node';
 import { Uri } from 'vscode';
 
-import { ChainType } from '../enums/chainType';
-import ActionModule from '../interfaces/actionModule';
-import FileChangeHandler from '../interfaces/fileChangeHandler';
-import ModuleContext from '../interfaces/moduleContext';
-import ModuleChainManager from '../modules/moduleChainManager';
-import PoToI18nextJsonConversionModule from '../modules/poToI18nextJsonConversion/poToI18nextJsonConversionModule';
-import ReadPoFileModule from '../modules/readPoFile/readPoFileModule';
-import FileWatcherCreator from '../services/fileChange/fileWatcherCreator';
-import FileLockStoreStore from '../stores/fileLock/fileLockStore';
-import FilePathUtilities from '../utilities/filePathUtilities';
+import { ChainType } from '../../../enums/chainType';
+import ActionModule from '../../../interfaces/actionModule';
+import FileChangeHandler from '../../../interfaces/fileChangeHandler';
+import ModuleContext from '../../../interfaces/moduleContext';
+import ModuleChainManager from '../../../modules/moduleChainManager';
+import PoToI18nextJsonConversionModule from '../../../modules/poToI18nextJsonConversion/poToI18nextJsonConversionModule';
+import ReadPoFileModule from '../../../modules/readPoFile/readPoFileModule';
+import FileLockStoreStore from '../../../stores/fileLock/fileLockStore';
+import FilePathUtilities from '../../../utilities/filePathUtilities';
+import FileWatcherCreator from '../fileWatcherCreator';
 
 export default class PoFileChangeHandler implements FileChangeHandler {
   private static fileWatcherCreator: FileWatcherCreator;

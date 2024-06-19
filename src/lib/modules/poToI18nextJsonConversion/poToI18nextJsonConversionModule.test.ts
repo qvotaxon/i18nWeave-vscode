@@ -1,8 +1,8 @@
 import * as assert from 'assert';
 import { Uri, workspace } from 'vscode';
 
-import PoToI18nextJsonConversionModule from '../../../lib/modules/poToI18nextJsonConversion/poToI18nextJsonConversionModule';
-import FileReader from '../../../lib/services/fileIo/fileReader';
+import FileReader from '../../services/fileIo/fileReader';
+import PoToI18nextJsonConversionModule from './poToI18nextJsonConversionModule';
 
 suite('PoToI18nextJsonConversionModule Tests', () => {
   test('doExecute should convert PO to JSON and write to file', async () => {

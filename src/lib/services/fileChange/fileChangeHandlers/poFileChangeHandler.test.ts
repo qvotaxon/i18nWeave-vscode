@@ -2,13 +2,13 @@ import * as assert from 'assert';
 import sinon from 'sinon';
 import { Uri } from 'vscode';
 
-import { ChainType } from '../../lib/enums/chainType';
-import PoFileChangeHandler from '../../lib/fileChangeHandlers/poFileChangeHandler';
-import ModuleChainManager from '../../lib/modules/moduleChainManager';
-import ReadPoFileModule from '../../lib/modules/readPoFile/readPoFileModule';
-import FileWatcherCreator from '../../lib/services/fileChange/fileWatcherCreator';
-import FileLockStoreStore from '../../lib/stores/fileLock/fileLockStore';
-import filePathUtilities from '../../lib/utilities/filePathUtilities';
+import { ChainType } from '../../../enums/chainType';
+import ModuleChainManager from '../../../modules/moduleChainManager';
+import ReadPoFileModule from '../../../modules/readPoFile/readPoFileModule';
+import FileLockStoreStore from '../../../stores/fileLock/fileLockStore';
+import filePathUtilities from '../../../utilities/filePathUtilities';
+import FileWatcherCreator from '../fileWatcherCreator';
+import PoFileChangeHandler from './poFileChangeHandler';
 
 suite('PoFileChangeHandler', () => {
   test('should initialize moduleChainManager and register chain', () => {

@@ -2,9 +2,9 @@ import * as assert from 'assert';
 import * as mock from 'mock-fs';
 import { Uri } from 'vscode';
 
-import ReadJsonFileModule from '../../../lib/modules/readJsonFile/readJsonFileModule';
-import { ReadJsonFileModuleContext } from '../../../lib/modules/readJsonFile/readJsonFileModuleContext';
-import FileReader from '../../../lib/services/fileIo/fileReader';
+import FileReader from '../../services/fileIo/fileReader';
+import ReadJsonFileModule from './readJsonFileModule';
+import { ReadJsonFileModuleContext } from './readJsonFileModuleContext';
 
 suite('ReadJsonFileModule Tests', () => {
   setup(() => {

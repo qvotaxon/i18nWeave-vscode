@@ -3,13 +3,13 @@ import fs from 'fs';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import GeneralConfiguration from '../../lib/entities/configuration/general/generalConfiguration';
-import { ChainType } from '../../lib/enums/chainType';
-import TypeScriptFileChangeHandler from '../../lib/fileChangeHandlers/typeScriptFileChangeHandler';
-import ModuleContext from '../../lib/interfaces/moduleContext';
-import ModuleChainManager from '../../lib/modules/moduleChainManager';
-import ConfigurationStoreManager from '../../lib/stores/configuration/configurationStoreManager';
-import FileContentStore from '../../lib/stores/fileContent/fileContentStore';
+import GeneralConfiguration from '../../../entities/configuration/general/generalConfiguration';
+import { ChainType } from '../../../enums/chainType';
+import ModuleContext from '../../../interfaces/moduleContext';
+import ModuleChainManager from '../../../modules/moduleChainManager';
+import ConfigurationStoreManager from '../../../stores/configuration/configurationStoreManager';
+import FileContentStore from '../../../stores/fileContent/fileContentStore';
+import TypeScriptFileChangeHandler from './typeScriptFileChangeHandler';
 
 suite('TypeScriptFileChangeHandler', () => {
   let moduleChainManagerStub: sinon.SinonStubbedInstance<ModuleChainManager>;

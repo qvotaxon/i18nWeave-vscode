@@ -2,8 +2,8 @@ import * as assert from 'assert';
 import { i18next2po } from 'gettext-converter';
 import { Uri, workspace } from 'vscode';
 
-import I18nextJsonToPoConversionModule from '../../../lib/modules/i18nextJsonToPoConversion/i18nextJsonToPoConversionModule';
-import FileReader from '../../../lib/services/fileIo/fileReader';
+import FileReader from '../../services/fileIo/fileReader';
+import I18nextJsonToPoConversionModule from './i18nextJsonToPoConversionModule';
 
 suite('I18nextJsonToPoConversionModule Tests', () => {
   const potCreationDateRegex = /"POT-Creation-Date: .+\\n"/g;

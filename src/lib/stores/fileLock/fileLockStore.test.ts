@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import { Uri } from 'vscode';
 
-import FileLockStoreStore from '../../lib/stores/fileLock/fileLockStore';
+import FileLockStoreStore from './fileLockStore';
 
 suite('FileLockStoreStore', () => {
   let fileLockStore: FileLockStoreStore;
@@ -21,7 +21,7 @@ suite('FileLockStoreStore', () => {
     const uri1 = Uri.file('/path/to/file/2');
     const uri2 = Uri.file('/path/to/file/3');
     fileLockStore.add(uri1);
-    fileLockStore.add(uri1);
+    fileLockStore.add(uri1); //NOSONAR
     fileLockStore.add(uri2);
 
     fileLockStore.delete(uri1);
