@@ -12,7 +12,14 @@ suite('FileWriter Tests', () => {
   });
 
   test('writeToFileAsync should write data to a file', async () => {
-    const relativePath = path.join(__dirname, '..', '..', 'test', 'test.json');
+    const relativePath = path.join(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      'test',
+      'test.json'
+    );
     const filePath = Uri.file(relativePath);
     const data = { test: 'test' };
 
