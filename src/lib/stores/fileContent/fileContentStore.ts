@@ -1,5 +1,7 @@
 import fs from 'fs';
-import { GlobPattern, ProgressLocation, window, workspace } from 'vscode';
+import { ProgressLocation, window } from 'vscode';
+
+import FileLocationStore from '../fileLocation/fileLocationStore';
 
 export default class FileContentStore {
   private static instance: FileContentStore;
@@ -18,7 +20,7 @@ export default class FileContentStore {
     return FileContentStore.instance;
   }
 
-  public async initializeInitialFileContentsAsync(pattern: GlobPattern) {
+  public initializeInitialFileContents() {
     window.withProgress(
       {
         location: ProgressLocation.Window,
@@ -26,10 +28,9 @@ export default class FileContentStore {
       },
       async () => {
         try {
-          const fileUris = await workspace.findFiles(
-            pattern,
-            '**​/{node_modules,.git,.next}/**'
-          );
+          const fileUris = FileLocationStore.getInstance().getFilesByType([
+            'ts',
+          ]);
 
           fileUris.forEach(fileUri => {
             FileContentStore.updatePreviousFileContents(fileUri.fsPath);
