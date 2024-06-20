@@ -48,8 +48,7 @@ suite('FileWatcherCreator', () => {
 
       const fileWatchers =
         await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
-          '**/*.ts',
-          {} as vscode.ExtensionContext
+          '**/*.ts'
         );
 
       assert.strictEqual(fileWatchers.length, 1);
@@ -71,8 +70,7 @@ suite('FileWatcherCreator', () => {
       hasFileLockStub.returns(false);
 
       await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
-        '**/*.ts',
-        {} as vscode.ExtensionContext
+        '**/*.ts'
       );
 
       sinon.assert.calledOnce(handleFileChangeAsyncStub);
@@ -91,7 +89,6 @@ suite('FileWatcherCreator', () => {
 
       await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
         '**/*.ts',
-        {} as vscode.ExtensionContext,
         () => true
       );
 

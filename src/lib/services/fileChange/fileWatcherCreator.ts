@@ -1,8 +1,6 @@
 import * as vscode from 'vscode';
 
-import WebViewService from '../webview/webviewService';
 import FileChangeHandlerFactory from './fileChangeHandlerFactory';
-import JsonFileChangeHandler from './fileChangeHandlers/jsonFileChangeHandler';
 
 /**
  * Class responsible for creating file watchers for files matching a given glob pattern.
@@ -27,7 +25,6 @@ export default class FileWatcherCreator {
    */
   public async createFileWatchersForFilesMatchingGlobAsync(
     pattern: string,
-    context: vscode.ExtensionContext,
     ...disableFlags: (() => boolean)[]
   ): Promise<vscode.FileSystemWatcher[]> {
     const fileURIs = await vscode.workspace.findFiles(
@@ -48,17 +45,6 @@ export default class FileWatcherCreator {
             await fileChangeHandler?.handleFileChangeAsync(uri);
           }
         });
-
-        //TODO: Move this to a more appropriate place
-        // Open JSON files as tables
-        if (fileChangeHandler instanceof JsonFileChangeHandler) {
-          vscode.workspace.onDidOpenTextDocument(document => {
-            const uri = document.uri;
-            if (uri.scheme === 'file' && uri.fsPath === fsPath) {
-              WebViewService.getInstance().openJsonAsTable(uri, context);
-            }
-          });
-        }
 
         fileWatchers.push(fileWatcher);
       })

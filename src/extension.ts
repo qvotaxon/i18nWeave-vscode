@@ -1,7 +1,9 @@
 import * as Sentry from '@sentry/node';
+import vscode from 'vscode';
 import { ExtensionContext } from 'vscode';
 
 import FileWatcherCreator from './lib/services/fileChange/fileWatcherCreator';
+import WebViewService from './lib/services/webview/webviewService';
 import ConfigurationStoreManager from './lib/stores/configuration/configurationStoreManager';
 import FileContentStore from './lib/stores/fileContent/fileContentStore';
 
@@ -46,6 +48,9 @@ export async function activate(
       fileWatcherCreator
     );
 
+    const onDidOpenTextDocumentDisposable =
+      await createWebViewForFilesMatchingPattern(jsonFileGlobPattern);
+
     const poFileWatchers = await createWatchersForPattern(
       poFileGlobPattern,
       'i18nextJsonToPoConversionModule',
@@ -57,7 +62,8 @@ export async function activate(
     context.subscriptions.push(
       ...typeScriptFileWatchers,
       ...jsonFileWatchers,
-      ...poFileWatchers
+      ...poFileWatchers,
+      onDidOpenTextDocumentDisposable
     );
   } catch (error) {
     Sentry.captureException(error);
@@ -71,11 +77,30 @@ async function createWatchersForPattern(
 ) {
   return await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
     globPattern,
-    _context,
     () =>
       false ===
       ConfigurationStoreManager.getInstance().getConfig<any>(configKey).enabled
   );
+}
+
+async function createWebViewForFilesMatchingPattern(globPattern: string) {
+  const fileURIs = await vscode.workspace.findFiles(
+    globPattern,
+    '**/{node_modules,.next}/**'
+  );
+
+  const onDidOpenTextDocumentDisposable =
+    vscode.workspace.onDidOpenTextDocument(document => {
+      const uri = document.uri;
+      if (
+        uri.scheme === 'file' &&
+        fileURIs.find(fileUri => uri.fsPath === fileUri.fsPath)
+      ) {
+        WebViewService.getInstance().openJsonAsTable(uri, _context);
+      }
+    });
+
+  return onDidOpenTextDocumentDisposable;
 }
 
 export function deactivate() {
