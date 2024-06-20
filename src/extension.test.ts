@@ -44,23 +44,23 @@ suite('Extension Activation', () => {
   });
 
   test('should activate extension and create file watchers', async () => {
-    fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync.resolves([]);
+    fileWatcherCreator.createFileWatchersForFileTypeAsync.resolves([]);
 
     await activate(context, fileWatcherCreator);
 
     sinon.assert.calledWith(
-      fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync,
-      '**/{apps,libs}/**/*.{tsx,ts}',
+      fileWatcherCreator.createFileWatchersForFileTypeAsync,
+      ['ts', 'tsx'],
       sinon.match.func
     );
     sinon.assert.calledWith(
-      fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync,
-      '**/locales/**/*.json',
+      fileWatcherCreator.createFileWatchersForFileTypeAsync,
+      ['json'],
       sinon.match.func
     );
     sinon.assert.calledWith(
-      fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync,
-      '**/locales/**/*.po',
+      fileWatcherCreator.createFileWatchersForFileTypeAsync,
+      ['po'],
       sinon.match.func
     );
     sinon.assert.calledOnce(configurationStoreManagerStub().initialize);

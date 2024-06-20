@@ -6,6 +6,7 @@ import FileWatcherCreator from './lib/services/fileChange/fileWatcherCreator';
 import WebViewService from './lib/services/webview/webviewService';
 import ConfigurationStoreManager from './lib/stores/configuration/configurationStoreManager';
 import FileContentStore from './lib/stores/fileContent/fileContentStore';
+import FileLocationStore from './lib/stores/fileLocation/fileLocationStore';
 
 function initializeSentry() {
   Sentry.init({
@@ -28,31 +29,34 @@ export async function activate(
   _context = context;
 
   try {
-    const typeScriptFileGlobPattern = '**/{apps,libs}/**/*.{tsx,ts}';
-    const jsonFileGlobPattern = `**/locales/**/*.json`;
-    const poFileGlobPattern = `**/locales/**/*.po`;
+    const filePatterns = [
+      '**/*.json',
+      '**/*.po',
+      '**/{apps,libs}/**/*.{tsx,ts}',
+    ];
+    const ignorePattern = '**/{node_modules,.next,.spec.*}/**';
 
-    await FileContentStore.getInstance().initializeInitialFileContentsAsync(
-      typeScriptFileGlobPattern
+    await FileLocationStore.getInstance().scanWorkspaceAsync(
+      filePatterns,
+      ignorePattern
     );
 
-    const typeScriptFileWatchers = await createWatchersForPattern(
-      typeScriptFileGlobPattern,
+    FileContentStore.getInstance().initializeInitialFileContents();
+
+    const typeScriptFileWatchers = await createWatchersForFileType(
+      ['ts', 'tsx'],
       'i18nextScannerModule',
       fileWatcherCreator
     );
 
-    const jsonFileWatchers = await createWatchersForPattern(
-      jsonFileGlobPattern,
+    const jsonFileWatchers = await createWatchersForFileType(
+      ['json'],
       'i18nextJsonToPoConversionModule',
       fileWatcherCreator
     );
 
-    const onDidOpenTextDocumentDisposable =
-      await createWebViewForFilesMatchingPattern(jsonFileGlobPattern);
-
-    const poFileWatchers = await createWatchersForPattern(
-      poFileGlobPattern,
+    const poFileWatchers = await createWatchersForFileType(
+      ['po'],
       'i18nextJsonToPoConversionModule',
       fileWatcherCreator
     );
@@ -62,21 +66,20 @@ export async function activate(
     context.subscriptions.push(
       ...typeScriptFileWatchers,
       ...jsonFileWatchers,
-      ...poFileWatchers,
-      onDidOpenTextDocumentDisposable
+      ...poFileWatchers
     );
   } catch (error) {
     Sentry.captureException(error);
   }
 }
 
-async function createWatchersForPattern(
-  globPattern: string,
+async function createWatchersForFileType(
+  fileExtensions: string[],
   configKey: 'i18nextScannerModule' | 'i18nextJsonToPoConversionModule',
   fileWatcherCreator: FileWatcherCreator
 ) {
-  return await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
-    globPattern,
+  return await fileWatcherCreator.createFileWatchersForFileTypeAsync(
+    fileExtensions,
     () =>
       false ===
       ConfigurationStoreManager.getInstance().getConfig<any>(configKey).enabled
