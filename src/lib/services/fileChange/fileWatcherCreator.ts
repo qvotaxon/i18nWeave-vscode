@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 
+import FileLocationStore from '../../stores/fileLocation/fileLocationStore';
 import FileChangeHandlerFactory from './fileChangeHandlerFactory';
 
 /**
@@ -23,14 +24,12 @@ export default class FileWatcherCreator {
    * @param disableFlags - Optional disable flags that determine whether the file watchers should be disabled.
    * @returns A promise that resolves to an array of file system watchers.
    */
-  public async createFileWatchersForFilesMatchingGlobAsync(
-    pattern: string,
+  public async createFileWatchersForFileTypeAsync(
+    fileExtensions: string[],
     ...disableFlags: (() => boolean)[]
   ): Promise<vscode.FileSystemWatcher[]> {
-    const fileURIs = await vscode.workspace.findFiles(
-      pattern,
-      '**/{node_modules,.next}/**'
-    );
+    const fileURIs =
+      FileLocationStore.getInstance().getFilesByType(fileExtensions);
     const fileWatchers: vscode.FileSystemWatcher[] = [];
 
     await Promise.all(

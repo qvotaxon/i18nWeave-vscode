@@ -1,8 +1,10 @@
 import * as assert from 'assert';
 import fs from 'fs';
 import sinon from 'sinon';
+import vscode from 'vscode';
 import { window, workspace } from 'vscode';
 
+import FileLocationStore from '../fileLocation/fileLocationStore';
 import FileContentStore from './fileContentStore';
 
 suite('FileContentStore', () => {
@@ -32,54 +34,50 @@ suite('FileContentStore', () => {
 
   suite('initializeInitialFileContentsAsync', () => {
     test('should initialize file caches', async () => {
-      const pattern = '**/*.txt';
-      const fileUris = [
-        { fsPath: '/path/to/file1.txt' },
-        { fsPath: '/path/to/file2.txt' },
-      ];
-      findFilesStub.resolves(fileUris);
+      const expectedFirstPath = vscode.Uri.parse('file:///path/to/file1.ts');
+      const expectedSecondPath = vscode.Uri.parse('file:///path/to/file2.ts');
 
-      await fileContentStore.initializeInitialFileContentsAsync(pattern);
+      const fileLocationStoreStub = sinon
+        .stub(FileLocationStore.getInstance(), 'getFilesByType')
+        .returns([expectedFirstPath, expectedSecondPath]);
 
-      sinon.assert.calledOnceWithExactly(
-        findFilesStub,
-        pattern,
-        '**​/{node_modules,.git,.next}/**'
-      );
+      fileContentStore.initializeInitialFileContents();
+
       sinon.assert.calledTwice(readFileSyncStub);
       sinon.assert.calledWithExactly(
         readFileSyncStub.getCall(0),
-        '/path/to/file1.txt',
+        expectedFirstPath.fsPath,
         { encoding: 'utf8' }
       );
       sinon.assert.calledWithExactly(
         readFileSyncStub.getCall(1),
-        '/path/to/file2.txt',
+        expectedSecondPath.fsPath,
         { encoding: 'utf8' }
       );
+
+      fileLocationStoreStub.restore();
     });
 
     test('should handle errors and show error message', async () => {
-      const pattern = '**/*.txt';
       const errorMessage = 'Error initializing initial file contents';
-      findFilesStub.rejects(new Error(errorMessage));
 
-      await fileContentStore.initializeInitialFileContentsAsync(pattern);
+      const fileLocationStoreStub = sinon
+        .stub(FileLocationStore.getInstance(), 'getFilesByType')
+        .throws(new Error(errorMessage));
 
-      sinon.assert.calledOnceWithExactly(
-        findFilesStub,
-        pattern,
-        '**​/{node_modules,.git,.next}/**'
-      );
+      fileContentStore.initializeInitialFileContents();
+
       sinon.assert.notCalled(readFileSyncStub);
       sinon.assert.calledOnce(showErrorMessageStub);
       sinon.assert.calledWithExactly(showErrorMessageStub, errorMessage);
+
+      fileLocationStoreStub.restore();
     });
   });
 
   suite('fileChangeContainsTranslationKeys', () => {
     test('should return true if file change contains translation keys', () => {
-      const fsPath = '/path/to/file.txt';
+      const fsPath = '/path/to/file.json';
       const currentFileContents = 'I18nKey("key1")\nI18nKey("key2")\n';
       const previousFileContents = 'I18nKey("key1")\n';
       FileContentStore.currentFileContents[fsPath as keyof object] =
@@ -93,7 +91,7 @@ suite('FileContentStore', () => {
     });
 
     test('should return false if file change does not contain translation keys', () => {
-      const fsPath = '/path/to/file.txt';
+      const fsPath = '/path/to/file.json';
       const currentFileContents = 'console.log("Hello, world!");\n';
       const previousFileContents = 'console.log("Hello, world!");\n';
       FileContentStore.currentFileContents[fsPath as keyof object] =
@@ -109,7 +107,7 @@ suite('FileContentStore', () => {
 
   suite('updatePreviousFileContents', () => {
     test('should update previous file contents', () => {
-      const fsPath = '/path/to/file.txt';
+      const fsPath = '/path/to/file.json';
       const fileContent = 'I18nKey("key1")\nI18nKey("key2")\n';
       readFileSyncStub.returns(fileContent);
 
@@ -127,7 +125,7 @@ suite('FileContentStore', () => {
 
   suite('updateCurrentFileContents', () => {
     test('should update current file contents', () => {
-      const fsPath = '/path/to/file.txt';
+      const fsPath = '/path/to/file.json';
       const fileContent = 'I18nKey("key1")\nI18nKey("key2")\n';
       readFileSyncStub.returns(fileContent);
 
