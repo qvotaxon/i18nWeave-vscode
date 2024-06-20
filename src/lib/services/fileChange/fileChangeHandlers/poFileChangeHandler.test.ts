@@ -6,7 +6,7 @@ import { ChainType } from '../../../enums/chainType';
 import ModuleChainManager from '../../../modules/moduleChainManager';
 import ReadPoFileModule from '../../../modules/readPoFile/readPoFileModule';
 import FileLockStoreStore from '../../../stores/fileLock/fileLockStore';
-import filePathUtilities from '../../../utilities/filePathUtilities';
+import * as filePathUtilities from '../../../utilities/filePathUtilities';
 import FileWatcherCreator from '../fileWatcherCreator';
 import PoFileChangeHandler from './poFileChangeHandler';
 
@@ -65,9 +65,11 @@ suite('PoFileChangeHandler', () => {
       outputPath: Uri.parse('/path/to/output'),
     };
 
-    const processFilePathStub = sinon
-      .stub(filePathUtilities, 'processFilePath')
-      .returns(extractedFileParts);
+    const extractFilePathPartsStub = sinon.stub(
+      filePathUtilities,
+      'extractFilePathParts'
+    );
+    extractFilePathPartsStub.returns(extractedFileParts);
 
     const fileWatcherCreatorCreateFileWatcherForFileStub = sinon.stub(
       FileWatcherCreator.prototype,
@@ -88,7 +90,7 @@ suite('PoFileChangeHandler', () => {
     );
 
     sinon.assert.calledOnceWithExactly(
-      processFilePathStub,
+      extractFilePathPartsStub,
       changeFileLocation.fsPath
     );
 
@@ -109,7 +111,7 @@ suite('PoFileChangeHandler', () => {
 
     sinon.assert.calledOnce(fileWatcherCreatorCreateFileWatcherForFileStub);
 
-    processFilePathStub.restore();
+    extractFilePathPartsStub.restore();
     moduleChainManagerExecuteChainStub.restore();
     fileLockStoreAddStub.restore();
     fileWatcherCreatorCreateFileWatcherForFileStub.restore();

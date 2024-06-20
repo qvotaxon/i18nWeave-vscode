@@ -1,42 +1,48 @@
+import path from 'path';
+import vscode from 'vscode';
 import { Uri } from 'vscode';
 
-import { ExtractedFileParts } from '../types/extractedFileParts';
+import { ExtractedFileParts as FilePathParts } from '../types/extractedFileParts';
+
+export function extractLocale(filePath: string): string {
+  const localePattern = /\\locales\\([^\\]+)\\/;
+  const match = localePattern.exec(filePath);
+  if (!match || match.length < 2) {
+    throw new Error('Invalid file path format');
+  }
+  return match[1];
+}
+
+export function determineOutputPath(filePath: string): Uri {
+  if (!filePath.endsWith('.po') && !filePath.endsWith('.json')) {
+    throw new Error(
+      'Invalid file extension. Only .po and .json files are supported.'
+    );
+  }
+
+  const commonPath = filePath.replace(/\.po$|\.json$/, '');
+  return filePath.endsWith('.po')
+    ? Uri.file(`${commonPath}.json`)
+    : Uri.file(`${commonPath}.po`);
+}
 
 /**
- * The FilePathProcessor class is responsible for processing file paths and extracting locale and output path information.
+ * Processes the given file path and extracts the locale and output path.
+ * @param filePath - The file path to process.
+ * @returns A {@link FilePathParts} object containing the extracted locale and output path.
  */
-export default class FilePathUtilities {
-  private static extractLocale(filePath: string): string {
-    const localePattern = /\\locales\\([^\\]+)\\/;
-    const match = localePattern.exec(filePath);
-    if (!match || match.length < 2) {
-      throw new Error('Invalid file path format');
-    }
-    return match[1];
-  }
+export function extractFilePathParts(filePath: string): FilePathParts {
+  const locale = extractLocale(filePath);
+  const outputPath = determineOutputPath(filePath);
 
-  private static determineOutputPath(filePath: string): Uri {
-    if (!filePath.endsWith('.po') && !filePath.endsWith('.json')) {
-      throw new Error(
-        'Invalid file extension. Only .po and .json files are supported.'
-      );
-    }
+  return { locale, outputPath } as FilePathParts;
+}
 
-    const commonPath = filePath.replace(/\.po$|\.json$/, '');
-    return filePath.endsWith('.po')
-      ? Uri.file(`${commonPath}.json`)
-      : Uri.file(`${commonPath}.po`);
-  }
-
-  /**
-   * Processes the given file path and extracts the locale and output path.
-   * @param filePath - The file path to process.
-   * @returns A {@link ExtractedFileParts} object containing the extracted locale and output path.
-   */
-  public static processFilePath(filePath: string): ExtractedFileParts {
-    const locale = this.extractLocale(filePath);
-    const outputPath = this.determineOutputPath(filePath);
-
-    return { locale, outputPath };
-  }
+/**
+ * Gets the file extension from a URI.
+ * @param uri The URI of the file.
+ * @returns The file extension.
+ */
+export function getFileExtension(uri: vscode.Uri): string {
+  return path.extname(uri.fsPath).slice(1);
 }

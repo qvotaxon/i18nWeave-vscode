@@ -7,7 +7,7 @@ import ModuleChainManager from '../../../modules/moduleChainManager';
 import ReadJsonFileModule from '../../../modules/readJsonFile/readJsonFileModule';
 import TranslationModule from '../../../modules/translation/translationModule';
 import FileLockStoreStore from '../../../stores/fileLock/fileLockStore';
-import filePathUtilities from '../../../utilities/filePathUtilities';
+import * as filePathUtilities from '../../../utilities/filePathUtilities';
 import FileWatcherCreator from '../fileWatcherCreator';
 import JsonFileChangeHandler from './jsonFileChangeHandler';
 
@@ -73,9 +73,11 @@ suite('JsonFileChangeHandler', () => {
       outputPath: Uri.parse('/path/to/output'),
     };
 
-    const processFilePathStub = sinon
-      .stub(filePathUtilities, 'processFilePath')
-      .returns(extractedFileParts);
+    const extractFilePathPartsStub = sinon.stub(
+      filePathUtilities,
+      'extractFilePathParts'
+    );
+    extractFilePathPartsStub.returns(extractedFileParts);
 
     const fileWatcherCreatorCreateFileWatcherForFileStub = sinon.stub(
       FileWatcherCreator.prototype,
@@ -96,7 +98,7 @@ suite('JsonFileChangeHandler', () => {
     );
 
     sinon.assert.calledOnceWithExactly(
-      processFilePathStub,
+      extractFilePathPartsStub,
       changeFileLocation.fsPath
     );
 
@@ -117,7 +119,7 @@ suite('JsonFileChangeHandler', () => {
 
     sinon.assert.calledOnce(fileWatcherCreatorCreateFileWatcherForFileStub);
 
-    processFilePathStub.restore();
+    extractFilePathPartsStub.restore();
     moduleChainManagerExecuteChainStub.restore();
     fileLockStoreAddStub.restore();
     fileWatcherCreatorCreateFileWatcherForFileStub.restore();
