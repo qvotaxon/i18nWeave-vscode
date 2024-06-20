@@ -15,11 +15,15 @@ function initializeSentry() {
 }
 initializeSentry();
 
+let _context = {} as ExtensionContext;
+
 export async function activate(
   context: ExtensionContext,
   fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator()
 ) {
   console.log('i18nWeave is now active!');
+
+  _context = context;
 
   try {
     const typeScriptFileGlobPattern = '**/{apps,libs}/**/*.{tsx,ts}';
@@ -67,6 +71,7 @@ async function createWatchersForPattern(
 ) {
   return await fileWatcherCreator.createFileWatchersForFilesMatchingGlobAsync(
     globPattern,
+    _context,
     () =>
       false ===
       ConfigurationStoreManager.getInstance().getConfig<any>(configKey).enabled
