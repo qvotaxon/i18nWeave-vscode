@@ -39,7 +39,7 @@ suite('FileContentStore', () => {
 
       const fileLocationStoreStub = sinon
         .stub(FileLocationStore.getInstance(), 'getFilesByType')
-        .returns([expectedFirstPath, expectedSecondPath]);
+        .returns([expectedFirstPath.fsPath, expectedSecondPath.fsPath]);
 
       fileContentStore.initializeInitialFileContents();
 

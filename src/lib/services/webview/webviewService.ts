@@ -77,7 +77,7 @@ export default class WebViewService {
     updateWebviewContent();
   }
 
-  private getWebviewContent(
+  public getWebviewContent(
     panel: vscode.WebviewPanel,
     jsonData: any,
     extensionUri: vscode.Uri
@@ -85,15 +85,22 @@ export default class WebViewService {
     const tableContent = this.generateTableContent(jsonData);
     const htmlFilePath = vscode.Uri.joinPath(
       extensionUri,
+      'src',
       'media',
       'index.html'
     );
     const cssFilePath = vscode.Uri.joinPath(
       extensionUri,
+      'src',
       'media',
       'styles.css'
     );
-    const jsFilePath = vscode.Uri.joinPath(extensionUri, 'media', 'script.js');
+    const jsFilePath = vscode.Uri.joinPath(
+      extensionUri,
+      'src',
+      'media',
+      'script.js'
+    );
 
     const htmlContent = fs
       .readFileSync(htmlFilePath.fsPath, 'utf8')
@@ -110,7 +117,7 @@ export default class WebViewService {
     return htmlContent;
   }
 
-  private generateTableContent(jsonData: any, parentKey = ''): string {
+  public generateTableContent(jsonData: any, parentKey = ''): string {
     let content = '';
     for (const key in jsonData) {
       if (typeof jsonData[key] === 'object') {
@@ -128,13 +135,17 @@ export default class WebViewService {
     return content;
   }
 
-  private saveJsonFile(uri: vscode.Uri, jsonData: string) {
-    fs.writeFile(uri.fsPath, jsonData, 'utf8', err => {
-      if (err) {
-        vscode.window.showErrorMessage(`Error saving file: ${err.message}`);
-      } else {
-        vscode.window.showInformationMessage('File saved successfully');
-      }
-    });
+  public saveJsonFile(uri: vscode.Uri, jsonData: string) {
+    try {
+      fs.writeFileSync(uri.fsPath, jsonData, {
+        encoding: 'utf8',
+      });
+
+      vscode.window.showInformationMessage('File saved successfully');
+    } catch (err) {
+      vscode.window.showErrorMessage(
+        `Error saving file: ${(err as Error).message}`
+      );
+    }
   }
 }

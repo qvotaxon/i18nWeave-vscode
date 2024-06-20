@@ -28,12 +28,12 @@ export default class FileContentStore {
       },
       async () => {
         try {
-          const fileUris = FileLocationStore.getInstance().getFilesByType([
+          const fsPaths = FileLocationStore.getInstance().getFilesByType([
             'ts',
           ]);
 
-          fileUris.forEach(fileUri => {
-            FileContentStore.updatePreviousFileContents(fileUri.fsPath);
+          fsPaths.forEach(fsPath => {
+            FileContentStore.updatePreviousFileContents(fsPath);
           });
         } catch (error) {
           console.error('Error initializing initial file contents:', error);

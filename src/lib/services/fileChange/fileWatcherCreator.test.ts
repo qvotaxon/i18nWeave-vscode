@@ -41,7 +41,7 @@ suite('FileWatcherCreator', () => {
     test('should create file watchers for files matching the specified glob pattern', async () => {
       const fileLocationStoreStub = sinon
         .stub(FileLocationStore.getInstance(), 'getFilesByType')
-        .returns([vscode.Uri.parse('file:///path/to/file.ts')]);
+        .returns([vscode.Uri.parse('file:///path/to/file.ts').fsPath]);
 
       const mockFileWatcher = {
         onDidChange: sinon.stub(),
@@ -65,7 +65,7 @@ suite('FileWatcherCreator', () => {
       const mockUri = vscode.Uri.parse('file:///path/to/file.ts');
       const fileLocationStoreStub = sinon
         .stub(FileLocationStore.getInstance(), 'getFilesByType')
-        .returns([mockUri]);
+        .returns([mockUri.fsPath]);
       const mockFileWatcher = {
         onDidChange: (callback: (uri: vscode.Uri) => Promise<void>) => {
           callback(mockUri);
