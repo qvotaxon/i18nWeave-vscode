@@ -18,7 +18,7 @@ export default class WebViewService {
 
   /**
    * Opens a JSON file as a table in a webview.
-   * 
+   *
    * @param uri The URI of the JSON file.
    * @param context The extension context.
    */
@@ -41,7 +41,11 @@ export default class WebViewService {
 
         try {
           const jsonData = JSON.parse(data);
-          panel.webview.html = this.getWebviewContent(jsonData, context.extensionUri);
+          panel.webview.html = this.getWebviewContent(
+            panel,
+            jsonData,
+            context.extensionUri
+          );
 
           panel.webview.onDidReceiveMessage(
             message => {
@@ -53,7 +57,9 @@ export default class WebViewService {
             context.subscriptions
           );
         } catch (e) {
-          vscode.window.showErrorMessage(`Error parsing JSON: ${(e as Error).message}`);
+          vscode.window.showErrorMessage(
+            `Error parsing JSON: ${(e as Error).message}`
+          );
         }
       });
     };
@@ -71,16 +77,35 @@ export default class WebViewService {
     updateWebviewContent();
   }
 
-  private getWebviewContent(jsonData: any, extensionUri: vscode.Uri): string {
+  private getWebviewContent(
+    panel: vscode.WebviewPanel,
+    jsonData: any,
+    extensionUri: vscode.Uri
+  ): string {
     const tableContent = this.generateTableContent(jsonData);
-    const htmlFilePath = vscode.Uri.joinPath(extensionUri, 'media', 'index.html');
-    const cssFilePath = vscode.Uri.joinPath(extensionUri, 'media', 'styles.css');
+    const htmlFilePath = vscode.Uri.joinPath(
+      extensionUri,
+      'media',
+      'index.html'
+    );
+    const cssFilePath = vscode.Uri.joinPath(
+      extensionUri,
+      'media',
+      'styles.css'
+    );
     const jsFilePath = vscode.Uri.joinPath(extensionUri, 'media', 'script.js');
 
-    const htmlContent = fs.readFileSync(htmlFilePath.fsPath, 'utf8')
+    const htmlContent = fs
+      .readFileSync(htmlFilePath.fsPath, 'utf8')
       .replace('<!-- TABLE_CONTENT -->', tableContent)
-      .replace('<!-- STYLESHEET_PATH -->', panel.webview.asWebviewUri(cssFilePath).toString())
-      .replace('<!-- SCRIPT_PATH -->', panel.webview.asWebviewUri(jsFilePath).toString());
+      .replace(
+        '<!-- STYLESHEET_PATH -->',
+        panel.webview.asWebviewUri(cssFilePath).toString()
+      )
+      .replace(
+        '<!-- SCRIPT_PATH -->',
+        panel.webview.asWebviewUri(jsFilePath).toString()
+      );
 
     return htmlContent;
   }
@@ -89,7 +114,10 @@ export default class WebViewService {
     let content = '';
     for (const key in jsonData) {
       if (typeof jsonData[key] === 'object') {
-        content += this.generateTableContent(jsonData[key], `${parentKey}${key}.`);
+        content += this.generateTableContent(
+          jsonData[key],
+          `${parentKey}${key}.`
+        );
       } else {
         content += `<tr>
                 <td>${parentKey}${key}</td>
