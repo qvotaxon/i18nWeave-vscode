@@ -1,61 +1,77 @@
-import * as assert from 'assert';
-import { Uri } from 'vscode';
+import assert from 'assert';
+import vscode from 'vscode';
 
-import { ExtractedFileParts } from '../types/extractedFileParts';
-import FilePathUtilities from './filePathUtilities';
+import {
+  determineOutputPath,
+  extractFilePathParts,
+  extractLocale,
+  getFileExtension,
+} from './filePathUtilities';
 
-suite('FilePathUtilities', () => {
+suite('filePathUtilities', () => {
   suite('extractLocale', () => {
-    test('should extract locale from valid file path', () => {
-      const filePath = '\\path\\to\\locales\\en\\file.json';
-      const locale = FilePathUtilities['extractLocale'](filePath);
-      assert.strictEqual(locale, 'en');
+    test('should extract the locale from the file path', () => {
+      const filePath = 'C:\\locales\\en\\file.po';
+      const locale = extractLocale(filePath);
+      assert.equal(locale, 'en');
     });
 
     test('should throw an error for invalid file path format', () => {
-      const filePath = '\\path\\to\\file.json';
-      assert.throws(() => {
-        FilePathUtilities['extractLocale'](filePath);
-      }, Error('Invalid file path format'));
+      const filePath = 'C:\\invalid\\file.path';
+      assert.throws(() => extractLocale(filePath), {
+        message: 'Invalid file path format',
+      });
     });
   });
 
   suite('determineOutputPath', () => {
-    test('should determine output path for .po file', () => {
-      const filePath = '\\path\\to\\file.po';
-      const outputPath = FilePathUtilities['determineOutputPath'](filePath);
-      assert.strictEqual(
-        outputPath.fsPath,
-        Uri.file('\\path\\to\\file.json').fsPath
+    test('should determine the output path for .po file', () => {
+      const filePath = 'C:\\locales\\en\\file.po';
+      const outputPath = determineOutputPath(filePath);
+      assert.deepStrictEqual(
+        outputPath,
+        vscode.Uri.file('C:\\locales\\en\\file.json')
       );
     });
 
-    test('should determine output path for .json file', () => {
-      const filePath = '\\path\\to\\file.json';
-      const outputPath = FilePathUtilities['determineOutputPath'](filePath);
-      assert.strictEqual(
-        outputPath.fsPath,
-        Uri.file('\\path\\to\\file.po').fsPath
+    test('should determine the output path for .json file', () => {
+      const filePath = 'C:\\locales\\en\\file.json';
+      const outputPath = determineOutputPath(filePath);
+
+      assert.deepStrictEqual(
+        outputPath,
+        vscode.Uri.file('C:\\locales\\en\\file.po')
       );
     });
 
-    test('should throw an error for unsupported file extension', () => {
-      const filePath = '\\path\\to\\file.txt';
-      assert.throws(() => {
-        FilePathUtilities['determineOutputPath'](filePath);
-      }, Error('Invalid file extension. Only .po and .json files are supported.'));
+    test('should throw an error for invalid file extension', () => {
+      const filePath = 'C:\\locales\\en\\file.txt';
+
+      assert.throws(() => determineOutputPath(filePath), {
+        message:
+          'Invalid file extension. Only .po and .json files are supported.',
+      });
     });
   });
 
-  suite('processFilePath', () => {
-    test('should process file path and extract locale and output path', () => {
-      const filePath = '\\path\\to\\locales\\en\\file.po';
-      const result: ExtractedFileParts =
-        FilePathUtilities.processFilePath(filePath);
-      assert.deepStrictEqual(result, {
+  suite('extractFilePathParts', () => {
+    test('should extract the locale and output path from the file path', () => {
+      const filePath = 'C:\\locales\\en\\file.po';
+      const filePathParts = extractFilePathParts(filePath);
+
+      assert.deepStrictEqual(filePathParts, {
         locale: 'en',
-        outputPath: Uri.file('\\path\\to\\locales\\en\\file.json'),
+        outputPath: vscode.Uri.file('C:\\locales\\en\\file.json'),
       });
+    });
+  });
+
+  suite('getFileExtension', () => {
+    test('should get the file extension from the URI', () => {
+      const uri = vscode.Uri.file('C:\\locales\\en\\file.po');
+      const fileExtension = getFileExtension(uri);
+
+      assert.strictEqual(fileExtension, 'po');
     });
   });
 });

@@ -10,7 +10,7 @@ import ModuleChainManager from '../../../modules/moduleChainManager';
 import ReadJsonFileModule from '../../../modules/readJsonFile/readJsonFileModule';
 import TranslationModule from '../../../modules/translation/translationModule';
 import FileLockStoreStore from '../../../stores/fileLock/fileLockStore';
-import FilePathUtilities from '../../../utilities/filePathUtilities';
+import { extractFilePathParts } from '../../../utilities/filePathUtilities';
 import FileWatcherCreator from '../fileWatcherCreator';
 
 export default class JsonFileChangeHandler implements FileChangeHandler {
@@ -92,7 +92,7 @@ export default class JsonFileChangeHandler implements FileChangeHandler {
           return Promise.resolve();
         }
 
-        const extractedFileParts = FilePathUtilities.processFilePath(
+        const extractedFileParts = extractFilePathParts(
           changeFileLocation.fsPath
         );
 

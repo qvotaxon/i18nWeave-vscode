@@ -9,7 +9,7 @@ import ModuleChainManager from '../../../modules/moduleChainManager';
 import PoToI18nextJsonConversionModule from '../../../modules/poToI18nextJsonConversion/poToI18nextJsonConversionModule';
 import ReadPoFileModule from '../../../modules/readPoFile/readPoFileModule';
 import FileLockStoreStore from '../../../stores/fileLock/fileLockStore';
-import FilePathUtilities from '../../../utilities/filePathUtilities';
+import { extractFilePathParts } from '../../../utilities/filePathUtilities';
 import FileWatcherCreator from '../fileWatcherCreator';
 
 export default class PoFileChangeHandler implements FileChangeHandler {
@@ -81,7 +81,7 @@ export default class PoFileChangeHandler implements FileChangeHandler {
           return Promise.resolve();
         }
 
-        const extractedFileParts = FilePathUtilities.processFilePath(
+        const extractedFileParts = extractFilePathParts(
           changeFileLocation.fsPath
         );
 
