@@ -1,0 +1,47 @@
+body {
+    background-color: var(--vscode-editor-background);
+    color: var(--vscode-editor-foreground);
+    font-family: var(--vscode-editor-font-family);
+    font-size: var(--vscode-editor-font-size);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--vscode-editor-foreground);
+}
+
+th, td {
+    border: 1px solid var(--vscode-editor-foreground);
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+}
+
+td[contenteditable="true"] {
+    background-color: var(--vscode-editor-background);
+    color: var(--vscode-editor-foreground);
+}
+
+.fab {
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border: none;
+    padding: 15px 20px;
+    cursor: pointer;
+    font-size: var(--vscode-editor-font-size);
+    border-radius: 50%;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+.fab:hover {
+    background-color: var(--vscode-button-hoverBackground);
+}
