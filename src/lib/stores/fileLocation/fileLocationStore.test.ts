@@ -32,7 +32,10 @@ suite('FileLocationStore Tests', function () {
     sandbox.stub(vscode.workspace, 'findFiles').resolves(mockFiles);
     const addFileStub = sandbox.stub<any, any>(store, 'addFile');
 
-    await store.scanWorkspace(['**/*.json', '**/*.ts'], '**/node_modules/**');
+    await store.scanWorkspaceAsync(
+      ['**/*.json', '**/*.ts'],
+      '**/node_modules/**'
+    );
 
     assert.strictEqual(
       addFileStub.callCount,

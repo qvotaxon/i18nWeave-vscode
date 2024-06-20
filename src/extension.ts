@@ -23,10 +23,17 @@ export async function activate(
   console.log('i18nWeave is now active!');
 
   try {
-    const filePatterns = ['**/*.json', '**/*.po', '**/*.ts'];
-    const ignorePattern = '**/{node_modules,.next}/**';
+    const filePatterns = [
+      '**/*.json',
+      '**/*.po',
+      '**/{apps,libs}/**/*.{tsx,ts}',
+    ];
+    const ignorePattern = '**/{node_modules,.next,.spec.*}/**';
 
-    FileLocationStore.getInstance().scanWorkspace(filePatterns, ignorePattern);
+    await FileLocationStore.getInstance().scanWorkspaceAsync(
+      filePatterns,
+      ignorePattern
+    );
 
     FileContentStore.getInstance().initializeInitialFileContents();
 

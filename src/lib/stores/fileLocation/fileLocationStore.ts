@@ -23,7 +23,10 @@ export default class FileLocationStore {
   /**
    * Scans the workspace for specific file types and populates the store.
    */
-  public async scanWorkspace(filePatterns: string[], ignorePattern: string) {
+  public async scanWorkspaceAsync(
+    filePatterns: string[],
+    ignorePattern: string
+  ) {
     for (const pattern of filePatterns) {
       const files = await vscode.workspace.findFiles(pattern, ignorePattern);
       files.forEach(file => this.addFile(file));
