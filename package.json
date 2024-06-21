@@ -176,9 +176,9 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "compile:sourcemaps": "tsc -p ./ && npm run sentry:sourcemaps",
-    "postcompile": "copyfiles -u 1 ./src/media/**/* out/",
+    "postcompile": "npm run copyfiles",
     "watch": "tsc -watch -p ./",
-    "prewatch": "copyfiles -u 1 ./src/media/**/* out/",
+    "prewatch": "npm run copyfiles",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
@@ -186,7 +186,8 @@
     "publish": "npx vsce publish",
     "test:clover": "npm run test -- --coverage --coverage-reporter=clover",
     "test:lcov": "npm run test -- --coverage --coverage-reporter=lcov",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org i18nweave --project i18nweave-vscode-r3 ./out && sentry-cli sourcemaps upload --org i18nweave --project i18nweave-vscode-r3 ./out"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org i18nweave --project i18nweave-vscode-r3 ./out && sentry-cli sourcemaps upload --org i18nweave --project i18nweave-vscode-r3 ./out",
+    "copyfiles": "copyfiles -u 1 ./src/media/**/* out/"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
