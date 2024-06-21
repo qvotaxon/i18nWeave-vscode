@@ -1,249 +1,207 @@
-// import assert from 'assert';
-// import * as fs from 'fs';
-// import sinon from 'sinon';
-// import * as vscode from 'vscode';
+import assert from 'assert';
+import fs from 'fs';
+import sinon from 'sinon';
+import vscode from 'vscode';
 
-// import WebViewService from './webviewService';
+import WebViewService from './webviewService';
 
-// suite('WebViewService Tests', function () {
-//   let service: WebViewService;
-//   let sandbox: sinon.SinonSandbox;
+suite('WebViewService', () => {
+  let sandbox: sinon.SinonSandbox;
 
-//   setup(function () {
-//     sandbox = sinon.createSandbox();
-//     service = WebViewService.getInstance();
-//   });
+  setup(() => {
+    sandbox = sinon.createSandbox();
+  });
 
-//   teardown(function () {
-//     sandbox.restore();
-//   });
+  teardown(() => {
+    sandbox.restore();
+  });
 
-//   test('getInstance should return a singleton instance', function () {
-//     const instance1 = WebViewService.getInstance();
-//     const instance2 = WebViewService.getInstance();
-//     assert.strictEqual(instance1, instance2, 'Instances are not the same');
-//   });
+  test('should return a singleton instance', () => {
+    const instance1 = WebViewService.getInstance();
+    const instance2 = WebViewService.getInstance();
+    assert.equal(instance1, instance2);
+  });
 
-//   test('openJsonAsTable should create a webview panel and set its content', function () {
-//     const uri = vscode.Uri.file('/path/to/file.json');
-//     const context = {} as vscode.ExtensionContext;
-//     const panel = {
-//       webview: {
-//         html: '',
-//         asWebviewUri: sandbox.stub().returns('webviewUri'),
-//       },
-//       onDidChangeViewState: sandbox.stub(),
-//       webviewPanel: {
-//         visible: true,
-//       },
-//     };
-//     // const readFileStub = sandbox.stub(fs, 'readFileSync');
-//     const getWebviewContentStub = sandbox
-//       .stub(service, 'getWebviewContent')
-//       .returns('webviewContent');
-//     const showErrorMessageStub = sandbox.stub(
-//       vscode.window,
-//       'showErrorMessage'
-//     );
-//     const onDidReceiveMessageStub = sandbox.stub(panel.webview, 'asWebviewUri');
-//     const saveJsonFileStub = sandbox.stub(service, 'saveJsonFile');
+  suite('openJsonAsTable', () => {
+    let readFileStub: sinon.SinonStub;
+    let readFileSyncStub: sinon.SinonStub;
+    let showErrorMessageStub: sinon.SinonStub;
+    let createWebviewPanelStub: sinon.SinonStub;
 
-//     sandbox.stub(vscode.window, 'createWebviewPanel').returns(panel as any);
+    setup(() => {
+      readFileStub = sandbox.stub(fs, 'readFile');
+      readFileSyncStub = sandbox.stub(fs, 'readFileSync');
+      showErrorMessageStub = sandbox.stub(vscode.window, 'showErrorMessage');
+      createWebviewPanelStub = sandbox
+        .stub(vscode.window, 'createWebviewPanel')
+        .returns({
+          webview: {
+            html: '',
+            onDidReceiveMessage: sandbox.stub(),
+            asWebviewUri: sandbox.stub().returns('webviewUri'),
+          },
+          onDidChangeViewState: sandbox.stub(),
+        } as unknown as vscode.WebviewPanel);
+    });
 
-//     service.openJsonAsTable(uri, context);
+    test('should handle file reading errors', async () => {
+      readFileStub.yields(new Error('File not found'));
 
-//     // assert.strictEqual(
-//     //   vscode.window.createWebviewPanel.callCount,
-//     //   1,
-//     //   'createWebviewPanel was not called'
-//     // );
-//     // assert.strictEqual(readFileStub.callCount, 1, 'readFile was not called');
-//     assert.strictEqual(
-//       getWebviewContentStub.callCount,
-//       1,
-//       'getWebviewContent was not called'
-//     );
-//     assert.strictEqual(
-//       showErrorMessageStub.callCount,
-//       0,
-//       'showErrorMessage was called'
-//     );
-//     assert.strictEqual(
-//       onDidReceiveMessageStub.callCount,
-//       1,
-//       'onDidReceiveMessage was not called'
-//     );
-//     assert.strictEqual(
-//       saveJsonFileStub.callCount,
-//       0,
-//       'saveJsonFile was called'
-//     );
+      const uri = vscode.Uri.file('path/to/file.json');
+      const context = {
+        subscriptions: [],
+      } as unknown as vscode.ExtensionContext;
 
-//     assert.strictEqual(
-//       panel.onDidChangeViewState.callCount,
-//       1,
-//       'onDidChangeViewState was not called'
-//     );
-//     assert.strictEqual(
-//       panel.webview.html,
-//       'webviewContent',
-//       'Webview content is incorrect'
-//     );
-//     // assert.strictEqual(
-//     //   panel.webview.onDidReceiveMessage,
-//     //   onDidReceiveMessageStub,
-//     //   'onDidReceiveMessage is incorrect'
-//     // );
-//   });
+      WebViewService.getInstance().openJsonAsTable(uri, context);
 
-//   test('openJsonAsTable should show an error message if reading the file fails', function () {
-//     const uri = vscode.Uri.file('/path/to/file.json');
-//     const context = {} as vscode.ExtensionContext;
-//     const panel = {
-//       webview: {
-//         html: '',
-//         asWebviewUri: sandbox.stub().returns('webviewUri'),
-//       },
-//       onDidChangeViewState: sandbox.stub(),
-//       webviewPanel: {
-//         visible: true,
-//       },
-//     };
-//     // const readFileStub = sandbox.stub(fs, 'readFileSync');
-//     const getWebviewContentStub = sandbox.stub(service, 'getWebviewContent');
-//     const showErrorMessageStub = sandbox.stub(
-//       vscode.window,
-//       'showErrorMessage'
-//     );
-//     const onDidReceiveMessageStub = sandbox.stub(panel.webview, 'asWebviewUri');
-//     const saveJsonFileStub = sandbox.stub(service, 'saveJsonFile');
+      assert.ok(
+        showErrorMessageStub.calledWith('Error reading file: File not found')
+      );
+    });
 
-//     sandbox.stub(vscode.window, 'createWebviewPanel').returns(panel as any);
+    test('should handle JSON parsing errors', async () => {
+      readFileStub.yields(null, 'invalid json');
 
-//     service.openJsonAsTable(uri, context);
+      const uri = vscode.Uri.file('path/to/file.json');
+      const context = {
+        subscriptions: [],
+      } as unknown as vscode.ExtensionContext;
 
-//     // assert.strictEqual(
-//     //   vscode.window.createWebviewPanel.callCount,
-//     //   1,
-//     //   'createWebviewPanel was not called'
-//     // );
-//     // assert.strictEqual(readFileStub.callCount, 1, 'readFile was not called');
-//     assert.strictEqual(
-//       getWebviewContentStub.callCount,
-//       0,
-//       'getWebviewContent was called'
-//     );
-//     assert.strictEqual(
-//       showErrorMessageStub.callCount,
-//       1,
-//       'showErrorMessage was not called'
-//     );
-//     assert.strictEqual(
-//       onDidReceiveMessageStub.callCount,
-//       0,
-//       'onDidReceiveMessage was called'
-//     );
-//     assert.strictEqual(
-//       saveJsonFileStub.callCount,
-//       0,
-//       'saveJsonFile was called'
-//     );
+      WebViewService.getInstance().openJsonAsTable(uri, context);
 
-//     assert.strictEqual(
-//       panel.onDidChangeViewState.callCount,
-//       1,
-//       'onDidChangeViewState was not called'
-//     );
-//     assert.strictEqual(panel.webview.html, '', 'Webview content is incorrect');
-//     assert.strictEqual(
-//       showErrorMessageStub.getCall(0).args[0],
-//       'Error reading file: Read error',
-//       'Error message is incorrect'
-//     );
-//   });
+      assert.ok(
+        showErrorMessageStub.calledWith(
+          `Error parsing JSON: Unexpected token 'i', "invalid json" is not valid JSON`
+        )
+      );
+    });
 
-//   test('getWebviewContent should return the correct HTML content', function () {
-//     const panel = {} as vscode.WebviewPanel;
-//     const jsonData = { key: 'value' };
-//     const extensionUri = vscode.Uri.file('/path/to/extension');
+    test('should update webview content on panel visibility change', async () => {
+      readFileStub.yields(null, '{"key": "value"}');
+      readFileSyncStub.returns(
+        '<html><!-- TABLE_CONTENT --><!-- STYLESHEET_PATH --><!-- SCRIPT_PATH --></html>'
+      );
+      const panel = createWebviewPanelStub();
+      const onDidChangeViewStateStub =
+        panel.onDidChangeViewState as sinon.SinonStub;
 
-//     const readFileSyncStub = sandbox
-//       .stub(fs, 'readFileSync')
-//       .returns('htmlContent');
-//     const joinPathStub = sandbox.stub(vscode.Uri, 'joinPath').returnsThis();
-//     const asWebviewUriStub = sandbox
-//       .stub(panel.webview, 'asWebviewUri')
-//       .returns(vscode.Uri.from({ scheme: 'vscode-resource', path: 'path' }));
+      const uri = vscode.Uri.file('path/to/file.json');
+      const context = {
+        subscriptions: [],
+        extensionUri: vscode.Uri.file('path/to/extension'),
+      } as unknown as vscode.ExtensionContext;
 
-//     const htmlContent = service.getWebviewContent(
-//       panel,
-//       jsonData,
-//       extensionUri
-//     );
+      WebViewService.getInstance().openJsonAsTable(uri, context);
 
-//     assert.strictEqual(
-//       readFileSyncStub.callCount,
-//       1,
-//       'readFileSync was not called'
-//     );
-//     assert.strictEqual(joinPathStub.callCount, 3, 'joinPath was not called');
-//     assert.strictEqual(
-//       asWebviewUriStub.callCount,
-//       2,
-//       'asWebviewUri was not called'
-//     );
-//     assert.strictEqual(htmlContent, 'htmlContent', 'HTML content is incorrect');
-//   });
+      const event = { webviewPanel: { visible: true } };
+      onDidChangeViewStateStub.callArgWith(0, event);
 
-//   test('generateTableContent should return the correct table content', function () {
-//     const jsonData = {
-//       key1: 'value1',
-//       key2: {
-//         nestedKey: 'nestedValue',
-//       },
-//     };
+      assert.ok(panel.webview.html.includes('<td>key</td>'));
+      assert.ok(
+        panel.webview.html.includes('<td contenteditable="true">value</td>')
+      );
+    });
+  });
 
-//     const tableContent = service.generateTableContent(jsonData);
+  suite('getWebviewContent', () => {
+    let readFileSyncStub: sinon.SinonStub;
+    let asWebviewUriStub: sinon.SinonStub;
 
-//     assert.strictEqual(
-//       tableContent,
-//       `<tr>
-//                 <td>key1</td>
-//                 <td contenteditable="true">value1</td>
-//             </tr><tr>
-//                 <td>key2.nestedKey</td>
-//                 <td contenteditable="true">nestedValue</td>
-//             </tr>`,
-//       'Table content is incorrect'
-//     );
-//   });
+    setup(() => {
+      readFileSyncStub = sandbox
+        .stub(fs, 'readFileSync')
+        .returns(
+          '<html><!-- TABLE_CONTENT --><!-- STYLESHEET_PATH --><!-- SCRIPT_PATH --></html>'
+        );
+      asWebviewUriStub = sandbox.stub().returns('webviewUri');
+    });
 
-//   test('saveJsonFile should save the JSON file', function () {
-//     const uri = vscode.Uri.file('/path/to/file.json');
-//     const jsonData = '{"key": "value"}';
+    teardown(() => {
+      sandbox.restore();
+    });
 
-//     const writeFileStub = sandbox.stub(fs, 'writeFileSync');
-//     const showErrorMessageStub = sandbox.stub(
-//       vscode.window,
-//       'showErrorMessage'
-//     );
-//     const showInformationMessageStub = sandbox.stub(
-//       vscode.window,
-//       'showInformationMessage'
-//     );
+    test('should generate correct webview content', () => {
+      const panel = {
+        webview: { asWebviewUri: asWebviewUriStub },
+      } as unknown as vscode.WebviewPanel;
+      const jsonData = { key: 'value' };
+      const extensionUri = vscode.Uri.file('path/to/extension');
 
-//     service.saveJsonFile(uri, jsonData);
+      const content = WebViewService.getInstance().getWebviewContent(
+        panel,
+        jsonData,
+        extensionUri
+      );
 
-//     assert.strictEqual(writeFileStub.callCount, 1, 'writeFile was not called');
-//     assert.strictEqual(
-//       showErrorMessageStub.callCount,
-//       0,
-//       'showErrorMessage was called'
-//     );
-//     assert.strictEqual(
-//       showInformationMessageStub.callCount,
-//       1,
-//       'showInformationMessage was not called'
-//     );
-//   });
-// });
+      assert.ok(content.includes('<td>key</td>'));
+      assert.ok(content.includes('<td contenteditable="true">value</td>'));
+      assert.ok(content.includes('webviewUri'));
+    });
+  });
+
+  suite('generateTableContent', () => {
+    test('should generate table content for simple JSON', () => {
+      const jsonData = { key: 'value' };
+      const content =
+        WebViewService.getInstance().generateTableContent(jsonData);
+
+      assert.ok(content.includes('<td>key</td>'));
+      assert.ok(content.includes('<td contenteditable="true">value</td>'));
+    });
+
+    test('should generate table content for nested JSON', () => {
+      const jsonData = { parent: { child: 'value' } };
+      const content =
+        WebViewService.getInstance().generateTableContent(jsonData);
+
+      assert.ok(content.includes('<td>parent.child</td>'));
+      assert.ok(content.includes('<td contenteditable="true">value</td>'));
+    });
+  });
+
+  suite('saveJsonFile', () => {
+    let writeFileSyncStub: sinon.SinonStub;
+    let showInformationMessageStub: sinon.SinonStub;
+    let showErrorMessageStub: sinon.SinonStub;
+
+    setup(() => {
+      showInformationMessageStub = sandbox.stub(
+        vscode.window,
+        'showInformationMessage'
+      );
+      showErrorMessageStub = sandbox.stub(vscode.window, 'showErrorMessage');
+    });
+
+    test('should save JSON file and show success message', () => {
+      writeFileSyncStub = sinon.stub(fs, 'writeFileSync');
+      const uri = vscode.Uri.file('path/to/file.json');
+      const jsonData = '{"key": "value"}';
+
+      WebViewService.getInstance().saveJsonFile(uri, jsonData);
+
+      assert.ok(
+        writeFileSyncStub.calledOnceWith(uri.fsPath, jsonData, {
+          encoding: 'utf8',
+        })
+      );
+      assert.ok(
+        showInformationMessageStub.calledOnceWith('File saved successfully')
+      );
+    });
+
+    test('should handle file saving errors', () => {
+      writeFileSyncStub.throws(new Error('Permission denied'));
+
+      const uri = vscode.Uri.file('path/to/file.json');
+      const jsonData = '{"key": "value"}';
+
+      WebViewService.getInstance().saveJsonFile(uri, jsonData);
+
+      assert.ok(
+        showErrorMessageStub.calledOnceWith(
+          'Error saving file: Permission denied'
+        )
+      );
+    });
+  });
+});
