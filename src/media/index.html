@@ -1,24 +1,25 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JSON Table View</title>
-    <link rel="stylesheet" href="<!-- STYLESHEET_PATH -->">
-</head>
-<body>
+    <link rel="stylesheet" href="<!-- STYLESHEET_PATH -->" />
+  </head>
+  <body>
+    <input type="text" id="filterInput" placeholder="Filter table" />
     <table id="jsonTable">
-        <thead>
-            <tr>
-                <th>Key</th>
-                <th>Value</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- TABLE_CONTENT -->
-        </tbody>
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- TABLE_CONTENT -->
+      </tbody>
     </table>
-    <button class="fab" id="saveButton">💾</button>
+    <button class="fab" id="saveButton">Save</button>
     <script src="<!-- SCRIPT_PATH -->"></script>
-</body>
+  </body>
 </html>
