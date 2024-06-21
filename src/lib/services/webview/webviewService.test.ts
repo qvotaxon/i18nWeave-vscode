@@ -118,6 +118,7 @@ suite('WebViewService', () => {
 
     teardown(() => {
       sandbox.restore();
+      sinon.restore();
     });
 
     test('should generate correct webview content', () => {
@@ -165,6 +166,7 @@ suite('WebViewService', () => {
     let showErrorMessageStub: sinon.SinonStub;
 
     setup(() => {
+      writeFileSyncStub = sinon.stub(fs, 'writeFileSync');
       showInformationMessageStub = sandbox.stub(
         vscode.window,
         'showInformationMessage'
@@ -172,8 +174,12 @@ suite('WebViewService', () => {
       showErrorMessageStub = sandbox.stub(vscode.window, 'showErrorMessage');
     });
 
+    teardown(() => {
+      sandbox.restore();
+      sinon.restore();
+    });
+
     test('should save JSON file and show success message', () => {
-      writeFileSyncStub = sinon.stub(fs, 'writeFileSync');
       const uri = vscode.Uri.file('path/to/file.json');
       const jsonData = '{"key": "value"}';
 
