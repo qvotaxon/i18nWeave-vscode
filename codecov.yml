@@ -32,3 +32,4 @@ github_checks:
 ignore:
   - 'src/lib/enums/*.ts'
   - 'src/extension.ts'
+  - 'src/media/*'
