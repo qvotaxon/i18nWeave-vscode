@@ -4,6 +4,13 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.3.0-alpha](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.2.0-alpha...v0.3.0-alpha) (2024-06-21)
+
+
+### Features
+
+* Add filter and keyboard shortcuts ([#99](https://github.com/qvotaxon/i18nWeave-vscode/issues/99)) ([e9d595a](https://github.com/qvotaxon/i18nWeave-vscode/commit/e9d595aefd63091242cc6fec2778ca0e774dd13c))
+
 ## [0.2.0-alpha](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.1.0-alpha...v0.2.0-alpha) (2024-06-21)
 
 
