@@ -85,19 +85,19 @@ export default class WebViewService {
     const tableContent = this.generateTableContent(jsonData);
     const htmlFilePath = vscode.Uri.joinPath(
       extensionUri,
-      'src',
+      'out',
       'media',
       'index.html'
     );
     const cssFilePath = vscode.Uri.joinPath(
       extensionUri,
-      'src',
+      'out',
       'media',
       'styles.css'
     );
     const jsFilePath = vscode.Uri.joinPath(
       extensionUri,
-      'src',
+      'out',
       'media',
       'script.js'
     );
