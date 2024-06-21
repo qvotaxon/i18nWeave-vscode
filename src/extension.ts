@@ -1,10 +1,13 @@
 import * as Sentry from '@sentry/node';
+import vscode from 'vscode';
 import { ExtensionContext } from 'vscode';
 
 import FileWatcherCreator from './lib/services/fileChange/fileWatcherCreator';
+import WebViewService from './lib/services/webview/webviewService';
 import ConfigurationStoreManager from './lib/stores/configuration/configurationStoreManager';
 import FileContentStore from './lib/stores/fileContent/fileContentStore';
 import FileLocationStore from './lib/stores/fileLocation/fileLocationStore';
+import { FileSearchLocation } from './lib/types/fileSearchLocation';
 
 function initializeSentry() {
   Sentry.init({
@@ -16,26 +19,43 @@ function initializeSentry() {
 }
 initializeSentry();
 
+let _context = {} as ExtensionContext;
+
 export async function activate(
   context: ExtensionContext,
   fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator()
 ) {
   console.log('i18nWeave is now active!');
 
+  _context = context;
+
   try {
-    const filePatterns = [
-      '**/*.json',
-      '**/*.po',
-      '**/{apps,libs}/**/*.{tsx,ts}',
+    const fileSearchLocations = [
+      {
+        filePattern: '**/public/locales/**/*.json',
+        ignorePattern:
+          '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
+      } as FileSearchLocation,
+      {
+        filePattern: '**/public/locales/**/*.po',
+        ignorePattern:
+          '**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**',
+      } as FileSearchLocation,
+      {
+        filePattern: '**/{apps,libs}/**/*.{tsx,ts}',
+        ignorePattern:
+          '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**,**/*.spec.ts,**/*.spec.tsx}',
+      } as FileSearchLocation,
     ];
-    const ignorePattern = '**/{node_modules,.next,.spec.*}/**';
 
     await FileLocationStore.getInstance().scanWorkspaceAsync(
-      filePatterns,
-      ignorePattern
+      fileSearchLocations
     );
 
     FileContentStore.getInstance().initializeInitialFileContents();
+
+    const onDidOpenTextDocumentDisposable =
+      await createWebViewForFilesMatchingPattern();
 
     const typeScriptFileWatchers = await createWatchersForFileType(
       ['ts', 'tsx'],
@@ -60,7 +80,8 @@ export async function activate(
     context.subscriptions.push(
       ...typeScriptFileWatchers,
       ...jsonFileWatchers,
-      ...poFileWatchers
+      ...poFileWatchers,
+      onDidOpenTextDocumentDisposable
     );
   } catch (error) {
     Sentry.captureException(error);
@@ -78,6 +99,22 @@ async function createWatchersForFileType(
       false ===
       ConfigurationStoreManager.getInstance().getConfig<any>(configKey).enabled
   );
+}
+
+async function createWebViewForFilesMatchingPattern() {
+  const onDidOpenTextDocumentDisposable =
+    vscode.workspace.onDidOpenTextDocument(document => {
+      const uri = document.uri;
+      if (
+        uri.scheme === 'file' &&
+        uri.path.endsWith('.json') &&
+        FileLocationStore.getInstance().hasFile(uri)
+      ) {
+        WebViewService.getInstance().openJsonAsTable(uri, _context);
+      }
+    });
+
+  return onDidOpenTextDocumentDisposable;
 }
 
 export function deactivate() {

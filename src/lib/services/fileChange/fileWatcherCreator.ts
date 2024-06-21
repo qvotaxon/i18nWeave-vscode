@@ -28,13 +28,12 @@ export default class FileWatcherCreator {
     fileExtensions: string[],
     ...disableFlags: (() => boolean)[]
   ): Promise<vscode.FileSystemWatcher[]> {
-    const fileURIs =
+    const fsPaths =
       FileLocationStore.getInstance().getFilesByType(fileExtensions);
     const fileWatchers: vscode.FileSystemWatcher[] = [];
 
     await Promise.all(
-      fileURIs.map(async fileURI => {
-        const fsPath = fileURI.fsPath;
+      fsPaths.map(async fsPath => {
         const fileWatcher = vscode.workspace.createFileSystemWatcher(fsPath);
         const fileChangeHandler =
           new FileChangeHandlerFactory().createFileChangeHandler(fsPath);

@@ -48,6 +48,10 @@ suite('Extension Activation', () => {
 
     await activate(context, fileWatcherCreator);
 
+    sinon.assert.calledThrice(
+      fileWatcherCreator.createFileWatchersForFileTypeAsync
+    );
+
     sinon.assert.calledWith(
       fileWatcherCreator.createFileWatchersForFileTypeAsync,
       ['ts', 'tsx'],
@@ -64,7 +68,7 @@ suite('Extension Activation', () => {
       sinon.match.func
     );
     sinon.assert.calledOnce(configurationStoreManagerStub().initialize);
-    assert.strictEqual(context.subscriptions.length, 0);
+    assert.strictEqual(context.subscriptions.length, 1);
   });
 
   test('should deactivate extension', () => {

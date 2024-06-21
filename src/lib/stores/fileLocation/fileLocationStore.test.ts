@@ -2,6 +2,7 @@ import assert from 'assert';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
+import { FileSearchLocation } from '../../types/fileSearchLocation';
 import * as filePathUtilities from '../../utilities/filePathUtilities';
 import FileLocationStore from './fileLocationStore';
 
@@ -32,10 +33,18 @@ suite('FileLocationStore Tests', function () {
     sandbox.stub(vscode.workspace, 'findFiles').resolves(mockFiles);
     const addFileStub = sandbox.stub<any, any>(store, 'addFile');
 
-    await store.scanWorkspaceAsync(
-      ['**/*.json', '**/*.ts'],
-      '**/node_modules/**'
-    );
+    const fileSearchLocations = [
+      {
+        filePattern: '**/*.json',
+        ignorePattern: '**/node_modules/**',
+      } as FileSearchLocation,
+      {
+        filePattern: '**/*.ts',
+        ignorePattern: '**/node_modules/**',
+      } as FileSearchLocation,
+    ];
+
+    await store.scanWorkspaceAsync(fileSearchLocations);
 
     assert.strictEqual(
       addFileStub.callCount,
@@ -58,7 +67,10 @@ suite('FileLocationStore Tests', function () {
     store.addFile(uri);
 
     const files = store.getFilesByType(['json']);
-    assert.ok(files.includes(uri), 'The file was not added to the store');
+    assert.ok(
+      files.includes(uri.fsPath),
+      'The file was not added to the store'
+    );
   });
 
   test('removeFile should remove a file from the store', function () {
@@ -71,7 +83,10 @@ suite('FileLocationStore Tests', function () {
     store.removeFile(uri);
 
     const files = store.getFilesByType(['json']);
-    assert.ok(!files.includes(uri), 'The file was not removed from the store');
+    assert.ok(
+      !files.includes(uri.fsPath),
+      'The file was not removed from the store'
+    );
   });
 
   test('getFilesByType should return all files of specific types', function () {
@@ -92,8 +107,11 @@ suite('FileLocationStore Tests', function () {
     const jsonFiles = store.getFilesByType(['json']);
     const tsFiles = store.getFilesByType(['ts']);
 
-    assert.ok(jsonFiles.includes(uri1), 'The JSON file was not returned');
-    assert.ok(tsFiles.includes(uri2), 'The TS file was not returned');
+    assert.ok(
+      jsonFiles.includes(uri1.fsPath),
+      'The JSON file was not returned'
+    );
+    assert.ok(tsFiles.includes(uri2.fsPath), 'The TS file was not returned');
   });
 
   //   test('getRelatedFiles should return related files by replacing the extension', function () {
@@ -120,31 +138,4 @@ suite('FileLocationStore Tests', function () {
   //       'The related file was not returned'
   //     );
   //   });
-
-  test('createFileWatchers should set up file watchers', function () {
-    const context: vscode.ExtensionContext = {
-      subscriptions: [],
-      // other properties if needed
-    } as any;
-    const createFileSystemWatcherStub = sandbox
-      .stub(vscode.workspace, 'createFileSystemWatcher')
-      .returns({
-        onDidCreate: sinon.spy(),
-        onDidDelete: sinon.spy(),
-        onDidChange: sinon.spy(),
-      } as any);
-
-    store.createFileWatchers(context);
-
-    assert.strictEqual(
-      createFileSystemWatcherStub.callCount,
-      3,
-      'createFileSystemWatcher was not called three times'
-    );
-    assert.strictEqual(
-      context.subscriptions.length,
-      3,
-      'Watchers were not added to context subscriptions'
-    );
-  });
 });

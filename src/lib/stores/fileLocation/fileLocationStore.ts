@@ -1,10 +1,11 @@
 import vscode from 'vscode';
 
+import { FileSearchLocation } from '../../types/fileSearchLocation';
 import { getFileExtension } from '../../utilities/filePathUtilities';
 
 export default class FileLocationStore {
   private static instance: FileLocationStore;
-  private fileLocations: Map<string, Set<vscode.Uri>> = new Map();
+  private fileLocations: Map<string, Set<string>> = new Map();
 
   private constructor() {
     // Private constructor to prevent instantiation
@@ -23,12 +24,12 @@ export default class FileLocationStore {
   /**
    * Scans the workspace for specific file types and populates the store.
    */
-  public async scanWorkspaceAsync(
-    filePatterns: string[],
-    ignorePattern: string
-  ) {
-    for (const pattern of filePatterns) {
-      const files = await vscode.workspace.findFiles(pattern, ignorePattern);
+  public async scanWorkspaceAsync(fileSearchLocations: FileSearchLocation[]) {
+    for (const fileSearchLocation of fileSearchLocations) {
+      const files = await vscode.workspace.findFiles(
+        fileSearchLocation.filePattern,
+        fileSearchLocation.ignorePattern
+      );
       files.forEach(file => this.addFile(file));
     }
   }
@@ -42,7 +43,7 @@ export default class FileLocationStore {
     if (!this.fileLocations.has(extension)) {
       this.fileLocations.set(extension, new Set());
     }
-    this.fileLocations.get(extension)!.add(uri);
+    this.fileLocations.get(extension)!.add(uri.fsPath);
   }
 
   /**
@@ -51,7 +52,7 @@ export default class FileLocationStore {
    */
   private removeFile(uri: vscode.Uri) {
     const extension = getFileExtension(uri);
-    this.fileLocations.get(extension)?.delete(uri);
+    this.fileLocations.get(extension)?.delete(uri.fsPath);
   }
 
   /**
@@ -59,8 +60,8 @@ export default class FileLocationStore {
    * @param extensions An array of file extensions (e.g., ['json', 'po', 'ts']).
    * @returns An array of URIs for files of the specified types.
    */
-  public getFilesByType(extensions: string[]): vscode.Uri[] {
-    const files: vscode.Uri[] = [];
+  public getFilesByType(extensions: string[]): string[] {
+    const files: string[] = [];
     for (const extension of extensions) {
       const extensionFiles = this.fileLocations.get(extension);
       if (extensionFiles) {
@@ -68,6 +69,15 @@ export default class FileLocationStore {
       }
     }
     return files;
+  }
+
+  public hasFile(uri: vscode.Uri): boolean {
+    const extension = getFileExtension(uri);
+
+    const filesWithExtension = this.fileLocations.get(extension);
+    const hasFile = filesWithExtension?.has(uri.fsPath) ?? false;
+
+    return this.fileLocations.get(extension)?.has(uri.fsPath) ?? false;
   }
 
   //TODO: reenable this method and fix the related tests. I couldnt' get the mocking of the files to work and the method is unused for now.
@@ -86,21 +96,4 @@ export default class FileLocationStore {
   //       ? [relatedFilePath]
   //       : [];
   //   }
-
-  /**
-   * Creates file watchers for the tracked files and sets up event handlers.
-   */
-  public createFileWatchers(context: vscode.ExtensionContext) {
-    const filePatterns = ['**/*.json', '**/*.po', '**/*.ts'];
-
-    for (const pattern of filePatterns) {
-      const watcher = vscode.workspace.createFileSystemWatcher(pattern);
-
-      watcher.onDidCreate(uri => this.addFile(uri));
-      watcher.onDidDelete(uri => this.removeFile(uri));
-      // Optionally handle file changes if necessary
-
-      context.subscriptions.push(watcher);
-    }
-  }
 }
