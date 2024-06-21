@@ -3,9 +3,23 @@ const filterInput = document.getElementById('filterInput');
 const jsonTable = document.getElementById('jsonTable');
 const rows = jsonTable.getElementsByTagName('tr');
 
-document.getElementById('saveButton').addEventListener('click', () => save());
+document.getElementById('saveButton').addEventListener('click', save);
+document.addEventListener('keydown', handleKeyDown);
+document.addEventListener('DOMContentLoaded', handleDOMContentLoaded);
+filterInput.addEventListener('keyup', handleFilterInput);
 
-document.addEventListener('keydown', function (event) {
+function save() {
+    const table = document.getElementById('jsonTable');
+    const jsonData = {};
+    for (let i = 1; i < table.rows.length; i++) {
+        const key = table.rows[i].cells[0].innerText;
+        const value = table.rows[i].cells[1].innerText;
+        setNestedValue(jsonData, key.split('.'), value);
+    }
+    vscode.postMessage({ command: 'save', jsonData: JSON.stringify(jsonData, null, 2) });
+}
+
+function handleKeyDown(event) {
     if (event.ctrlKey && event.key === 's') {
         event.preventDefault();
         save();
@@ -21,16 +35,19 @@ document.addEventListener('keydown', function (event) {
 
         if (filterInput === document.activeElement) {
             clearFilterInput();
-            blurFilterInput();
         }
     }
-});
+}
 
-filterInput.addEventListener('keyup', function () {
+function handleDOMContentLoaded() {
+    focusFilterInput();
+    styleTableRows();
+}
+
+function handleFilterInput() {
     const filterValue = filterInput.value.toLowerCase();
 
-    const table = document.getElementById('jsonTable');
-    for (let i = 1, row; row = table.rows[i]; i++) {
+    for (let i = 1; i < rows.length; i++) {
         const keyColumn = rows[i].getElementsByTagName('td')[0];
         const valueColumn = rows[i].getElementsByTagName('td')[1];
 
@@ -43,41 +60,36 @@ filterInput.addEventListener('keyup', function () {
             rows[i].style.display = 'none';
         }
     }
-});
 
-/**
- * Sets a nested value in an object based on the provided path.
- * 
- * @param {Object} obj - The object to set the value in.
- * @param {Array} path - An array of keys representing the path.
- * @param {string} value - The value to set.
- */
+    styleTableRows();
+}
+
 function setNestedValue(obj, path, value) {
     const lastKey = path.pop();
     const lastObj = path.reduce((obj, key) => obj[key] = obj[key] || {}, obj);
     lastObj[lastKey] = value;
 }
 
-function save() {
-    const table = document.getElementById('jsonTable');
-    const jsonData = {};
-    for (let i = 1, row; row = table.rows[i]; i++) {
-        const key = row.cells[0].innerText;
-        const value = row.cells[1].innerText;
-        setNestedValue(jsonData, key.split('.'), value);
-    }
-    vscode.postMessage({ command: 'save', jsonData: JSON.stringify(jsonData, null, 2) });
-}
-
 function focusFilterInput() {
     filterInput.focus();
-}
-
-function blurFilterInput() {
-    filterInput.blur();
 }
 
 function clearFilterInput() {
     filterInput.value = '';
     filterInput.dispatchEvent(new Event('keyup'));
+}
+
+function styleTableRows() {
+    let styledRowCount = 0;
+    for (let i = 1; i < rows.length; i++) {
+        let row = rows[i];
+        const keyColumn = row.getElementsByTagName('td')[0];
+        const valueColumn = row.getElementsByTagName('td')[1];
+
+        if (row.style.display !== 'none') {
+            keyColumn.style.backgroundColor = styledRowCount % 2 === 0 ? 'var(--vscode-tab-inactiveBackground)' : 'var(--vscode-tab-activeBackground)';
+            valueColumn.style.backgroundColor = styledRowCount % 2 === 0 ? 'var(--vscode-tab-inactiveBackground)' : 'var(--vscode-tab-activeBackground)';
+            styledRowCount++;
+        }
+    }
 }
