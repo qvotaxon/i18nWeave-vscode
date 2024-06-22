@@ -3,7 +3,7 @@ import vscode from 'vscode';
 import { ExtensionContext } from 'vscode';
 
 import FileWatcherCreator from './lib/services/fileChange/fileWatcherCreator';
-import WebViewService from './lib/services/webview/webviewService';
+import WebViewService from './lib/services/webView/webViewService';
 import ConfigurationStoreManager from './lib/stores/configuration/configurationStoreManager';
 import FileContentStore from './lib/stores/fileContent/fileContentStore';
 import FileLocationStore from './lib/stores/fileLocation/fileLocationStore';

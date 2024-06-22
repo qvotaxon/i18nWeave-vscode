@@ -17,7 +17,7 @@ export default class WebViewService {
   }
 
   /**
-   * Opens a JSON file as a table in a webview.
+   * Opens a JSON file as a table in a web view.
    *
    * @param uri The URI of the JSON file.
    * @param context The extension context.
@@ -32,7 +32,7 @@ export default class WebViewService {
       }
     );
 
-    const updateWebviewContent = () => {
+    const updateWebViewContent = () => {
       fs.readFile(uri.fsPath, 'utf8', (err, data) => {
         if (err) {
           vscode.window.showErrorMessage(`Error reading file: ${err.message}`);
@@ -41,7 +41,7 @@ export default class WebViewService {
 
         try {
           const jsonData = JSON.parse(data);
-          panel.webview.html = this.getWebviewContent(
+          panel.webview.html = this.getWebViewContent(
             panel,
             jsonData,
             context.extensionUri
@@ -67,17 +67,17 @@ export default class WebViewService {
     panel.onDidChangeViewState(
       event => {
         if (event.webviewPanel.visible) {
-          updateWebviewContent();
+          updateWebViewContent();
         }
       },
       null,
       context.subscriptions
     );
 
-    updateWebviewContent();
+    updateWebViewContent();
   }
 
-  public getWebviewContent(
+  public getWebViewContent(
     panel: vscode.WebviewPanel,
     jsonData: any,
     extensionUri: vscode.Uri

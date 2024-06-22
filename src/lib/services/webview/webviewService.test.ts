@@ -3,7 +3,7 @@ import fs from 'fs';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import WebViewService from './webviewService';
+import WebViewService from './webViewService';
 
 suite('WebViewService', () => {
   let sandbox: sinon.SinonSandbox;
@@ -128,7 +128,7 @@ suite('WebViewService', () => {
       const jsonData = { key: 'value' };
       const extensionUri = vscode.Uri.file('path/to/extension');
 
-      const content = WebViewService.getInstance().getWebviewContent(
+      const content = WebViewService.getInstance().getWebViewContent(
         panel,
         jsonData,
         extensionUri
