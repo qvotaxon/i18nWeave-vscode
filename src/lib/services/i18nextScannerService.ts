@@ -29,7 +29,6 @@ export default class I18nextScannerService {
 
   /**
    * Scan code for translation keys in the code file for which the path is provided.
-   * @returns A promise resolving to the scan results.
    */
   public scanCode(): void {
     Sentry.startSpan(
@@ -37,82 +36,86 @@ export default class I18nextScannerService {
         op: 'typeScript.scanCodeFori18next',
         name: 'TypeScript i18next Scanner Module',
       },
-      () => {
-        const configurationManager = ConfigurationStoreManager.getInstance();
-        const i18nextScannerModuleConfig =
-          configurationManager.getConfig<I18nextScannerModuleConfiguration>(
-            'i18nextScannerModule'
-          );
+      span => {
+        try {
+          const configManager = ConfigurationStoreManager.getInstance();
+          const config =
+            configManager.getConfig<I18nextScannerModuleConfiguration>(
+              'i18nextScannerModule'
+            );
+          const workspaceRoot = getSingleWorkSpaceRoot();
 
-        const workspaceRoot = getSingleWorkSpaceRoot();
-
-        const options: I18nextScannerOptions = {
-          compatibilityJSON: 'v3',
-          debug: false,
-          removeUnusedKeys: true,
-          sort: true,
-          func: {
-            list: i18nextScannerModuleConfig.translationFunctionNames,
-            extensions: i18nextScannerModuleConfig.fileExtensions,
-          },
-          lngs: i18nextScannerModuleConfig.languages,
-          ns: i18nextScannerModuleConfig.namespaces,
-          defaultLng: i18nextScannerModuleConfig.defaultLanguage,
-          defaultNs: i18nextScannerModuleConfig.defaultNamespace,
-          defaultValue: '',
-          resource: {
-            loadPath: `${workspaceRoot}/${i18nextScannerModuleConfig.translationFilesLocation}/{{lng}}/{{ns}}.json`,
-            savePath: `${workspaceRoot}/${i18nextScannerModuleConfig.translationFilesLocation}/{{lng}}/{{ns}}.json`,
-            jsonIndent: 4,
-            lineEnding: 'CRLF',
-          },
-          nsSeparator: ':',
-          keySeparator: '.',
-          pluralSeparator: '_',
-          contextSeparator: ':',
-          contextDefaultValues: [],
-          interpolation: {
-            prefix: '{{',
-            suffix: '}}',
-          },
-          metadata: {},
-          allowDynamicKeys: true,
-          trans: {
-            component: i18nextScannerModuleConfig.translationComponentName,
-            i18nKey:
-              i18nextScannerModuleConfig.translationComponentTranslationKey,
-            defaultsKey: 'defaults',
-            extensions: i18nextScannerModuleConfig.fileExtensions,
-            fallbackKey: false,
-            supportBasicHtmlNodes: true,
-            keepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p'],
-            acorn: {
-              ecmaVersion: 2020,
-              sourceType: 'module', // defaults to 'module'
+          const options: I18nextScannerOptions = {
+            compatibilityJSON: 'v3',
+            debug: false,
+            removeUnusedKeys: true,
+            sort: true,
+            func: {
+              list: config.translationFunctionNames,
+              extensions: config.fileExtensions,
             },
-          },
-        };
+            lngs: config.languages,
+            ns: config.namespaces,
+            defaultLng: config.defaultLanguage,
+            defaultNs: config.defaultNamespace,
+            defaultValue: '',
+            resource: {
+              loadPath: `${workspaceRoot}/${config.translationFilesLocation}/{{lng}}/{{ns}}.json`,
+              savePath: `${workspaceRoot}/${config.translationFilesLocation}/{{lng}}/{{ns}}.json`,
+              jsonIndent: 4,
+              lineEnding: 'CRLF',
+            },
+            nsSeparator: ':',
+            keySeparator: '.',
+            pluralSeparator: '_',
+            contextSeparator: ':',
+            contextDefaultValues: [],
+            interpolation: {
+              prefix: '{{',
+              suffix: '}}',
+            },
+            metadata: {},
+            allowDynamicKeys: true,
+            trans: {
+              component: config.translationComponentName,
+              i18nKey: config.translationComponentTranslationKey,
+              defaultsKey: 'defaults',
+              extensions: config.fileExtensions,
+              fallbackKey: false,
+              supportBasicHtmlNodes: true,
+              keepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p'],
+              acorn: {
+                ecmaVersion: 2020,
+                sourceType: 'module',
+              },
+            },
+          };
 
-        const scanSources = i18nextScannerModuleConfig.codeFileLocations.map(
-          location => `${location}/**/*.{ts,tsx}`
-        );
-        scanSources.push(
-          ...i18nextScannerModuleConfig.codeFileLocations.map(
-            location => `!${location}/**/*.spec.{ts,tsx}`
-          )
-        );
-        scanSources.push('!node_modules/**');
+          const scanSources = [
+            ...config.codeFileLocations.map(
+              location => `${location}/**/*.{ts,tsx}`
+            ),
+            ...config.codeFileLocations.map(
+              location => `!${location}/**/*.spec.{ts,tsx}`
+            ),
+            '!node_modules/**',
+          ];
 
-        this.executeScanner(options, workspaceRoot, scanSources);
+          this.executeScanner(options, workspaceRoot, scanSources);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          span.end();
+        }
       }
     );
   }
 
-  private executeScanner = (
+  private executeScanner(
     options: I18nextScannerOptions,
     workspaceRoot: string,
     scanSources: string[]
-  ) => {
+  ): void {
     try {
       vfs
         .src(scanSources, { cwd: workspaceRoot })
@@ -122,5 +125,5 @@ export default class I18nextScannerService {
     } catch (error) {
       console.error(error);
     }
-  };
+  }
 }
