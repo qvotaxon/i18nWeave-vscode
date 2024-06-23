@@ -33,4 +33,4 @@ ignore:
   - 'src/lib/enums/*.ts'
   - 'src/extension.ts'
   - 'src/media/**/*'
-  - '**/jsonWebviewCreator.ts
+  - '**/jsonWebviewCreator.ts'
