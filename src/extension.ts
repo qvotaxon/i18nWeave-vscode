@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/node';
 import vscode from 'vscode';
 import { ExtensionContext } from 'vscode';
 
+import GeneralConfiguration from './lib/entities/configuration/general/generalConfiguration';
 import { FileType } from './lib/enums/fileType';
 import WebviewFactory from './lib/factories/webviewFactory';
 import FileWatcherCreator from './lib/services/fileChange/fileWatcherCreator';
@@ -117,7 +118,10 @@ async function createWebViewForFilesMatchingPattern(
       if (
         uri.scheme === 'file' &&
         uri.path.endsWith('.json') &&
-        FileLocationStore.getInstance().hasFile(uri)
+        FileLocationStore.getInstance().hasFile(uri) &&
+        ConfigurationStoreManager.getInstance().getConfig<GeneralConfiguration>(
+          'general'
+        ).betaFeaturesConfiguration.enableJsonFileWebView
       ) {
         webviewService.showWebview(FileType.JSON, uri);
       }

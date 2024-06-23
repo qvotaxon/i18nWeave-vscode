@@ -156,6 +156,11 @@
             "type": "string",
             "default": "",
             "description": "Absolute Path to the package.json file of your project."
+          },
+          "i18nWeave.betaFeaturesConfiguration.enableJsonFileWebView": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable the Json File Web View. This feature is still in beta and may not work as expected."
           }
         }
       },
