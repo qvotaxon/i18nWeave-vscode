@@ -4,6 +4,7 @@ import sinon from 'sinon';
 import vscode from 'vscode';
 import { window, workspace } from 'vscode';
 
+import ConfigurationStoreManager from '../configuration/configurationStoreManager';
 import FileLocationStore from '../fileLocation/fileLocationStore';
 import FileContentStore from './fileContentStore';
 
@@ -76,7 +77,26 @@ suite('FileContentStore', () => {
   });
 
   suite('fileChangeContainsTranslationKeys', () => {
+    let getConfigStub: sinon.SinonStub;
+
+    teardown(() => {
+      getConfigStub.restore();
+    });
+
     test('should return true if file change contains translation keys', () => {
+      const config = {
+        i18nextScannerModule: {
+          translationFilesLocation: 'locales',
+          translationFunctionNames: ['I18nKey'],
+          translationComponentTranslationKey: 'i18nKey',
+          translationComponentName: 'Trans',
+        },
+      };
+
+      getConfigStub = sinon
+        .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
+        .returns(config.i18nextScannerModule);
+
       const fsPath = '/path/to/file.json';
       const currentFileContents = 'I18nKey("key1")\nI18nKey("key2")\n';
       const previousFileContents = 'I18nKey("key1")\n';

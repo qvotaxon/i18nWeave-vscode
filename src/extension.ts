@@ -37,20 +37,23 @@ export async function activate(
 
   _context = context;
 
+  const tempHardCodedTransFilesPath = 'src/i18n'; //old val: public/locales
+  const tempHardCodedCodeFilesPath = 'src'; //old val: {apps,libs}
+
   try {
     const fileSearchLocations = [
       {
-        filePattern: '**/public/locales/**/*.json',
+        filePattern: `**/${tempHardCodedTransFilesPath}/**/*.json`,
         ignorePattern:
           '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
       } as FileSearchLocation,
       {
-        filePattern: '**/public/locales/**/*.po',
+        filePattern: `**/${tempHardCodedTransFilesPath}/**/*.po`,
         ignorePattern:
           '**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**',
       } as FileSearchLocation,
       {
-        filePattern: '**/{apps,libs}/**/*.{tsx,ts}',
+        filePattern: `**/${tempHardCodedCodeFilesPath}/**/*.{tsx,ts}`,
         ignorePattern:
           '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**,**/*.spec.ts,**/*.spec.tsx}',
       } as FileSearchLocation,

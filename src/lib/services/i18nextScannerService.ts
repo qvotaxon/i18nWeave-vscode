@@ -1,44 +1,12 @@
 import * as Sentry from '@sentry/node';
 import sort from 'gulp-sort';
 import I18nextScanner from 'i18next-scanner';
-import path from 'path';
 import vfs from 'vinyl-fs';
 
-import GeneralConfiguration from '../entities/configuration/general/generalConfiguration';
+import I18nextScannerModuleConfiguration from '../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
 import ConfigurationStoreManager from '../stores/configuration/configurationStoreManager';
-
-type I18nextScannerOptions = {
-  compatibilityJSON: string;
-  debug: boolean;
-  removeUnusedKeys: boolean;
-  sort: boolean;
-  func: {
-    list: string[];
-    extensions: string[];
-  };
-  lngs: string[];
-  ns: string[];
-  defaultLng: string;
-  defaultNs: string;
-  defaultValue: string;
-  resource: {
-    loadPath: string;
-    savePath: string;
-    jsonIndent: number;
-    lineEnding: string;
-  };
-  nsSeparator: string;
-  keySeparator: string;
-  pluralSeparator: string;
-  contextSeparator: string;
-  contextDefaultValues: any[];
-  interpolation: {
-    prefix: string;
-    suffix: string;
-  };
-  metadata: any;
-  allowDynamicKeys: boolean;
-};
+import { I18nextScannerOptions } from '../types/i18nextScannerOptions';
+import { getSingleWorkSpaceRoot } from '../utilities/filePathUtilities';
 
 /**
  * Service for scanning code using i18next-scanner.
@@ -70,32 +38,31 @@ export default class I18nextScannerService {
         name: 'TypeScript i18next Scanner Module',
       },
       () => {
-        const packageJsonAbsoluteFolderPath =
-          ConfigurationStoreManager.getInstance().getConfig<GeneralConfiguration>(
-            'general'
-          ).pathsConfiguration.packageJsonAbsoluteFolderPath;
+        const configurationManager = ConfigurationStoreManager.getInstance();
+        const i18nextScannerModuleConfig =
+          configurationManager.getConfig<I18nextScannerModuleConfiguration>(
+            'i18nextScannerModule'
+          );
 
-        const fixedPackageJsonAbsoluteFolderPath = path.normalize(
-          packageJsonAbsoluteFolderPath
-        );
+        const workspaceRoot = getSingleWorkSpaceRoot();
 
         const options: I18nextScannerOptions = {
           compatibilityJSON: 'v3',
-          debug: true,
+          debug: false,
           removeUnusedKeys: true,
           sort: true,
           func: {
-            list: ['I18nKey', 't'],
-            extensions: ['.ts', '.tsx'],
+            list: i18nextScannerModuleConfig.translationFunctionNames,
+            extensions: i18nextScannerModuleConfig.fileExtensions,
           },
-          lngs: ['nl', 'en', 'de', 'pl'],
-          ns: ['common', 'onboarding', 'validation'],
-          defaultLng: 'nl',
-          defaultNs: 'common',
+          lngs: i18nextScannerModuleConfig.languages,
+          ns: i18nextScannerModuleConfig.namespaces,
+          defaultLng: i18nextScannerModuleConfig.defaultLanguage,
+          defaultNs: i18nextScannerModuleConfig.defaultNamespace,
           defaultValue: '',
           resource: {
-            loadPath: `${fixedPackageJsonAbsoluteFolderPath}/public/locales/{{lng}}/{{ns}}.json`,
-            savePath: `${fixedPackageJsonAbsoluteFolderPath}/public/locales/{{lng}}/{{ns}}.json`,
+            loadPath: `${workspaceRoot}/${i18nextScannerModuleConfig.translationFilesLocation}/{{lng}}/{{ns}}.json`,
+            savePath: `${workspaceRoot}/${i18nextScannerModuleConfig.translationFilesLocation}/{{lng}}/{{ns}}.json`,
             jsonIndent: 4,
             lineEnding: 'CRLF',
           },
@@ -109,31 +76,51 @@ export default class I18nextScannerService {
             suffix: '}}',
           },
           metadata: {},
-          allowDynamicKeys: false,
+          allowDynamicKeys: true,
+          trans: {
+            component: i18nextScannerModuleConfig.translationComponentName,
+            i18nKey:
+              i18nextScannerModuleConfig.translationComponentTranslationKey,
+            defaultsKey: 'defaults',
+            extensions: i18nextScannerModuleConfig.fileExtensions,
+            fallbackKey: false,
+            supportBasicHtmlNodes: true,
+            keepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p'],
+            acorn: {
+              ecmaVersion: 2020,
+              sourceType: 'module', // defaults to 'module'
+            },
+          },
         };
 
-        this.executeScanner(options, fixedPackageJsonAbsoluteFolderPath);
+        const scanSources = i18nextScannerModuleConfig.codeFileLocations.map(
+          location => `${location}/**/*.{ts,tsx}`
+        );
+        scanSources.push(
+          ...i18nextScannerModuleConfig.codeFileLocations.map(
+            location => `!${location}/**/*.spec.{ts,tsx}`
+          )
+        );
+        scanSources.push('!node_modules/**');
+
+        this.executeScanner(options, workspaceRoot, scanSources);
       }
     );
   }
 
   private executeScanner = (
     options: I18nextScannerOptions,
-    fixedPackageJsonAbsoluteFolderPath: string
+    workspaceRoot: string,
+    scanSources: string[]
   ) => {
-    vfs
-      .src(
-        [
-          `apps/**/*.{ts,tsx}`,
-          `libs/**/*.{ts,tsx}`,
-          `!apps/**/*.spec.{ts,tsx}`,
-          `!libs/**/*.spec.{ts,tsx}`,
-          `!node_modules/**`,
-        ],
-        { cwd: fixedPackageJsonAbsoluteFolderPath }
-      )
-      .pipe(sort())
-      .pipe(I18nextScanner(options))
-      .pipe(vfs.dest('./'));
+    try {
+      vfs
+        .src(scanSources, { cwd: workspaceRoot })
+        .pipe(sort())
+        .pipe(I18nextScanner(options))
+        .pipe(vfs.dest('./'));
+    } catch (error) {
+      console.error(error);
+    }
   };
 }
