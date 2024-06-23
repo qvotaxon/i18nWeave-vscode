@@ -75,18 +75,18 @@ export default class JsonWebviewCreator implements WebviewCreator {
     );
 
     const htmlContent = fs
-      .readFileSync(mediaPath.with({ path: 'index.html' }).fsPath, 'utf8')
+      .readFileSync(vscode.Uri.joinPath(mediaPath, 'index.html').fsPath, 'utf8')
       .replace('<!-- TABLE_CONTENT -->', tableContent)
       .replace(
         '<!-- STYLESHEET_PATH -->',
         this.panel!.webview.asWebviewUri(
-          mediaPath.with({ path: 'styles.css' })
+          vscode.Uri.joinPath(mediaPath, 'styles.css')
         ).toString()
       )
       .replace(
         '<!-- SCRIPT_PATH -->',
         this.panel!.webview.asWebviewUri(
-          mediaPath.with({ path: 'script.js' })
+          vscode.Uri.joinPath(mediaPath, 'script.js')
         ).toString()
       );
 
