@@ -11,10 +11,6 @@ suite('I18nextScannerService', () => {
 
   setup(() => {
     scannerService = I18nextScannerService.getInstance();
-    getConfigStub = sinon.stub(
-      ConfigurationStoreManager.getInstance(),
-      'getConfig'
-    );
   });
 
   teardown(() => {
@@ -31,10 +27,18 @@ suite('I18nextScannerService', () => {
 
   suite('scanCodeAsync', () => {
     test('should scan code for translation keys', async () => {
-      // const pathsConfiguration = {
-      //   packageJsonAbsoluteFolderPath: 'some/path',
-      // } as GeneralConfiguration['pathsConfiguration'];
-      // getConfigStub.returns({ pathsConfiguration });
+      const config = {
+        i18nextScannerModule: {
+          translationFilesLocation: 'locales',
+          translationFunctionNames: ['I18nKey'],
+          translationComponentTranslationKey: 'i18nKey',
+          translationComponentName: 'Trans',
+        },
+      };
+
+      getConfigStub = sinon
+        .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
+        .returns(config.i18nextScannerModule);
 
       const executeScannerStub = (scannerService['executeScanner'] = sinon
         .stub()

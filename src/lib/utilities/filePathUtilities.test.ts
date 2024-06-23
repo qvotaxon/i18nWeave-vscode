@@ -1,6 +1,8 @@
 import assert from 'assert';
+import sinon from 'sinon';
 import vscode from 'vscode';
 
+import ConfigurationStoreManager from '../stores/configuration/configurationStoreManager';
 import {
   determineOutputPath,
   extractFilePathParts,
@@ -9,14 +11,56 @@ import {
 } from './filePathUtilities';
 
 suite('filePathUtilities', () => {
+  let getConfigStub: sinon.SinonStub;
+
+  teardown(() => {
+    sinon.restore();
+  });
+
   suite('extractLocale', () => {
     test('should extract the locale from the file path', () => {
+      const config = {
+        i18nextScannerModule: {
+          translationFilesLocation: 'locales',
+        },
+      };
+
+      getConfigStub = sinon
+        .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
+        .returns(config.i18nextScannerModule);
+
       const filePath = 'C:\\locales\\en\\file.po';
       const locale = extractLocale(filePath);
       assert.equal(locale, 'en');
     });
 
+    test('should extract the locale from the file path with nested translation files location', () => {
+      const config = {
+        i18nextScannerModule: {
+          translationFilesLocation: 'src/i18n',
+        },
+      };
+
+      getConfigStub = sinon
+        .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
+        .returns(config.i18nextScannerModule);
+
+      const filePath = 'C:\\src\\i18n\\en\\file.po';
+      const locale = extractLocale(filePath);
+      assert.equal(locale, 'en');
+    });
+
     test('should throw an error for invalid file path format', () => {
+      const config = {
+        i18nextScannerModule: {
+          translationFilesLocation: 'src/i18n',
+        },
+      };
+
+      getConfigStub = sinon
+        .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
+        .returns(config.i18nextScannerModule);
+
       const filePath = 'C:\\invalid\\file.path';
       assert.throws(() => extractLocale(filePath), {
         message: 'Invalid file path format',
@@ -56,12 +100,42 @@ suite('filePathUtilities', () => {
 
   suite('extractFilePathParts', () => {
     test('should extract the locale and output path from the file path', () => {
+      const config = {
+        i18nextScannerModule: {
+          translationFilesLocation: 'locales',
+        },
+      };
+
+      getConfigStub = sinon
+        .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
+        .returns(config.i18nextScannerModule);
+
       const filePath = 'C:\\locales\\en\\file.po';
       const filePathParts = extractFilePathParts(filePath);
 
       assert.deepStrictEqual(filePathParts, {
         locale: 'en',
         outputPath: vscode.Uri.file('C:\\locales\\en\\file.json'),
+      });
+    });
+
+    test('should extract the locale and output path from the file path with nested translation files location', () => {
+      const config = {
+        i18nextScannerModule: {
+          translationFilesLocation: 'src/i18n',
+        },
+      };
+
+      getConfigStub = sinon
+        .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
+        .returns(config.i18nextScannerModule);
+
+      const filePath = 'C:\\src\\i18n\\en\\file.po';
+      const filePathParts = extractFilePathParts(filePath);
+
+      assert.deepStrictEqual(filePathParts, {
+        locale: 'en',
+        outputPath: vscode.Uri.file('C:\\src\\i18n\\en\\file.json'),
       });
     });
   });

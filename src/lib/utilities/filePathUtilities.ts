@@ -7,6 +7,10 @@ import ConfigurationStoreManager from '../stores/configuration/configurationStor
 import { ExtractedFileParts as FilePathParts } from '../types/extractedFileParts';
 
 export function extractLocale(filePath: string): string {
+  let test =
+    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+      'i18nextScannerModule'
+    ).translationFilesLocation;
   const translationFilesLocation =
     ConfigurationStoreManager.getInstance()
       .getConfig<I18nextScannerModuleConfiguration>('i18nextScannerModule')

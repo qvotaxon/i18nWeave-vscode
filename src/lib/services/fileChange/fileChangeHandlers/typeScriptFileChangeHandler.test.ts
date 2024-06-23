@@ -41,6 +41,12 @@ suite('TypeScriptFileChangeHandler', () => {
   });
 
   suite('handleFileChangeAsync', () => {
+    let getConfigStub: sinon.SinonStub;
+
+    teardown(() => {
+      sinon.restore();
+    });
+
     test('should not execute chain if changeFileLocation is undefined', async () => {
       sinon
         .stub(FileContentStore, 'fileChangeContainsTranslationKeys')
@@ -53,6 +59,20 @@ suite('TypeScriptFileChangeHandler', () => {
     });
 
     test('should execute chain if changeFileLocation is provided', async () => {
+      const config = {
+        i18nextScannerModule: {
+          translationFilesLocation: 'locales',
+          translationFunctionNames: ['I18nKey'],
+          translationComponentTranslationKey: 'i18nKey',
+          translationComponentName: 'Trans',
+          codeFileLocations: ['src'],
+        },
+      };
+
+      getConfigStub = sinon
+        .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
+        .returns(config.i18nextScannerModule);
+
       sinon
         .stub(FileContentStore, 'fileChangeContainsTranslationKeys')
         .returns(true);
@@ -90,6 +110,19 @@ suite('TypeScriptFileChangeHandler', () => {
     });
 
     test('should execute chain if changeFileLocation contains translation keys', async () => {
+      const config = {
+        i18nextScannerModule: {
+          translationFilesLocation: 'locales',
+          translationFunctionNames: ['I18nKey'],
+          translationComponentTranslationKey: 'i18nKey',
+          translationComponentName: 'Trans',
+          codeFileLocations: ['src'],
+        },
+      };
+
+      getConfigStub = sinon
+        .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
+        .returns(config.i18nextScannerModule);
       sinon
         .stub(FileContentStore, 'fileChangeContainsTranslationKeys')
         .returns(true);
