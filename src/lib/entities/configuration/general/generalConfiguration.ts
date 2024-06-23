@@ -1,3 +1,4 @@
+import BetaFeaturesConfiguration from './betaFeaturesConfiguration';
 import PathsConfiguration from './pathsConfiguration';
 
 /**
@@ -5,4 +6,6 @@ import PathsConfiguration from './pathsConfiguration';
  */
 export default class GeneralConfiguration {
   pathsConfiguration: PathsConfiguration = new PathsConfiguration();
+  betaFeaturesConfiguration: BetaFeaturesConfiguration =
+    new BetaFeaturesConfiguration();
 }
