@@ -48,4 +48,11 @@ export default class WebviewStore {
     const fsPath = uri.fsPath;
     WebviewStore._webviews.delete(fsPath);
   }
+
+  /**
+   * Clears the webviews stored in the WebviewStore.
+   */
+  public clear(): void {
+    WebviewStore._webviews.clear();
+  }
 }
