@@ -4,6 +4,21 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.4.0-alpha](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.3.1-alpha...v0.4.0-alpha) (2024-06-23)
+
+
+### Features
+
+* enhance i18n support and simplify config ([#111](https://github.com/qvotaxon/i18nWeave-vscode/issues/111)) ([2ae61a2](https://github.com/qvotaxon/i18nWeave-vscode/commit/2ae61a23c66f53498b2f7d9aa21830b1e1543409))
+* Enhance user experience and code readability ([#104](https://github.com/qvotaxon/i18nWeave-vscode/issues/104)) ([459f2f5](https://github.com/qvotaxon/i18nWeave-vscode/commit/459f2f590b48fcef99252de4be489062de467b55))
+* unlock beta feature for JSON file webview! ([#109](https://github.com/qvotaxon/i18nWeave-vscode/issues/109)) ([2cf9e9d](https://github.com/qvotaxon/i18nWeave-vscode/commit/2cf9e9d283c341d9cf3989876297a9289b7f82e8))
+
+
+### Bug Fixes
+
+* **codecov:** correct typo in ignore path ([#110](https://github.com/qvotaxon/i18nWeave-vscode/issues/110)) ([b8639e1](https://github.com/qvotaxon/i18nWeave-vscode/commit/b8639e18e922bcd72a317d25118e9f49752b9e58))
+* json table view ([#108](https://github.com/qvotaxon/i18nWeave-vscode/issues/108)) ([5649be1](https://github.com/qvotaxon/i18nWeave-vscode/commit/5649be1fe2abfc4e94b27b6513f115ecc7cb70b9))
+
 ## [0.3.1-alpha](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.3.0-alpha...v0.3.1-alpha) (2024-06-21)
 
 
