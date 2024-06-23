@@ -33,6 +33,7 @@ suite('I18nextScannerService', () => {
           translationFunctionNames: ['I18nKey'],
           translationComponentTranslationKey: 'i18nKey',
           translationComponentName: 'Trans',
+          codeFileLocations: ['src'],
         },
       };
 
