@@ -1,6 +1,8 @@
 import fs from 'fs';
 import { ProgressLocation, window } from 'vscode';
 
+import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
+import ConfigurationStoreManager from '../configuration/configurationStoreManager';
 import FileLocationStore from '../fileLocation/fileLocationStore';
 
 export default class FileContentStore {
@@ -48,6 +50,11 @@ export default class FileContentStore {
       FileContentStore.currentFileContents[fsPath as keyof object],
       FileContentStore.previousFileContents[fsPath as keyof object]
     );
+
+    if (changedLines.length === 0) {
+      return false;
+    }
+
     const translationKeys =
       FileContentStore.extractTranslationKeys(changedLines);
 
@@ -109,9 +116,27 @@ export default class FileContentStore {
   };
 
   private static extractTranslationKeys = (lines: string[]) => {
-    const translationKeys: string[] = [];
-    const keyRegex = /(?:I18nKey|t)\(\s*['"`](.*?)['"`]\s*\)?/g;
+    const i18nextScannerModuleConfig =
+      ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+        'i18nextScannerModule'
+      );
+    const translationFunctionNames = [];
+    translationFunctionNames.push(
+      i18nextScannerModuleConfig.translationFunctionNames
+    );
+    translationFunctionNames.push(
+      i18nextScannerModuleConfig.translationComponentTranslationKey
+    );
+    const translationComponentName =
+      i18nextScannerModuleConfig.translationComponentName;
+    const keysToSearchFor = translationFunctionNames.flat().join('|');
 
+    const keyRegex = new RegExp(
+      `(?:${keysToSearchFor})\\(\\s*['"\`](.*?)['"\`]\\s*\\)?|<${translationComponentName}\\s+${keysToSearchFor}=['"\`](.*?)['"\`]\\s*>`,
+      'g'
+    );
+
+    const translationKeys: string[] = [];
     lines.forEach((line: string) => {
       let match;
       while ((match = keyRegex.exec(line)) !== null) {

@@ -31,10 +31,10 @@ suite('I18nextScannerService', () => {
 
   suite('scanCodeAsync', () => {
     test('should scan code for translation keys', async () => {
-      const pathsConfiguration = {
-        packageJsonAbsoluteFolderPath: 'some/path',
-      } as GeneralConfiguration['pathsConfiguration'];
-      getConfigStub.returns({ pathsConfiguration });
+      // const pathsConfiguration = {
+      //   packageJsonAbsoluteFolderPath: 'some/path',
+      // } as GeneralConfiguration['pathsConfiguration'];
+      // getConfigStub.returns({ pathsConfiguration });
 
       const executeScannerStub = (scannerService['executeScanner'] = sinon
         .stub()

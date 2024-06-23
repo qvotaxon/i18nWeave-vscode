@@ -21,12 +21,12 @@ suite('TypeScriptFileChangeHandler', () => {
     readFileSyncStub = sinon.stub(fs, 'readFileSync');
     handler = TypeScriptFileChangeHandler.create();
 
-    const pathsConfiguration = {
-      packageJsonAbsoluteFolderPath: 'some/path',
-    } as GeneralConfiguration['pathsConfiguration'];
-    sinon
-      .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
-      .returns({ pathsConfiguration });
+    // const pathsConfiguration = {
+    //   packageJsonAbsoluteFolderPath: 'some/path',
+    // } as GeneralConfiguration['pathsConfiguration'];
+    // sinon
+    //   .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
+    //   .returns({ pathsConfiguration });
   });
 
   teardown(() => {

@@ -56,6 +56,10 @@ export default class DeeplService {
         formality = 'default';
       }
 
+      if (targetLanguage === 'cs') {
+        formality = 'default';
+      }
+
       const result = await DeeplService.translateUsingDeepl(
         DeeplService.translator,
         text,

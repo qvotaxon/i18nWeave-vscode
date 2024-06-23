@@ -143,8 +143,87 @@
         "properties": {
           "i18nWeave.i18nextScannerModule.enabled": {
             "type": "boolean",
-            "default": false,
+            "default": true,
             "description": "Enable the i18next-scanner module."
+          },
+          "i18nWeave.i18nextScannerModule.namespaces": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [
+              "common"
+            ],
+            "description": "List of namespaces for translation."
+          },
+          "i18nWeave.i18nextScannerModule.defaultNamespace": {
+            "type": "string",
+            "default": "common",
+            "description": "Default namespace to use for translations."
+          },
+          "i18nWeave.i18nextScannerModule.codeFileLocations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [
+              "src"
+            ],
+            "description": "List of code file locations to scan."
+          },
+          "i18nWeave.i18nextScannerModule.translationFilesLocation": {
+            "type": "string",
+            "default": "src/i18n",
+            "description": "Location of the translation files."
+          },
+          "i18nWeave.i18nextScannerModule.languages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [
+              "en"
+            ],
+            "description": "Languages used by your application."
+          },
+          "i18nWeave.i18nextScannerModule.defaultLanguage": {
+            "type": "string",
+            "default": "en",
+            "description": "Default language used by your application."
+          },
+          "i18nWeave.i18nextScannerModule.translationFunctionNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [
+              "t",
+              "i18next.t"
+            ],
+            "description": "Names of the translation functions used in your application."
+          },
+          "i18nWeave.i18nextScannerModule.translationComponentTranslationKey": {
+            "type": "string",
+            "default": "i18nKey",
+            "description": "Names of the translation functions used in your application."
+          },
+          "i18nWeave.i18nextScannerModule.translationComponentName": {
+            "type": "string",
+            "default": "Trans",
+            "description": "Name of the translation component used in your application."
+          },
+          "i18nWeave.i18nextScannerModule.fileExtensions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [
+              ".ts",
+              ".tsx",
+              ".js",
+              ".jsx"
+            ],
+            "description": "File extensions to scan for translations."
           }
         }
       },
@@ -152,11 +231,6 @@
         "id": "general",
         "title": "General",
         "properties": {
-          "i18nWeave.pathsConfiguration.packageJsonAbsoluteFolderPath": {
-            "type": "string",
-            "default": "",
-            "description": "Absolute Path to the package.json file of your project."
-          },
           "i18nWeave.betaFeaturesConfiguration.enableJsonFileWebView": {
             "type": "boolean",
             "default": false,
