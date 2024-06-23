@@ -3,11 +3,13 @@ import vscode from 'vscode';
 import { ExtensionContext } from 'vscode';
 
 import { FileType } from './lib/enums/fileType';
+import WebviewFactory from './lib/factories/webviewFactory';
 import FileWatcherCreator from './lib/services/fileChange/fileWatcherCreator';
 import WebviewService from './lib/services/webview/webviewService';
 import ConfigurationStoreManager from './lib/stores/configuration/configurationStoreManager';
 import FileContentStore from './lib/stores/fileContent/fileContentStore';
 import FileLocationStore from './lib/stores/fileLocation/fileLocationStore';
+import WebviewStore from './lib/stores/webview/webviewStore';
 import { FileSearchLocation } from './lib/types/fileSearchLocation';
 
 function initializeSentry() {
@@ -25,7 +27,10 @@ let _context = {} as ExtensionContext;
 export async function activate(
   context: ExtensionContext,
   fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator(),
-  webviewService: WebviewService = new WebviewService(context)
+  webviewService: WebviewService = new WebviewService(
+    WebviewStore.getInstance(),
+    new WebviewFactory(context)
+  )
 ) {
   console.log('i18nWeave is now active!');
 

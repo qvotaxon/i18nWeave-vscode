@@ -1,23 +1,24 @@
 import vscode from 'vscode';
 
 import { FileType } from '../../enums/fileType';
-import WebviewFactory from '../../factories/webviewFactory';
-import WebviewStore from '../../stores/webview/webviewStore';
+import { IWebviewFactory } from '../../interfaces/webviewFactory';
+import { IWebviewStore } from '../../interfaces/webviewStore';
 
 /**
  * Service class for managing webviews.
  */
 export default class WebviewService {
-  private webviewStore: WebviewStore;
-  private webviewFactory: WebviewFactory;
+  private webviewStore: IWebviewStore;
+  private webviewFactory: IWebviewFactory;
 
   /**
    * Creates an instance of WebviewService.
-   * @param context The extension context.
+   * @param webviewStore The webview store.
+   * @param webviewFactory The webview factory.
    */
-  constructor(context: vscode.ExtensionContext) {
-    this.webviewStore = WebviewStore.getInstance();
-    this.webviewFactory = new WebviewFactory(context);
+  constructor(webviewStore: IWebviewStore, webviewFactory: IWebviewFactory) {
+    this.webviewStore = webviewStore;
+    this.webviewFactory = webviewFactory;
   }
 
   /**
