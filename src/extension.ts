@@ -2,8 +2,9 @@ import * as Sentry from '@sentry/node';
 import vscode from 'vscode';
 import { ExtensionContext } from 'vscode';
 
+import { FileType } from './lib/enums/fileType';
 import FileWatcherCreator from './lib/services/fileChange/fileWatcherCreator';
-import WebViewService from './lib/services/webview/webviewService';
+import WebviewService from './lib/services/webview/webviewService';
 import ConfigurationStoreManager from './lib/stores/configuration/configurationStoreManager';
 import FileContentStore from './lib/stores/fileContent/fileContentStore';
 import FileLocationStore from './lib/stores/fileLocation/fileLocationStore';
@@ -23,7 +24,8 @@ let _context = {} as ExtensionContext;
 
 export async function activate(
   context: ExtensionContext,
-  fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator()
+  fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator(),
+  webviewService: WebviewService = new WebviewService(context)
 ) {
   console.log('i18nWeave is now active!');
 
@@ -55,7 +57,7 @@ export async function activate(
     FileContentStore.getInstance().initializeInitialFileContents();
 
     const onDidOpenTextDocumentDisposable =
-      await createWebViewForFilesMatchingPattern();
+      await createWebViewForFilesMatchingPattern(webviewService);
 
     const typeScriptFileWatchers = await createWatchersForFileType(
       ['ts', 'tsx'],
@@ -101,7 +103,9 @@ async function createWatchersForFileType(
   );
 }
 
-async function createWebViewForFilesMatchingPattern() {
+async function createWebViewForFilesMatchingPattern(
+  webviewService: WebviewService
+) {
   const onDidOpenTextDocumentDisposable =
     vscode.workspace.onDidOpenTextDocument(document => {
       const uri = document.uri;
@@ -110,7 +114,7 @@ async function createWebViewForFilesMatchingPattern() {
         uri.path.endsWith('.json') &&
         FileLocationStore.getInstance().hasFile(uri)
       ) {
-        WebViewService.getInstance().openJsonAsTable(uri, _context);
+        webviewService.showWebview(FileType.JSON, uri);
       }
     });
 
