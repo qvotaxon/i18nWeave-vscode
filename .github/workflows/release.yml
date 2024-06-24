@@ -56,11 +56,12 @@ jobs:
       #     VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
       - name: Publish VS Code Extension
+        if: ${{ steps.release.outputs.release_created }}
         uses: HaaLeo/publish-vscode-extension@v1.6.2
         with:
-          preRelease: true
           pat: ${{ secrets.VSCE_PAT }}
           registryUrl: https://marketplace.visualstudio.com
+          preRelease: true
 
       - name: Attest Build Provenance
         if: ${{ steps.release.outputs.release_created }}
