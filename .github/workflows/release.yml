@@ -49,11 +49,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload ${{steps.release.outputs.tag_name}} i18nWeave-vscode-${{steps.release.outputs.tag_name}}.vsix
 
-      - name: Release Pre-release extension
-        if: ${{ steps.release.outputs.release_created }}
-        run: npx vsce publish --packagePath i18nWeave-vscode-${{steps.release.outputs.tag_name}}.vsix --pre-release
-        env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      # - name: Release Pre-release extension
+      #   if: ${{ steps.release.outputs.release_created }}
+      #   run: npx vsce publish --packagePath i18nWeave-vscode-${{steps.release.outputs.tag_name}}.vsix --pre-release
+      #   env:
+      #     VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Publish VS Code Extension
+        uses: HaaLeo/publish-vscode-extension@v1.6.2
+        with:
+          pat: ${{ secrets.VSCE_PAT }}
+          registryUrl: https://marketplace.visualstudio.com
 
       - name: Attest Build Provenance
         if: ${{ steps.release.outputs.release_created }}
