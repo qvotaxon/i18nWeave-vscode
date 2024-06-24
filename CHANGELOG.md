@@ -4,6 +4,14 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.4.3](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.4.2...v0.4.3) (2024-06-24)
+
+
+### Bug Fixes
+
+* conditionally run VS Code extension publishing ([#124](https://github.com/qvotaxon/i18nWeave-vscode/issues/124)) ([6f80e1e](https://github.com/qvotaxon/i18nWeave-vscode/commit/6f80e1ef4d3d73e0d4db7794ac4a6049138e40b9))
+* enable preRelease and update download badge URL ([#122](https://github.com/qvotaxon/i18nWeave-vscode/issues/122)) ([8e4e7f7](https://github.com/qvotaxon/i18nWeave-vscode/commit/8e4e7f7eea65e5b762bf7e8da0f3320b55d14567))
+
 ## [0.4.2](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.4.1...v0.4.2) (2024-06-24)
 
 
