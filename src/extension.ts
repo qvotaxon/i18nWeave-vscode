@@ -3,6 +3,7 @@ import vscode from 'vscode';
 import { ExtensionContext } from 'vscode';
 
 import GeneralConfiguration from './lib/entities/configuration/general/generalConfiguration';
+import I18nextScannerModuleConfiguration from './lib/entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
 import { FileType } from './lib/enums/fileType';
 import WebviewFactory from './lib/factories/webviewFactory';
 import FileWatcherCreator from './lib/services/fileChange/fileWatcherCreator';
@@ -23,8 +24,6 @@ function initializeSentry() {
 }
 initializeSentry();
 
-let _context = {} as ExtensionContext;
-
 export async function activate(
   context: ExtensionContext,
   fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator(),
@@ -35,25 +34,37 @@ export async function activate(
 ) {
   console.log('i18nWeave is now active!');
 
-  _context = context;
+  ConfigurationStoreManager.getInstance().initialize();
 
-  const tempHardCodedTransFilesPath = 'src/i18n'; //old val: public/locales
-  const tempHardCodedCodeFilesPath = 'src'; //old val: {apps,libs}
+  const translationFilesLocation =
+    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+      'i18nextScannerModule'
+    ).translationFilesLocation;
+
+  const codeFileLocations =
+    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+      'i18nextScannerModule'
+    ).codeFileLocations;
+
+  const codeFileExtensions =
+    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+      'i18nextScannerModule'
+    ).fileExtensions;
 
   try {
     const fileSearchLocations = [
       {
-        filePattern: `**/${tempHardCodedTransFilesPath}/**/*.json`,
+        filePattern: `**/${translationFilesLocation}/**/*.json`,
         ignorePattern:
           '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
       } as FileSearchLocation,
       {
-        filePattern: `**/${tempHardCodedTransFilesPath}/**/*.po`,
+        filePattern: `**/${translationFilesLocation}/**/*.po`,
         ignorePattern:
-          '**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**',
+          '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
       } as FileSearchLocation,
       {
-        filePattern: `**/${tempHardCodedCodeFilesPath}/**/*.{tsx,ts}`,
+        filePattern: `**/{${codeFileLocations}}/**/*{${codeFileExtensions}}`,
         ignorePattern:
           '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**,**/*.spec.ts,**/*.spec.tsx}',
       } as FileSearchLocation,
@@ -85,8 +96,6 @@ export async function activate(
       'i18nextJsonToPoConversionModule',
       fileWatcherCreator
     );
-
-    ConfigurationStoreManager.getInstance().initialize();
 
     context.subscriptions.push(
       ...typeScriptFileWatchers,
