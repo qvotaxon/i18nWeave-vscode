@@ -1,4 +1,4 @@
-![Downloads](https://img.shields.io/visual-studio-marketplace/d/qvotaxon.i18nweave-vscode?logo=github&branch=main)
+![Downloads](https://img.shields.io/visual-studio-marketplace/d/qvotaxon.i18nweave?logo=github&branch=main)
 ![Latest version](https://img.shields.io/github/package-json/v/qvotaxon/i18nweave-vscode)
 
 [![Build](https://github.com/qvotaxon/i18nWeave-vscode/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/qvotaxon/i18nWeave-vscode/actions/workflows/build.yml)

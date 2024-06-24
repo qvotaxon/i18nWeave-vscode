@@ -58,6 +58,7 @@ jobs:
       - name: Publish VS Code Extension
         uses: HaaLeo/publish-vscode-extension@v1.6.2
         with:
+          preRelease: true
           pat: ${{ secrets.VSCE_PAT }}
           registryUrl: https://marketplace.visualstudio.com
 
