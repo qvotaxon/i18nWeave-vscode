@@ -43,7 +43,16 @@ export default class I18nextScannerService {
             configManager.getConfig<I18nextScannerModuleConfiguration>(
               'i18nextScannerModule'
             );
-          const workspaceRoot = getSingleWorkSpaceRoot();
+          let workspaceRoot = getSingleWorkSpaceRoot();
+
+          //todo: remove this override:
+
+          if (
+            workspaceRoot ===
+            'c:\\Users\\j.vervloed\\RGF\\USG Portals React Web'
+          ) {
+            workspaceRoot += '/portals-web';
+          }
 
           const options: I18nextScannerOptions = {
             compatibilityJSON: 'v3',
