@@ -2,6 +2,7 @@
   "name": "i18nweave",
   "displayName": "i18nWeave",
   "description": "Developer's i18n Companion",
+  "icon": "static/logo-128x128.png",
   "publisher": "qvotaxon",
   "license": "SEE LICENSE IN LICENSE.txt",
   "repository": {
@@ -28,34 +29,9 @@
   ],
   "badges": [
     {
-      "url": "https://img.shields.io/visual-studio-marketplace/d/qvotaxon.i18nweave-vscode?logo=github&branch=main",
-      "href": "https://marketplace.visualstudio.com/items?itemName=qvotaxon.i18nweave-vscode",
-      "description": "Downloads"
-    },
-    {
-      "url": "https://img.shields.io/github/actions/workflow/status/qvotaxon/i18nweave-vscode/pullrequest.yml?logo=github&branch=main",
-      "href": "https://github.com/qvotaxon/i18nweave-vscode/actions?query=workflow%3Apullrequest",
-      "description": "GitHub Workflow Status"
-    },
-    {
       "url": "https://codecov.io/github/qvotaxon/i18nWeave-vscode/graph/badge.svg?token=GJVSSQ0WRS",
       "href": "https://codecov.io/github/qvotaxon/i18nWeave-vscode",
       "description": "codecov"
-    },
-    {
-      "url": "https://img.shields.io/github/issues/qvotaxon/i18nweave-vscode?logo=github&branch=main",
-      "href": "https://github.com/qvotaxon/i18nweave-vscode/issues",
-      "description": "Open Issues"
-    },
-    {
-      "url": "https://img.shields.io/github/issues-closed/qvotaxon/i18nweave-vscode?logo=github&branch=main",
-      "href": "https://github.com/qvotaxon/i18nweave-vscode/issues?q=is%3Aissue+is%3Aclosed",
-      "description": "Closed Issues"
-    },
-    {
-      "url": "https://img.shields.io/github/languages/top/qvotaxon/i18nweave-vscode?logo=github&branch=main",
-      "href": "https://github.com/qvotaxon/i18nweave-vscode",
-      "description": "Languages"
     },
     {
       "url": "https://img.shields.io/github/contributors/qvotaxon/i18nweave-vscode?logo=github&branch=main",
