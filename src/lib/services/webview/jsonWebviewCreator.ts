@@ -145,10 +145,16 @@ export default class JsonWebviewCreator implements WebviewCreator {
     panel: vscode.WebviewPanel,
     uri: vscode.Uri
   ): void {
+    vscode.workspace.createFileSystemWatcher(uri.fsPath).onDidChange(() => {
+      panel.webview.html = this.updateWebviewContent(uri);
+    });
+
     panel.onDidChangeViewState(
       event => {
-        if (event.webviewPanel.visible) {
-          this.updateWebviewContent(uri);
+        if (event.webviewPanel.visible && event.webviewPanel.active) {
+          panel.webview.html = this.updateWebviewContent(uri);
+        } else if (!event.webviewPanel.active) {
+          this.webviewStore.removeWebview(uri);
         }
       },
       null,
