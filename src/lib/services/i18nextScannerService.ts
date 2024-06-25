@@ -6,10 +6,7 @@ import vfs from 'vinyl-fs';
 import I18nextScannerModuleConfiguration from '../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
 import ConfigurationStoreManager from '../stores/configuration/configurationStoreManager';
 import { I18nextScannerOptions } from '../types/i18nextScannerOptions';
-import {
-  getProjectRootFolder,
-  getSingleWorkSpaceRoot,
-} from '../utilities/filePathUtilities';
+import { getProjectRootFolder } from '../utilities/filePathUtilities';
 
 /**
  * Service for scanning code using i18next-scanner.
