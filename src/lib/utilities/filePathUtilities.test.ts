@@ -1,4 +1,6 @@
 import assert from 'assert';
+import fs from 'fs';
+import path from 'path';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
@@ -7,7 +9,9 @@ import {
   determineOutputPath,
   extractFilePathParts,
   extractLocale,
+  findProjectRoot,
   getFileExtension,
+  getProjectRootFolder,
 } from './filePathUtilities';
 
 suite('filePathUtilities', () => {
@@ -25,7 +29,7 @@ suite('filePathUtilities', () => {
         },
       };
 
-      getConfigStub = sinon
+      getConfigStub = sinon //NOSONAR
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
@@ -41,7 +45,7 @@ suite('filePathUtilities', () => {
         },
       };
 
-      getConfigStub = sinon
+      getConfigStub = sinon //NOSONAR
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
@@ -57,7 +61,7 @@ suite('filePathUtilities', () => {
         },
       };
 
-      getConfigStub = sinon
+      getConfigStub = sinon //NOSONAR
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
@@ -106,7 +110,7 @@ suite('filePathUtilities', () => {
         },
       };
 
-      getConfigStub = sinon
+      getConfigStub = sinon //NOSONAR
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
@@ -126,7 +130,7 @@ suite('filePathUtilities', () => {
         },
       };
 
-      getConfigStub = sinon
+      getConfigStub = sinon //NOSONAR
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
@@ -146,6 +150,133 @@ suite('filePathUtilities', () => {
       const fileExtension = getFileExtension(uri);
 
       assert.strictEqual(fileExtension, 'po');
+    });
+  });
+
+  suite('findProjectRoot', () => {
+    test('should find project root by locating package.json downward', () => {
+      const rootDir = 'C:\\workspace';
+      const projectDir = path.join(rootDir, 'project');
+      const localesDir = path.join(projectDir, 'public', 'locales');
+
+      sinon.stub(fs, 'existsSync').callsFake(p => {
+        return (
+          p === path.join(projectDir, 'package.json') ||
+          p === localesDir ||
+          p === projectDir ||
+          p === rootDir
+        );
+      });
+
+      sinon.stub(fs, 'lstatSync').callsFake((p): any => {
+        return {
+          isDirectory: () => p === projectDir, //NOSONAR
+        };
+      });
+
+      sinon.stub(fs, 'readdirSync').callsFake((dir): any => {
+        if (dir === rootDir) {
+          return ['project'];
+        }
+        if (dir === projectDir) {
+          return ['public', 'package.json'];
+        }
+        if (dir === path.join(projectDir, 'public')) {
+          return ['locales'];
+        }
+        return [];
+      });
+
+      const projectRoot = findProjectRoot(rootDir);
+      assert.strictEqual(projectRoot, projectDir);
+    });
+
+    test('should stop searching when node_modules is found', () => {
+      const rootDir = 'C:\\workspace';
+      const projectDir = path.join(rootDir, 'project');
+      const nodeModulesDir = path.join(projectDir, 'node_modules');
+
+      sinon.stub(fs, 'existsSync').callsFake(p => {
+        return p === nodeModulesDir || p === projectDir || p === rootDir;
+      });
+
+      sinon.stub(fs, 'lstatSync').callsFake((p): any => {
+        return {
+          isDirectory: () => p === nodeModulesDir || p === projectDir, //NOSONAR
+        };
+      });
+
+      sinon.stub(fs, 'readdirSync').callsFake((dir): any => {
+        if (dir === rootDir) {
+          return ['project'];
+        }
+        if (dir === projectDir) {
+          return ['node_modules'];
+        }
+        return [];
+      });
+
+      const projectRoot = findProjectRoot(rootDir);
+      assert.strictEqual(projectRoot, projectDir);
+    });
+  });
+
+  suite('getProjectRootFolder', () => {
+    test('should get project root folder from workspace', () => {
+      const workspaceFolder = {
+        uri: vscode.Uri.file('C:\\workspace'),
+      } as vscode.WorkspaceFolder;
+      const projectDir = path.join(workspaceFolder.uri.fsPath, 'project');
+
+      sinon.stub(vscode.workspace, 'workspaceFolders').value([workspaceFolder]);
+      sinon.stub(fs, 'existsSync').callsFake(p => {
+        return (
+          p === path.join(projectDir, 'package.json') ||
+          p === workspaceFolder.uri.fsPath ||
+          p === projectDir
+        );
+      });
+      sinon.stub(fs, 'lstatSync').callsFake((p): any => {
+        return {
+          isDirectory: () => p === projectDir, //NOSONAR
+        };
+      });
+
+      sinon.stub(fs, 'readdirSync').callsFake((dir): any => {
+        if (dir === workspaceFolder.uri.fsPath) {
+          return ['project'];
+        }
+        if (dir === projectDir) {
+          return ['package.json'];
+        }
+        return [];
+      });
+
+      const projectRoot = getProjectRootFolder();
+      assert.strictEqual(projectRoot, projectDir);
+    });
+
+    test('should return undefined if no project root is found', () => {
+      const rootDir = 'c:\\workspace';
+      const workspaceFolder = {
+        uri: vscode.Uri.file(rootDir),
+      } as vscode.WorkspaceFolder;
+
+      sinon.stub(vscode.workspace, 'workspaceFolders').value([workspaceFolder]);
+      sinon.stub(fs, 'existsSync').returns(false);
+      sinon.stub(fs, 'lstatSync').callsFake((p): any => {
+        return {
+          isDirectory: () => p === rootDir, //NOSONAR
+        };
+      });
+      sinon.stub(fs, 'readdirSync').callsFake((dir): any => {
+        if (dir === rootDir) {
+          return ['project'];
+        }
+      });
+
+      const projectRoot = getProjectRootFolder();
+      assert.strictEqual(projectRoot, undefined);
     });
   });
 });
