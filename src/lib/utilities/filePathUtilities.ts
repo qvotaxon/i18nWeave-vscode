@@ -1,6 +1,6 @@
+import fs from 'fs';
 import path from 'path';
-import vscode, { workspace } from 'vscode';
-import { Uri } from 'vscode';
+import vscode, { Uri, workspace } from 'vscode';
 
 import I18nextScannerModuleConfiguration from '../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
 import ConfigurationStoreManager from '../stores/configuration/configurationStoreManager';
@@ -11,7 +11,7 @@ export function extractLocale(filePath: string): string {
     ConfigurationStoreManager.getInstance()
       .getConfig<I18nextScannerModuleConfiguration>('i18nextScannerModule')
       .translationFilesLocation.split('/')
-      .pop() || '';
+      .pop() ?? '';
 
   const localePattern = new RegExp(
     `\\\\${translationFilesLocation}\\\\([^\\\\]+)\\\\`
@@ -64,8 +64,62 @@ export function getSingleWorkSpaceRoot(): string {
     throw new Error('No workspace folders found');
   }
 
-  // Assuming you want to use the first workspace folder
   const rootFolder = workspaceFolders[0].uri.fsPath;
 
   return rootFolder;
+}
+
+/**
+ * Search for the project root by looking for package.json file downward.
+ * Stops at node_modules directory as it likely indicates the project root.
+ * @param dir - The starting directory to search from.
+ * @returns The path to the project root folder or undefined if not found.
+ */
+export function findProjectRoot(dir: string): string | undefined {
+  const queue: string[] = [dir];
+
+  while (queue.length > 0) {
+    const currentDir = queue.shift()!;
+
+    // Check for node_modules directory
+    const nodeModulesPath = path.join(currentDir, 'node_modules');
+    if (fs.existsSync(nodeModulesPath)) {
+      return currentDir;
+    }
+
+    // Check for package.json file
+    const packageJsonPath = path.join(currentDir, 'package.json');
+    if (fs.existsSync(packageJsonPath)) {
+      return currentDir;
+    }
+
+    // Add subdirectories to the queue
+    const subDirs = fs
+      .readdirSync(currentDir)
+      .map(name => path.join(currentDir, name))
+      .filter(subPath => fs.lstatSync(subPath).isDirectory());
+
+    queue.push(...subDirs);
+  }
+
+  return undefined;
+}
+
+/**
+ * Get the actual project root folder by locating the package.json file.
+ * @returns The path to the project root folder or undefined if not found.
+ */
+export function getProjectRootFolder(): string | undefined {
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+
+  if (workspaceFolders) {
+    for (const folder of workspaceFolders) {
+      const projectRoot = findProjectRoot(folder.uri.fsPath);
+      if (projectRoot) {
+        return projectRoot;
+      }
+    }
+  }
+
+  return undefined;
 }
