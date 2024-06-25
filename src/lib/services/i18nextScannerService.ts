@@ -6,7 +6,7 @@ import vfs from 'vinyl-fs';
 import I18nextScannerModuleConfiguration from '../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
 import ConfigurationStoreManager from '../stores/configuration/configurationStoreManager';
 import { I18nextScannerOptions } from '../types/i18nextScannerOptions';
-import { getSingleWorkSpaceRoot } from '../utilities/filePathUtilities';
+import { getProjectRootFolder } from '../utilities/filePathUtilities';
 
 /**
  * Service for scanning code using i18next-scanner.
@@ -43,15 +43,10 @@ export default class I18nextScannerService {
             configManager.getConfig<I18nextScannerModuleConfiguration>(
               'i18nextScannerModule'
             );
-          let workspaceRoot = getSingleWorkSpaceRoot();
+          let projectRoot = getProjectRootFolder();
 
-          //todo: remove this override:
-
-          if (
-            workspaceRoot ===
-            'c:\\Users\\j.vervloed\\RGF\\USG Portals React Web'
-          ) {
-            workspaceRoot += '/portals-web';
+          if (!projectRoot) {
+            throw new Error('No project root found');
           }
 
           const options: I18nextScannerOptions = {
@@ -69,8 +64,8 @@ export default class I18nextScannerService {
             defaultNs: config.defaultNamespace,
             defaultValue: '',
             resource: {
-              loadPath: `${workspaceRoot}/${config.translationFilesLocation}/{{lng}}/{{ns}}.json`,
-              savePath: `${workspaceRoot}/${config.translationFilesLocation}/{{lng}}/{{ns}}.json`,
+              loadPath: `${projectRoot}/${config.translationFilesLocation}/{{lng}}/{{ns}}.json`,
+              savePath: `${projectRoot}/${config.translationFilesLocation}/{{lng}}/{{ns}}.json`,
               jsonIndent: 4,
               lineEnding: 'CRLF',
             },
@@ -110,7 +105,7 @@ export default class I18nextScannerService {
             '!node_modules/**',
           ];
 
-          this.executeScanner(options, workspaceRoot, scanSources);
+          this.executeScanner(options, projectRoot, scanSources);
         } catch (error) {
           console.error(error);
         } finally {
