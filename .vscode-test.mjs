@@ -6,4 +6,8 @@ export default defineConfig({
 		'out/extension.test.js'
 	],
 	workspaceFolder: './src/test/mock-workspace',
+	env: {
+		DOTENV_CONFIG_PATH: './src/.env.vscode-test',
+		NODE_ENV: "development"
+	}
 });

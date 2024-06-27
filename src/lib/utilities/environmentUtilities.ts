@@ -3,8 +3,6 @@
  * @returns The current environment, defaulting to 'development' if not set.
  */
 export function getEnvironment(): string {
-  console.log(process.env.NODE_ENV);
-
   return process.env.NODE_ENV ?? 'development';
 }
 
@@ -21,5 +19,7 @@ export function isDevelopment(): boolean {
  * @returns {boolean} Returns true if the environment is production, false otherwise.
  */
 export function isProduction(): boolean {
+  const test = getEnvironment();
+
   return getEnvironment() === 'production';
 }

@@ -1,7 +1,5 @@
 import * as assert from 'assert';
-import sinon from 'sinon';
 
-import * as environmentUtilities from './environmentUtilities';
 import {
   getEnvironment,
   isDevelopment,
@@ -27,11 +25,14 @@ suite('Environment Utilities', () => {
 
   suite('isProduction', () => {
     test('should return true if the current environment is production', () => {
-      sinon.stub(environmentUtilities, 'getEnvironment').returns('production');
+      const currentNodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
 
       const isProd = isProduction();
       assert.ok(isProd);
       assert.equal(typeof isProd, 'boolean');
+
+      process.env.NODE_ENV = currentNodeEnv;
     });
   });
 });
