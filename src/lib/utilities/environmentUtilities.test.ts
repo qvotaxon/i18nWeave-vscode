@@ -17,9 +17,14 @@ suite('Environment Utilities', () => {
 
   suite('isDevelopment', () => {
     test('should return true if the current environment is development', () => {
+      const currentNodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'development';
+
       const isDev = isDevelopment();
       assert.ok(isDev);
       assert.equal(typeof isDev, 'boolean');
+
+      process.env.NODE_ENV = currentNodeEnv;
     });
   });
 
