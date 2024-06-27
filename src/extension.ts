@@ -22,15 +22,23 @@ const envFilePath =
 dotenv.config({ path: envFilePath });
 
 function initializeSentry() {
+  const i18nWeaveExtension =
+    vscode.extensions.getExtension('qvotaxon.i18nWeave')!;
+  const installationId = vscode.env.machineId;
+
   Sentry.init({
-    enabled: isProduction(),
+    enabled: isProduction() && vscode.env.isTelemetryEnabled,
     dsn: 'https://188de1d08857e4d1a5e59d8a9da5da1a@o4507423909216256.ingest.de.sentry.io/4507431475019856',
     integrations: Sentry.getDefaultIntegrations({}),
     tracesSampleRate: 1.0,
     profilesSampleRate: 1.0,
+    release: i18nWeaveExtension.packageJSON.version,
+  });
+
+  Sentry.setUser({
+    id: installationId,
   });
 }
-initializeSentry();
 
 export async function activate(
   context: ExtensionContext,
@@ -41,6 +49,8 @@ export async function activate(
   )
 ) {
   console.log('i18nWeave is now active!');
+
+  initializeSentry();
 
   ConfigurationStoreManager.getInstance().initialize();
 
