@@ -7,6 +7,7 @@ import GeneralConfiguration from './lib/entities/configuration/general/generalCo
 import I18nextScannerModuleConfiguration from './lib/entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
 import { FileType } from './lib/enums/fileType';
 import WebviewFactory from './lib/factories/webviewFactory';
+import ConfigurationWizardService from './lib/services/configurationWizard/configurationWizardService';
 import FileWatcherCreator from './lib/services/fileChange/fileWatcherCreator';
 import WebviewService from './lib/services/webview/webviewService';
 import ConfigurationStoreManager from './lib/stores/configuration/configurationStoreManager';
@@ -43,6 +44,7 @@ function initializeSentry() {
 export async function activate(
   context: ExtensionContext,
   fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator(),
+  configurationWizardService: ConfigurationWizardService = new ConfigurationWizardService(),
   webviewService: WebviewService = new WebviewService(
     WebviewStore.getInstance(),
     new WebviewFactory(context)
@@ -52,24 +54,24 @@ export async function activate(
 
   initializeSentry();
 
-  ConfigurationStoreManager.getInstance().initialize();
-
-  const translationFilesLocation =
-    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
-      'i18nextScannerModule'
-    ).translationFilesLocation;
-
-  const codeFileLocations =
-    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
-      'i18nextScannerModule'
-    ).codeFileLocations;
-
-  const codeFileExtensions =
-    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
-      'i18nextScannerModule'
-    ).fileExtensions;
-
   try {
+    ConfigurationStoreManager.getInstance().initialize();
+
+    const translationFilesLocation =
+      ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+        'i18nextScannerModule'
+      ).translationFilesLocation;
+
+    const codeFileLocations =
+      ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+        'i18nextScannerModule'
+      ).codeFileLocations;
+
+    const codeFileExtensions =
+      ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+        'i18nextScannerModule'
+      ).fileExtensions;
+
     const fileSearchLocations = [
       {
         filePattern: `**/${translationFilesLocation}/**/*.json`,
@@ -115,11 +117,15 @@ export async function activate(
       fileWatcherCreator
     );
 
+    const configurationWizardCommandDisposable =
+      await registerConfigurationWizardCommand(configurationWizardService);
+
     context.subscriptions.push(
       ...typeScriptFileWatchers,
       ...jsonFileWatchers,
       ...poFileWatchers,
-      onDidOpenTextDocumentDisposable
+      onDidOpenTextDocumentDisposable,
+      configurationWizardCommandDisposable
     );
   } catch (error) {
     Sentry.captureException(error);
@@ -158,6 +164,25 @@ async function createWebViewForFilesMatchingPattern(
     });
 
   return onDidOpenTextDocumentDisposable;
+}
+
+async function registerConfigurationWizardCommand(
+  configurationWizardService: ConfigurationWizardService
+): Promise<vscode.Disposable> {
+  return vscode.commands.registerCommand(
+    'i18nWeave.launchConfigurationWizard',
+    async () => {
+      const config =
+        await configurationWizardService.startConfigurationWizardAsync();
+      if (config) {
+        vscode.window.showInformationMessage(
+          `Configuration: ${JSON.stringify(config, null, 2)}`
+        );
+      } else {
+        vscode.window.showErrorMessage('Configuration was cancelled.');
+      }
+    }
+  );
 }
 
 export function deactivate() {

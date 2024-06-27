@@ -51,6 +51,12 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "commands": [
+      {
+        "command": "i18nWeave.launchConfigurationWizard",
+        "title": "Configure i18nWeave"
+      }
+    ],
     "configuration": [
       {
         "id": "translationModule",
