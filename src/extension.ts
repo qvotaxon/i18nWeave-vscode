@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/node';
-import vscode from 'vscode';
-import { ExtensionContext } from 'vscode';
+import * as dotenv from 'dotenv';
+import path from 'path';
+import vscode, { ExtensionContext } from 'vscode';
 
 import GeneralConfiguration from './lib/entities/configuration/general/generalConfiguration';
 import I18nextScannerModuleConfiguration from './lib/entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
@@ -13,9 +14,16 @@ import FileContentStore from './lib/stores/fileContent/fileContentStore';
 import FileLocationStore from './lib/stores/fileLocation/fileLocationStore';
 import WebviewStore from './lib/stores/webview/webviewStore';
 import { FileSearchLocation } from './lib/types/fileSearchLocation';
+import { isProduction } from './lib/utilities/environmentUtilities';
+
+const envFilePath =
+  process.env.DOTENV_CONFIG_PATH ??
+  path.join(__dirname, '..', '.env.production');
+dotenv.config({ path: envFilePath });
 
 function initializeSentry() {
   Sentry.init({
+    enabled: isProduction(),
     dsn: 'https://188de1d08857e4d1a5e59d8a9da5da1a@o4507423909216256.ingest.de.sentry.io/4507431475019856',
     integrations: Sentry.getDefaultIntegrations({}),
     tracesSampleRate: 1.0,
