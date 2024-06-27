@@ -19,7 +19,5 @@ export function isDevelopment(): boolean {
  * @returns {boolean} Returns true if the environment is production, false otherwise.
  */
 export function isProduction(): boolean {
-  const test = getEnvironment();
-
   return getEnvironment() === 'production';
 }
