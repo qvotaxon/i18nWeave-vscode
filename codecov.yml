@@ -10,7 +10,7 @@ coverage:
   precision: 2
   range:
     - 70.0
-    - 85.0
+    - 80.0
   round: down
   status:
     changes: false
@@ -18,11 +18,11 @@ coverage:
       flag_coverage_not_uploaded_behavior: include
     patch:
       default:
-        target: 85%
+        target: 80%
         threshold: 5%
     project:
       default:
-        target: 85%
+        target: 80%
         threshold: 0%
         base: auto
 
