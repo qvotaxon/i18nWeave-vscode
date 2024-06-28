@@ -6,6 +6,6 @@ import * as deepl from 'deepl-node';
 export default class DeepLConfiguration {
   enabled: boolean = false;
   apiKey: string = '';
-  preserveFormatting: boolean = false;
+  preserveFormatting: boolean = true;
   formality: deepl.Formality = 'default';
 }
