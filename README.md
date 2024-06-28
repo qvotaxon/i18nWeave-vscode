@@ -30,6 +30,7 @@ i18nWeave is a Visual Studio Code extension designed to streamline the managemen
 
 ## ⭐ Features
 
+- **Installation Wizard**: Get up and running in no time using the build-in configuration wizard. Pick any of the build-in framework configurations and get started in just a few clicks. Or with just a few more clicks setup a custom project using i18next translations. 
 - **Translation Key Extraction**: This feature allows for the easy extraction of translation keys from code files, which ensures the accurate localization of your application.
 - **PO File Support**: You have the option to use PO files for managing translations. This feature enables seamless integration with your existing localization workflows.
 - **PO to i18n-next JSON Conversion**: Effortlessly convert PO files into the i18n-next JSON format and vice versa. This conversion facilitates compatibility with a variety of localization tools and libraries.
