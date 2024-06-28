@@ -29,11 +29,21 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - uses: googleapis/release-please-action@v4
+      - name: Release Please
         id: release
+        uses: googleapis/release-please-action@v4
         with:
           token: ${{ secrets.RELEASE_PLEASE_KEY }}
           release-type: node
+
+      - name: Cache npm dependencies
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: node-modules-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-
 
       - name: Install dependencies
         if: ${{ steps.release.outputs.release_created }}
@@ -41,13 +51,13 @@ jobs:
 
       - name: Create Pre-release extension
         if: ${{ steps.release.outputs.release_created }}
-        run: npx vsce package -o i18nWeave-vscode-${{steps.release.outputs.tag_name}}.vsix --pre-release
+        run: npx vsce package -o i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix --pre-release
 
       - name: Upload Release Artifact to GitHub
         if: ${{ steps.release.outputs.release_created }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload ${{steps.release.outputs.tag_name}} i18nWeave-vscode-${{steps.release.outputs.tag_name}}.vsix
+        run: gh release upload ${{ steps.release.outputs.tag_name }} i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix
 
       - name: Publish VS Code Extension
         if: ${{ steps.release.outputs.release_created }}
