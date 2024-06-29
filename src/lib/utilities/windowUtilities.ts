@@ -31,7 +31,7 @@ export async function promptForFoldersAsync(
  * @param canSelectMany - Optional. Specifies whether multiple folders can be selected. Default is false.
  * @returns A promise that resolves to the selected folder path(s) or undefined if no folder is selected.
  */
-async function showOpenDialog(
+export async function showOpenDialog(
   placeHolder: string,
   canSelectMany = false
 ): Promise<string | string[] | undefined> {
