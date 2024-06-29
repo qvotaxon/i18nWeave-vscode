@@ -99,10 +99,12 @@ export default class I18nextScannerService {
 
           const scanSources = [
             ...config.codeFileLocations.map(
-              location => `${location}/**/*.{${config.fileExtensions}}`
+              location =>
+                `${location.replace(/^\//, '')}/**/*.{${config.fileExtensions}}`
             ),
             ...config.codeFileLocations.map(
-              location => `!${location}/**/*.spec.{${config.fileExtensions}}`
+              location =>
+                `!${location.replace(/^\//, '')}/**/*.spec.{${config.fileExtensions}}`
             ),
             '!node_modules/**',
           ];

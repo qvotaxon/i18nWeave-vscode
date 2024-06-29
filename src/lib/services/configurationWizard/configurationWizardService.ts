@@ -251,7 +251,7 @@ export default class ConfigurationWizardService {
     }
 
     i18nextScannerModuleConfiguration!.fileExtensions =
-      fileExtensions.split(', ');
+      fileExtensions.split(/,\s|,/);
 
     return true;
   }
@@ -268,7 +268,7 @@ export default class ConfigurationWizardService {
       return false; // User cancelled
     }
 
-    i18nextScannerModuleConfiguration!.languages = languages.split(', ');
+    i18nextScannerModuleConfiguration!.languages = languages.split(/,\s|,/);
 
     return true;
   }
@@ -285,7 +285,7 @@ export default class ConfigurationWizardService {
       return false; // User cancelled
     }
 
-    i18nextScannerModuleConfiguration!.namespaces = namespaces.split(', ');
+    i18nextScannerModuleConfiguration!.namespaces = namespaces.split(/,\s|,/);
 
     return true;
   }
@@ -303,7 +303,7 @@ export default class ConfigurationWizardService {
     }
 
     i18nextScannerModuleConfiguration!.translationFunctionNames =
-      translationFunctionNames.split(', ');
+      translationFunctionNames.split(/,\s|,/);
 
     return true;
   }

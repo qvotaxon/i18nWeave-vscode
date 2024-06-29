@@ -110,17 +110,17 @@ async function initializeFileLocations() {
 
   const fileSearchLocations = [
     {
-      filePattern: `**/${translationFilesLocation}/**/*.json`,
+      filePattern: `**${translationFilesLocation}/**/*.json`,
       ignorePattern:
         '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
     } as FileSearchLocation,
     {
-      filePattern: `**/${translationFilesLocation}/**/*.po`,
+      filePattern: `**${translationFilesLocation}/**/*.po`,
       ignorePattern:
         '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
     } as FileSearchLocation,
     {
-      filePattern: `**/{${codeFileLocations}}/**/*{${codeFileExtensions}}`,
+      filePattern: `**{${codeFileLocations}}/**/*{${codeFileExtensions}}`,
       ignorePattern:
         '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**,**/*.spec.ts,**/*.spec.tsx}',
     } as FileSearchLocation,

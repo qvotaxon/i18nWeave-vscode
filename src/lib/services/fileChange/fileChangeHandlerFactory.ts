@@ -12,6 +12,8 @@ export default class FileChangeHandlerFactory {
     switch (fileExt) {
       case 'ts':
       case 'tsx':
+      case 'js':
+      case 'jsx':
         return TypeScriptFileChangeHandler.create();
       case 'po':
         return PoFileChangeHandler.create();
