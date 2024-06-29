@@ -57,79 +57,106 @@ export async function activate(
   try {
     ConfigurationStoreManager.getInstance().initialize();
 
-    const translationFilesLocation =
-      ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
-        'i18nextScannerModule'
-      ).translationFilesLocation;
-
-    const codeFileLocations =
-      ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
-        'i18nextScannerModule'
-      ).codeFileLocations;
-
-    const codeFileExtensions =
-      ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
-        'i18nextScannerModule'
-      ).fileExtensions;
-
-    const fileSearchLocations = [
-      {
-        filePattern: `**/${translationFilesLocation}/**/*.json`,
-        ignorePattern:
-          '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
-      } as FileSearchLocation,
-      {
-        filePattern: `**/${translationFilesLocation}/**/*.po`,
-        ignorePattern:
-          '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
-      } as FileSearchLocation,
-      {
-        filePattern: `**/{${codeFileLocations}}/**/*{${codeFileExtensions}}`,
-        ignorePattern:
-          '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**,**/*.spec.ts,**/*.spec.tsx}',
-      } as FileSearchLocation,
-    ];
-
-    await FileLocationStore.getInstance().scanWorkspaceAsync(
-      fileSearchLocations
-    );
-
-    FileContentStore.getInstance().initializeInitialFileContents();
+    await initializeFileLocations();
 
     const onDidOpenTextDocumentDisposable =
       await createWebViewForFilesMatchingPattern(webviewService);
 
-    const typeScriptFileWatchers = await createWatchersForFileType(
-      ['ts', 'tsx'],
-      'i18nextScannerModule',
-      fileWatcherCreator
-    );
+    const configurationWatcherDisposable =
+      vscode.workspace.onDidChangeConfiguration(async () => {
+        ConfigurationStoreManager.getInstance().syncConfigurationStore();
 
-    const jsonFileWatchers = await createWatchersForFileType(
-      ['json'],
-      'i18nextJsonToPoConversionModule',
-      fileWatcherCreator
-    );
+        await reinitialize(fileWatcherCreator, context);
+      });
 
-    const poFileWatchers = await createWatchersForFileType(
-      ['po'],
-      'i18nextJsonToPoConversionModule',
-      fileWatcherCreator
-    );
+    const { typeScriptFileWatchers, jsonFileWatchers, poFileWatchers } =
+      await createFileWatchers(fileWatcherCreator);
 
     const configurationWizardCommandDisposable =
-      await registerConfigurationWizardCommand(configurationWizardService);
+      await registerConfigurationWizardCommand(
+        configurationWizardService,
+        fileWatcherCreator,
+        context
+      );
 
     context.subscriptions.push(
       ...typeScriptFileWatchers,
       ...jsonFileWatchers,
       ...poFileWatchers,
       onDidOpenTextDocumentDisposable,
-      configurationWizardCommandDisposable
+      configurationWizardCommandDisposable,
+      configurationWatcherDisposable
     );
   } catch (error) {
     Sentry.captureException(error);
   }
+}
+
+async function initializeFileLocations() {
+  const translationFilesLocation =
+    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+      'i18nextScannerModule'
+    ).translationFilesLocation;
+
+  const codeFileLocations =
+    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+      'i18nextScannerModule'
+    ).codeFileLocations;
+
+  const codeFileExtensions =
+    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+      'i18nextScannerModule'
+    ).fileExtensions;
+
+  const fileSearchLocations = [
+    {
+      filePattern: `**/${translationFilesLocation}/**/*.json`,
+      ignorePattern:
+        '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
+    } as FileSearchLocation,
+    {
+      filePattern: `**/${translationFilesLocation}/**/*.po`,
+      ignorePattern:
+        '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
+    } as FileSearchLocation,
+    {
+      filePattern: `**/{${codeFileLocations}}/**/*{${codeFileExtensions}}`,
+      ignorePattern:
+        '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**,**/*.spec.ts,**/*.spec.tsx}',
+    } as FileSearchLocation,
+  ];
+
+  await FileLocationStore.getInstance().scanWorkspaceAsync(fileSearchLocations);
+
+  FileContentStore.getInstance().initializeInitialFileContents();
+}
+
+async function createFileWatchers(fileWatcherCreator: FileWatcherCreator) {
+  const typeScriptFileWatchers = await createWatchersForFileType(
+    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+      'i18nextScannerModule'
+    ).fileExtensions,
+    'i18nextScannerModule',
+    fileWatcherCreator
+  );
+
+  const jsonFileWatchers = await createWatchersForFileType(
+    ['json'],
+    'i18nextJsonToPoConversionModule',
+    fileWatcherCreator
+  );
+
+  const poFileWatchers = await createWatchersForFileType(
+    ['po'],
+    'i18nextJsonToPoConversionModule',
+    fileWatcherCreator
+  );
+
+  return {
+    typeScriptFileWatchers,
+    jsonFileWatchers,
+    poFileWatchers,
+  };
 }
 
 async function createWatchersForFileType(
@@ -167,7 +194,9 @@ async function createWebViewForFilesMatchingPattern(
 }
 
 async function registerConfigurationWizardCommand(
-  configurationWizardService: ConfigurationWizardService
+  configurationWizardService: ConfigurationWizardService,
+  fileWatcherCreator: FileWatcherCreator,
+  context: vscode.ExtensionContext
 ): Promise<vscode.Disposable> {
   return vscode.commands.registerCommand(
     'i18nWeave.launchConfigurationWizard',
@@ -175,13 +204,33 @@ async function registerConfigurationWizardCommand(
       const config =
         await configurationWizardService.startConfigurationWizardAsync();
       if (config) {
+        await reinitialize(fileWatcherCreator, context);
+
         vscode.window.showInformationMessage(
-          `Configuration: ${JSON.stringify(config, null, 2)}`
+          `Successfully configured i18nWeave. Happy weaving! 🌍`
         );
       } else {
-        vscode.window.showErrorMessage('Configuration was cancelled.');
+        vscode.window.showWarningMessage(
+          'Configuration wizard cancelled, no changes were made.'
+        );
       }
     }
+  );
+}
+
+async function reinitialize(
+  fileWatcherCreator: FileWatcherCreator,
+  context: vscode.ExtensionContext
+) {
+  initializeFileLocations();
+
+  const { typeScriptFileWatchers, jsonFileWatchers, poFileWatchers } =
+    await createFileWatchers(fileWatcherCreator);
+
+  context.subscriptions.push(
+    ...typeScriptFileWatchers,
+    ...jsonFileWatchers,
+    ...poFileWatchers
   );
 }
 

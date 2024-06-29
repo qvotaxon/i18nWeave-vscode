@@ -2,17 +2,26 @@ import vscode from 'vscode';
 
 import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
 import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
+import { getLocalizedTexts } from '../../utilities/localizationUtilities';
 import {
   promptForFolder as promptForFolderAsync,
   promptForFolders as promptForFoldersAsync,
 } from '../../utilities/windowUtilities';
 
-// Define an enum for the frameworks.
 enum Framework {
-  Angular = 'Angular',
-  React = 'React',
-  NextJS = 'Next.js',
+  // TODO: implement specific logic for each framework
+
+  // Angular = 'Angular (angular-i18next)', // import { I18NEXT_SERVICE, I18NextLoadResult, I18NextModule, ITranslationService, defaultInterpolationFormat } from 'angular-i18next';
+  //https://github.com/Romanchuk/angular-i18next-demo/blob/master/src/app/AppModule.ts
+
+  // React = 'React (react-i18next)', // if react scan for usages of import { initReactI18next } from 'react-i18next'; using https://chatgpt.com/c/59f6a733-dd77-4d20-9622-ab6934808cfb.
+  NextJS = 'Next.js (next-i18next)', //if next js then read next-i18next.config.js file
   Custom = 'Custom',
+}
+
+enum ProjectType {
+  SingleProject = 'Single project',
+  MonoRepo = 'Mono-repo (not supported yet)',
 }
 
 export default class ConfigurationWizardService {
@@ -22,7 +31,13 @@ export default class ConfigurationWizardService {
     const i18nextScannerModuleConfiguration: I18nextScannerModuleConfiguration =
       new I18nextScannerModuleConfiguration();
 
-    const framework = await this.selectFramework();
+    const projectType = await this.selectProjectTypeAsync();
+
+    if (!projectType || projectType === ProjectType.MonoRepo) {
+      return undefined;
+    }
+
+    const framework = await this.selectFrameworkAsync();
 
     if (!framework) {
       return undefined;
@@ -30,50 +45,138 @@ export default class ConfigurationWizardService {
 
     if (framework === Framework.Custom) {
       if (
-        !(await this.configureTranslationFilesLocationAsync(
+        !(await this.configureCustomProjectAsync(
           i18nextScannerModuleConfiguration
         ))
       ) {
         return undefined;
       }
+    } else if (framework === Framework.NextJS) {
+      const configFilePath = await this.scanNextI18nextConfigFileAsync();
+      if (configFilePath) {
+        const config =
+          await this.readNextI18nextConfigFileAsync(configFilePath);
+        if (config) {
+          const userResponse = await this.showConfigurationToUserAsync(
+            configFilePath,
+            config.defaultLanguage!
+          );
+          if (userResponse?.includes(', lead the way!')) {
+            this.setConfigurationAsync(
+              i18nextScannerModuleConfiguration,
+              config
+            );
+            return i18nextScannerModuleConfiguration;
+          } else if (userResponse?.includes('configure it myself.')) {
+            if (
+              !(await this.configureCustomProjectAsync(
+                i18nextScannerModuleConfiguration
+              ))
+            ) {
+              return undefined;
+            }
+            if (
+              !(await this.configureGeneralSettingsAsync(
+                i18nextScannerModuleConfiguration
+              ))
+            ) {
+              return undefined;
+            }
 
-      if (
-        !(await this.configureCodeFileLocationsAsync(
-          i18nextScannerModuleConfiguration
-        ))
-      ) {
-        return undefined;
+            await this.setConfigurationAsync(i18nextScannerModuleConfiguration);
+            return i18nextScannerModuleConfiguration;
+          } else {
+            return undefined;
+          }
+        }
       }
-
       if (
-        !(await this.configureFileExtensionsAsync(
+        !(await this.configureCustomProjectAsync(
           i18nextScannerModuleConfiguration
         ))
       ) {
         return undefined;
       }
     } else {
-      //TODO: implement specific logic for each framework
+      // TODO: implement specific logic for each framework
     }
 
     if (
-      !(await this.configureDefaultLanguageAsync(
+      !(await this.configureGeneralSettingsAsync(
         i18nextScannerModuleConfiguration
       ))
     ) {
       return undefined;
     }
 
+    await this.setConfigurationAsync(i18nextScannerModuleConfiguration);
+
+    return i18nextScannerModuleConfiguration;
+  }
+
+  private async selectProjectTypeAsync(): Promise<string | undefined> {
+    return await vscode.window.showQuickPick(Object.values(ProjectType), {
+      placeHolder: 'Select the project type',
+    });
+  }
+
+  private async selectFrameworkAsync(): Promise<string | undefined> {
+    return await vscode.window.showQuickPick(Object.values(Framework), {
+      placeHolder: 'Select a framework',
+    });
+  }
+
+  private async configureCustomProjectAsync(
+    i18nextScannerModuleConfiguration: I18nextScannerModuleConfiguration
+  ): Promise<boolean> {
+    if (
+      !(await this.configureTranslationFilesLocationAsync(
+        i18nextScannerModuleConfiguration
+      ))
+    ) {
+      return false;
+    }
+
+    if (
+      !(await this.configureCodeFileLocationsAsync(
+        i18nextScannerModuleConfiguration
+      ))
+    ) {
+      return false;
+    }
+
+    if (
+      !(await this.configureFileExtensionsAsync(
+        i18nextScannerModuleConfiguration
+      ))
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private async configureGeneralSettingsAsync(
+    i18nextScannerModuleConfiguration: I18nextScannerModuleConfiguration
+  ): Promise<boolean> {
+    if (
+      !(await this.configureDefaultLanguageAsync(
+        i18nextScannerModuleConfiguration
+      ))
+    ) {
+      return false;
+    }
+
     if (
       !(await this.configureLanguagesAsync(i18nextScannerModuleConfiguration))
     ) {
-      return undefined;
+      return false;
     }
 
     if (
       !(await this.configureNamespacesAsync(i18nextScannerModuleConfiguration))
     ) {
-      return undefined;
+      return false;
     }
 
     if (
@@ -81,21 +184,10 @@ export default class ConfigurationWizardService {
         i18nextScannerModuleConfiguration
       ))
     ) {
-      return undefined;
+      return false;
     }
 
-    await ConfigurationStoreManager.getInstance().setConfigAsync<I18nextScannerModuleConfiguration>(
-      'i18nextScannerModule',
-      i18nextScannerModuleConfiguration
-    );
-
-    return i18nextScannerModuleConfiguration;
-  }
-
-  private async selectFramework(): Promise<string | undefined> {
-    return await vscode.window.showQuickPick(Object.values(Framework), {
-      placeHolder: 'Select a framework',
-    });
+    return true;
   }
 
   private async configureTranslationFilesLocationAsync(
@@ -214,5 +306,63 @@ export default class ConfigurationWizardService {
       translationFunctionNames.split(', ');
 
     return true;
+  }
+
+  //TODO: change to return vscode.Uri to and actual configuration file
+  private async scanNextI18nextConfigFileAsync(): Promise<string | undefined> {
+    return '/path/to/next-i18next.config.js';
+  }
+
+  //TODO: change to return the actual configuration
+  private async readNextI18nextConfigFileAsync(
+    configFilePath: string
+  ): Promise<Partial<I18nextScannerModuleConfiguration> | undefined> {
+    return {
+      defaultLanguage: 'en',
+      languages: ['en', 'fr'],
+      namespaces: ['common'],
+      fileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+      translationFunctionNames: ['t', 'i18next.t'],
+    };
+  }
+
+  private async showConfigurationToUserAsync(
+    configFilePath: string,
+    defaultLanguage: string
+  ): Promise<string | undefined> {
+    const localizedTexts = getLocalizedTexts(defaultLanguage);
+
+    const configText = `
+      ${localizedTexts.greeting}! We've detected a configuration file at: "${configFilePath}". Shall we proceed with this file?
+    `;
+
+    return await vscode.window.showInformationMessage(
+      `${configText}`,
+      `${localizedTexts.confirmativeText}, lead the way!`,
+      `${localizedTexts.dismissiveText}, I'll configure it myself.`
+    );
+  }
+
+  private async setConfigurationAsync(
+    i18nextScannerModuleConfiguration: I18nextScannerModuleConfiguration,
+    configurationPatch?: Partial<I18nextScannerModuleConfiguration>
+  ): Promise<void> {
+    if (configurationPatch) {
+      i18nextScannerModuleConfiguration.defaultLanguage =
+        configurationPatch.defaultLanguage!;
+      i18nextScannerModuleConfiguration.languages =
+        configurationPatch.languages!;
+      i18nextScannerModuleConfiguration.namespaces =
+        configurationPatch.namespaces!;
+      i18nextScannerModuleConfiguration.fileExtensions =
+        configurationPatch.fileExtensions!;
+      i18nextScannerModuleConfiguration.translationFunctionNames =
+        configurationPatch.translationFunctionNames!;
+    }
+
+    await ConfigurationStoreManager.getInstance().setConfigAsync<I18nextScannerModuleConfiguration>(
+      'i18nextScannerModule',
+      i18nextScannerModuleConfiguration
+    );
   }
 }

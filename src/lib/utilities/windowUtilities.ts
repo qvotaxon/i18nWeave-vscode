@@ -1,4 +1,7 @@
+import path from 'path';
 import vscode from 'vscode';
+
+import { getPosixPathFromUri, getProjectRootFolder } from './filePathUtilities';
 
 /**
  * Prompts the user to select a folder.
@@ -33,12 +36,14 @@ async function showOpenDialog(
   placeHolder: string,
   canSelectMany = false
 ): Promise<string | string[] | undefined> {
-  const translationFilesFolderSelectionPrompt =
-    await vscode.window.showQuickPick([placeHolder], {
+  const folderSelectionPrompt = await vscode.window.showQuickPick(
+    [placeHolder],
+    {
       placeHolder: placeHolder,
-    });
+    }
+  );
 
-  if (!translationFilesFolderSelectionPrompt) {
+  if (!folderSelectionPrompt) {
     return undefined;
   }
 
@@ -54,8 +59,18 @@ async function showOpenDialog(
   }
 
   if (folderUri.length > 1) {
-    return folderUri.map(folderUri => folderUri.fsPath);
+    return folderUri.map(folderUri => getRelativePath(folderUri.fsPath));
   }
 
-  return folderUri[0].fsPath;
+  return getRelativePath(folderUri[0].fsPath);
+}
+
+function getRelativePath(folderPath: string) {
+  const projectRootFolder = getProjectRootFolder();
+
+  if (!projectRootFolder) {
+    throw new Error('Project root folder not found.');
+  }
+
+  return getPosixPathFromUri(folderPath.replace(projectRootFolder, ''));
 }

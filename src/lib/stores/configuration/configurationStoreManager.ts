@@ -29,9 +29,6 @@ export default class ConfigurationStoreManager {
    */
   public initialize(): void {
     this.syncConfigurationStore();
-    vscode.workspace.onDidChangeConfiguration(() =>
-      this.syncConfigurationStore()
-    );
   }
 
   /**
