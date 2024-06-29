@@ -4,6 +4,13 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.5.0](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.4.6...v0.5.0) (2024-06-29)
+
+
+### Features
+
+* Introduce Config Wizard and Enhance Setup ([#136](https://github.com/qvotaxon/i18nWeave-vscode/issues/136)) ([ff69d04](https://github.com/qvotaxon/i18nWeave-vscode/commit/ff69d0401c436007b9319e797738eae269fd6411))
+
 ## [0.4.6](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.4.5...v0.4.6) (2024-06-25)
 
 
