@@ -7,7 +7,7 @@ import { getPosixPathFromUri, getProjectRootFolder } from './filePathUtilities';
  * @param placeHolder - The placeholder text for the open dialog.
  * @returns A promise that resolves to the selected folder path or undefined if cancelled.
  */
-export async function promptForFolder(
+export async function promptForFolderAsync(
   placeHolder: string
 ): Promise<string | undefined> {
   return (await showOpenDialog(placeHolder)) as string;
@@ -19,7 +19,7 @@ export async function promptForFolder(
  * @param placeHolder - The placeholder text to display in the folder selection dialog.
  * @returns A promise that resolves to an array of selected folder paths, or undefined if the user cancels the selection.
  */
-export async function promptForFolders(
+export async function promptForFoldersAsync(
   placeHolder: string
 ): Promise<string[] | undefined> {
   return (await showOpenDialog(placeHolder, true)) as string[];
