@@ -123,3 +123,12 @@ export function getProjectRootFolder(): string | undefined {
 
   return undefined;
 }
+
+/**
+ * Converts a VSCode URI to a POSIX-style path.
+ * @param uri - The VSCode URI object.
+ * @returns The POSIX-style filesystem path.
+ */
+export function getPosixPathFromUri(fsPath: string): string {
+  return path.posix.normalize(fsPath.replace(/\\/g, '/'));
+}

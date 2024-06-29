@@ -35,6 +35,14 @@ export default class FileLocationStore {
   }
 
   /**
+   * Clears the file location store.
+   * Removes all file locations from the store.
+   */
+  public async clearStoreAsync() {
+    this.fileLocations.clear();
+  }
+
+  /**
    * Adds a file to the store.
    * @param uri The URI of the file.
    */

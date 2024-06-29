@@ -56,7 +56,9 @@ export default class I18nextScannerService {
             sort: true,
             func: {
               list: config.translationFunctionNames,
-              extensions: config.fileExtensions,
+              extensions: config.fileExtensions.map(
+                fileExtension => `.${fileExtension}`
+              ),
             },
             lngs: config.languages,
             ns: config.namespaces,
@@ -97,10 +99,12 @@ export default class I18nextScannerService {
 
           const scanSources = [
             ...config.codeFileLocations.map(
-              location => `${location}/**/*.{ts,tsx}`
+              location =>
+                `${location.replace(/^\//, '')}/**/*.{${config.fileExtensions}}`
             ),
             ...config.codeFileLocations.map(
-              location => `!${location}/**/*.spec.{ts,tsx}`
+              location =>
+                `!${location.replace(/^\//, '')}/**/*.spec.{${config.fileExtensions}}`
             ),
             '!node_modules/**',
           ];

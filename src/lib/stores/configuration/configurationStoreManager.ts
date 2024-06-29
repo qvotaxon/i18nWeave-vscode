@@ -29,9 +29,6 @@ export default class ConfigurationStoreManager {
    */
   public initialize(): void {
     this.syncConfigurationStore();
-    vscode.workspace.onDidChangeConfiguration(() =>
-      this.syncConfigurationStore()
-    );
   }
 
   /**
@@ -123,5 +120,12 @@ export default class ConfigurationStoreManager {
       throw new Error(`Configuration for key "${String(key)}" not found.`);
     }
     return config as T;
+  }
+
+  public async setConfigAsync<T>(
+    key: keyof ExtensionConfiguration,
+    value: ExtensionConfiguration[keyof ExtensionConfiguration]
+  ): Promise<void> {
+    await this.getConfigurationStore().setAsync(key, value);
   }
 }

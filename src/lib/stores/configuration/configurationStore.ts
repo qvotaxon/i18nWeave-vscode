@@ -1,3 +1,5 @@
+import vscode, { ConfigurationTarget } from 'vscode';
+
 import ExtensionConfiguration from '../../entities/configuration/extensionConfiguration';
 
 export default class ConfigurationStore {
@@ -13,10 +15,19 @@ export default class ConfigurationStore {
     return this.options[key];
   }
 
-  set<K extends keyof ExtensionConfiguration>(
+  async setAsync<K extends keyof ExtensionConfiguration>(
     key: K,
-    value: ExtensionConfiguration[K]
-  ): void {
+    value: ExtensionConfiguration[K],
+    configurationTarget = ConfigurationTarget.Workspace
+  ): Promise<void> {
+    Object.keys(value).forEach(key => {
+      const configuration = vscode.workspace.getConfiguration(
+        `i18nWeave.${key}`
+      );
+      const configValue = (value as { [key: string]: any })[key];
+      configuration.update(key, configValue, configurationTarget);
+    });
+
     this.options[key] = value;
   }
 

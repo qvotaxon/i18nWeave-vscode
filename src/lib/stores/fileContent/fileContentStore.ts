@@ -32,6 +32,7 @@ export default class FileContentStore {
         try {
           const fsPaths = FileLocationStore.getInstance().getFilesByType([
             'ts',
+            'tsx',
           ]);
 
           fsPaths.forEach(fsPath => {
@@ -123,9 +124,6 @@ export default class FileContentStore {
     const translationFunctionNames = [];
     translationFunctionNames.push(
       i18nextScannerModuleConfig.translationFunctionNames
-    );
-    translationFunctionNames.push(
-      i18nextScannerModuleConfig.translationComponentTranslationKey
     );
     const translationComponentName =
       i18nextScannerModuleConfig.translationComponentName;

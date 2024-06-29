@@ -31,7 +31,7 @@ suite('ConfigurationStore Tests', () => {
     assert.strictEqual(result, undefined);
   });
 
-  test('set should update the value associated with the given key', () => {
+  test('set should update the value associated with the given key', async () => {
     const store = new ConfigurationStore({
       debugging: {
         logging: {
@@ -40,7 +40,7 @@ suite('ConfigurationStore Tests', () => {
       },
     });
 
-    store.set('debugging', {
+    await store.setAsync('debugging', {
       logging: {
         enableVerboseLogging: true,
       },

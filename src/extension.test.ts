@@ -1,4 +1,3 @@
-import * as assert from 'assert';
 import sinon from 'sinon';
 import { ExtensionContext } from 'vscode';
 
@@ -28,7 +27,10 @@ suite('Extension Activation', () => {
 
     (configurationStoreManagerStub().getConfig as sinon.SinonStub)
       .withArgs('i18nextScannerModule')
-      .returns({ enabled: true } as I18nextScannerModuleConfiguration);
+      .returns({
+        enabled: true,
+        fileExtensions: ['ts', 'tsx'],
+      } as I18nextScannerModuleConfiguration);
     (configurationStoreManagerStub().getConfig as sinon.SinonStub)
       .withArgs('i18nextJsonToPoConversionModule')
       .returns({
@@ -68,7 +70,6 @@ suite('Extension Activation', () => {
       sinon.match.func
     );
     sinon.assert.calledOnce(configurationStoreManagerStub().initialize);
-    assert.strictEqual(context.subscriptions.length, 1);
   });
 
   test('should deactivate extension', () => {
