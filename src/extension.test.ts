@@ -1,4 +1,3 @@
-import * as assert from 'assert';
 import sinon from 'sinon';
 import { ExtensionContext } from 'vscode';
 

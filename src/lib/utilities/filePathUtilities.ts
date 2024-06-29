@@ -124,60 +124,6 @@ export function getProjectRootFolder(): string | undefined {
   return undefined;
 }
 
-// /**
-//  * Search for the project root by looking for package.json file downward.
-//  * Stops at node_modules directory as it likely indicates the project root.
-//  * @param dir - The starting directory to search from.
-//  * @returns The path to the project root folder or undefined if not found.
-//  */
-// export function findProjectRoot(dir: string): string | undefined {
-//   const queue: string[] = [dir];
-
-//   while (queue.length > 0) {
-//     const currentDir = queue.shift()!;
-
-//     // Check for node_modules directory
-//     const nodeModulesPath = path.join(currentDir, 'node_modules');
-//     if (fs.existsSync(nodeModulesPath)) {
-//       return currentDir;
-//     }
-
-//     // Check for package.json file
-//     const packageJsonPath = path.join(currentDir, 'package.json');
-//     if (fs.existsSync(packageJsonPath)) {
-//       return currentDir;
-//     }
-
-//     // Add subdirectories to the queue
-//     const subDirs = fs
-//       .readdirSync(currentDir)
-//       .map(name => path.join(currentDir, name))
-//       .filter(subPath => fs.lstatSync(subPath).isDirectory());
-
-//     queue.push(...subDirs);
-//   }
-
-//   return undefined;
-// }
-
-// /**
-//  * Get the actual project root folder by locating the package.json file.
-//  * @returns The path to the project root folder or undefined if not found.
-//  */
-// export function getProjectRootFolder(): string | undefined {
-//   const workspaceFolders = vscode.workspace.workspaceFolders;
-
-//   if (workspaceFolders && workspaceFolders.length === 1) {
-//     return findProjectRoot(workspaceFolders[0].uri.fsPath);
-//   }
-
-//   if (workspaceFolders && workspaceFolders.length > 1) {
-//     throw new Error('Multiple workspace folders are not supported yet.');
-//   }
-
-//   return undefined;
-// }
-
 /**
  * Converts a VSCode URI to a POSIX-style path.
  * @param uri - The VSCode URI object.

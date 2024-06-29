@@ -125,9 +125,6 @@ export default class FileContentStore {
     translationFunctionNames.push(
       i18nextScannerModuleConfig.translationFunctionNames
     );
-    // translationFunctionNames.push(
-    //   i18nextScannerModuleConfig.translationComponentTranslationKey
-    // );
     const translationComponentName =
       i18nextScannerModuleConfig.translationComponentName;
     const keysToSearchFor = translationFunctionNames.flat().join('|');

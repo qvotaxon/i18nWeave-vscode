@@ -10,15 +10,10 @@ import ConfigurationStoreManager from './configurationStoreManager';
 suite('ConfigurationStoreManager', () => {
   let getConfigurationStub: sinon.SinonStub;
   let getExtensionStub: sinon.SinonStub;
-  let onDidChangeConfigurationStub: sinon.SinonStub;
 
   setup(() => {
     getConfigurationStub = sinon.stub(vscode.workspace, 'getConfiguration');
     getExtensionStub = sinon.stub(vscode.extensions, 'getExtension');
-    onDidChangeConfigurationStub = sinon.stub(
-      vscode.workspace,
-      'onDidChangeConfiguration'
-    );
   });
 
   teardown(() => {

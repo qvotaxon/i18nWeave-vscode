@@ -20,27 +20,15 @@ export default class ConfigurationStore {
     value: ExtensionConfiguration[K],
     configurationTarget = ConfigurationTarget.Workspace
   ): Promise<void> {
-    const theKey = key; // i18nextScannerModule
-    const theValue = value as { [key: string]: any };
-
-    Object.keys(theValue).forEach(key => {
+    Object.keys(value).forEach(key => {
       const configuration = vscode.workspace.getConfiguration(
-        `i18nWeave.${theKey}`
+        `i18nWeave.${key}`
       );
-      const configValue = theValue[key];
+      const configValue = (value as { [key: string]: any })[key];
       configuration.update(key, configValue, configurationTarget);
     });
 
     this.options[key] = value;
-
-    // theValue.forEach(element => {
-
-    // });
-
-    // const configuration = vscode.workspace.getConfiguration(
-    //   `i18nWeave.${theKey}`
-    // );
-    // return await configuration.update('', '', ConfigurationTarget.Workspace);
   }
 
   update(userOptions: Partial<ExtensionConfiguration>): void {

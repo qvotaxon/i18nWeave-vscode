@@ -1,4 +1,3 @@
-import path from 'path';
 import vscode from 'vscode';
 
 import { getPosixPathFromUri, getProjectRootFolder } from './filePathUtilities';

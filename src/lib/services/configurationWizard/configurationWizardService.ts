@@ -9,13 +9,9 @@ import {
 } from '../../utilities/windowUtilities';
 
 enum Framework {
-  // TODO: implement specific logic for each framework
-
-  // Angular = 'Angular (angular-i18next)', // import { I18NEXT_SERVICE, I18NextLoadResult, I18NextModule, ITranslationService, defaultInterpolationFormat } from 'angular-i18next';
-  //https://github.com/Romanchuk/angular-i18next-demo/blob/master/src/app/AppModule.ts
-
-  // React = 'React (react-i18next)', // if react scan for usages of import { initReactI18next } from 'react-i18next'; using https://chatgpt.com/c/59f6a733-dd77-4d20-9622-ab6934808cfb.
-  NextJS = 'Next.js (next-i18next)', //if next js then read next-i18next.config.js file
+  Angular = 'Angular (angular-i18next)',
+  React = 'React (react-i18next)',
+  NextJS = 'Next.js (next-i18next)',
   Custom = 'Custom',
 }
 
@@ -200,7 +196,7 @@ export default class ConfigurationWizardService {
       return false;
     }
 
-    i18nextScannerModuleConfiguration!.translationFilesLocation =
+    i18nextScannerModuleConfiguration.translationFilesLocation =
       translationFilesLocation;
 
     return true;
@@ -233,7 +229,7 @@ export default class ConfigurationWizardService {
       return false; // User cancelled
     }
 
-    i18nextScannerModuleConfiguration!.defaultLanguage = defaultLanguage;
+    i18nextScannerModuleConfiguration.defaultLanguage = defaultLanguage;
 
     return true;
   }
@@ -250,7 +246,7 @@ export default class ConfigurationWizardService {
       return false; // User cancelled
     }
 
-    i18nextScannerModuleConfiguration!.fileExtensions =
+    i18nextScannerModuleConfiguration.fileExtensions =
       fileExtensions.split(/,\s|,/);
 
     return true;
@@ -268,7 +264,7 @@ export default class ConfigurationWizardService {
       return false; // User cancelled
     }
 
-    i18nextScannerModuleConfiguration!.languages = languages.split(/,\s|,/);
+    i18nextScannerModuleConfiguration.languages = languages.split(/,\s|,/);
 
     return true;
   }
@@ -285,7 +281,7 @@ export default class ConfigurationWizardService {
       return false; // User cancelled
     }
 
-    i18nextScannerModuleConfiguration!.namespaces = namespaces.split(/,\s|,/);
+    i18nextScannerModuleConfiguration.namespaces = namespaces.split(/,\s|,/);
 
     return true;
   }
@@ -302,18 +298,16 @@ export default class ConfigurationWizardService {
       return false; // User cancelled
     }
 
-    i18nextScannerModuleConfiguration!.translationFunctionNames =
+    i18nextScannerModuleConfiguration.translationFunctionNames =
       translationFunctionNames.split(/,\s|,/);
 
     return true;
   }
 
-  //TODO: change to return vscode.Uri to and actual configuration file
   private async scanNextI18nextConfigFileAsync(): Promise<string | undefined> {
     return '/path/to/next-i18next.config.js';
   }
 
-  //TODO: change to return the actual configuration
   private async readNextI18nextConfigFileAsync(
     configFilePath: string
   ): Promise<Partial<I18nextScannerModuleConfiguration> | undefined> {
@@ -333,8 +327,8 @@ export default class ConfigurationWizardService {
     const localizedTexts = getLocalizedTexts(defaultLanguage);
 
     const configText = `
-      ${localizedTexts.greeting}! We've detected a configuration file at: "${configFilePath}". Shall we proceed with this file?
-    `;
+    ${localizedTexts.greeting}! We've detected a configuration file at: "${configFilePath}". Shall we proceed with this file?
+  `;
 
     return await vscode.window.showInformationMessage(
       `${configText}`,
