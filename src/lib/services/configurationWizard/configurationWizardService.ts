@@ -62,10 +62,10 @@ export default class ConfigurationWizardService {
           configFilePath,
           nextConfig.defaultLanguage!
         );
-        if (userResponse?.includes(', lead the way!')) {
+        if (userResponse?.title?.includes(', lead the way!')) {
           setConfigurationAsync(config, nextConfig);
           return config;
-        } else if (userResponse?.includes('configure it myself.')) {
+        } else if (userResponse?.title?.includes('configure it myself.')) {
           if (!(await configureCustomProjectAsync(config))) {
             return undefined;
           }

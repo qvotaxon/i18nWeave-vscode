@@ -1,4 +1,4 @@
-import vscode from 'vscode';
+import vscode, { MessageItem } from 'vscode';
 
 import { Framework } from '../enums/framework';
 import { ProjectType } from '../enums/projectType';
@@ -19,12 +19,21 @@ export async function selectFrameworkAsync(): Promise<string | undefined> {
 export async function showConfigurationToUserAsync(
   configFilePath: string,
   defaultLanguage: string
-): Promise<string | undefined> {
+): Promise<MessageItem | undefined> {
   const localizedTexts = getLocalizedTexts(defaultLanguage);
   const configText = `${localizedTexts.greeting}! We've detected a configuration file at: "${configFilePath}". Shall we proceed with this file?`;
+
+  // Convert your string options to MessageItem objects
+  const confirmativeOption: vscode.MessageItem = {
+    title: `${localizedTexts.confirmativeText}, lead the way!`,
+  };
+  const dismissiveOption: vscode.MessageItem = {
+    title: `${localizedTexts.dismissiveText}, I'll configure it myself.`,
+  };
+
   return await vscode.window.showInformationMessage(
     `${configText}`,
-    `${localizedTexts.confirmativeText}, lead the way!`,
-    `${localizedTexts.dismissiveText}, I'll configure it myself.`
+    confirmativeOption,
+    dismissiveOption
   );
 }

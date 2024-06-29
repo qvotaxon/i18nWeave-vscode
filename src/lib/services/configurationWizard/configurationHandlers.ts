@@ -28,7 +28,8 @@ export async function configureGeneralSettingsAsync(
   );
 }
 
-async function configureTranslationFilesLocationAsync(
+// TODO: Below methods are only exported for testing purposes. Find a better way to test them.
+export async function configureTranslationFilesLocationAsync(
   config: Partial<I18nextScannerModuleConfiguration>
 ): Promise<boolean> {
   const location = await promptForFolderAsync(
@@ -41,7 +42,7 @@ async function configureTranslationFilesLocationAsync(
   return true;
 }
 
-async function configureCodeFileLocationsAsync(
+export async function configureCodeFileLocationsAsync(
   config: Partial<I18nextScannerModuleConfiguration>
 ): Promise<boolean> {
   const locations = await promptForFoldersAsync(
@@ -54,7 +55,7 @@ async function configureCodeFileLocationsAsync(
   return true;
 }
 
-async function configureFileExtensionsAsync(
+export async function configureFileExtensionsAsync(
   config: Partial<I18nextScannerModuleConfiguration>
 ): Promise<boolean> {
   const extensions = await vscode.window.showInputBox({
@@ -68,7 +69,7 @@ async function configureFileExtensionsAsync(
   return true;
 }
 
-async function configureDefaultLanguageAsync(
+export async function configureDefaultLanguageAsync(
   config: Partial<I18nextScannerModuleConfiguration>
 ): Promise<boolean> {
   const defaultLanguage = await vscode.window.showInputBox({
@@ -82,7 +83,7 @@ async function configureDefaultLanguageAsync(
   return true;
 }
 
-async function configureLanguagesAsync(
+export async function configureLanguagesAsync(
   config: Partial<I18nextScannerModuleConfiguration>
 ): Promise<boolean> {
   const languages = await vscode.window.showInputBox({
@@ -96,7 +97,7 @@ async function configureLanguagesAsync(
   return true;
 }
 
-async function configureNamespacesAsync(
+export async function configureNamespacesAsync(
   config: Partial<I18nextScannerModuleConfiguration>
 ): Promise<boolean> {
   const namespaces = await vscode.window.showInputBox({
@@ -110,7 +111,7 @@ async function configureNamespacesAsync(
   return true;
 }
 
-async function configureTranslationFunctionNamesAsync(
+export async function configureTranslationFunctionNamesAsync(
   config: Partial<I18nextScannerModuleConfiguration>
 ): Promise<boolean> {
   const functionNames = await vscode.window.showInputBox({
