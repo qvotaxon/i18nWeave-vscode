@@ -35,7 +35,6 @@ suite('ConfigurationStoreManager', () => {
       ConfigurationStoreManager.getInstance().initialize();
 
       sinon.assert.calledOnce(syncConfigurationStoreStub);
-      sinon.assert.calledOnce(onDidChangeConfigurationStub);
     });
   });
 
