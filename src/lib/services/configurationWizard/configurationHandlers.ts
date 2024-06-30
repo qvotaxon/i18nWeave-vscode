@@ -60,12 +60,21 @@ export async function configureFileExtensionsAsync(
 ): Promise<boolean> {
   const extensions = await vscode.window.showInputBox({
     placeHolder: 'For example: ts, tsx, js, jsx',
-    prompt: 'Enter the file extensions to scan',
+    prompt:
+      'Enter the file extensions to scan for translation keys. Separate multiple extensions with a comma.',
+    title: 'File Extensions',
   });
   if (!extensions) {
     return false;
   }
-  config.fileExtensions = extensions.split(/,\s|,/);
+
+  const fileExtensions = extensions
+    .split(/,\s|,/)
+    .map(ext => (ext.startsWith('.') ? ext.slice(1) : ext))
+    .filter((ext, index, self) => self.indexOf(ext) === index);
+
+  config.fileExtensions = fileExtensions;
+
   return true;
 }
 
