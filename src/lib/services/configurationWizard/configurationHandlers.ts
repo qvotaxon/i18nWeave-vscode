@@ -33,7 +33,7 @@ export async function configureTranslationFilesLocationAsync(
   config: Partial<I18nextScannerModuleConfiguration>
 ): Promise<boolean> {
   const location = await promptForFolderAsync(
-    'Select the translation files location folder'
+    'Where are the translation files located?'
   );
   if (!location) {
     return false;
@@ -46,7 +46,7 @@ export async function configureCodeFileLocationsAsync(
   config: Partial<I18nextScannerModuleConfiguration>
 ): Promise<boolean> {
   const locations = await promptForFoldersAsync(
-    'Select the code file locations folders'
+    'Where are the code files you want to scan for translation keys?'
   );
   if (!locations) {
     return false;
@@ -61,7 +61,7 @@ export async function configureFileExtensionsAsync(
   const extensions = await vscode.window.showInputBox({
     placeHolder: 'For example: ts, tsx, js, jsx',
     prompt:
-      'Enter the file extensions to scan for translation keys. Separate multiple extensions with a comma.',
+      'What are the extensions of the code files you want to scan for translation keys?',
     title: 'File Extensions',
   });
   if (!extensions) {
@@ -82,8 +82,9 @@ export async function configureDefaultLanguageAsync(
   config: Partial<I18nextScannerModuleConfiguration>
 ): Promise<boolean> {
   const defaultLanguage = await vscode.window.showInputBox({
-    placeHolder: 'For example: en or fr',
-    prompt: 'Enter the default (two-letter) language of your application',
+    placeHolder: 'For example: en',
+    prompt: 'What is the default language of your application?',
+    title: 'Default Language',
   });
   if (!defaultLanguage) {
     return false;
@@ -97,7 +98,8 @@ export async function configureLanguagesAsync(
 ): Promise<boolean> {
   const languages = await vscode.window.showInputBox({
     placeHolder: 'For example: en, fr, de',
-    prompt: 'Enter the languages of your application',
+    prompt: 'Enter the lanugages of your application separated by commas',
+    title: 'Languages',
   });
   if (!languages) {
     return false;
@@ -110,8 +112,9 @@ export async function configureNamespacesAsync(
   config: Partial<I18nextScannerModuleConfiguration>
 ): Promise<boolean> {
   const namespaces = await vscode.window.showInputBox({
-    placeHolder: 'For example: common, auth',
-    prompt: 'Enter the namespaces of your application',
+    placeHolder: 'For example: common, home, about',
+    prompt: 'Enter the namespaces of your application separated by commas',
+    title: 'Namespaces',
   });
   if (!namespaces) {
     return false;
@@ -124,8 +127,10 @@ export async function configureTranslationFunctionNamesAsync(
   config: Partial<I18nextScannerModuleConfiguration>
 ): Promise<boolean> {
   const functionNames = await vscode.window.showInputBox({
-    placeHolder: 'For example: t, i18next.t',
-    prompt: 'Enter the translation function names',
+    placeHolder: 'For example: t, I18nKey',
+    prompt:
+      'Enter the translation function names separated by commas. For example when translating using t("my.key", { count: 5 }), the function name is "t"',
+    title: 'Translation Function Names',
   });
   if (!functionNames) {
     return false;

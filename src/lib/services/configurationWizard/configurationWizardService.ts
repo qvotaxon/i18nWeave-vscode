@@ -1,3 +1,5 @@
+import vscode from 'vscode';
+
 import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
 import { Framework } from '../../enums/framework';
 import { ProjectType } from '../../enums/projectType';
@@ -36,11 +38,16 @@ export default class ConfigurationWizardService {
       if (!(await configureCustomProjectAsync(config))) {
         return undefined;
       }
-    } else if (framework === Framework.NextJS) {
-      const result = await this.handleNextJSConfigAsync(config);
-      if (result === undefined) {
-        return undefined;
-      }
+    }
+    // TODO: Enable this once the logic for NextJS has been fully implemented.
+    else if (framework === Framework.NextJS) {
+      // const result = await this.handleNextJSConfigAsync(config);
+      // if (result === undefined) {
+      vscode.window.showInformationMessage(
+        'This feature is not yet implemented yet.'
+      );
+      return undefined;
+      // }
     }
 
     if (!(await configureGeneralSettingsAsync(config))) {

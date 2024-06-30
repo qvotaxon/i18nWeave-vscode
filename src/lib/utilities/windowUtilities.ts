@@ -2,6 +2,8 @@ import vscode from 'vscode';
 
 import { getPosixPathFromUri, getProjectRootFolder } from './filePathUtilities';
 
+//TODO: Move to promptUtilities.ts
+
 /**
  * Prompts the user to select a folder.
  * @param placeHolder - The placeholder text for the open dialog.
@@ -38,6 +40,7 @@ export async function showOpenDialog(
   const folderSelectionPrompt = await vscode.window.showQuickPick(
     [placeHolder],
     {
+      title: canSelectMany ? 'Select One or More Folders' : 'Select Folder',
       placeHolder: placeHolder,
     }
   );
