@@ -69,9 +69,9 @@ TODO
 
 ### Somewhere in the nearer future
 
-- reduce required configuration / setup
+- Support More Automatic Configurations For Other Frameworks. Such as React and Angular. 
 
-### Somewhere in the far future
+### Somewhere in the farther future
 
 - Implement ai features
 
