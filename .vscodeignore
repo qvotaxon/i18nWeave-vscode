@@ -10,3 +10,14 @@ vsc-extension-quickstart.md
 **/*.ts
 **/.vscode-test.*
 .sentryclirc
+.github/**
+coverage/**
+.env
+.env.*
+.release-please-manifest.json
+codecov.yml
+package.json
+release-please-config.json
+artwork/**
+node_modules/**
+package.json

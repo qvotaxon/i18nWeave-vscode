@@ -3,7 +3,7 @@
     "module": "CommonJS",
     "target": "ES2022",
     "outDir": "out",
-    "lib": ["ES6"],
+    "lib": ["ES6"], //TODO: check if ES2022 is supported
     "sourceMap": true,
     "rootDir": "src",
     "strict": true,
