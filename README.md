@@ -17,7 +17,7 @@
 # i18nWeave - Developer's i18n Companion
 
 <div align="center">
-    <img src="static/img-AnBmJQ10bAe8mXdWwP4hG6Ha.png" alt="alt text" height="300">
+    <img src="static/logo.png" alt="alt text" height="300">
 </div>
 
 <font color="orange">**Note**: Please be aware that this extension is currently under development. Use it with the understanding that features and functionality may change.</font>
@@ -30,7 +30,7 @@ i18nWeave is a Visual Studio Code extension designed to streamline the managemen
 
 ## ⭐ Features
 
-- **Installation Wizard**: Get up and running in no time using the build-in configuration wizard. Pick any of the build-in framework configurations and get started in just a few clicks. Or with just a few more clicks setup a custom project using i18next translations. 
+- **Installation Wizard**: Get up and running in no time using the build-in configuration wizard. Pick any of the build-in framework configurations and get started in just a few clicks. Or with just a few more clicks setup a custom project using i18next translations.
 - **Translation Key Extraction**: This feature allows for the easy extraction of translation keys from code files, which ensures the accurate localization of your application.
 - **PO File Support**: You have the option to use PO files for managing translations. This feature enables seamless integration with your existing localization workflows.
 - **PO to i18n-next JSON Conversion**: Effortlessly convert PO files into the i18n-next JSON format and vice versa. This conversion facilitates compatibility with a variety of localization tools and libraries.
@@ -69,7 +69,7 @@ TODO
 
 ### Somewhere in the nearer future
 
-- Support More Automatic Configurations For Other Frameworks. Such as React and Angular. 
+- Support More Automatic Configurations For Other Frameworks. Such as React and Angular.
 
 ### Somewhere in the farther future
 
