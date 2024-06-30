@@ -6,13 +6,15 @@ import { getLocalizedTexts } from './localizationUtilities';
 
 export async function selectProjectTypeAsync(): Promise<string | undefined> {
   return await vscode.window.showQuickPick(Object.values(ProjectType), {
-    placeHolder: 'Select the project type',
+    placeHolder: 'Will you be working on a single project or a mono-repo?',
+    title: 'Project Type Selection',
   });
 }
 
 export async function selectFrameworkAsync(): Promise<string | undefined> {
   return await vscode.window.showQuickPick(Object.values(Framework), {
-    placeHolder: 'Select a framework',
+    placeHolder: 'Do you use any of the following frameworks?',
+    title: 'Framework Selection',
   });
 }
 
