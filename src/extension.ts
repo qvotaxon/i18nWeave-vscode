@@ -10,8 +10,8 @@ import WebviewFactory from './lib/factories/webviewFactory';
 import ConfigurationWizardService from './lib/services/configurationWizard/configurationWizardService';
 import FileWatcherCreator from './lib/services/fileChange/fileWatcherCreator';
 import WebviewService from './lib/services/webview/webviewService';
+import CodeTranslationStore from './lib/stores/codeTranslation/codeTranslationStore';
 import ConfigurationStoreManager from './lib/stores/configuration/configurationStoreManager';
-import FileContentStore from './lib/stores/fileContent/fileContentStore';
 import FileLocationStore from './lib/stores/fileLocation/fileLocationStore';
 import WebviewStore from './lib/stores/webview/webviewStore';
 import { FileSearchLocation } from './lib/types/fileSearchLocation';
@@ -57,7 +57,7 @@ export async function activate(
   try {
     ConfigurationStoreManager.getInstance().initialize();
 
-    await initializeFileLocations();
+    await initializeFileLocations(context);
 
     const onDidOpenTextDocumentDisposable =
       await createWebViewForFilesMatchingPattern(webviewService);
@@ -92,7 +92,7 @@ export async function activate(
   }
 }
 
-async function initializeFileLocations() {
+async function initializeFileLocations(context: ExtensionContext) {
   const translationFilesLocation =
     ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
       'i18nextScannerModule'
@@ -128,7 +128,7 @@ async function initializeFileLocations() {
 
   await FileLocationStore.getInstance().scanWorkspaceAsync(fileSearchLocations);
 
-  FileContentStore.getInstance().initializeInitialFileContents();
+  await CodeTranslationStore.getInstance().initializeAsync(context);
 }
 
 async function createFileWatchers(fileWatcherCreator: FileWatcherCreator) {
@@ -222,7 +222,7 @@ async function reinitialize(
   fileWatcherCreator: FileWatcherCreator,
   context: vscode.ExtensionContext
 ) {
-  initializeFileLocations();
+  initializeFileLocations(context);
 
   const { typeScriptFileWatchers, jsonFileWatchers, poFileWatchers } =
     await createFileWatchers(fileWatcherCreator);

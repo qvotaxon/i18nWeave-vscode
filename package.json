@@ -42,11 +42,6 @@
       "url": "https://img.shields.io/github/license/qvotaxon/i18nweave-vscode?logo=github",
       "href": "https://github.com/qvotaxon/i18nweave-vscode/blob/main/LICENSE",
       "description": "License"
-    },
-    {
-      "url": "https://img.shields.io/github/package-json/v/qvotaxon/i18nweave-vscode",
-      "href": "https://github.com/qvotaxon/i18nweave-vscode/releases",
-      "description": "Latest version"
     }
   ],
   "main": "./out/extension.js",
@@ -240,7 +235,7 @@
     "compile:production": "cross-env DOTENV_CONFIG_PATH=.env.production webpack --mode production",
     "compile:sourcemaps": "cross-env DOTENV_CONFIG_PATH=.env.production webpack --mode production && npm run sentry:sourcemaps",
     "postcompile": "npm run copyfiles",
-    "watch": "webpack --watch --mode development",
+    "watch": "tsc -watch -p ./",
     "prewatch": "npm run copyfiles",
     "pretest": "npm run compile:development && npm run lint",
     "lint": "eslint src --ext ts",
