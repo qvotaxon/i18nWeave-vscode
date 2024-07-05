@@ -237,7 +237,7 @@
     "postcompile": "npm run copyfiles",
     "watch": "tsc -watch -p ./",
     "prewatch": "npm run copyfiles",
-    "pretest": "npm run compile:development && npm run lint",
+    "pretest": "tsc -p ./",
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
     "package": "npx vsce package",
