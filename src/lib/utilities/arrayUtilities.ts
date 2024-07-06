@@ -4,7 +4,6 @@
  * @param arr2 - Second array.
  * @returns boolean - True if arrays are equal, false otherwise.
  */
-//TODO: move to utility class
 export function arraysEqual<T>(arr1: T[], arr2: T[]): boolean {
   if (arr1.length !== arr2.length) {
     return false;

@@ -3,13 +3,7 @@
  * @returns The current environment, defaulting to 'production' if not set.
  */
 export function getEnvironment(): string {
-  if (
-    process.env.NODE_ENV !== undefined &&
-    process.env.NODE_ENV !== 'undefined'
-  ) {
-    return process.env.NODE_ENV;
-  }
-  return 'production';
+  return process.env.NODE_ENV ?? 'production';
 }
 
 /**
