@@ -1,9 +1,15 @@
 /**
  * Gets the current environment.
- * @returns The current environment, defaulting to 'development' if not set.
+ * @returns The current environment, defaulting to 'production' if not set.
  */
 export function getEnvironment(): string {
-  return process.env.NODE_ENV ?? 'development';
+  if (
+    process.env.NODE_ENV !== undefined &&
+    process.env.NODE_ENV !== 'undefined'
+  ) {
+    return process.env.NODE_ENV;
+  }
+  return 'production';
 }
 
 /**
