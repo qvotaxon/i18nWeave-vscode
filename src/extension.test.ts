@@ -47,7 +47,7 @@ suite('Extension Activation', () => {
     sinon.restore();
   });
 
-  test.skip('should activate extension and create file watchers', async () => {
+  test('should activate extension and create file watchers', async () => {
     fileWatcherCreator.createFileWatchersForFileTypeAsync.resolves([]);
 
     await activate(context, fileWatcherCreator);
