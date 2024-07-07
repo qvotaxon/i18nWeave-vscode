@@ -67,6 +67,15 @@ jobs:
           registryUrl: https://marketplace.visualstudio.com
           preRelease: true
 
+      - name: Create Sentry release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: i18nweave
+          SENTRY_PROJECT: i18nweave-vscode
+        with:
+          version: ${{ steps.release.outputs.tag_name }}
+
       - name: Attest Build Provenance
         if: ${{ steps.release.outputs.release_created }}
         uses: actions/attest-build-provenance@v1.3.1
