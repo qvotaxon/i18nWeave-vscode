@@ -229,7 +229,7 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run build:production",
+    "vscode:prepublish": "npm run compile:production",
     "compile:development": "cross-env DOTENV_CONFIG_PATH=.env.development && tsc -p ./",
     "compile:production": "cross-env DOTENV_CONFIG_PATH=.env.production webpack --mode production",
     "compile:sourcemaps": "cross-env DOTENV_CONFIG_PATH=.env.production webpack --mode production",
@@ -242,7 +242,7 @@
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
     "package": "npx vsce package",
-    "publish": "npm run build:production && npm run package",
+    "publish": "npm run compile:production && npm run package",
     "test:coverage": "npm run test -- --coverage --coverage-reporter=clover",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org i18nweave --project i18nweave-vscode-r3 ./out && sentry-cli sourcemaps upload --org i18nweave --project i18nweave-vscode-r3 ./out",
     "copyfiles": "copyfiles -u 1 ./src/media/**/* out/"
