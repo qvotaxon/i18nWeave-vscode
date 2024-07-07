@@ -3,12 +3,11 @@ import fs from 'fs';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import GeneralConfiguration from '../../../entities/configuration/general/generalConfiguration';
 import { ChainType } from '../../../enums/chainType';
 import ModuleContext from '../../../interfaces/moduleContext';
 import ModuleChainManager from '../../../modules/moduleChainManager';
+import CodeTranslationStore from '../../../stores/codeTranslation/codeTranslationStore';
 import ConfigurationStoreManager from '../../../stores/configuration/configurationStoreManager';
-import FileContentStore from '../../../stores/fileContent/fileContentStore';
 import TypeScriptFileChangeHandler from './typeScriptFileChangeHandler';
 
 suite('TypeScriptFileChangeHandler', () => {
@@ -49,8 +48,11 @@ suite('TypeScriptFileChangeHandler', () => {
 
     test('should not execute chain if changeFileLocation is undefined', async () => {
       sinon
-        .stub(FileContentStore, 'fileChangeContainsTranslationKeys')
-        .returns(true);
+        .stub(
+          CodeTranslationStore.getInstance(),
+          'fileChangeContainsTranslationFunctionsAsync'
+        )
+        .returns(new Promise<boolean>(resolve => resolve(true)));
 
       const executeChainStub =
         moduleChainManagerStub.executeChainAsync as sinon.SinonStub;
@@ -74,8 +76,11 @@ suite('TypeScriptFileChangeHandler', () => {
         .returns(config.i18nextScannerModule);
 
       sinon
-        .stub(FileContentStore, 'fileChangeContainsTranslationKeys')
-        .returns(true);
+        .stub(
+          CodeTranslationStore.getInstance(),
+          'fileChangeContainsTranslationFunctionsAsync'
+        )
+        .returns(new Promise<boolean>(resolve => resolve(true)));
 
       const executeChainStub =
         moduleChainManagerStub.executeChainAsync as sinon.SinonStub;
@@ -101,8 +106,11 @@ suite('TypeScriptFileChangeHandler', () => {
       const uri = vscode.Uri.file('path/to/file.ts');
 
       sinon
-        .stub(FileContentStore, 'fileChangeContainsTranslationKeys')
-        .returns(false);
+        .stub(
+          CodeTranslationStore.getInstance(),
+          'fileChangeContainsTranslationFunctionsAsync'
+        )
+        .returns(new Promise<boolean>(resolve => resolve(false)));
 
       await handler.handleFileChangeAsync(uri);
 
@@ -123,9 +131,13 @@ suite('TypeScriptFileChangeHandler', () => {
       getConfigStub = sinon
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
+
       sinon
-        .stub(FileContentStore, 'fileChangeContainsTranslationKeys')
-        .returns(true);
+        .stub(
+          CodeTranslationStore.getInstance(),
+          'fileChangeContainsTranslationFunctionsAsync'
+        )
+        .returns(new Promise<boolean>(resolve => resolve(true)));
 
       const executeChainStub =
         moduleChainManagerStub.executeChainAsync as sinon.SinonStub;

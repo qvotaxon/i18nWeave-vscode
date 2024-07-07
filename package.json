@@ -42,11 +42,6 @@
       "url": "https://img.shields.io/github/license/qvotaxon/i18nweave-vscode?logo=github",
       "href": "https://github.com/qvotaxon/i18nweave-vscode/blob/main/LICENSE",
       "description": "License"
-    },
-    {
-      "url": "https://img.shields.io/github/package-json/v/qvotaxon/i18nweave-vscode",
-      "href": "https://github.com/qvotaxon/i18nweave-vscode/releases",
-      "description": "Latest version"
     }
   ],
   "main": "./out/extension.js",
@@ -235,24 +230,22 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run build:production",
-    "compile": "cross-env DOTENV_CONFIG_PATH=.env.local webpack --mode development",
-    "compile:development": "cross-env DOTENV_CONFIG_PATH=.env.local webpack --mode development",
+    "compile:development": "cross-env DOTENV_CONFIG_PATH=.env.development && tsc -p ./",
     "compile:production": "cross-env DOTENV_CONFIG_PATH=.env.production webpack --mode production",
-    "compile:sourcemaps": "cross-env DOTENV_CONFIG_PATH=.env.production webpack --mode production && npm run sentry:sourcemaps",
-    "postcompile": "npm run copyfiles",
+    "compile:sourcemaps": "cross-env DOTENV_CONFIG_PATH=.env.production webpack --mode production",
+    "postcompile:development": "npm run copyfiles",
+    "postcompile:production": "npm run copyfiles",
+    "postcompile:sourcemaps": "npm run copyfiles && npm run sentry:sourcemaps",
     "watch": "webpack --watch --mode development",
     "prewatch": "npm run copyfiles",
-    "pretest": "npm run compile:development && npm run lint",
+    "pretest": "cross-env DOTENV_CONFIG_PATH=.env.development && npm run copyfiles && tsc -p ./",
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
     "package": "npx vsce package",
     "publish": "npm run build:production && npm run package",
-    "test:clover": "npm run test -- --coverage --coverage-reporter=clover",
-    "test:lcov": "npm run test -- --coverage --coverage-reporter=lcov",
+    "test:coverage": "npm run test -- --coverage --coverage-reporter=clover",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org i18nweave --project i18nweave-vscode-r3 ./out && sentry-cli sourcemaps upload --org i18nweave --project i18nweave-vscode-r3 ./out",
-    "copyfiles": "copyfiles -u 1 ./src/media/**/* out/",
-    "build": "webpack --mode development",
-    "build:production": "webpack --mode production"
+    "copyfiles": "copyfiles -u 1 ./src/media/**/* out/"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",

@@ -1,10 +1,15 @@
 const path = require('path');
+const Dotenv = require('dotenv');
+
+// Load the environment variables from the specified .env file
+Dotenv.config({ path: process.env.DOTENV_CONFIG_PATH || '.env.production' });
 
 module.exports = (env, argv) => {
     const isProduction = argv.mode === 'production';
 
     return {
         entry: './src/extension.ts', // This should be your main file
+        devtool: 'source-map',
         output: {
             filename: 'extension.js',
             path: path.resolve(__dirname, 'out'),

@@ -58,10 +58,11 @@ jobs:
 
       - name: Lint & Test
         if: matrix.os == 'macos-latest' || matrix.os == 'windows-latest'
-        run: npm run test:clover
+        run: npm run test:coverage
 
       - name: Upload coverage reports to Codecov
         if: matrix.os == 'macos-latest' || matrix.os == 'windows-latest'
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true

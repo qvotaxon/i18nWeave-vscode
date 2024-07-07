@@ -5,15 +5,15 @@ import { activate, deactivate } from './extension';
 import I18nextJsonToPoConversionModuleConfiguration from './lib/entities/configuration/modules/I18nextJsonToPoConversionModule/i18nextJsonToPoConversionModuleConfiguration';
 import I18nextScannerModuleConfiguration from './lib/entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
 import FileWatcherCreator from './lib/services/fileChange/fileWatcherCreator';
+import CodeTranslationStore from './lib/stores/codeTranslation/codeTranslationStore';
 import ConfigurationStoreManager from './lib/stores/configuration/configurationStoreManager';
-import FileContentStore from './lib/stores/fileContent/fileContentStore';
 
 suite('Extension Activation', () => {
   let context: ExtensionContext;
   let fileWatcherCreator: sinon.SinonStubbedInstance<FileWatcherCreator>;
   let configurationStoreManagerStub: sinon.SinonStub;
 
-  let fileContentStoreStub: sinon.SinonStubbedInstance<FileContentStore>;
+  let codeTranslationStoreStub: sinon.SinonStubbedInstance<CodeTranslationStore>;
 
   setup(() => {
     context = { subscriptions: [] } as any;
@@ -37,8 +37,10 @@ suite('Extension Activation', () => {
         enabled: true,
       } as I18nextJsonToPoConversionModuleConfiguration);
 
-    fileContentStoreStub = sinon.createStubInstance(FileContentStore);
-    sinon.stub(FileContentStore, 'getInstance').returns(fileContentStoreStub);
+    codeTranslationStoreStub = sinon.createStubInstance(CodeTranslationStore);
+    sinon
+      .stub(CodeTranslationStore, 'getInstance')
+      .returns(codeTranslationStoreStub);
   });
 
   teardown(() => {
