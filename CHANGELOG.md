@@ -4,6 +4,13 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.6.2](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.6.1...v0.6.2) (2024-07-07)
+
+
+### Bug Fixes
+
+* release ([#156](https://github.com/qvotaxon/i18nWeave-vscode/issues/156)) ([2915e72](https://github.com/qvotaxon/i18nWeave-vscode/commit/2915e723bd87d18b164cd8911cdeec6b60fdd01c))
+
 ## [0.6.1](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.6.0...v0.6.1) (2024-07-07)
 
 
