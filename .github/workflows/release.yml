@@ -72,7 +72,7 @@ jobs:
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: i18nweave
-          SENTRY_PROJECT: i18nweave-vscode
+          SENTRY_PROJECT: i18nweave-vscode-r3
         with:
           version: ${{ steps.release.outputs.tag_name }}
 
