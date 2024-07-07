@@ -39,6 +39,8 @@ function initializeSentry() {
   Sentry.setUser({
     id: installationId,
   });
+
+  Sentry.startSession();
 }
 
 export async function activate(
@@ -235,5 +237,5 @@ async function reinitialize(
 }
 
 export function deactivate() {
-  // This method is called when your extension is deactivated
+  Sentry.endSession();
 }
