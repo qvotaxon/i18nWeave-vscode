@@ -2,6 +2,7 @@ import vscode from 'vscode';
 
 import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
 import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
+import { sanitizeLocations } from '../../utilities/filePathUtilities';
 import {
   promptForFolderAsync,
   promptForFoldersAsync,
@@ -51,7 +52,8 @@ export async function configureCodeFileLocationsAsync(
   if (!locations) {
     return false;
   }
-  config.codeFileLocations = locations;
+
+  config.codeFileLocations = sanitizeLocations(locations);
   return true;
 }
 

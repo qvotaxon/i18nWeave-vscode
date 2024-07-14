@@ -80,7 +80,7 @@ suite('FileLocationStore Tests', function () {
     // @ts-ignore: access private method
     store.addFile(uri);
     // @ts-ignore: access private method
-    store.removeFile(uri);
+    store.deleteStoreRecordAsync(uri);
 
     const files = store.getFilesByType(['json']);
     assert.ok(

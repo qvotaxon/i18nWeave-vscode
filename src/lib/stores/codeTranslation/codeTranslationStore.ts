@@ -91,6 +91,11 @@ export default class CodeTranslationStore {
     this.updateCache();
   }
 
+  public deleteStoreRecord(fsPath: string) {
+    this._codeTranslations.delete(fsPath);
+    this.updateCache();
+  }
+
   private updateCache = () => {
     const cacheArray = Array.from(this._codeTranslations.values());
     this._context!.globalState.update(this._cacheKey, cacheArray);

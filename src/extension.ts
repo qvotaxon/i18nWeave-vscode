@@ -134,22 +134,63 @@ async function initializeFileLocations(context: ExtensionContext) {
 }
 
 async function createFileWatchers(fileWatcherCreator: FileWatcherCreator) {
-  const typeScriptFileWatchers = await createWatchersForFileType(
+  const translationFilesLocation =
     ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
       'i18nextScannerModule'
-    ).fileExtensions,
+    ).translationFilesLocation;
+
+  const codeFileLocations =
+    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+      'i18nextScannerModule'
+    ).codeFileLocations;
+
+  const codeFileExtensions =
+    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+      'i18nextScannerModule'
+    ).fileExtensions;
+
+  const globFileLocations = codeFileLocations.map(location => {
+    location = location.endsWith('/')
+      ? location.substring(location.length)
+      : location;
+    location = location.startsWith('/') ? location.substring(1) : location;
+    return location;
+  });
+
+  const filepat = `**/{${globFileLocations}}/**/*.{${codeFileExtensions}}`;
+  const actualfilepath = '**{/apps,/libs}/**/*.{ts,tsx,js,jsx}';
+  const fixedActualfilepath = '**/apps/**/*.{ts,tsx,js,jsx}';
+  const filepat2 = `**/apps/**/*.tsx`;
+
+  const typeScriptFileWatchers = await createWatchersForFileType(
+    FileType.TypeScript,
+    {
+      filePattern: filepat, //`**{${codeFileLocations}}/**/*.{${codeFileExtensions}}`,
+      ignorePattern:
+        '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**,**/*.spec.ts,**/*.spec.tsx}',
+    } as FileSearchLocation,
     'i18nextScannerModule',
     fileWatcherCreator
   );
 
   const jsonFileWatchers = await createWatchersForFileType(
-    ['json'],
+    FileType.JSON,
+    {
+      filePattern: `**${translationFilesLocation}/**/*.json`,
+      ignorePattern:
+        '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
+    } as FileSearchLocation,
     'i18nextJsonToPoConversionModule',
     fileWatcherCreator
   );
 
   const poFileWatchers = await createWatchersForFileType(
-    ['po'],
+    FileType.PO,
+    {
+      filePattern: `**${translationFilesLocation}/**/*.po`,
+      ignorePattern:
+        '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
+    } as FileSearchLocation,
     'i18nextJsonToPoConversionModule',
     fileWatcherCreator
   );
@@ -162,12 +203,14 @@ async function createFileWatchers(fileWatcherCreator: FileWatcherCreator) {
 }
 
 async function createWatchersForFileType(
-  fileExtensions: string[],
+  fileType: FileType,
+  fileSearchLocation: FileSearchLocation,
   configKey: 'i18nextScannerModule' | 'i18nextJsonToPoConversionModule',
   fileWatcherCreator: FileWatcherCreator
 ) {
   return await fileWatcherCreator.createFileWatchersForFileTypeAsync(
-    fileExtensions,
+    fileType,
+    fileSearchLocation,
     () =>
       false ===
       ConfigurationStoreManager.getInstance().getConfig<any>(configKey).enabled

@@ -2,8 +2,10 @@ import * as assert from 'assert';
 import sinon from 'sinon';
 import * as vscode from 'vscode';
 
+import { FileType } from '../../enums/fileType';
 import FileLocationStore from '../../stores/fileLocation/fileLocationStore';
 import FileLockStoreStore from '../../stores/fileLock/fileLockStore';
+import { FileSearchLocation } from '../../types/fileSearchLocation';
 import FileChangeHandlerFactory from './fileChangeHandlerFactory';
 import FileWatcherCreator from './fileWatcherCreator';
 
@@ -30,6 +32,12 @@ suite('FileWatcherCreator', () => {
       .stub(FileChangeHandlerFactory.prototype, 'createFileChangeHandler')
       .returns({
         handleFileChangeAsync: handleFileChangeAsyncStub,
+        handleFileDeletionAsync: sinon.stub().resolves(),
+        handleFileCreationAsync: function (
+          changeFileLocation: vscode.Uri
+        ): Promise<void> {
+          throw new Error('Function not implemented.');
+        },
       });
   });
 
@@ -39,9 +47,11 @@ suite('FileWatcherCreator', () => {
 
   suite('createFileWatchersForFilesMatchingGlobAsync', () => {
     test('should create file watchers for files matching the specified glob pattern', async () => {
+      const mockUri = vscode.Uri.parse('file:///path/to/file.ts');
+
       const fileLocationStoreStub = sinon
         .stub(FileLocationStore.getInstance(), 'getFilesByType')
-        .returns([vscode.Uri.parse('file:///path/to/file.ts').fsPath]);
+        .returns([mockUri.fsPath]);
 
       const mockFileWatcher = {
         onDidChange: sinon.stub(),
@@ -50,7 +60,10 @@ suite('FileWatcherCreator', () => {
       hasFileLockStub.returns(false);
 
       const fileWatchers =
-        await fileWatcherCreator.createFileWatchersForFileTypeAsync(['ts']);
+        await fileWatcherCreator.createFileWatchersForFileTypeAsync(
+          FileType.TypeScript,
+          { filePattern: mockUri.fsPath } as FileSearchLocation
+        );
 
       assert.strictEqual(fileWatchers.length, 1);
       assert.strictEqual(fileWatchers[0], mockFileWatcher);
@@ -74,7 +87,10 @@ suite('FileWatcherCreator', () => {
       createFileSystemWatcherStub.returns(mockFileWatcher);
       hasFileLockStub.returns(false);
 
-      await fileWatcherCreator.createFileWatchersForFileTypeAsync(['ts']);
+      await fileWatcherCreator.createFileWatchersForFileTypeAsync(
+        FileType.TypeScript,
+        { filePattern: mockUri.fsPath } as FileSearchLocation
+      );
 
       sinon.assert.calledOnce(handleFileChangeAsyncStub);
 
@@ -93,7 +109,8 @@ suite('FileWatcherCreator', () => {
       hasFileLockStub.returns(false);
 
       await fileWatcherCreator.createFileWatchersForFileTypeAsync(
-        ['ts'],
+        FileType.TypeScript,
+        { filePattern: mockUri.fsPath } as FileSearchLocation,
         () => true
       );
 

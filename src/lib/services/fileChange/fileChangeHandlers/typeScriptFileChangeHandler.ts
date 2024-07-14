@@ -8,13 +8,16 @@ import ModuleContext from '../../../interfaces/moduleContext';
 import I18nextScannerModule from '../../../modules/i18nextScanner/i18nextScannerModule';
 import ModuleChainManager from '../../../modules/moduleChainManager';
 import CodeTranslationStore from '../../../stores/codeTranslation/codeTranslationStore';
+import FileLocationStore from '../../../stores/fileLocation/fileLocationStore';
 
-export default class TypeScriptFileChangeHandler implements FileChangeHandler {
+export default class TypeScriptFileChangeHandler extends FileChangeHandler {
   private static i18nextScannerModule: I18nextScannerModule;
   private static moduleChainManager: ModuleChainManager =
     new ModuleChainManager();
 
   private constructor(i18nextScannerModule: I18nextScannerModule) {
+    super();
+
     TypeScriptFileChangeHandler.i18nextScannerModule = i18nextScannerModule;
     TypeScriptFileChangeHandler.moduleChainManager.registerChain(
       ChainType.TypeScript,
@@ -65,6 +68,21 @@ export default class TypeScriptFileChangeHandler implements FileChangeHandler {
           changeFileLocation.fsPath
         );
       }
+    );
+  }
+
+  public async handleFileDeletionAsync(
+    changeFileLocation?: Uri
+  ): Promise<void> {
+    if (!changeFileLocation) {
+      return;
+    }
+    super.handleFileDeletionAsync(changeFileLocation);
+
+    FileLocationStore.getInstance().deleteStoreRecord(changeFileLocation);
+
+    CodeTranslationStore.getInstance().deleteStoreRecord(
+      changeFileLocation.fsPath
     );
   }
 }

@@ -1,4 +1,6 @@
+import { GlobPattern } from 'vscode';
+
 export type FileSearchLocation = {
-  filePattern: string;
-  ignorePattern: string;
+  filePattern: GlobPattern;
+  ignorePattern: GlobPattern;
 };

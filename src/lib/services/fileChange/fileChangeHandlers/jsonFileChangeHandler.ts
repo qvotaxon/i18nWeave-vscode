@@ -9,11 +9,12 @@ import I18nextJsonToPoConversionModule from '../../../modules/i18nextJsonToPoCon
 import ModuleChainManager from '../../../modules/moduleChainManager';
 import ReadJsonFileModule from '../../../modules/readJsonFile/readJsonFileModule';
 import TranslationModule from '../../../modules/translation/translationModule';
+import FileLocationStore from '../../../stores/fileLocation/fileLocationStore';
 import FileLockStoreStore from '../../../stores/fileLock/fileLockStore';
 import { extractFilePathParts } from '../../../utilities/filePathUtilities';
 import FileWatcherCreator from '../fileWatcherCreator';
 
-export default class JsonFileChangeHandler implements FileChangeHandler {
+export default class JsonFileChangeHandler extends FileChangeHandler {
   private static fileWatcherCreator: FileWatcherCreator;
   private static readJsonFileModule: ReadJsonFileModule;
   private static translationModule: TranslationModule;
@@ -28,6 +29,8 @@ export default class JsonFileChangeHandler implements FileChangeHandler {
     translationModule: TranslationModule,
     i18nextJsonToPoConversionModule: I18nextJsonToPoConversionModule
   ) {
+    super();
+
     JsonFileChangeHandler.fileWatcherCreator = fileWatcherCreator;
     JsonFileChangeHandler.readJsonFileModule = readJsonFileModule;
     JsonFileChangeHandler.translationModule = translationModule;
