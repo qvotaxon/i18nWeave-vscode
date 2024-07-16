@@ -58,7 +58,7 @@ export default class FileLocationStore {
    * Removes a file from the store.
    * @param uri The URI of the file.
    */
-  public deleteStoreRecord(uri: vscode.Uri) {
+  public deleteFile(uri: vscode.Uri) {
     const extension = getFileExtension(uri);
     this.fileLocations.get(extension)?.delete(uri.fsPath);
   }

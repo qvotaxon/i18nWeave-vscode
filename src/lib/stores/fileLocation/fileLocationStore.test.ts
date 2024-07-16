@@ -31,7 +31,10 @@ suite('FileLocationStore Tests', function () {
       vscode.Uri.file('/path/to/file2.ts'),
     ];
     sandbox.stub(vscode.workspace, 'findFiles').resolves(mockFiles);
-    const addFileStub = sandbox.stub<any, any>(store, 'addFile');
+    const addOrUpdateFileStub = sandbox.stub<any, any>(
+      store,
+      'addOrUpdateFile'
+    );
 
     const fileSearchLocations = [
       {
@@ -47,24 +50,22 @@ suite('FileLocationStore Tests', function () {
     await store.scanWorkspaceAsync(fileSearchLocations);
 
     assert.strictEqual(
-      addFileStub.callCount,
+      addOrUpdateFileStub.callCount,
       mockFiles.length * 2, //TODO: find out why this needs a * 2
-      'addFile was not called for each file'
+      'addOrUpdateFile was not called for each file'
     );
     mockFiles.forEach((file, index) => {
       assert.ok(
-        addFileStub.calledWith(file),
-        `addFile was not called with the correct file: ${file.fsPath}`
+        addOrUpdateFileStub.calledWith(file),
+        `addOrUpdateFile was not called with the correct file: ${file.fsPath}`
       );
     });
   });
 
-  test('addFile should add a file to the store', function () {
+  test('addOrUpdateFile should add a file to the store', function () {
     const uri = vscode.Uri.file('/path/to/file.json');
     sandbox.stub(filePathUtilities, 'getFileExtension').returns('json');
-
-    // @ts-ignore: access private method
-    store.addFile(uri);
+    store.addOrUpdateFile(uri);
 
     const files = store.getFilesByType(['json']);
     assert.ok(
@@ -76,11 +77,8 @@ suite('FileLocationStore Tests', function () {
   test('removeFile should remove a file from the store', function () {
     const uri = vscode.Uri.file('/path/to/file.json');
     sandbox.stub(filePathUtilities, 'getFileExtension').returns('json');
-
-    // @ts-ignore: access private method
-    store.addFile(uri);
-    // @ts-ignore: access private method
-    store.deleteStoreRecordAsync(uri);
+    store.addOrUpdateFile(uri);
+    store.deleteFile(uri);
 
     const files = store.getFilesByType(['json']);
     assert.ok(
@@ -99,10 +97,8 @@ suite('FileLocationStore Tests', function () {
       .onSecondCall()
       .returns('ts');
 
-    // @ts-ignore: access private method
-    store.addFile(uri1);
-    // @ts-ignore: access private method
-    store.addFile(uri2);
+    store.addOrUpdateFile(uri1);
+    store.addOrUpdateFile(uri2);
 
     const jsonFiles = store.getFilesByType(['json']);
     const tsFiles = store.getFilesByType(['ts']);

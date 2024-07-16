@@ -30,7 +30,9 @@ suite('Extension Activation', () => {
       .withArgs('i18nextScannerModule')
       .returns({
         enabled: true,
-        fileExtensions: ['ts', 'tsx'],
+        fileExtensions: ['ts', 'blaat'],
+        codeFileLocations: ['src'],
+        translationFilesLocation: 'src/locales',
       } as I18nextScannerModuleConfiguration);
     (configurationStoreManagerStub().getConfig as sinon.SinonStub)
       .withArgs('i18nextJsonToPoConversionModule')
@@ -60,16 +62,19 @@ suite('Extension Activation', () => {
     sinon.assert.calledWith(
       fileWatcherCreator.createFileWatchersForFileTypeAsync,
       FileType.Code,
+      sinon.match.object,
       sinon.match.func
     );
     sinon.assert.calledWith(
       fileWatcherCreator.createFileWatchersForFileTypeAsync,
       FileType.Json,
+      sinon.match.object,
       sinon.match.func
     );
     sinon.assert.calledWith(
       fileWatcherCreator.createFileWatchersForFileTypeAsync,
       FileType.Po,
+      sinon.match.object,
       sinon.match.func
     );
     sinon.assert.calledOnce(configurationStoreManagerStub().initialize);

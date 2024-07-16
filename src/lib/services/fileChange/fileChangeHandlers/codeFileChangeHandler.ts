@@ -79,7 +79,7 @@ export default class CodeFileChangeHandler extends FileChangeHandler {
     }
     super.handleFileDeletionAsync(changeFileLocation);
 
-    FileLocationStore.getInstance().deleteStoreRecord(changeFileLocation);
+    FileLocationStore.getInstance().deleteFile(changeFileLocation);
 
     CodeTranslationStore.getInstance().deleteStoreRecord(
       changeFileLocation.fsPath

@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 
 import { FileType } from '../../enums/fileType';
-import FileLocationStore from '../../stores/fileLocation/fileLocationStore';
 import { FileSearchLocation } from '../../types/fileSearchLocation';
 import FileChangeHandlerFactory from './fileChangeHandlerFactory';
 
@@ -44,11 +43,6 @@ export default class FileWatcherCreator {
       }
     });
 
-    // TODO: Find a way to get this to work.
-    // Currently it's not working because files not existing during extension startup are not registered in the file location store, so the watcher is not created.
-    //
-    // We can fix this by adding the file to the file location store when the file change handler is created (so in the createFileChangeHandler method).
-    // And having the current flow just work based on glob patterns.
     fileWatcher.onDidDelete(async uri => {
       if (!disableFlags.some(flag => flag())) {
         await fileChangeHandler?.handleFileDeletionAsync(uri);
@@ -62,8 +56,6 @@ export default class FileWatcherCreator {
     });
 
     fileWatchers.push(fileWatcher);
-    // })
-    // );
 
     return fileWatchers;
   }

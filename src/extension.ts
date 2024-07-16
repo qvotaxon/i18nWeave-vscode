@@ -149,23 +149,10 @@ async function createFileWatchers(fileWatcherCreator: FileWatcherCreator) {
       'i18nextScannerModule'
     ).fileExtensions;
 
-  const globFileLocations = codeFileLocations.map(location => {
-    location = location.endsWith('/')
-      ? location.substring(location.length)
-      : location;
-    location = location.startsWith('/') ? location.substring(1) : location;
-    return location;
-  });
-
-  const filepat = `**/{${globFileLocations}}/**/*.{${codeFileExtensions}}`;
-  const actualfilepath = '**{/apps,/libs}/**/*.{ts,tsx,js,jsx}';
-  const fixedActualfilepath = '**/apps/**/*.{ts,tsx,js,jsx}';
-  const filepat2 = `**/apps/**/*.tsx`;
-
   const codeFileWatchers = await createWatchersForFileType(
     FileType.Code,
     {
-      filePattern: filepat, //`**{${codeFileLocations}}/**/*.{${codeFileExtensions}}`,
+      filePattern: `**/{${codeFileLocations}}/**/*.{${codeFileExtensions}}`,
       ignorePattern:
         '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**,**/*.spec.ts,**/*.spec.tsx}',
     } as FileSearchLocation,
