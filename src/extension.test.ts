@@ -59,17 +59,17 @@ suite('Extension Activation', () => {
 
     sinon.assert.calledWith(
       fileWatcherCreator.createFileWatchersForFileTypeAsync,
-      FileType.TypeScript,
+      FileType.Code,
       sinon.match.func
     );
     sinon.assert.calledWith(
       fileWatcherCreator.createFileWatchersForFileTypeAsync,
-      FileType.JSON,
+      FileType.Json,
       sinon.match.func
     );
     sinon.assert.calledWith(
       fileWatcherCreator.createFileWatchersForFileTypeAsync,
-      FileType.PO,
+      FileType.Po,
       sinon.match.func
     );
     sinon.assert.calledOnce(configurationStoreManagerStub().initialize);

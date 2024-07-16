@@ -8,17 +8,17 @@ import ModuleContext from '../../../interfaces/moduleContext';
 import ModuleChainManager from '../../../modules/moduleChainManager';
 import CodeTranslationStore from '../../../stores/codeTranslation/codeTranslationStore';
 import ConfigurationStoreManager from '../../../stores/configuration/configurationStoreManager';
-import TypeScriptFileChangeHandler from './typeScriptFileChangeHandler';
+import CodeFileChangeHandler from './codeFileChangeHandler';
 
-suite('TypeScriptFileChangeHandler', () => {
+suite('CodeFileChangeHandler', () => {
   let moduleChainManagerStub: sinon.SinonStubbedInstance<ModuleChainManager>;
   let readFileSyncStub: sinon.SinonStub;
-  let handler: TypeScriptFileChangeHandler;
+  let handler: CodeFileChangeHandler;
 
   setup(() => {
     moduleChainManagerStub = sinon.createStubInstance(ModuleChainManager);
     readFileSyncStub = sinon.stub(fs, 'readFileSync');
-    handler = TypeScriptFileChangeHandler.create();
+    handler = CodeFileChangeHandler.create();
 
     // const pathsConfiguration = {
     //   packageJsonAbsoluteFolderPath: 'some/path',
@@ -33,9 +33,9 @@ suite('TypeScriptFileChangeHandler', () => {
   });
 
   suite('create', () => {
-    test('should create an instance of TypeScriptFileChangeHandler', () => {
-      const instance = TypeScriptFileChangeHandler.create();
-      assert(instance instanceof TypeScriptFileChangeHandler);
+    test('should create an instance of CodeFileChangeHandler', () => {
+      const instance = CodeFileChangeHandler.create();
+      assert(instance instanceof CodeFileChangeHandler);
     });
   });
 
@@ -94,10 +94,7 @@ suite('TypeScriptFileChangeHandler', () => {
         outputPath: uri,
       };
 
-      executeChainStub.calledOnceWithExactly(
-        ChainType.TypeScript,
-        expectedContext
-      );
+      executeChainStub.calledOnceWithExactly(ChainType.Code, expectedContext);
     });
 
     test('should not execute chain if changeFileLocation does not contain translation keys', async () => {
@@ -151,10 +148,7 @@ suite('TypeScriptFileChangeHandler', () => {
         outputPath: uri,
       };
 
-      executeChainStub.calledOnceWithExactly(
-        ChainType.TypeScript,
-        expectedContext
-      );
+      executeChainStub.calledOnceWithExactly(ChainType.Code, expectedContext);
     });
   });
 });

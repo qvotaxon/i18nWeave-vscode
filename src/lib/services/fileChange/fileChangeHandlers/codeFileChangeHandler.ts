@@ -10,7 +10,7 @@ import ModuleChainManager from '../../../modules/moduleChainManager';
 import CodeTranslationStore from '../../../stores/codeTranslation/codeTranslationStore';
 import FileLocationStore from '../../../stores/fileLocation/fileLocationStore';
 
-export default class TypeScriptFileChangeHandler extends FileChangeHandler {
+export default class CodeFileChangeHandler extends FileChangeHandler {
   private static i18nextScannerModule: I18nextScannerModule;
   private static moduleChainManager: ModuleChainManager =
     new ModuleChainManager();
@@ -18,27 +18,27 @@ export default class TypeScriptFileChangeHandler extends FileChangeHandler {
   private constructor(i18nextScannerModule: I18nextScannerModule) {
     super();
 
-    TypeScriptFileChangeHandler.i18nextScannerModule = i18nextScannerModule;
-    TypeScriptFileChangeHandler.moduleChainManager.registerChain(
-      ChainType.TypeScript,
-      this.createTypeScriptChain()
+    CodeFileChangeHandler.i18nextScannerModule = i18nextScannerModule;
+    CodeFileChangeHandler.moduleChainManager.registerChain(
+      ChainType.Code,
+      this.createCodeFileChain()
     );
   }
 
-  public static create(): TypeScriptFileChangeHandler {
+  public static create(): CodeFileChangeHandler {
     const i18nextScannerModule = new I18nextScannerModule();
-    return new TypeScriptFileChangeHandler(i18nextScannerModule);
+    return new CodeFileChangeHandler(i18nextScannerModule);
   }
 
-  private createTypeScriptChain(): ActionModule {
-    return TypeScriptFileChangeHandler.i18nextScannerModule;
+  private createCodeFileChain(): ActionModule {
+    return CodeFileChangeHandler.i18nextScannerModule;
   }
 
   public async handleFileChangeAsync(changeFileLocation?: Uri): Promise<void> {
     await Sentry.startSpan(
       {
-        op: 'typeScript.handleFileChange',
-        name: 'TypeScript File Change Handler',
+        op: 'codeFile.handleFileChange',
+        name: 'Code File Change Handler',
       },
       async () => {
         if (!changeFileLocation) {
@@ -59,8 +59,8 @@ export default class TypeScriptFileChangeHandler extends FileChangeHandler {
           outputPath: changeFileLocation,
         };
 
-        await TypeScriptFileChangeHandler.moduleChainManager.executeChainAsync(
-          ChainType.TypeScript,
+        await CodeFileChangeHandler.moduleChainManager.executeChainAsync(
+          ChainType.Code,
           context
         );
 

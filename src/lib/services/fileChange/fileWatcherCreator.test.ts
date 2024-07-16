@@ -61,7 +61,7 @@ suite('FileWatcherCreator', () => {
 
       const fileWatchers =
         await fileWatcherCreator.createFileWatchersForFileTypeAsync(
-          FileType.TypeScript,
+          FileType.Code,
           { filePattern: mockUri.fsPath } as FileSearchLocation
         );
 
@@ -88,7 +88,7 @@ suite('FileWatcherCreator', () => {
       hasFileLockStub.returns(false);
 
       await fileWatcherCreator.createFileWatchersForFileTypeAsync(
-        FileType.TypeScript,
+        FileType.Code,
         { filePattern: mockUri.fsPath } as FileSearchLocation
       );
 
@@ -109,7 +109,7 @@ suite('FileWatcherCreator', () => {
       hasFileLockStub.returns(false);
 
       await fileWatcherCreator.createFileWatchersForFileTypeAsync(
-        FileType.TypeScript,
+        FileType.Code,
         { filePattern: mockUri.fsPath } as FileSearchLocation,
         () => true
       );

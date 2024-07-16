@@ -1,17 +1,17 @@
 import { FileType } from '../../enums/fileType';
 import FileChangeHandler from '../../interfaces/fileChangeHandler';
+import CodeFileChangeHandler from './fileChangeHandlers/codeFileChangeHandler';
 import JsonFileChangeHandler from './fileChangeHandlers/jsonFileChangeHandler';
 import PoFileChangeHandler from './fileChangeHandlers/poFileChangeHandler';
-import TypeScriptFileChangeHandler from './fileChangeHandlers/typeScriptFileChangeHandler';
 
 export default class FileChangeHandlerFactory {
   public createFileChangeHandler(fileType: FileType): FileChangeHandler {
     switch (fileType) {
-      case FileType.TypeScript:
-        return TypeScriptFileChangeHandler.create();
-      case FileType.PO:
+      case FileType.Code:
+        return CodeFileChangeHandler.create();
+      case FileType.Po:
         return PoFileChangeHandler.create();
-      case FileType.JSON:
+      case FileType.Json:
         return JsonFileChangeHandler.create();
       default:
         throw new Error('Unsupported file extension');

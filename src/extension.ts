@@ -71,7 +71,7 @@ export async function activate(
         await reinitialize(fileWatcherCreator, context);
       });
 
-    const { typeScriptFileWatchers, jsonFileWatchers, poFileWatchers } =
+    const { codeFileWatchers, jsonFileWatchers, poFileWatchers } =
       await createFileWatchers(fileWatcherCreator);
 
     const configurationWizardCommandDisposable =
@@ -82,7 +82,7 @@ export async function activate(
       );
 
     context.subscriptions.push(
-      ...typeScriptFileWatchers,
+      ...codeFileWatchers,
       ...jsonFileWatchers,
       ...poFileWatchers,
       onDidOpenTextDocumentDisposable,
@@ -162,41 +162,40 @@ async function createFileWatchers(fileWatcherCreator: FileWatcherCreator) {
   const fixedActualfilepath = '**/apps/**/*.{ts,tsx,js,jsx}';
   const filepat2 = `**/apps/**/*.tsx`;
 
-  const typeScriptFileWatchers = await createWatchersForFileType(
-    FileType.TypeScript,
+  const codeFileWatchers = await createWatchersForFileType(
+    FileType.Code,
     {
       filePattern: filepat, //`**{${codeFileLocations}}/**/*.{${codeFileExtensions}}`,
       ignorePattern:
         '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**,**/*.spec.ts,**/*.spec.tsx}',
     } as FileSearchLocation,
-    'i18nextScannerModule',
-    fileWatcherCreator
+    fileWatcherCreator,
+    'i18nextScannerModule'
   );
 
   const jsonFileWatchers = await createWatchersForFileType(
-    FileType.JSON,
+    FileType.Json,
     {
       filePattern: `**${translationFilesLocation}/**/*.json`,
       ignorePattern:
         '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
     } as FileSearchLocation,
-    'i18nextJsonToPoConversionModule',
     fileWatcherCreator
   );
 
   const poFileWatchers = await createWatchersForFileType(
-    FileType.PO,
+    FileType.Po,
     {
       filePattern: `**${translationFilesLocation}/**/*.po`,
       ignorePattern:
         '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
     } as FileSearchLocation,
-    'i18nextJsonToPoConversionModule',
-    fileWatcherCreator
+    fileWatcherCreator,
+    'i18nextJsonToPoConversionModule'
   );
 
   return {
-    typeScriptFileWatchers,
+    codeFileWatchers,
     jsonFileWatchers,
     poFileWatchers,
   };
@@ -205,15 +204,18 @@ async function createFileWatchers(fileWatcherCreator: FileWatcherCreator) {
 async function createWatchersForFileType(
   fileType: FileType,
   fileSearchLocation: FileSearchLocation,
-  configKey: 'i18nextScannerModule' | 'i18nextJsonToPoConversionModule',
-  fileWatcherCreator: FileWatcherCreator
+  fileWatcherCreator: FileWatcherCreator,
+  disableFlag?: 'i18nextScannerModule' | 'i18nextJsonToPoConversionModule'
 ) {
   return await fileWatcherCreator.createFileWatchersForFileTypeAsync(
     fileType,
     fileSearchLocation,
     () =>
       false ===
-      ConfigurationStoreManager.getInstance().getConfig<any>(configKey).enabled
+      (disableFlag
+        ? ConfigurationStoreManager.getInstance().getConfig<any>(disableFlag)
+            .enabled
+        : true)
   );
 }
 
@@ -231,7 +233,7 @@ async function createWebViewForFilesMatchingPattern(
           'general'
         ).betaFeaturesConfiguration.enableJsonFileWebView
       ) {
-        webviewService.showWebview(FileType.JSON, uri);
+        webviewService.showWebview(FileType.Json, uri);
       }
     });
 
@@ -269,11 +271,11 @@ async function reinitialize(
 ) {
   initializeFileLocations(context);
 
-  const { typeScriptFileWatchers, jsonFileWatchers, poFileWatchers } =
+  const { codeFileWatchers, jsonFileWatchers, poFileWatchers } =
     await createFileWatchers(fileWatcherCreator);
 
   context.subscriptions.push(
-    ...typeScriptFileWatchers,
+    ...codeFileWatchers,
     ...jsonFileWatchers,
     ...poFileWatchers
   );
