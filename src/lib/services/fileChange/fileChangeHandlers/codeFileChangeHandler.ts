@@ -34,7 +34,10 @@ export default class CodeFileChangeHandler extends FileChangeHandler {
     return CodeFileChangeHandler.i18nextScannerModule;
   }
 
-  public async handleFileChangeAsync(changeFileLocation?: Uri): Promise<void> {
+  public async handleFileChangeAsync(
+    changeFileLocation?: Uri,
+    isDeletedFile?: boolean
+  ): Promise<void> {
     await Sentry.startSpan(
       {
         op: 'codeFile.handleFileChange',
@@ -46,6 +49,7 @@ export default class CodeFileChangeHandler extends FileChangeHandler {
         }
 
         if (
+          !isDeletedFile &&
           !(await CodeTranslationStore.getInstance().fileChangeContainsTranslationFunctionsAsync(
             changeFileLocation.fsPath
           ))
@@ -64,9 +68,11 @@ export default class CodeFileChangeHandler extends FileChangeHandler {
           context
         );
 
-        CodeTranslationStore.getInstance().updateStoreRecordAsync(
-          changeFileLocation.fsPath
-        );
+        if (!isDeletedFile) {
+          CodeTranslationStore.getInstance().updateStoreRecordAsync(
+            changeFileLocation.fsPath
+          );
+        }
       }
     );
   }
@@ -78,6 +84,8 @@ export default class CodeFileChangeHandler extends FileChangeHandler {
       return;
     }
     super.handleFileDeletionAsync(changeFileLocation);
+
+    await this.handleFileChangeAsync(changeFileLocation, true);
 
     FileLocationStore.getInstance().deleteFile(changeFileLocation);
 
