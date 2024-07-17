@@ -87,4 +87,12 @@ export default class CodeFileChangeHandler extends FileChangeHandler {
       changeFileLocation.fsPath
     );
   }
+
+  public async handleFileCreationAsync(changeFileLocation: Uri): Promise<void> {
+    if (!changeFileLocation) {
+      return;
+    }
+    await super.handleFileCreationAsync(changeFileLocation);
+    await this.handleFileChangeAsync(changeFileLocation);
+  }
 }

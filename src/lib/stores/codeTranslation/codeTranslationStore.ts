@@ -110,7 +110,14 @@ export default class CodeTranslationStore {
     const currentTranslationFunctionNames =
       this._codeTranslations.get(fsPath)?.translationFunctionNames;
 
-    if (newTranslationFunctionNames && !currentTranslationFunctionNames) {
+    if (newTranslationFunctionNames?.length === 0) {
+      return false;
+    }
+
+    if (
+      newTranslationFunctionNames?.length > 0 &&
+      !currentTranslationFunctionNames
+    ) {
       return true;
     }
 
