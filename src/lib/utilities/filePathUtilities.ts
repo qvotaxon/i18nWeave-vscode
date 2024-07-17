@@ -132,3 +132,19 @@ export function getProjectRootFolder(): string | undefined {
 export function getPosixPathFromUri(fsPath: string): string {
   return path.posix.normalize(fsPath.replace(/\\/g, '/'));
 }
+
+/**
+ * Sanitizes an array of file locations by removing leading and trailing slashes.
+ *
+ * @param locations - The array of file locations to sanitize.
+ * @returns The sanitized array of file locations.
+ */
+export function sanitizeLocations(locations: string[]): string[] {
+  return locations.map(location => {
+    location = location.endsWith('/')
+      ? location.substring(location.length)
+      : location;
+    location = location.startsWith('/') ? location.substring(1) : location;
+    return location;
+  });
+}

@@ -8,11 +8,12 @@ import ModuleContext from '../../../interfaces/moduleContext';
 import ModuleChainManager from '../../../modules/moduleChainManager';
 import PoToI18nextJsonConversionModule from '../../../modules/poToI18nextJsonConversion/poToI18nextJsonConversionModule';
 import ReadPoFileModule from '../../../modules/readPoFile/readPoFileModule';
+import FileLocationStore from '../../../stores/fileLocation/fileLocationStore';
 import FileLockStoreStore from '../../../stores/fileLock/fileLockStore';
 import { extractFilePathParts } from '../../../utilities/filePathUtilities';
 import FileWatcherCreator from '../fileWatcherCreator';
 
-export default class PoFileChangeHandler implements FileChangeHandler {
+export default class PoFileChangeHandler extends FileChangeHandler {
   private static fileWatcherCreator: FileWatcherCreator;
   private static readPoFileModule: ReadPoFileModule;
   private static poToI18nextJsonConversionModule: PoToI18nextJsonConversionModule;
@@ -25,6 +26,8 @@ export default class PoFileChangeHandler implements FileChangeHandler {
     readPoFileModule: ReadPoFileModule,
     poToI18nextJsonConversionModule: PoToI18nextJsonConversionModule
   ) {
+    super();
+
     PoFileChangeHandler.fileWatcherCreator = fileWatcherCreator;
     PoFileChangeHandler.readPoFileModule = readPoFileModule;
     PoFileChangeHandler.poToI18nextJsonConversionModule =

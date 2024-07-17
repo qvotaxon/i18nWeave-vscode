@@ -91,6 +91,11 @@ export default class CodeTranslationStore {
     this.updateCache();
   }
 
+  public deleteStoreRecord(fsPath: string) {
+    this._codeTranslations.delete(fsPath);
+    this.updateCache();
+  }
+
   private updateCache = () => {
     const cacheArray = Array.from(this._codeTranslations.values());
     this._context!.globalState.update(this._cacheKey, cacheArray);
@@ -105,7 +110,14 @@ export default class CodeTranslationStore {
     const currentTranslationFunctionNames =
       this._codeTranslations.get(fsPath)?.translationFunctionNames;
 
-    if (newTranslationFunctionNames && !currentTranslationFunctionNames) {
+    if (newTranslationFunctionNames?.length === 0) {
+      return false;
+    }
+
+    if (
+      newTranslationFunctionNames?.length > 0 &&
+      !currentTranslationFunctionNames
+    ) {
       return true;
     }
 

@@ -42,7 +42,7 @@ suite('WebviewService', () => {
     mockWebviewStore.getWebview.returns(existingWebviewPanel);
     const existingWebviewPanelSpy = sinon.spy(existingWebviewPanel, 'reveal');
 
-    webviewService.showWebview(FileType.JSON, uri);
+    webviewService.showWebview(FileType.Json, uri);
 
     sinon.assert.calledWith(existingWebviewPanelSpy, vscode.ViewColumn.One);
   });
@@ -57,7 +57,7 @@ suite('WebviewService', () => {
     const existingWebviewPanelSpy = sinon.spy(newWebviewPanel, 'reveal');
     mockWebviewFactory.createWebview.returns(newWebviewPanel);
 
-    webviewService.showWebview(FileType.JSON, uri);
+    webviewService.showWebview(FileType.Json, uri);
 
     sinon.assert.calledWith(mockWebviewStore.addWebview, uri, newWebviewPanel);
     sinon.assert.notCalled(existingWebviewPanelSpy);

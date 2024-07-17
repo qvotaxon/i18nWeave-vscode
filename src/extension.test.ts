@@ -4,6 +4,7 @@ import { ExtensionContext } from 'vscode';
 import { activate, deactivate } from './extension';
 import I18nextJsonToPoConversionModuleConfiguration from './lib/entities/configuration/modules/I18nextJsonToPoConversionModule/i18nextJsonToPoConversionModuleConfiguration';
 import I18nextScannerModuleConfiguration from './lib/entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
+import { FileType } from './lib/enums/fileType';
 import FileWatcherCreator from './lib/services/fileChange/fileWatcherCreator';
 import CodeTranslationStore from './lib/stores/codeTranslation/codeTranslationStore';
 import ConfigurationStoreManager from './lib/stores/configuration/configurationStoreManager';
@@ -29,7 +30,9 @@ suite('Extension Activation', () => {
       .withArgs('i18nextScannerModule')
       .returns({
         enabled: true,
-        fileExtensions: ['ts', 'tsx'],
+        fileExtensions: ['ts', 'blaat'],
+        codeFileLocations: ['src'],
+        translationFilesLocation: 'src/locales',
       } as I18nextScannerModuleConfiguration);
     (configurationStoreManagerStub().getConfig as sinon.SinonStub)
       .withArgs('i18nextJsonToPoConversionModule')
@@ -58,17 +61,20 @@ suite('Extension Activation', () => {
 
     sinon.assert.calledWith(
       fileWatcherCreator.createFileWatchersForFileTypeAsync,
-      ['ts', 'tsx'],
+      FileType.Code,
+      sinon.match.object,
       sinon.match.func
     );
     sinon.assert.calledWith(
       fileWatcherCreator.createFileWatchersForFileTypeAsync,
-      ['json'],
+      FileType.Json,
+      sinon.match.object,
       sinon.match.func
     );
     sinon.assert.calledWith(
       fileWatcherCreator.createFileWatchersForFileTypeAsync,
-      ['po'],
+      FileType.Po,
+      sinon.match.object,
       sinon.match.func
     );
     sinon.assert.calledOnce(configurationStoreManagerStub().initialize);

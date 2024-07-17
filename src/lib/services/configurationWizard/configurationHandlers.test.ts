@@ -39,13 +39,26 @@ suite('ConfigurationHandlers', () => {
     const config = new I18nextScannerModuleConfiguration();
     sandbox
       .stub(windowUtilities, 'promptForFoldersAsync')
+      .resolves(['path/to/code']);
+
+    const result =
+      await configurationHandlers.configureCodeFileLocationsAsync(config);
+
+    assert.strictEqual(result, true);
+    assert.deepStrictEqual(config.codeFileLocations, ['path/to/code']);
+  });
+
+  test('configureCodeFileLocationsAsync should sanitizeLocations codeFileLocations', async () => {
+    const config = new I18nextScannerModuleConfiguration();
+    sandbox
+      .stub(windowUtilities, 'promptForFoldersAsync')
       .resolves(['/path/to/code']);
 
     const result =
       await configurationHandlers.configureCodeFileLocationsAsync(config);
 
     assert.strictEqual(result, true);
-    assert.deepStrictEqual(config.codeFileLocations, ['/path/to/code']);
+    assert.deepStrictEqual(config.codeFileLocations, ['path/to/code']);
   });
 
   test('configureFileExtensionsAsync should set fileExtensions', async () => {

@@ -71,7 +71,7 @@ export async function activate(
         await reinitialize(fileWatcherCreator, context);
       });
 
-    const { typeScriptFileWatchers, jsonFileWatchers, poFileWatchers } =
+    const { codeFileWatchers, jsonFileWatchers, poFileWatchers } =
       await createFileWatchers(fileWatcherCreator);
 
     const configurationWizardCommandDisposable =
@@ -82,7 +82,7 @@ export async function activate(
       );
 
     context.subscriptions.push(
-      ...typeScriptFileWatchers,
+      ...codeFileWatchers,
       ...jsonFileWatchers,
       ...poFileWatchers,
       onDidOpenTextDocumentDisposable,
@@ -134,43 +134,75 @@ async function initializeFileLocations(context: ExtensionContext) {
 }
 
 async function createFileWatchers(fileWatcherCreator: FileWatcherCreator) {
-  const typeScriptFileWatchers = await createWatchersForFileType(
+  const translationFilesLocation =
     ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
       'i18nextScannerModule'
-    ).fileExtensions,
-    'i18nextScannerModule',
-    fileWatcherCreator
+    ).translationFilesLocation;
+
+  const codeFileLocations =
+    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+      'i18nextScannerModule'
+    ).codeFileLocations;
+
+  const codeFileExtensions =
+    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+      'i18nextScannerModule'
+    ).fileExtensions;
+
+  const codeFileWatchers = await createWatchersForFileType(
+    FileType.Code,
+    {
+      filePattern: `**/{${codeFileLocations}}/**/*.{${codeFileExtensions}}`,
+      ignorePattern:
+        '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**,**/*.spec.ts,**/*.spec.tsx}',
+    } as FileSearchLocation,
+    fileWatcherCreator,
+    'i18nextScannerModule'
   );
 
   const jsonFileWatchers = await createWatchersForFileType(
-    ['json'],
-    'i18nextJsonToPoConversionModule',
+    FileType.Json,
+    {
+      filePattern: `**${translationFilesLocation}/**/*.json`,
+      ignorePattern:
+        '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
+    } as FileSearchLocation,
     fileWatcherCreator
   );
 
   const poFileWatchers = await createWatchersForFileType(
-    ['po'],
-    'i18nextJsonToPoConversionModule',
-    fileWatcherCreator
+    FileType.Po,
+    {
+      filePattern: `**${translationFilesLocation}/**/*.po`,
+      ignorePattern:
+        '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
+    } as FileSearchLocation,
+    fileWatcherCreator,
+    'i18nextJsonToPoConversionModule'
   );
 
   return {
-    typeScriptFileWatchers,
+    codeFileWatchers,
     jsonFileWatchers,
     poFileWatchers,
   };
 }
 
 async function createWatchersForFileType(
-  fileExtensions: string[],
-  configKey: 'i18nextScannerModule' | 'i18nextJsonToPoConversionModule',
-  fileWatcherCreator: FileWatcherCreator
+  fileType: FileType,
+  fileSearchLocation: FileSearchLocation,
+  fileWatcherCreator: FileWatcherCreator,
+  disableFlag?: 'i18nextScannerModule' | 'i18nextJsonToPoConversionModule'
 ) {
   return await fileWatcherCreator.createFileWatchersForFileTypeAsync(
-    fileExtensions,
+    fileType,
+    fileSearchLocation,
     () =>
       false ===
-      ConfigurationStoreManager.getInstance().getConfig<any>(configKey).enabled
+      (disableFlag
+        ? ConfigurationStoreManager.getInstance().getConfig<any>(disableFlag)
+            .enabled
+        : true)
   );
 }
 
@@ -188,7 +220,7 @@ async function createWebViewForFilesMatchingPattern(
           'general'
         ).betaFeaturesConfiguration.enableJsonFileWebView
       ) {
-        webviewService.showWebview(FileType.JSON, uri);
+        webviewService.showWebview(FileType.Json, uri);
       }
     });
 
@@ -226,11 +258,11 @@ async function reinitialize(
 ) {
   initializeFileLocations(context);
 
-  const { typeScriptFileWatchers, jsonFileWatchers, poFileWatchers } =
+  const { codeFileWatchers, jsonFileWatchers, poFileWatchers } =
     await createFileWatchers(fileWatcherCreator);
 
   context.subscriptions.push(
-    ...typeScriptFileWatchers,
+    ...codeFileWatchers,
     ...jsonFileWatchers,
     ...poFileWatchers
   );

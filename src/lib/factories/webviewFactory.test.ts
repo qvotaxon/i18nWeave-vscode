@@ -17,12 +17,12 @@ suite('WebviewFactory', () => {
       createWebview: sinon.stub().returns({} as vscode.WebviewPanel),
     };
     webviewFactory = new WebviewFactory(context);
-    webviewFactory['creators'].set(FileType.JSON, jsonWebviewCreator);
+    webviewFactory['creators'].set(FileType.Json, jsonWebviewCreator);
   });
 
   test('should create a webview panel for JSON file type', () => {
     const uri = vscode.Uri.file('/path/to/file.json');
-    const webviewPanel = webviewFactory.createWebview(FileType.JSON, uri);
+    const webviewPanel = webviewFactory.createWebview(FileType.Json, uri);
     assert.ok(webviewPanel);
     //@ts-ignore
     sinon.assert.calledOnce(jsonWebviewCreator.createWebview);

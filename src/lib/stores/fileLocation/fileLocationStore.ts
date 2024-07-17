@@ -30,7 +30,7 @@ export default class FileLocationStore {
         fileSearchLocation.filePattern,
         fileSearchLocation.ignorePattern
       );
-      files.forEach(file => this.addFile(file));
+      files.forEach(file => this.addOrUpdateFile(file));
     }
   }
 
@@ -46,7 +46,7 @@ export default class FileLocationStore {
    * Adds a file to the store.
    * @param uri The URI of the file.
    */
-  private addFile(uri: vscode.Uri) {
+  public addOrUpdateFile(uri: vscode.Uri) {
     const extension = getFileExtension(uri);
     if (!this.fileLocations.has(extension)) {
       this.fileLocations.set(extension, new Set());
@@ -58,7 +58,7 @@ export default class FileLocationStore {
    * Removes a file from the store.
    * @param uri The URI of the file.
    */
-  private removeFile(uri: vscode.Uri) {
+  public deleteFile(uri: vscode.Uri) {
     const extension = getFileExtension(uri);
     this.fileLocations.get(extension)?.delete(uri.fsPath);
   }
