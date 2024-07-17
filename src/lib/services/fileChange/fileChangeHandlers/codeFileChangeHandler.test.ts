@@ -1,31 +1,18 @@
 import assert from 'assert';
-import fs from 'fs';
 import sinon from 'sinon';
-import vscode from 'vscode';
+import vscode, { Uri } from 'vscode';
 
 import { ChainType } from '../../../enums/chainType';
 import ModuleContext from '../../../interfaces/moduleContext';
 import ModuleChainManager from '../../../modules/moduleChainManager';
 import CodeTranslationStore from '../../../stores/codeTranslation/codeTranslationStore';
-import ConfigurationStoreManager from '../../../stores/configuration/configurationStoreManager';
 import CodeFileChangeHandler from './codeFileChangeHandler';
 
 suite('CodeFileChangeHandler', () => {
-  let moduleChainManagerStub: sinon.SinonStubbedInstance<ModuleChainManager>;
-  let readFileSyncStub: sinon.SinonStub;
   let handler: CodeFileChangeHandler;
 
   setup(() => {
-    moduleChainManagerStub = sinon.createStubInstance(ModuleChainManager);
-    readFileSyncStub = sinon.stub(fs, 'readFileSync');
     handler = CodeFileChangeHandler.create();
-
-    // const pathsConfiguration = {
-    //   packageJsonAbsoluteFolderPath: 'some/path',
-    // } as GeneralConfiguration['pathsConfiguration'];
-    // sinon
-    //   .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
-    //   .returns({ pathsConfiguration });
   });
 
   teardown(() => {
@@ -40,50 +27,36 @@ suite('CodeFileChangeHandler', () => {
   });
 
   suite('handleFileChangeAsync', () => {
-    let getConfigStub: sinon.SinonStub;
-
-    teardown(() => {
-      sinon.restore();
-    });
-
     test('should not execute chain if changeFileLocation is undefined', async () => {
-      sinon
-        .stub(
-          CodeTranslationStore.getInstance(),
-          'fileChangeContainsTranslationFunctionsAsync'
-        )
-        .returns(new Promise<boolean>(resolve => resolve(true)));
+      const executeChainAsyncStub =
+        // @ts-ignore - stubbing a private method
+        (CodeFileChangeHandler.moduleChainManager.executeChainAsync =
+          sinon.stub());
 
-      const executeChainStub =
-        moduleChainManagerStub.executeChainAsync as sinon.SinonStub;
+      // const moduleChainManagerStub =
+      //   sinon.createStubInstance(ModuleChainManager);
+
+      // const executeChainStub = (moduleChainManagerStub.executeChainAsync =
+      //   sinon.stub());
+
       await handler.handleFileChangeAsync();
-      sinon.assert.notCalled(executeChainStub);
+
+      sinon.assert.notCalled(executeChainAsyncStub);
     });
 
     test('should execute chain if changeFileLocation is provided', async () => {
-      const config = {
-        i18nextScannerModule: {
-          translationFilesLocation: 'locales',
-          translationFunctionNames: ['I18nKey'],
-          translationComponentTranslationKey: 'i18nKey',
-          translationComponentName: 'Trans',
-          codeFileLocations: ['src'],
-        },
-      };
-
-      getConfigStub = sinon
-        .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
-        .returns(config.i18nextScannerModule);
+      const executeChainAsyncStub =
+        // @ts-ignore - stubbing a private method
+        (CodeFileChangeHandler.moduleChainManager.executeChainAsync =
+          sinon.stub());
 
       sinon
         .stub(
           CodeTranslationStore.getInstance(),
           'fileChangeContainsTranslationFunctionsAsync'
         )
-        .returns(new Promise<boolean>(resolve => resolve(true)));
+        .returns(Promise.resolve(true));
 
-      const executeChainStub =
-        moduleChainManagerStub.executeChainAsync as sinon.SinonStub;
       const uri = vscode.Uri.file('path/to/file.ts');
 
       await handler.handleFileChangeAsync(uri);
@@ -94,50 +67,76 @@ suite('CodeFileChangeHandler', () => {
         outputPath: uri,
       };
 
-      executeChainStub.calledOnceWithExactly(ChainType.Code, expectedContext);
+      sinon.assert.calledOnceWithExactly(
+        executeChainAsyncStub,
+        ChainType.Code,
+        expectedContext
+      );
     });
 
-    test('should not execute chain if changeFileLocation does not contain translation keys', async () => {
-      const executeChainStub =
-        moduleChainManagerStub.executeChainAsync as sinon.SinonStub;
-      const uri = vscode.Uri.file('path/to/file.ts');
+    test('should not execute chain if event is not triggered by a file deletion change and changeFileLocation does not contain translation keys', async () => {
+      const executeChainAsyncStub =
+        // @ts-ignore - stubbing a private method
+        (CodeFileChangeHandler.moduleChainManager.executeChainAsync =
+          sinon.stub());
 
       sinon
         .stub(
           CodeTranslationStore.getInstance(),
           'fileChangeContainsTranslationFunctionsAsync'
         )
-        .returns(new Promise<boolean>(resolve => resolve(false)));
+        .returns(Promise.resolve(false));
+
+      const uri = vscode.Uri.file('path/to/file.ts');
 
       await handler.handleFileChangeAsync(uri);
 
-      sinon.assert.notCalled(executeChainStub);
+      sinon.assert.notCalled(executeChainAsyncStub);
     });
 
-    test('should execute chain if changeFileLocation contains translation keys', async () => {
-      const config = {
-        i18nextScannerModule: {
-          translationFilesLocation: 'locales',
-          translationFunctionNames: ['I18nKey'],
-          translationComponentTranslationKey: 'i18nKey',
-          translationComponentName: 'Trans',
-          codeFileLocations: ['src'],
-        },
-      };
-
-      getConfigStub = sinon
-        .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
-        .returns(config.i18nextScannerModule);
+    test('should execute chain if event is triggered by a file deletion change and changeFileLocation does not contain translation keys', async () => {
+      const executeChainAsyncStub =
+        // @ts-ignore - stubbing a private method
+        (CodeFileChangeHandler.moduleChainManager.executeChainAsync =
+          sinon.stub());
 
       sinon
         .stub(
           CodeTranslationStore.getInstance(),
           'fileChangeContainsTranslationFunctionsAsync'
         )
-        .returns(new Promise<boolean>(resolve => resolve(true)));
+        .returns(Promise.resolve(false));
 
-      const executeChainStub =
-        moduleChainManagerStub.executeChainAsync as sinon.SinonStub;
+      const uri = vscode.Uri.file('path/to/file.ts');
+
+      await handler.handleFileChangeAsync(uri, true);
+
+      const expectedContext: ModuleContext = {
+        inputPath: uri,
+        locale: '',
+        outputPath: uri,
+      };
+
+      sinon.assert.calledOnceWithExactly(
+        executeChainAsyncStub,
+        ChainType.Code,
+        expectedContext
+      );
+    });
+
+    test('should execute chain if event is not triggered by a file deletion change and changeFileLocation contains translation keys', async () => {
+      const executeChainAsyncStub =
+        // @ts-ignore - stubbing a private method
+        (CodeFileChangeHandler.moduleChainManager.executeChainAsync =
+          sinon.stub());
+
+      sinon
+        .stub(
+          CodeTranslationStore.getInstance(),
+          'fileChangeContainsTranslationFunctionsAsync'
+        )
+        .returns(Promise.resolve(true));
+
       const uri = vscode.Uri.file('path/to/file.ts');
 
       await handler.handleFileChangeAsync(uri);
@@ -148,7 +147,76 @@ suite('CodeFileChangeHandler', () => {
         outputPath: uri,
       };
 
-      executeChainStub.calledOnceWithExactly(ChainType.Code, expectedContext);
+      sinon.assert.calledOnceWithExactly(
+        executeChainAsyncStub,
+        ChainType.Code,
+        expectedContext
+      );
+    });
+
+    test('should execute chain if event is triggered by a file deletion change and changeFileLocation contains translation keys', async () => {
+      const executeChainAsyncStub =
+        // @ts-ignore - stubbing a private method
+        (CodeFileChangeHandler.moduleChainManager.executeChainAsync =
+          sinon.stub());
+
+      sinon
+        .stub(
+          CodeTranslationStore.getInstance(),
+          'fileChangeContainsTranslationFunctionsAsync'
+        )
+        .returns(Promise.resolve(true));
+
+      const uri = vscode.Uri.file('path/to/file.ts');
+
+      await handler.handleFileChangeAsync(uri, true);
+
+      const expectedContext: ModuleContext = {
+        inputPath: uri,
+        locale: '',
+        outputPath: uri,
+      };
+
+      sinon.assert.calledOnceWithExactly(
+        executeChainAsyncStub,
+        ChainType.Code,
+        expectedContext
+      );
+    });
+  });
+
+  suite('handleFileDeletionAsync', () => {
+    test('should handle file deletion and update store record', async () => {
+      const uri = Uri.file('path/to/file.ts');
+      const handleFileChangeAsyncStub = sinon.stub(
+        handler,
+        'handleFileChangeAsync'
+      );
+      const deleteStoreRecordStub = sinon.stub(
+        CodeTranslationStore.getInstance(),
+        'deleteStoreRecord'
+      );
+
+      await handler.handleFileDeletionAsync(uri);
+
+      sinon.assert.calledOnceWithExactly(handleFileChangeAsyncStub, uri, true);
+      sinon.assert.calledOnceWithExactly(deleteStoreRecordStub, uri.fsPath);
+    });
+
+    test('should not handle file deletion if changeFileLocation is undefined', async () => {
+      const handleFileChangeAsyncStub = sinon.stub(
+        handler,
+        'handleFileChangeAsync'
+      );
+      const deleteStoreRecordStub = sinon.stub(
+        CodeTranslationStore.getInstance(),
+        'deleteStoreRecord'
+      );
+
+      await handler.handleFileDeletionAsync();
+
+      sinon.assert.notCalled(handleFileChangeAsyncStub);
+      sinon.assert.notCalled(deleteStoreRecordStub);
     });
   });
 });

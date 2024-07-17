@@ -8,7 +8,6 @@ import ModuleContext from '../../../interfaces/moduleContext';
 import I18nextScannerModule from '../../../modules/i18nextScanner/i18nextScannerModule';
 import ModuleChainManager from '../../../modules/moduleChainManager';
 import CodeTranslationStore from '../../../stores/codeTranslation/codeTranslationStore';
-import FileLocationStore from '../../../stores/fileLocation/fileLocationStore';
 
 export default class CodeFileChangeHandler extends FileChangeHandler {
   private static i18nextScannerModule: I18nextScannerModule;
@@ -17,7 +16,6 @@ export default class CodeFileChangeHandler extends FileChangeHandler {
 
   private constructor(i18nextScannerModule: I18nextScannerModule) {
     super();
-
     CodeFileChangeHandler.i18nextScannerModule = i18nextScannerModule;
     CodeFileChangeHandler.moduleChainManager.registerChain(
       ChainType.Code,
@@ -36,9 +34,9 @@ export default class CodeFileChangeHandler extends FileChangeHandler {
 
   public async handleFileChangeAsync(
     changeFileLocation?: Uri,
-    isDeletedFile?: boolean
+    isFileDeletionChange: boolean = false
   ): Promise<void> {
-    await Sentry.startSpan(
+    Sentry.startSpan(
       {
         op: 'codeFile.handleFileChange',
         name: 'Code File Change Handler',
@@ -48,12 +46,12 @@ export default class CodeFileChangeHandler extends FileChangeHandler {
           return;
         }
 
-        if (
-          !isDeletedFile &&
-          !(await CodeTranslationStore.getInstance().fileChangeContainsTranslationFunctionsAsync(
+        const hasTranslationFunctions =
+          await CodeTranslationStore.getInstance().fileChangeContainsTranslationFunctionsAsync(
             changeFileLocation.fsPath
-          ))
-        ) {
+          );
+
+        if (!isFileDeletionChange && !hasTranslationFunctions) {
           return;
         }
 
@@ -68,8 +66,8 @@ export default class CodeFileChangeHandler extends FileChangeHandler {
           context
         );
 
-        if (!isDeletedFile) {
-          CodeTranslationStore.getInstance().updateStoreRecordAsync(
+        if (!isFileDeletionChange) {
+          await CodeTranslationStore.getInstance().updateStoreRecordAsync(
             changeFileLocation.fsPath
           );
         }
@@ -83,12 +81,8 @@ export default class CodeFileChangeHandler extends FileChangeHandler {
     if (!changeFileLocation) {
       return;
     }
-    super.handleFileDeletionAsync(changeFileLocation);
-
+    await super.handleFileDeletionAsync(changeFileLocation);
     await this.handleFileChangeAsync(changeFileLocation, true);
-
-    FileLocationStore.getInstance().deleteFile(changeFileLocation);
-
     CodeTranslationStore.getInstance().deleteStoreRecord(
       changeFileLocation.fsPath
     );
