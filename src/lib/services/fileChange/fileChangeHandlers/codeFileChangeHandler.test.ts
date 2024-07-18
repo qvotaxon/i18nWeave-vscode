@@ -1,10 +1,10 @@
 import assert from 'assert';
+import fs from 'fs';
 import sinon from 'sinon';
 import vscode, { Uri } from 'vscode';
 
 import { ChainType } from '../../../enums/chainType';
 import ModuleContext from '../../../interfaces/moduleContext';
-import ModuleChainManager from '../../../modules/moduleChainManager';
 import CodeTranslationStore from '../../../stores/codeTranslation/codeTranslationStore';
 import CodeFileChangeHandler from './codeFileChangeHandler';
 
@@ -33,12 +33,6 @@ suite('CodeFileChangeHandler', () => {
         (CodeFileChangeHandler.moduleChainManager.executeChainAsync =
           sinon.stub());
 
-      // const moduleChainManagerStub =
-      //   sinon.createStubInstance(ModuleChainManager);
-
-      // const executeChainStub = (moduleChainManagerStub.executeChainAsync =
-      //   sinon.stub());
-
       await handler.handleFileChangeAsync();
 
       sinon.assert.notCalled(executeChainAsyncStub);
@@ -50,6 +44,7 @@ suite('CodeFileChangeHandler', () => {
         (CodeFileChangeHandler.moduleChainManager.executeChainAsync =
           sinon.stub());
 
+      sinon.stub(fs, 'existsSync').returns(true);
       sinon
         .stub(
           CodeTranslationStore.getInstance(),
@@ -138,6 +133,7 @@ suite('CodeFileChangeHandler', () => {
         .returns(Promise.resolve(true));
 
       const uri = vscode.Uri.file('path/to/file.ts');
+      sinon.stub(fs, 'existsSync').returns(true);
 
       await handler.handleFileChangeAsync(uri);
 
