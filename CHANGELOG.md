@@ -4,6 +4,13 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.7.1](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.7.0...v0.7.1) (2024-07-18)
+
+
+### Bug Fixes
+
+* Fix issue with triggering file deletion logic ([#161](https://github.com/qvotaxon/i18nWeave-vscode/issues/161)) ([5f39d62](https://github.com/qvotaxon/i18nWeave-vscode/commit/5f39d62b7cd19984d4684cb90c0b272b198e126e))
+
 ## [0.7.0](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.6.2...v0.7.0) (2024-07-17)
 
 
