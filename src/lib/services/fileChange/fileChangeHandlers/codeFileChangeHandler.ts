@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/node';
+import fs from 'fs';
 import { Uri } from 'vscode';
 
 import { ChainType } from '../../../enums/chainType';
@@ -46,10 +47,14 @@ export default class CodeFileChangeHandler extends FileChangeHandler {
           return;
         }
 
-        const hasTranslationFunctions =
-          await CodeTranslationStore.getInstance().fileChangeContainsTranslationFunctionsAsync(
-            changeFileLocation.fsPath
-          );
+        let hasTranslationFunctions = false;
+
+        if (fs.existsSync(changeFileLocation.fsPath)) {
+          hasTranslationFunctions =
+            await CodeTranslationStore.getInstance().fileChangeContainsTranslationFunctionsAsync(
+              changeFileLocation.fsPath
+            );
+        }
 
         if (!isFileDeletionChange && !hasTranslationFunctions) {
           return;
