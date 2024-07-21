@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/node';
 
-import I18nextScannerService from '../../services/i18nextScannerService';
+import I18nextScannerService from '../../services/configurationWizard/i18nextScannerService';
 import { BaseActionModule } from '../baseActionModule';
 import I18nextScannerModuleContext from './i18nextScannerModuleContext';
 
