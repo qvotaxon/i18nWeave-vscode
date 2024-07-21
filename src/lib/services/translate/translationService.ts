@@ -1,4 +1,5 @@
 import fs from 'fs';
+import vscode from 'vscode';
 
 import DeeplService from './deeplService';
 
@@ -7,16 +8,21 @@ import DeeplService from './deeplService';
  */
 export default class TranslationService {
   private static instance: TranslationService;
+  private _context: vscode.ExtensionContext;
 
-  private constructor() {}
+  private constructor(context: vscode.ExtensionContext) {
+    this._context = context;
+  }
 
   /**
    * Retrieves the singleton instance of TranslationService.
    * @returns {TranslationService} The singleton instance.
    */
-  public static getInstance(): TranslationService {
+  public static getInstance(
+    context: vscode.ExtensionContext
+  ): TranslationService {
     if (!TranslationService.instance) {
-      TranslationService.instance = new TranslationService();
+      TranslationService.instance = new TranslationService(context);
     }
     return TranslationService.instance;
   }
@@ -113,11 +119,12 @@ export default class TranslationService {
       findMissingTranslations(changedTranslations, existingTranslations, '');
 
       missingTranslations.forEach(async missingTranslation => {
-        const translatedValue =
-          await DeeplService.getInstance().fetchTranslation(
-            missingTranslation.originalValue,
-            missingTranslation.locale
-          );
+        const deepLService = await DeeplService.getInstance(this._context);
+
+        const translatedValue = await deepLService.fetchTranslation(
+          missingTranslation.originalValue,
+          missingTranslation.locale
+        );
 
         const keys = missingTranslation.key.split('.');
         let nestedObj = existingTranslations;

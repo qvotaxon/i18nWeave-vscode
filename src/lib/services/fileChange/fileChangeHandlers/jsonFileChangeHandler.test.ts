@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import sinon from 'sinon';
+import vscode from 'vscode';
 import { Uri } from 'vscode';
 
 import { ChainType } from '../../../enums/chainType';
@@ -12,16 +13,28 @@ import FileWatcherCreator from '../fileWatcherCreator';
 import JsonFileChangeHandler from './jsonFileChangeHandler';
 
 suite('JsonFileChangeHandler', () => {
+  let extensionContext: vscode.ExtensionContext;
+
+  setup(() => {
+    extensionContext = {} as vscode.ExtensionContext;
+  });
+
   test('should initialize moduleChainManager and register chain', () => {
     const moduleChainManager = JsonFileChangeHandler.moduleChainManager;
     const registerChainSpy = sinon.spy(moduleChainManager, 'registerChain');
-    const jsonFileChangeHandler = JsonFileChangeHandler.create();
+    const jsonFileChangeHandler =
+      JsonFileChangeHandler.create(extensionContext);
 
     const expectedModuleChainManagerChains = {
       chains: {
         [ChainType.Json]: {
+          extensionContext: {},
           nextModule: {
-            nextModule: { nextModule: null },
+            extensionContext: {},
+            nextModule: {
+              extensionContext: {},
+              nextModule: null,
+            },
           },
         },
       },
@@ -41,7 +54,8 @@ suite('JsonFileChangeHandler', () => {
   });
 
   test('should set static module instances', () => {
-    const jsonFileChangeHandler = JsonFileChangeHandler.create();
+    const jsonFileChangeHandler =
+      JsonFileChangeHandler.create(extensionContext);
 
     assert.ok(jsonFileChangeHandler);
   });
@@ -56,7 +70,8 @@ suite('JsonFileChangeHandler', () => {
       'setNext'
     );
 
-    const jsonFileChangeHandler = JsonFileChangeHandler.create();
+    const jsonFileChangeHandler =
+      JsonFileChangeHandler.create(extensionContext);
 
     assert.ok(jsonFileChangeHandler instanceof JsonFileChangeHandler);
     assert.ok(
@@ -93,7 +108,7 @@ suite('JsonFileChangeHandler', () => {
       'add'
     );
 
-    await JsonFileChangeHandler.create().handleFileChangeAsync(
+    await JsonFileChangeHandler.create(extensionContext).handleFileChangeAsync(
       changeFileLocation
     );
 

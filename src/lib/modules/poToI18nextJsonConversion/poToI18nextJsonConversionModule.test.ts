@@ -1,12 +1,19 @@
 import * as assert from 'assert';
+import vscode from 'vscode';
 import { Uri, workspace } from 'vscode';
 
 import FileReader from '../../services/fileIo/fileReader';
 import PoToI18nextJsonConversionModule from './poToI18nextJsonConversionModule';
 
 suite('PoToI18nextJsonConversionModule Tests', () => {
+  let extensionContext: vscode.ExtensionContext;
+
+  setup(() => {
+    extensionContext = {} as vscode.ExtensionContext;
+  });
+
   test('doExecute should convert PO to JSON and write to file', async () => {
-    const module = new PoToI18nextJsonConversionModule();
+    const module = new PoToI18nextJsonConversionModule(extensionContext);
     const workspaceFolders = workspace.workspaceFolders![0];
     const inputPath = Uri.file(
       workspaceFolders.uri.fsPath + '/locales/nl/common.po'
@@ -59,7 +66,7 @@ msgstr "${Date.now().toString()}"`;
     );
     const locale = 'en-US';
 
-    const module = new PoToI18nextJsonConversionModule();
+    const module = new PoToI18nextJsonConversionModule(extensionContext);
     const context = {
       inputPath,
       outputPath,

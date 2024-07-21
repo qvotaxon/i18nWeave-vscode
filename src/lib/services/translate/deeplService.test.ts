@@ -3,6 +3,7 @@ import { Span } from '@sentry/node';
 import assert from 'assert';
 import * as deepl from 'deepl-node';
 import sinon from 'sinon';
+import vscode from 'vscode';
 
 import TranslationModuleConfiguration from '../../entities/configuration/modules/translationModule/translationModuleConfiguration';
 import ConfigurationStore from '../../stores/configuration/configurationStore';
@@ -10,12 +11,13 @@ import ConfigurationStoreManager from '../../stores/configuration/configurationS
 import DeeplService from './deeplService';
 
 suite('DeeplService', () => {
+  let extensionContext: vscode.ExtensionContext;
   let deeplService: DeeplService;
   let getConfigStub: sinon.SinonStub;
   let translateStub: sinon.SinonStub;
   let startSpanStub: sinon.SinonStub;
 
-  setup(() => {
+  setup(async () => {
     const config = {
       translationModule: {
         deepL: {
@@ -26,6 +28,7 @@ suite('DeeplService', () => {
       },
     };
 
+    extensionContext = {} as vscode.ExtensionContext;
     getConfigStub = sinon
       .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
       .returns(config.translationModule);
@@ -36,7 +39,7 @@ suite('DeeplService', () => {
       .stub(deepl.Translator.prototype, 'translateText')
       .resolves({ text: 'Translated text' } as deepl.TextResult);
 
-    deeplService = DeeplService.getInstance();
+    deeplService = await DeeplService.getInstance(extensionContext);
   });
 
   teardown(() => {
@@ -45,15 +48,15 @@ suite('DeeplService', () => {
 
   suite('getInstance', () => {
     test('should return a singleton instance', () => {
-      const instance1 = DeeplService.getInstance();
-      const instance2 = DeeplService.getInstance();
+      const instance1 = DeeplService.getInstance(extensionContext);
+      const instance2 = DeeplService.getInstance(extensionContext);
       assert.strictEqual(instance1, instance2);
     });
 
     test('should reinitialize the translator if the API key changes', () => {
-      const initialInstance = DeeplService.getInstance();
+      const initialInstance = DeeplService.getInstance(extensionContext);
       sinon.stub(DeeplService, 'getApiKey').returns('new-api-key');
-      const newInstance = DeeplService.getInstance();
+      const newInstance = DeeplService.getInstance(extensionContext);
       assert.notStrictEqual(initialInstance, newInstance);
     });
   });
@@ -76,6 +79,8 @@ suite('DeeplService', () => {
       ConfigurationStoreManager.getInstance()['_configurationStore'] =
         mockConfigStore;
 
+      const deeplService = await DeeplService.getInstance(extensionContext);
+
       const text = 'Hello';
       const targetLanguage = 'fr';
 
@@ -91,6 +96,7 @@ suite('DeeplService', () => {
     });
 
     test('should throw an error if translator is not initialized', async () => {
+      // @ts-ignore - Testing private method
       DeeplService.translator = undefined;
       const text = 'Hello';
       const targetLanguage = 'fr';
@@ -101,7 +107,7 @@ suite('DeeplService', () => {
         },
         {
           name: 'Error',
-          message: 'Translator not initialized. Please try again.',
+          message: 'Translator not initialized.',
         }
       );
     });

@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import sinon from 'sinon';
+import vscode from 'vscode';
 
 import ModuleContext from '../interfaces/moduleContext';
 import { BaseActionModule } from './baseActionModule';
@@ -9,13 +10,15 @@ class TestActionModule extends BaseActionModule {
 }
 
 suite('BaseActionModule', () => {
+  let extensionContext: vscode.ExtensionContext;
   let firstModule: TestActionModule;
   let secondModule: TestActionModule;
   let context: ModuleContext;
 
   setup(() => {
-    firstModule = new TestActionModule();
-    secondModule = new TestActionModule();
+    extensionContext = {} as vscode.ExtensionContext;
+    firstModule = new TestActionModule(extensionContext);
+    secondModule = new TestActionModule(extensionContext);
     context = {} as ModuleContext;
   });
 

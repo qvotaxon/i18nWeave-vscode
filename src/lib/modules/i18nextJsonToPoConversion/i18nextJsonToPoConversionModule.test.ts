@@ -1,11 +1,14 @@
 import * as assert from 'assert';
 import { i18next2po } from 'gettext-converter';
+import vscode from 'vscode';
 import { Uri, workspace } from 'vscode';
 
 import FileReader from '../../services/fileIo/fileReader';
 import I18nextJsonToPoConversionModule from './i18nextJsonToPoConversionModule';
 
 suite('I18nextJsonToPoConversionModule Tests', () => {
+  let extensionContext = {} as vscode.ExtensionContext;
+
   const potCreationDateRegex = /"POT-Creation-Date: .+\\n"/g;
   const poRevisionDateRegex = /"PO-Revision-Date: .+\\n"/g;
 
@@ -21,7 +24,7 @@ suite('I18nextJsonToPoConversionModule Tests', () => {
     let jsonContent = { key: 'value' };
     const locale = 'en-US';
 
-    const module = new I18nextJsonToPoConversionModule();
+    const module = new I18nextJsonToPoConversionModule(extensionContext);
     let context = {
       inputPath,
       outputPath,
@@ -78,7 +81,7 @@ suite('I18nextJsonToPoConversionModule Tests', () => {
     );
     const locale = 'en-US';
 
-    const module = new I18nextJsonToPoConversionModule();
+    const module = new I18nextJsonToPoConversionModule(extensionContext);
     const context = {
       inputPath,
       outputPath,

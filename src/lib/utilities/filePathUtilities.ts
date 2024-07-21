@@ -109,7 +109,7 @@ export function findProjectRoot(dir: string): string | undefined {
  * Get the actual project root folder by locating the package.json file.
  * @returns The path to the project root folder or undefined if not found.
  */
-export function getProjectRootFolder(): string | undefined {
+export function getProjectRootFolder(): string {
   const workspaceFolders = vscode.workspace.workspaceFolders;
 
   if (workspaceFolders) {
@@ -121,7 +121,7 @@ export function getProjectRootFolder(): string | undefined {
     }
   }
 
-  return undefined;
+  throw new Error('Project root folder not found');
 }
 
 /**

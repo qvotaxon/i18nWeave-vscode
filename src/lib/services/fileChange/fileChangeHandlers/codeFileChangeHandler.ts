@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/node';
 import fs from 'fs';
+import vscode from 'vscode';
 import { Uri } from 'vscode';
 
 import { ChainType } from '../../../enums/chainType';
@@ -24,8 +25,10 @@ export default class CodeFileChangeHandler extends FileChangeHandler {
     );
   }
 
-  public static create(): CodeFileChangeHandler {
-    const i18nextScannerModule = new I18nextScannerModule();
+  public static create(
+    context: vscode.ExtensionContext
+  ): CodeFileChangeHandler {
+    const i18nextScannerModule = new I18nextScannerModule(context);
     return new CodeFileChangeHandler(i18nextScannerModule);
   }
 

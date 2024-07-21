@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/node';
+import vscode from 'vscode';
 import { Uri } from 'vscode';
 
 import { ChainType } from '../../../enums/chainType';
@@ -39,11 +40,14 @@ export default class PoFileChangeHandler extends FileChangeHandler {
     );
   }
 
-  public static readonly create = (): PoFileChangeHandler => {
+  public static readonly create = (
+    context: vscode.ExtensionContext
+  ): PoFileChangeHandler => {
     const fileWatcherCreator = new FileWatcherCreator();
-    const readPoFileModule = new ReadPoFileModule();
-    const poToI18nextJsonConversionModule =
-      new PoToI18nextJsonConversionModule();
+    const readPoFileModule = new ReadPoFileModule(context);
+    const poToI18nextJsonConversionModule = new PoToI18nextJsonConversionModule(
+      context
+    );
 
     this.readPoFileModule = readPoFileModule;
     this.poToI18nextJsonConversionModule = poToI18nextJsonConversionModule;
@@ -96,19 +100,22 @@ export default class PoFileChangeHandler extends FileChangeHandler {
 
         FileLockStoreStore.getInstance().add(extractedFileParts.outputPath);
 
-        PoFileChangeHandler.moduleChainManager.executeChainAsync(
+        await PoFileChangeHandler.moduleChainManager.executeChainAsync(
           ChainType.Po,
           context
         );
 
-        PoFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
-          extractedFileParts.outputPath.fsPath,
-          () => {
-            FileLockStoreStore.getInstance().delete(
-              extractedFileParts.outputPath
-            );
-          }
-        );
+        const poFileChangeHandler =
+          PoFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
+            extractedFileParts.outputPath.fsPath,
+            () => {
+              FileLockStoreStore.getInstance().delete(
+                extractedFileParts.outputPath
+              );
+
+              poFileChangeHandler.dispose();
+            }
+          );
       }
     );
   }

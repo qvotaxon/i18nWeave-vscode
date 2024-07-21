@@ -1,3 +1,5 @@
+import vscode from 'vscode';
+
 import ActionModule from '../interfaces/actionModule';
 import ModuleContext from '../interfaces/moduleContext';
 
@@ -5,7 +7,15 @@ import ModuleContext from '../interfaces/moduleContext';
  * Represents a base class for action modules.
  */
 export abstract class BaseActionModule implements ActionModule {
+  protected extensionContext: vscode.ExtensionContext;
   private nextModule: ActionModule | null = null;
+
+  /**
+   *
+   */
+  constructor(extensionContext: vscode.ExtensionContext) {
+    this.extensionContext = extensionContext;
+  }
 
   /**
    * Sets the next action module in the chain.

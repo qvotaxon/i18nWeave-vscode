@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import * as mock from 'mock-fs';
+import vscode from 'vscode';
 import { Uri } from 'vscode';
 
 import FileReader from '../../services/fileIo/fileReader';
@@ -7,7 +8,11 @@ import ReadJsonFileModule from './readJsonFileModule';
 import { ReadJsonFileModuleContext } from './readJsonFileModuleContext';
 
 suite('ReadJsonFileModule Tests', () => {
+  let extensionContext: vscode.ExtensionContext;
+
   setup(() => {
+    extensionContext = {} as vscode.ExtensionContext;
+
     mock.default({
       '/path/to/file.json': "{ name: 'John Doe', age: 30 }",
     });
@@ -28,7 +33,7 @@ suite('ReadJsonFileModule Tests', () => {
       jsonContent: null,
     };
 
-    const module = new ReadJsonFileModule();
+    const module = new ReadJsonFileModule(extensionContext);
     await module.executeAsync(context);
 
     assert.deepStrictEqual(context.jsonContent, jsonContent);
@@ -50,7 +55,7 @@ suite('ReadJsonFileModule Tests', () => {
       jsonContent: null,
     };
 
-    const module = new ReadJsonFileModule();
+    const module = new ReadJsonFileModule(extensionContext);
     await module.executeAsync(context);
 
     assert.strictEqual(context.jsonContent, null);
@@ -74,7 +79,7 @@ suite('ReadJsonFileModule Tests', () => {
       jsonContent: null,
     };
 
-    const module = new ReadJsonFileModule();
+    const module = new ReadJsonFileModule(extensionContext);
     assert.rejects(module.executeAsync(context), Error, 'File not found');
     assert.strictEqual(context.jsonContent, null);
 

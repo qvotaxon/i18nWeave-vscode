@@ -1,4 +1,5 @@
 import * as assert from 'assert';
+import vscode from 'vscode';
 
 import { FileType } from '../../enums/fileType';
 import FileChangeHandlerFactory from './fileChangeHandlerFactory';
@@ -7,10 +8,19 @@ import JsonFileChangeHandler from './fileChangeHandlers/jsonFileChangeHandler';
 import PoFileChangeHandler from './fileChangeHandlers/poFileChangeHandler';
 
 suite('FileChangeHandlerFactory Tests', () => {
+  let extensionContext: vscode.ExtensionContext;
+
+  setup(() => {
+    extensionContext = {} as vscode.ExtensionContext;
+  });
+
   test('createFileChangeHandler should return an instance of JsonFileChangeHandler for json file', () => {
     const factory = new FileChangeHandlerFactory();
 
-    const handler = factory.createFileChangeHandler(FileType.Json);
+    const handler = factory.createFileChangeHandler(
+      FileType.Json,
+      extensionContext
+    );
 
     assert.strictEqual(handler instanceof JsonFileChangeHandler, true);
   });
@@ -18,7 +28,10 @@ suite('FileChangeHandlerFactory Tests', () => {
   test('createFileChangeHandler should return an instance of PoFileChangeHandler for po file', () => {
     const factory = new FileChangeHandlerFactory();
 
-    const handler = factory.createFileChangeHandler(FileType.Po);
+    const handler = factory.createFileChangeHandler(
+      FileType.Po,
+      extensionContext
+    );
 
     assert.strictEqual(handler instanceof PoFileChangeHandler, true);
   });
@@ -26,7 +39,10 @@ suite('FileChangeHandlerFactory Tests', () => {
   test('createFileChangeHandler should return an instance of CodeFileChangeHandler for ts file', () => {
     const factory = new FileChangeHandlerFactory();
 
-    const handler = factory.createFileChangeHandler(FileType.Code);
+    const handler = factory.createFileChangeHandler(
+      FileType.Code,
+      extensionContext
+    );
 
     assert.strictEqual(handler instanceof CodeFileChangeHandler, true);
   });
@@ -36,7 +52,7 @@ suite('FileChangeHandlerFactory Tests', () => {
 
     assert.throws(
       () => {
-        factory.createFileChangeHandler('txt' as FileType);
+        factory.createFileChangeHandler('txt' as FileType, extensionContext);
       },
       Error,
       'Unsupported file extension'

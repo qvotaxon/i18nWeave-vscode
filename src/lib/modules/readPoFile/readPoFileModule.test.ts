@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import * as mock from 'mock-fs';
+import vscode from 'vscode';
 import { Uri } from 'vscode';
 
 import FileReader from '../../services/fileIo/fileReader';
@@ -7,7 +8,11 @@ import ReadPoFileModule from './readPoFileModule';
 import { ReadPoFileModuleContext } from './readPoFileModuleContext';
 
 suite('ReadPoFileModule Tests', () => {
+  let extensionContext: vscode.ExtensionContext;
+
   setup(() => {
+    extensionContext = {} as vscode.ExtensionContext;
+
     mock.default({
       '/path/to/file.po': `
 msgid ""
@@ -54,7 +59,7 @@ msgstr "value"`;
       poContent: null,
     };
 
-    const module = new ReadPoFileModule();
+    const module = new ReadPoFileModule(extensionContext);
     await module.executeAsync(context);
 
     assert.deepStrictEqual(context.poContent, poContent);
@@ -76,7 +81,7 @@ msgstr "value"`;
       poContent: null,
     };
 
-    const module = new ReadPoFileModule();
+    const module = new ReadPoFileModule(extensionContext);
     await module.executeAsync(context);
 
     assert.strictEqual(context.poContent, null);
@@ -100,7 +105,7 @@ msgstr "value"`;
       poContent: null,
     };
 
-    const module = new ReadPoFileModule();
+    const module = new ReadPoFileModule(extensionContext);
     assert.rejects(module.executeAsync(context), Error, 'File not found');
     assert.strictEqual(context.poContent, null);
 

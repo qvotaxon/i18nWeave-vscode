@@ -9,10 +9,12 @@ import CodeTranslationStore from '../../../stores/codeTranslation/codeTranslatio
 import CodeFileChangeHandler from './codeFileChangeHandler';
 
 suite('CodeFileChangeHandler', () => {
+  let extensionContext: vscode.ExtensionContext;
   let handler: CodeFileChangeHandler;
 
   setup(() => {
-    handler = CodeFileChangeHandler.create();
+    extensionContext = {} as vscode.ExtensionContext;
+    handler = CodeFileChangeHandler.create(extensionContext);
   });
 
   teardown(() => {
@@ -21,7 +23,7 @@ suite('CodeFileChangeHandler', () => {
 
   suite('create', () => {
     test('should create an instance of CodeFileChangeHandler', () => {
-      const instance = CodeFileChangeHandler.create();
+      const instance = CodeFileChangeHandler.create(extensionContext);
       assert(instance instanceof CodeFileChangeHandler);
     });
   });

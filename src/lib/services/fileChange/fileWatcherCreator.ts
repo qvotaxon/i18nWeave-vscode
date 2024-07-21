@@ -28,6 +28,7 @@ export default class FileWatcherCreator {
   public async createFileWatchersForFileTypeAsync(
     fileType: FileType,
     fileSearchLocation: FileSearchLocation,
+    context: vscode.ExtensionContext,
     ...disableFlags: (() => boolean)[]
   ): Promise<vscode.FileSystemWatcher[]> {
     const fileWatchers: vscode.FileSystemWatcher[] = [];
@@ -35,7 +36,7 @@ export default class FileWatcherCreator {
       fileSearchLocation.filePattern
     );
     const fileChangeHandler =
-      new FileChangeHandlerFactory().createFileChangeHandler(fileType);
+      new FileChangeHandlerFactory().createFileChangeHandler(fileType, context);
 
     fileWatcher.onDidCreate(async uri => {
       if (!disableFlags.some(flag => flag())) {
