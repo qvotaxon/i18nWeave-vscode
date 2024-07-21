@@ -15,7 +15,6 @@ export default class DeeplService {
   private static instance: DeeplService;
   private translator: deepl.Translator | undefined;
   private static previousApiKey: string | undefined;
-  private static supportedSourceLanguages: readonly deepl.Language[]; // this is probably not needed
   private static supportedTargetLanguages: readonly deepl.Language[];
 
   private constructor(context: vscode.ExtensionContext) {
@@ -155,93 +154,29 @@ export default class DeeplService {
   private static async initializeTranslator(apiKey: string): Promise<void> {
     DeeplService.instance.translator = new deepl.Translator(apiKey);
 
-    const supportedSourceLanguages = await this.getSupportedSourceLanguages();
     const supportedTargetLanguages = await this.getSupportedTargetLanguages();
 
-    if (!supportedSourceLanguages || !supportedTargetLanguages) {
+    if (!supportedTargetLanguages) {
       throw new Error('Failed to retrieve supported languages from DeepL.');
     }
 
-    DeeplService.supportedSourceLanguages = supportedSourceLanguages;
     DeeplService.supportedTargetLanguages = supportedTargetLanguages;
-  }
-
-  private static async getSupportedSourceLanguages(): Promise<
-    readonly deepl.Language[] | undefined
-  > {
-    // Retrieve the cache entry or call a callback if expired or missing
-    // const data = await CacheService.get<readonly deepl.Language[] | undefined>(
-    //   DeeplService.instance.context,
-    //   sharedCacheKeys.SUPPORTED_SOURCE_LANGUAGES,
-    //   async () => {
-    //     // Callback function for cache miss
-    //     console.log('Cache expired or not found. Providing default value.');
-    //     // return await Sentry.startSpan(
-    //     //   { op: 'http.client', name: `Retrieve DeepL Supported Languages` },
-    //     //   async span => {
-    //     const retrievedSourceLanguages =
-    //       await DeeplService.instance.translator?.getSourceLanguages();
-
-    //     // Set a cache entry with a custom expiration of 7 days
-    //     CacheService.set(
-    //       DeeplService.instance.context,
-    //       sharedCacheKeys.SUPPORTED_SOURCE_LANGUAGES,
-    //       retrievedSourceLanguages
-    //     );
-
-    //     return retrievedSourceLanguages;
-    //     // }
-    //     // );
-    //   }
-    // );
-
-    // console.log('Cached data:', data);
-
-    let tempHardcodedReturnValueWithoutCache =
-      await DeeplService.instance.translator?.getSourceLanguages();
-
-    return tempHardcodedReturnValueWithoutCache;
-
-    // return data;
   }
 
   private static async getSupportedTargetLanguages(): Promise<
     readonly deepl.Language[] | undefined
   > {
-    // Retrieve the cache entry or call a callback if expired or missing
-    // const data = await CacheService.get<readonly deepl.Language[] | undefined>(
-    //   DeeplService.instance.context,
-    //   sharedCacheKeys.SUPPORTED_TARGET_LANGUAGES,
-    //   async () => {
-    //     // Callback function for cache miss
-    //     console.log('Cache expired or not found. Providing default value.');
-    //     return await Sentry.startSpan(
-    //       { op: 'http.client', name: `Retrieve DeepL Supported Languages` },
-    //       async span => {
-    //         const retrievedTargetLanguages =
-    //           await DeeplService.instance.translator?.getTargetLanguages();
+    const targetLanguages = await CacheService.get<
+      readonly deepl.Language[] | undefined
+    >(
+      DeeplService.instance.context,
+      sharedCacheKeys.SUPPORTED_TARGET_LANGUAGES,
+      async () => {
+        return DeeplService.instance.translator?.getTargetLanguages();
+      }
+    );
 
-    //         // Set a cache entry with a custom expiration of 7 days
-    //         CacheService.set(
-    //           DeeplService.instance.context,
-    //           sharedCacheKeys.SUPPORTED_TARGET_LANGUAGES,
-    //           retrievedTargetLanguages
-    //         );
-
-    //         return retrievedTargetLanguages;
-    //       }
-    //     );
-    //   }
-    // );
-
-    // console.log('Cached data:', data);
-
-    let tempHardcodedReturnValueWithoutCache =
-      await DeeplService.instance.translator?.getTargetLanguages();
-
-    return tempHardcodedReturnValueWithoutCache;
-
-    // return data;
+    return targetLanguages;
   }
 
   /**

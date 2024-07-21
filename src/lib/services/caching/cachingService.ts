@@ -11,7 +11,6 @@ export class CacheService {
    * @param context - The extension context.
    * @param key - The key for the cache entry.
    * @param value - The value to cache.
-   * @param expirationDays - Number of days after which the cache expires.
    */
   public static set<T>(
     context: vscode.ExtensionContext,
@@ -40,7 +39,11 @@ export class CacheService {
     const cacheEntry = context.globalState.get<CacheEntry<T>>(key);
 
     if (!cacheEntry) {
-      return await onCacheMiss(); // Cache does not exist
+      const result = await onCacheMiss(); // Cache does not exist
+
+      CacheService.set(context, key, result);
+
+      return result;
     }
 
     const { timestamp } = cacheEntry;
@@ -51,7 +54,11 @@ export class CacheService {
     );
 
     if (diffDays >= expirationDays) {
-      return await onCacheMiss(); // Cache is expired
+      const result = await onCacheMiss(); // Cache does not exist
+
+      CacheService.set(context, key, result);
+
+      return result;
     }
 
     return cacheEntry.value; // Cache is valid

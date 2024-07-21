@@ -1,7 +1,6 @@
 import { getProjectRootFolder } from '../../utilities/filePathUtilities';
 
 export const sharedCacheKeys = {
-  SUPPORTED_SOURCE_LANGUAGES: 'i18nWeave.shared.supportedSourceLanguages',
   SUPPORTED_TARGET_LANGUAGES: 'i18nWeave.shared.supportedTargetLanguages',
 };
 
