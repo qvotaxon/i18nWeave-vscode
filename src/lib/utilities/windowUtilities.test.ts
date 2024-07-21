@@ -32,14 +32,14 @@ suite('WindowUtilities', () => {
     assert.strictEqual(result, undefined);
   });
 
-  test('showOpenDialog should return folderUri[0].fsPath if folderUri has length of 1', async () => {
+  test('showOpenDialog should return and array with length one if only a single folder was picked', async () => {
     const folderUri = [vscode.Uri.file('/path/to/folder')];
     sandbox.stub(vscode.window, 'showQuickPick').resolves({} as any);
     sandbox.stub(vscode.window, 'showOpenDialog').resolves(folderUri);
 
     const result = await windowUtilities.showOpenDialog('Select Folder');
 
-    assert.strictEqual(result, '/path/to/folder');
+    assert.strictEqual(result, ['/path/to/folder']);
   });
 
   test('showOpenDialog should return an array of folderUri.fsPath if folderUri has length greater than 1', async () => {
