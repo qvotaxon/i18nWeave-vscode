@@ -16,19 +16,25 @@ export default class ConfigurationStore {
   }
 
   async setAsync<K extends keyof ExtensionConfiguration>(
-    key: K,
-    value: ExtensionConfiguration[K],
+    moduleName: K,
+    moduleValue: ExtensionConfiguration[K],
     configurationTarget = ConfigurationTarget.Workspace
   ): Promise<void> {
-    Object.keys(value).forEach(key => {
+    Object.keys(moduleValue).forEach(async configurationKey => {
       const configuration = vscode.workspace.getConfiguration(
-        `i18nWeave.${key}`
+        `i18nWeave.${moduleName}`
       );
-      const configValue = (value as { [key: string]: any })[key];
-      configuration.update(key, configValue, configurationTarget);
+      const configurationValue = (moduleValue as { [key: string]: any })[
+        configurationKey
+      ];
+      await configuration.update(
+        configurationKey,
+        configurationValue,
+        configurationTarget
+      );
     });
 
-    this.options[key] = value;
+    this.options[moduleName] = moduleValue;
   }
 
   update(userOptions: Partial<ExtensionConfiguration>): void {
