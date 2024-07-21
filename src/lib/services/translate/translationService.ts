@@ -83,7 +83,7 @@ export default class TranslationService {
       );
 
       for (const missingTranslation of missingTranslations) {
-        const deepLService = await DeeplService.getInstance(this.context);
+        const deepLService = await DeeplService.getInstanceAsync(this.context);
         const translatedValue = await deepLService.fetchTranslation(
           missingTranslation.originalValue,
           missingTranslation.locale

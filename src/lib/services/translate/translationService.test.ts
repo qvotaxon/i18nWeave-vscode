@@ -53,7 +53,7 @@ suite('TranslationService', () => {
     statSyncStub = sinon.stub(fs, 'statSync');
     writeFileSyncStub = sinon.stub(fs, 'writeFileSync');
     fetchTranslationStub = sinon.stub(
-      await DeeplService.getInstance(extensionContext),
+      await DeeplService.getInstanceAsync(extensionContext),
       'fetchTranslation'
     );
   });
