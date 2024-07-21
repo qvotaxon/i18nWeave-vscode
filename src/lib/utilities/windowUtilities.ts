@@ -12,7 +12,13 @@ import { getPosixPathFromUri, getProjectRootFolder } from './filePathUtilities';
 export async function promptForFolderAsync(
   placeHolder: string
 ): Promise<string | undefined> {
-  return (await showOpenDialog(placeHolder)) as string;
+  const selectedFolder = await showOpenDialog(placeHolder);
+
+  if (!selectedFolder) {
+    return undefined;
+  }
+
+  return selectedFolder[0];
 }
 
 /**
@@ -36,7 +42,7 @@ export async function promptForFoldersAsync(
 export async function showOpenDialog(
   placeHolder: string,
   canSelectMany = false
-): Promise<string | string[] | undefined> {
+): Promise<string[] | undefined> {
   const folderSelectionPrompt = await vscode.window.showQuickPick(
     [placeHolder],
     {
@@ -64,7 +70,7 @@ export async function showOpenDialog(
     return folderUri.map(folderUri => getRelativePath(folderUri.fsPath));
   }
 
-  return getRelativePath(folderUri[0].fsPath);
+  return [getRelativePath(folderUri[0].fsPath)];
 }
 
 function getRelativePath(folderPath: string) {

@@ -1,9 +1,9 @@
 import * as assert from 'assert';
 import sinon from 'sinon';
 
-import GeneralConfiguration from '../entities/configuration/general/generalConfiguration';
-import I18nextScannerModuleConfiguration from '../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
-import ConfigurationStoreManager from '../stores/configuration/configurationStoreManager';
+import GeneralConfiguration from '../../entities/configuration/general/generalConfiguration';
+import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
+import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
 import I18nextScannerService from './i18nextScannerService';
 
 suite('I18nextScannerService', () => {

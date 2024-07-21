@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 
-import I18nextScannerService from '../../services/i18nextScannerService';
+import I18nextScannerService from '../../services/i18nextScannerService/i18nextScannerService';
 import I18nextScannerModule from './i18nextScannerModule';
 import I18nextScannerModuleContext from './i18nextScannerModuleContext';
 

@@ -140,11 +140,16 @@ export function getPosixPathFromUri(fsPath: string): string {
  * @returns The sanitized array of file locations.
  */
 export function sanitizeLocations(locations: string[]): string[] {
-  return locations.map(location => {
+  const sanitizedLocations: string[] = [];
+
+  locations.forEach(location => {
     location = location.endsWith('/')
       ? location.substring(location.length)
       : location;
     location = location.startsWith('/') ? location.substring(1) : location;
-    return location;
+
+    sanitizedLocations.push(location);
   });
+
+  return sanitizedLocations;
 }
