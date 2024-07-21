@@ -1,4 +1,5 @@
 import assert from 'assert';
+import * as deepl from 'deepl-node';
 import fs from 'fs';
 import sinon from 'sinon';
 import vscode from 'vscode';
@@ -6,6 +7,7 @@ import vscode from 'vscode';
 import TranslationModuleConfiguration from '../../entities/configuration/modules/translationModule/translationModuleConfiguration';
 import ConfigurationStore from '../../stores/configuration/configurationStore';
 import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
+import { CacheEntry } from '../caching/cacheEntry';
 import DeeplService from './deeplService';
 import TranslationService from './translationService';
 
@@ -30,7 +32,21 @@ suite('TranslationService', () => {
     ConfigurationStoreManager.getInstance()['_configurationStore'] =
       mockConfigStore;
 
-    extensionContext = {} as vscode.ExtensionContext;
+    extensionContext = {
+      globalState: {
+        get: sinon.stub().returns({
+          value: [],
+          timestamp: new Date().toISOString(),
+        } as CacheEntry<readonly deepl.Language[]>),
+        update: sinon.stub(),
+      },
+      workspaceState: {
+        get: sinon.stub(),
+        update: sinon.stub(),
+      },
+      subscriptions: [],
+    } as unknown as vscode.ExtensionContext;
+
     translationService = TranslationService.getInstance(extensionContext);
     readFileSyncStub = sinon.stub(fs, 'readFileSync');
     readdirSyncStub = sinon.stub(fs, 'readdirSync');
@@ -58,8 +74,6 @@ suite('TranslationService', () => {
     test('should return paths of other translation files', () => {
       const fileLocation = 'C:\\projects\\translations\\en\\file.json';
       const parentDirectory = 'C:\\projects\\translations';
-      const directory = 'C:\\projects\\translations\\en';
-      const fileName = 'file.json';
 
       readdirSyncStub.withArgs(parentDirectory).returns(['en', 'fr']);
       statSyncStub
@@ -82,8 +96,6 @@ suite('TranslationService', () => {
     test('should exclude the original file from the result', () => {
       const fileLocation = 'C:\\projects\\translations\\en\\file.json';
       const parentDirectory = 'C:\\projects\\translations';
-      const directory = 'C:\\projects\\translations\\en';
-      const fileName = 'file.json';
 
       readdirSyncStub.withArgs(parentDirectory).returns(['en', 'fr']);
       statSyncStub
