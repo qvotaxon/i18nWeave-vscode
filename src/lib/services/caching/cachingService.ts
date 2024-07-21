@@ -2,7 +2,7 @@ import vscode from 'vscode';
 
 import { CacheEntry } from './cacheEntry';
 
-export class CacheService {
+export class CachingService {
   private static expirationDays: number = 14;
 
   /**
@@ -34,14 +34,14 @@ export class CacheService {
     context: vscode.ExtensionContext,
     key: string,
     onCacheMiss: () => Promise<T>,
-    expirationDays: number = CacheService.expirationDays
+    expirationDays: number = CachingService.expirationDays
   ): Promise<T> {
     const cacheEntry = context.globalState.get<CacheEntry<T>>(key);
 
     if (!cacheEntry) {
       const result = await onCacheMiss(); // Cache does not exist
 
-      CacheService.set(context, key, result);
+      CachingService.set(context, key, result);
 
       return result;
     }
@@ -56,7 +56,7 @@ export class CacheService {
     if (diffDays >= expirationDays) {
       const result = await onCacheMiss(); // Cache does not exist
 
-      CacheService.set(context, key, result);
+      CachingService.set(context, key, result);
 
       return result;
     }
@@ -80,6 +80,6 @@ export class CacheService {
    * @param days - Number of days after which the cache entries should expire.
    */
   public static setDefaultExpirationDays(days: number): void {
-    CacheService.expirationDays = days;
+    CachingService.expirationDays = days;
   }
 }

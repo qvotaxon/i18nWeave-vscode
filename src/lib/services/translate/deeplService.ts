@@ -5,7 +5,7 @@ import vscode from 'vscode';
 import TranslationModuleConfiguration from '../../entities/configuration/modules/translationModule/translationModuleConfiguration';
 import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
 import { sharedCacheKeys } from '../caching/cacheKeys';
-import { CacheService } from '../caching/cachingService';
+import { CachingService } from '../caching/cachingService';
 
 /**
  * Singleton class for managing DeepL translation services.
@@ -166,7 +166,7 @@ export default class DeeplService {
   private static async getSupportedTargetLanguages(): Promise<
     readonly deepl.Language[] | undefined
   > {
-    const targetLanguages = await CacheService.get<
+    const targetLanguages = await CachingService.get<
       readonly deepl.Language[] | undefined
     >(
       DeeplService.instance.context,
