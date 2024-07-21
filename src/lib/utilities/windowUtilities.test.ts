@@ -39,7 +39,7 @@ suite('WindowUtilities', () => {
 
     const result = await windowUtilities.showOpenDialog('Select Folder');
 
-    assert.strictEqual(result, ['/path/to/folder']);
+    assert.deepEqual(result, ['/path/to/folder']);
   });
 
   test('showOpenDialog should return an array of folderUri.fsPath if folderUri has length greater than 1', async () => {
