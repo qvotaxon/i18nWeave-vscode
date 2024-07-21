@@ -36,29 +36,63 @@ export default class DeeplService {
   /**
    * Fetches a translation for the given text and target language.
    * @param {string} text - The text to translate.
-   * @param {string} targetLanguage - The target language code.
+   * @param {string} requestedTargetLanguage - The target language code.
    * @returns {Promise<string>} The translated text.
    * @throws Will throw an error if the translation fails or the translator is not initialized.
    */
   public async fetchTranslation(
     text: string,
-    targetLanguage: string
+    requestedTargetLanguage: string
   ): Promise<string> {
     try {
       if (!DeeplService.translator) {
         throw new Error('Translator not initialized. Please try again.');
       }
 
+      let targetLanguage = requestedTargetLanguage;
+
+      const shouldUseSimplifiedTargetLanguage =
+        requestedTargetLanguage !== 'en-US' &&
+        requestedTargetLanguage !== 'en-GB' &&
+        requestedTargetLanguage !== 'pt-BR' &&
+        requestedTargetLanguage !== 'pt-PT' &&
+        requestedTargetLanguage !== 'zh-Hans';
+
+      if (shouldUseSimplifiedTargetLanguage) {
+        const languageRegex = new RegExp('([a-z]{2})(?:-[A-Z]{2})?');
+        const simplifiedTargetLanguage =
+          requestedTargetLanguage.match(languageRegex);
+
+        if (!simplifiedTargetLanguage) {
+          throw new Error(
+            `Invalid target language code. ${requestedTargetLanguage}`
+          );
+        }
+
+        targetLanguage = simplifiedTargetLanguage[1];
+      }
+
       let formality: deepl.Formality | undefined = DeeplService.getFormality();
 
-      if (targetLanguage === 'en') {
-        targetLanguage = 'en-US';
+      if (requestedTargetLanguage === 'en') {
+        targetLanguage = 'en-GB';
+      }
+
+      //TODO: Replace with data frorm language api endpoint
+      if (
+        targetLanguage !== 'nl' &&
+        targetLanguage !== 'de' &&
+        targetLanguage !== 'pl' &&
+        targetLanguage !== 'fr' &&
+        targetLanguage !== 'es' &&
+        targetLanguage !== 'it' &&
+        targetLanguage !== 'pt' &&
+        targetLanguage !== 'ru'
+      ) {
         formality = 'default';
       }
 
-      if (targetLanguage === 'cs') {
-        formality = 'default';
-      }
+      // formality = 'default';
 
       const result = await DeeplService.translateUsingDeepl(
         DeeplService.translator,
@@ -69,7 +103,11 @@ export default class DeeplService {
 
       return result.text;
     } catch (error) {
-      console.error('Error fetching translation:', error);
+      console.error(
+        'Error fetching translation:',
+        error,
+        requestedTargetLanguage
+      );
       throw error;
     }
   }
