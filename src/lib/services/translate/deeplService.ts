@@ -25,7 +25,7 @@ export default class DeeplService {
    * Retrieves the singleton instance of DeeplService.
    * @returns {DeeplService} The singleton instance.
    */
-  public static async getInstance(
+  public static async getInstanceAsync(
     context: vscode.ExtensionContext
   ): Promise<DeeplService> {
     const currentApiKey = DeeplService.getApiKey();
