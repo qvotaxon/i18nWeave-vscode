@@ -9,6 +9,7 @@ import FileChangeHandlerFactory from './fileChangeHandlerFactory';
 import FileWatcherCreator from './fileWatcherCreator';
 
 suite('FileWatcherCreator', () => {
+  let extensionContext: vscode.ExtensionContext;
   let fileWatcherCreator: FileWatcherCreator;
   let findFilesStub: sinon.SinonStub;
   let createFileSystemWatcherStub: sinon.SinonStub;
@@ -16,6 +17,7 @@ suite('FileWatcherCreator', () => {
   let handleFileChangeAsyncStub: sinon.SinonStub;
 
   setup(() => {
+    extensionContext = {} as vscode.ExtensionContext;
     fileWatcherCreator = new FileWatcherCreator();
     findFilesStub = sinon.stub(vscode.workspace, 'findFiles');
     createFileSystemWatcherStub = sinon.stub(
@@ -63,7 +65,8 @@ suite('FileWatcherCreator', () => {
       const fileWatchers =
         await fileWatcherCreator.createFileWatchersForFileTypeAsync(
           FileType.Code,
-          { filePattern: mockUri.fsPath } as FileSearchLocation
+          { filePattern: mockUri.fsPath } as FileSearchLocation,
+          extensionContext
         );
 
       assert.strictEqual(fileWatchers.length, 1);
@@ -90,7 +93,8 @@ suite('FileWatcherCreator', () => {
 
       await fileWatcherCreator.createFileWatchersForFileTypeAsync(
         FileType.Code,
-        { filePattern: mockUri.fsPath } as FileSearchLocation
+        { filePattern: mockUri.fsPath } as FileSearchLocation,
+        extensionContext
       );
 
       sinon.assert.calledOnce(handleFileChangeAsyncStub);
@@ -116,6 +120,7 @@ suite('FileWatcherCreator', () => {
       await fileWatcherCreator.createFileWatchersForFileTypeAsync(
         FileType.Code,
         { filePattern: mockUri.fsPath } as FileSearchLocation,
+        extensionContext,
         () => true
       );
 

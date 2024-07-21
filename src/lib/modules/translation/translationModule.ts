@@ -14,7 +14,9 @@ export default class TranslationModule extends BaseActionModule {
       ).enabled
     ) {
       if (context.jsonContent) {
-        TranslationService.getInstance().translateOtherI18nFiles(
+        TranslationService.getInstance(
+          this.extensionContext
+        ).translateOtherI18nFiles(
           context.inputPath.fsPath,
           context.jsonContent
         );

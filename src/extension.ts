@@ -72,7 +72,7 @@ export async function activate(
       });
 
     const { codeFileWatchers, jsonFileWatchers, poFileWatchers } =
-      await createFileWatchers(fileWatcherCreator);
+      await createFileWatchers(fileWatcherCreator, context);
 
     const configurationWizardCommandDisposable =
       await registerConfigurationWizardCommand(
@@ -133,7 +133,10 @@ async function initializeFileLocations(context: ExtensionContext) {
   await CodeTranslationStore.getInstance().initializeAsync(context);
 }
 
-async function createFileWatchers(fileWatcherCreator: FileWatcherCreator) {
+async function createFileWatchers(
+  fileWatcherCreator: FileWatcherCreator,
+  context: vscode.ExtensionContext
+) {
   const translationFilesLocation =
     ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
       'i18nextScannerModule'
@@ -157,6 +160,7 @@ async function createFileWatchers(fileWatcherCreator: FileWatcherCreator) {
         '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**,**/*.spec.ts,**/*.spec.tsx}',
     } as FileSearchLocation,
     fileWatcherCreator,
+    context,
     'i18nextScannerModule'
   );
 
@@ -167,7 +171,8 @@ async function createFileWatchers(fileWatcherCreator: FileWatcherCreator) {
       ignorePattern:
         '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
     } as FileSearchLocation,
-    fileWatcherCreator
+    fileWatcherCreator,
+    context
   );
 
   const poFileWatchers = await createWatchersForFileType(
@@ -178,6 +183,7 @@ async function createFileWatchers(fileWatcherCreator: FileWatcherCreator) {
         '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
     } as FileSearchLocation,
     fileWatcherCreator,
+    context,
     'i18nextJsonToPoConversionModule'
   );
 
@@ -192,11 +198,13 @@ async function createWatchersForFileType(
   fileType: FileType,
   fileSearchLocation: FileSearchLocation,
   fileWatcherCreator: FileWatcherCreator,
+  context: vscode.ExtensionContext,
   disableFlag?: 'i18nextScannerModule' | 'i18nextJsonToPoConversionModule'
 ) {
   return await fileWatcherCreator.createFileWatchersForFileTypeAsync(
     fileType,
     fileSearchLocation,
+    context,
     () =>
       false ===
       (disableFlag
@@ -259,7 +267,7 @@ async function reinitialize(
   initializeFileLocations(context);
 
   const { codeFileWatchers, jsonFileWatchers, poFileWatchers } =
-    await createFileWatchers(fileWatcherCreator);
+    await createFileWatchers(fileWatcherCreator, context);
 
   context.subscriptions.push(
     ...codeFileWatchers,

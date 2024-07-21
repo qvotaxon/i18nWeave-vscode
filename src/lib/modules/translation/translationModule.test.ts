@@ -7,11 +7,14 @@ import TranslationModule from './translationModule';
 import { TranslationModuleContext } from './translationModuleContext';
 
 suite('TranslationModule', () => {
+  let extensionContext: vscode.ExtensionContext;
   let translationModule: TranslationModule;
   let context: TranslationModuleContext;
 
   setup(() => {
-    translationModule = new TranslationModule();
+    extensionContext = {} as vscode.ExtensionContext;
+
+    translationModule = new TranslationModule(extensionContext);
     context = {
       jsonContent: {
         /* mock JSON content */
@@ -34,7 +37,7 @@ suite('TranslationModule', () => {
     getConfigStub.withArgs('translationModule').returns({ enabled: true });
 
     const translateOtherI18nFilesStub = sinon.stub(
-      TranslationService.getInstance(),
+      TranslationService.getInstance(extensionContext),
       'translateOtherI18nFiles'
     );
 
@@ -58,7 +61,7 @@ suite('TranslationModule', () => {
     getConfigStub.withArgs('translationModule').returns({ enabled: false });
 
     const translateOtherI18nFilesStub = sinon.stub(
-      TranslationService.getInstance(),
+      TranslationService.getInstance(extensionContext),
       'translateOtherI18nFiles'
     );
 

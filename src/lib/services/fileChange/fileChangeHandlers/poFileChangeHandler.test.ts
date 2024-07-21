@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import sinon from 'sinon';
+import vscode from 'vscode';
 import { Uri } from 'vscode';
 
 import { ChainType } from '../../../enums/chainType';
@@ -11,15 +12,25 @@ import FileWatcherCreator from '../fileWatcherCreator';
 import PoFileChangeHandler from './poFileChangeHandler';
 
 suite('PoFileChangeHandler', () => {
+  let extensionContext: vscode.ExtensionContext;
+
+  setup(() => {
+    extensionContext = {} as vscode.ExtensionContext;
+  });
+
   test('should initialize moduleChainManager and register chain', () => {
     const moduleChainManager = PoFileChangeHandler.moduleChainManager;
     const registerChainSpy = sinon.spy(moduleChainManager, 'registerChain');
-    const poFileChangeHandler = PoFileChangeHandler.create();
+    const poFileChangeHandler = PoFileChangeHandler.create(extensionContext);
 
     const expectedModuleChainManagerChains = {
       chains: {
         [ChainType.Po]: {
-          nextModule: { nextModule: null },
+          extensionContext: {},
+          nextModule: {
+            extensionContext: {},
+            nextModule: null,
+          },
         },
       },
     };
@@ -38,7 +49,7 @@ suite('PoFileChangeHandler', () => {
   });
 
   test('should set static module instances', () => {
-    const poFileChangeHandler = PoFileChangeHandler.create();
+    const poFileChangeHandler = PoFileChangeHandler.create(extensionContext);
 
     assert.ok(poFileChangeHandler);
   });
@@ -49,7 +60,7 @@ suite('PoFileChangeHandler', () => {
       'setNext'
     );
 
-    const poFileChangeHandler = PoFileChangeHandler.create();
+    const poFileChangeHandler = PoFileChangeHandler.create(extensionContext);
 
     assert.ok(poFileChangeHandler instanceof PoFileChangeHandler);
     assert.ok(
@@ -85,7 +96,7 @@ suite('PoFileChangeHandler', () => {
       'add'
     );
 
-    await PoFileChangeHandler.create().handleFileChangeAsync(
+    await PoFileChangeHandler.create(extensionContext).handleFileChangeAsync(
       changeFileLocation
     );
 

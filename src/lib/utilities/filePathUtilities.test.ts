@@ -256,7 +256,7 @@ suite('filePathUtilities', () => {
       assert.strictEqual(projectRoot, projectDir);
     });
 
-    test('should return undefined if no project root is found', () => {
+    test('should throw an error if no project root is found', () => {
       const rootDir = 'c:\\workspace';
       const workspaceFolder = {
         uri: vscode.Uri.file(rootDir),
@@ -275,8 +275,14 @@ suite('filePathUtilities', () => {
         }
       });
 
-      const projectRoot = getProjectRootFolder();
-      assert.strictEqual(projectRoot, undefined);
+      assert.throws(
+        () => {
+          getProjectRootFolder();
+        },
+        {
+          message: 'Project root folder not found',
+        }
+      );
     });
   });
 });

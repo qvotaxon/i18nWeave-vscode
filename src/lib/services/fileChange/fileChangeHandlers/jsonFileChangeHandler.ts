@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/node';
+import vscode from 'vscode';
 import { Uri } from 'vscode';
 
 import { ChainType } from '../../../enums/chainType';
@@ -43,12 +44,15 @@ export default class JsonFileChangeHandler extends FileChangeHandler {
     );
   }
 
-  public static readonly create = (): JsonFileChangeHandler => {
+  public static readonly create = (
+    context: vscode.ExtensionContext
+  ): JsonFileChangeHandler => {
     const fileWatcherCreator = new FileWatcherCreator();
-    const readJsonFileModule = new ReadJsonFileModule();
-    const translationModule = new TranslationModule();
-    const i18nextJsonToPoConversionModule =
-      new I18nextJsonToPoConversionModule();
+    const readJsonFileModule = new ReadJsonFileModule(context);
+    const translationModule = new TranslationModule(context);
+    const i18nextJsonToPoConversionModule = new I18nextJsonToPoConversionModule(
+      context
+    );
 
     this.readJsonFileModule = readJsonFileModule;
     this.translationModule = translationModule;
@@ -107,7 +111,7 @@ export default class JsonFileChangeHandler extends FileChangeHandler {
 
         FileLockStoreStore.getInstance().add(extractedFileParts.outputPath);
 
-        JsonFileChangeHandler.moduleChainManager.executeChainAsync(
+        await JsonFileChangeHandler.moduleChainManager.executeChainAsync(
           ChainType.Json,
           context
         );

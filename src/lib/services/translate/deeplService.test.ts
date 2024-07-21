@@ -3,19 +3,22 @@ import { Span } from '@sentry/node';
 import assert from 'assert';
 import * as deepl from 'deepl-node';
 import sinon from 'sinon';
+import vscode from 'vscode';
 
 import TranslationModuleConfiguration from '../../entities/configuration/modules/translationModule/translationModuleConfiguration';
 import ConfigurationStore from '../../stores/configuration/configurationStore';
 import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
+import { CacheEntry } from '../caching/cacheEntry';
 import DeeplService from './deeplService';
 
 suite('DeeplService', () => {
+  let extensionContext: vscode.ExtensionContext;
   let deeplService: DeeplService;
   let getConfigStub: sinon.SinonStub;
   let translateStub: sinon.SinonStub;
   let startSpanStub: sinon.SinonStub;
 
-  setup(() => {
+  setup(async () => {
     const config = {
       translationModule: {
         deepL: {
@@ -25,6 +28,21 @@ suite('DeeplService', () => {
         },
       },
     };
+
+    extensionContext = {
+      globalState: {
+        get: sinon.stub().returns({
+          value: [{ code: 'fr', name: 'French', supportsFormality: true }],
+          timestamp: new Date().toISOString(),
+        } as CacheEntry<readonly deepl.Language[]>),
+        update: sinon.stub(),
+      },
+      workspaceState: {
+        get: sinon.stub(),
+        update: sinon.stub(),
+      },
+      subscriptions: [],
+    } as unknown as vscode.ExtensionContext;
 
     getConfigStub = sinon
       .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
@@ -36,7 +54,7 @@ suite('DeeplService', () => {
       .stub(deepl.Translator.prototype, 'translateText')
       .resolves({ text: 'Translated text' } as deepl.TextResult);
 
-    deeplService = DeeplService.getInstance();
+    deeplService = await DeeplService.getInstanceAsync(extensionContext);
   });
 
   teardown(() => {
@@ -44,16 +62,17 @@ suite('DeeplService', () => {
   });
 
   suite('getInstance', () => {
-    test('should return a singleton instance', () => {
-      const instance1 = DeeplService.getInstance();
-      const instance2 = DeeplService.getInstance();
+    test('should return a singleton instance', async () => {
+      const instance1 = await DeeplService.getInstanceAsync(extensionContext);
+      const instance2 = await DeeplService.getInstanceAsync(extensionContext);
       assert.strictEqual(instance1, instance2);
     });
 
-    test('should reinitialize the translator if the API key changes', () => {
-      const initialInstance = DeeplService.getInstance();
+    test('should reinitialize the translator if the API key changes', async () => {
+      const initialInstance =
+        await DeeplService.getInstanceAsync(extensionContext);
       sinon.stub(DeeplService, 'getApiKey').returns('new-api-key');
-      const newInstance = DeeplService.getInstance();
+      const newInstance = await DeeplService.getInstanceAsync(extensionContext);
       assert.notStrictEqual(initialInstance, newInstance);
     });
   });
@@ -76,6 +95,9 @@ suite('DeeplService', () => {
       ConfigurationStoreManager.getInstance()['_configurationStore'] =
         mockConfigStore;
 
+      const deeplService =
+        await DeeplService.getInstanceAsync(extensionContext);
+
       const text = 'Hello';
       const targetLanguage = 'fr';
 
@@ -84,14 +106,15 @@ suite('DeeplService', () => {
         targetLanguage
       );
 
-      sinon.assert.calledTwice(getConfigStub);
+      sinon.assert.calledThrice(getConfigStub);
       sinon.assert.calledOnce(startSpanStub);
       sinon.assert.calledOnce(translateStub);
       assert.strictEqual(translation, 'Translated text');
     });
 
     test('should throw an error if translator is not initialized', async () => {
-      DeeplService.translator = undefined;
+      // @ts-ignore - Testing private method
+      DeeplService.instance.translator = undefined;
       const text = 'Hello';
       const targetLanguage = 'fr';
 
@@ -101,7 +124,7 @@ suite('DeeplService', () => {
         },
         {
           name: 'Error',
-          message: 'Translator not initialized. Please try again.',
+          message: 'Translator not initialized.',
         }
       );
     });

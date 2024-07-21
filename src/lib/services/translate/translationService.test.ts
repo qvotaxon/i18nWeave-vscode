@@ -1,14 +1,18 @@
 import assert from 'assert';
+import * as deepl from 'deepl-node';
 import fs from 'fs';
 import sinon from 'sinon';
+import vscode from 'vscode';
 
 import TranslationModuleConfiguration from '../../entities/configuration/modules/translationModule/translationModuleConfiguration';
 import ConfigurationStore from '../../stores/configuration/configurationStore';
 import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
+import { CacheEntry } from '../caching/cacheEntry';
 import DeeplService from './deeplService';
 import TranslationService from './translationService';
 
 suite('TranslationService', () => {
+  let extensionContext: vscode.ExtensionContext;
   let translationService: TranslationService;
   let readFileSyncStub: sinon.SinonStub;
   let readdirSyncStub: sinon.SinonStub;
@@ -16,7 +20,7 @@ suite('TranslationService', () => {
   let writeFileSyncStub: sinon.SinonStub;
   let fetchTranslationStub: sinon.SinonStub;
 
-  setup(() => {
+  setup(async () => {
     const translationModuleConfiguration = new TranslationModuleConfiguration();
     translationModuleConfiguration.enabled = true;
     translationModuleConfiguration.deepL.apiKey = 'api-key';
@@ -28,14 +32,28 @@ suite('TranslationService', () => {
     ConfigurationStoreManager.getInstance()['_configurationStore'] =
       mockConfigStore;
 
-    translationService = TranslationService.getInstance();
+    extensionContext = {
+      globalState: {
+        get: sinon.stub().returns({
+          value: [],
+          timestamp: new Date().toISOString(),
+        } as CacheEntry<readonly deepl.Language[]>),
+        update: sinon.stub(),
+      },
+      workspaceState: {
+        get: sinon.stub(),
+        update: sinon.stub(),
+      },
+      subscriptions: [],
+    } as unknown as vscode.ExtensionContext;
 
+    translationService = TranslationService.getInstance(extensionContext);
     readFileSyncStub = sinon.stub(fs, 'readFileSync');
     readdirSyncStub = sinon.stub(fs, 'readdirSync');
     statSyncStub = sinon.stub(fs, 'statSync');
     writeFileSyncStub = sinon.stub(fs, 'writeFileSync');
     fetchTranslationStub = sinon.stub(
-      DeeplService.getInstance(),
+      await DeeplService.getInstanceAsync(extensionContext),
       'fetchTranslation'
     );
   });
@@ -46,8 +64,8 @@ suite('TranslationService', () => {
 
   suite('getInstance', () => {
     test('should return the singleton instance', () => {
-      const instance1 = TranslationService.getInstance();
-      const instance2 = TranslationService.getInstance();
+      const instance1 = TranslationService.getInstance(extensionContext);
+      const instance2 = TranslationService.getInstance(extensionContext);
       assert.strictEqual(instance1, instance2);
     });
   });
@@ -56,8 +74,6 @@ suite('TranslationService', () => {
     test('should return paths of other translation files', () => {
       const fileLocation = 'C:\\projects\\translations\\en\\file.json';
       const parentDirectory = 'C:\\projects\\translations';
-      const directory = 'C:\\projects\\translations\\en';
-      const fileName = 'file.json';
 
       readdirSyncStub.withArgs(parentDirectory).returns(['en', 'fr']);
       statSyncStub
@@ -80,8 +96,6 @@ suite('TranslationService', () => {
     test('should exclude the original file from the result', () => {
       const fileLocation = 'C:\\projects\\translations\\en\\file.json';
       const parentDirectory = 'C:\\projects\\translations';
-      const directory = 'C:\\projects\\translations\\en';
-      const fileName = 'file.json';
 
       readdirSyncStub.withArgs(parentDirectory).returns(['en', 'fr']);
       statSyncStub

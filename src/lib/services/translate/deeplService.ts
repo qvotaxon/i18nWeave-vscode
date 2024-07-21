@@ -1,33 +1,42 @@
 import * as Sentry from '@sentry/node';
 import * as deepl from 'deepl-node';
+import vscode from 'vscode';
 
 import TranslationModuleConfiguration from '../../entities/configuration/modules/translationModule/translationModuleConfiguration';
 import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
+import { sharedCacheKeys } from '../caching/cacheKeys';
+import { CachingService } from '../caching/cachingService';
 
 /**
  * Singleton class for managing DeepL translation services.
  */
 export default class DeeplService {
+  private context: vscode.ExtensionContext;
   private static instance: DeeplService;
-  public static translator: deepl.Translator | undefined;
+  private translator: deepl.Translator | undefined;
   private static previousApiKey: string | undefined;
+  private static supportedTargetLanguages: readonly deepl.Language[];
 
-  private constructor() {}
+  private constructor(context: vscode.ExtensionContext) {
+    this.context = context;
+  }
 
   /**
    * Retrieves the singleton instance of DeeplService.
    * @returns {DeeplService} The singleton instance.
    */
-  public static getInstance(): DeeplService {
+  public static async getInstanceAsync(
+    context: vscode.ExtensionContext
+  ): Promise<DeeplService> {
     const currentApiKey = DeeplService.getApiKey();
 
     if (
       !DeeplService.instance ||
       DeeplService.previousApiKey !== currentApiKey
     ) {
-      DeeplService.initializeTranslator(currentApiKey);
-      DeeplService.instance = new DeeplService();
+      DeeplService.instance = new DeeplService(context);
       DeeplService.previousApiKey = currentApiKey;
+      await DeeplService.initializeTranslator(currentApiKey);
     }
 
     return DeeplService.instance;
@@ -45,8 +54,8 @@ export default class DeeplService {
     requestedTargetLanguage: string
   ): Promise<string> {
     try {
-      if (!DeeplService.translator) {
-        throw new Error('Translator not initialized. Please try again.');
+      if (!DeeplService.instance.translator) {
+        throw new Error('Translator not initialized.');
       }
 
       let targetLanguage = requestedTargetLanguage;
@@ -78,24 +87,28 @@ export default class DeeplService {
         targetLanguage = 'en-GB';
       }
 
-      //TODO: Replace with data frorm language api endpoint
       if (
-        targetLanguage !== 'nl' &&
-        targetLanguage !== 'de' &&
-        targetLanguage !== 'pl' &&
-        targetLanguage !== 'fr' &&
-        targetLanguage !== 'es' &&
-        targetLanguage !== 'it' &&
-        targetLanguage !== 'pt' &&
-        targetLanguage !== 'ru'
+        DeeplService.supportedTargetLanguages
+          .map(x => x.code)
+          .indexOf(targetLanguage as deepl.LanguageCode) === -1
       ) {
+        console.info(
+          `Skipping translation for unsupported target language: ${targetLanguage}`
+        );
+
+        return '';
+      }
+
+      const supportsFormality = DeeplService.supportedTargetLanguages.find(
+        x => x.code === targetLanguage
+      )?.supportsFormality;
+
+      if (!supportsFormality) {
         formality = 'default';
       }
 
-      // formality = 'default';
-
       const result = await DeeplService.translateUsingDeepl(
-        DeeplService.translator,
+        DeeplService.instance.translator,
         text,
         targetLanguage,
         formality
@@ -138,8 +151,32 @@ export default class DeeplService {
    * Initializes the DeepL translator with the API key from the configuration.
    * @throws Will throw an error if no API key is found in the configuration.
    */
-  private static initializeTranslator(apiKey: string): void {
-    DeeplService.translator = new deepl.Translator(apiKey);
+  private static async initializeTranslator(apiKey: string): Promise<void> {
+    DeeplService.instance.translator = new deepl.Translator(apiKey);
+
+    const supportedTargetLanguages = await this.getSupportedTargetLanguages();
+
+    if (!supportedTargetLanguages) {
+      throw new Error('Failed to retrieve supported languages from DeepL.');
+    }
+
+    DeeplService.supportedTargetLanguages = supportedTargetLanguages;
+  }
+
+  private static async getSupportedTargetLanguages(): Promise<
+    readonly deepl.Language[] | undefined
+  > {
+    const targetLanguages = await CachingService.get<
+      readonly deepl.Language[] | undefined
+    >(
+      DeeplService.instance.context,
+      sharedCacheKeys.SUPPORTED_TARGET_LANGUAGES,
+      async () => {
+        return DeeplService.instance.translator?.getTargetLanguages();
+      }
+    );
+
+    return targetLanguages;
   }
 
   /**
