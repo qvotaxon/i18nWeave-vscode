@@ -2,6 +2,7 @@ import sinon from 'sinon';
 import vscode from 'vscode';
 
 import I18nextScannerService from '../../services/i18nextScannerService/i18nextScannerService';
+import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
 import I18nextScannerModule from './i18nextScannerModule';
 import I18nextScannerModuleContext from './i18nextScannerModuleContext';
 
@@ -12,6 +13,13 @@ suite('I18nextScannerModule', () => {
   let scannerServiceScanCodeStub: sinon.SinonStub;
 
   setup(() => {
+    const getConfigStub = sinon.stub(
+      ConfigurationStoreManager.getInstance(),
+      'getConfig'
+    );
+    getConfigStub.withArgs('i18nextScannerModule').returns({ enabled: true });
+    extensionContext = {} as vscode.ExtensionContext;
+
     extensionContext = {} as vscode.ExtensionContext;
     scannerModule = new I18nextScannerModule(extensionContext);
     scannerServiceStub = sinon.createStubInstance(I18nextScannerService);

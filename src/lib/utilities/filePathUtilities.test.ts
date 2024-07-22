@@ -5,14 +5,16 @@ import sinon from 'sinon';
 import vscode from 'vscode';
 
 import ConfigurationStoreManager from '../stores/configuration/configurationStoreManager';
-import {
-  determineOutputPath,
-  extractFilePathParts,
-  extractLocale,
-  findProjectRoot,
-  getFileExtension,
-  getProjectRootFolder,
-} from './filePathUtilities';
+// import {
+//   determineOutputPath,
+//   extractFilePathParts,
+//   extractLocale,
+//   findProjectRoot,
+//   getFileExtension,
+//   getProjectRootFolder,
+//   getRelativePath,
+// } from './filePathUtilities';
+import * as filePathUtilities from './filePathUtilities';
 
 suite('filePathUtilities', () => {
   let getConfigStub: sinon.SinonStub;
@@ -34,7 +36,7 @@ suite('filePathUtilities', () => {
         .returns(config.i18nextScannerModule);
 
       const filePath = 'C:\\locales\\en\\file.po';
-      const locale = extractLocale(filePath);
+      const locale = filePathUtilities.extractLocale(filePath);
       assert.equal(locale, 'en');
     });
 
@@ -50,7 +52,7 @@ suite('filePathUtilities', () => {
         .returns(config.i18nextScannerModule);
 
       const filePath = 'C:\\src\\i18n\\en\\file.po';
-      const locale = extractLocale(filePath);
+      const locale = filePathUtilities.extractLocale(filePath);
       assert.equal(locale, 'en');
     });
 
@@ -66,7 +68,7 @@ suite('filePathUtilities', () => {
         .returns(config.i18nextScannerModule);
 
       const filePath = 'C:\\invalid\\file.path';
-      assert.throws(() => extractLocale(filePath), {
+      assert.throws(() => filePathUtilities.extractLocale(filePath), {
         message: 'Invalid file path format',
       });
     });
@@ -75,7 +77,7 @@ suite('filePathUtilities', () => {
   suite('determineOutputPath', () => {
     test('should determine the output path for .po file', () => {
       const filePath = 'C:\\locales\\en\\file.po';
-      const outputPath = determineOutputPath(filePath);
+      const outputPath = filePathUtilities.determineOutputPath(filePath);
       assert.deepStrictEqual(
         outputPath,
         vscode.Uri.file('C:\\locales\\en\\file.json')
@@ -84,7 +86,7 @@ suite('filePathUtilities', () => {
 
     test('should determine the output path for .json file', () => {
       const filePath = 'C:\\locales\\en\\file.json';
-      const outputPath = determineOutputPath(filePath);
+      const outputPath = filePathUtilities.determineOutputPath(filePath);
 
       assert.deepStrictEqual(
         outputPath,
@@ -95,7 +97,7 @@ suite('filePathUtilities', () => {
     test('should throw an error for invalid file extension', () => {
       const filePath = 'C:\\locales\\en\\file.txt';
 
-      assert.throws(() => determineOutputPath(filePath), {
+      assert.throws(() => filePathUtilities.determineOutputPath(filePath), {
         message:
           'Invalid file extension. Only .po and .json files are supported.',
       });
@@ -115,7 +117,7 @@ suite('filePathUtilities', () => {
         .returns(config.i18nextScannerModule);
 
       const filePath = 'C:\\locales\\en\\file.po';
-      const filePathParts = extractFilePathParts(filePath);
+      const filePathParts = filePathUtilities.extractFilePathParts(filePath);
 
       assert.deepStrictEqual(filePathParts, {
         locale: 'en',
@@ -135,7 +137,7 @@ suite('filePathUtilities', () => {
         .returns(config.i18nextScannerModule);
 
       const filePath = 'C:\\src\\i18n\\en\\file.po';
-      const filePathParts = extractFilePathParts(filePath);
+      const filePathParts = filePathUtilities.extractFilePathParts(filePath);
 
       assert.deepStrictEqual(filePathParts, {
         locale: 'en',
@@ -147,7 +149,7 @@ suite('filePathUtilities', () => {
   suite('getFileExtension', () => {
     test('should get the file extension from the URI', () => {
       const uri = vscode.Uri.file('C:\\locales\\en\\file.po');
-      const fileExtension = getFileExtension(uri);
+      const fileExtension = filePathUtilities.getFileExtension(uri);
 
       assert.strictEqual(fileExtension, 'po');
     });
@@ -187,7 +189,7 @@ suite('filePathUtilities', () => {
         return [];
       });
 
-      const projectRoot = findProjectRoot(rootDir);
+      const projectRoot = filePathUtilities.findProjectRoot(rootDir);
       assert.strictEqual(projectRoot, projectDir);
     });
 
@@ -216,7 +218,7 @@ suite('filePathUtilities', () => {
         return [];
       });
 
-      const projectRoot = findProjectRoot(rootDir);
+      const projectRoot = filePathUtilities.findProjectRoot(rootDir);
       assert.strictEqual(projectRoot, projectDir);
     });
   });
@@ -252,7 +254,7 @@ suite('filePathUtilities', () => {
         return [];
       });
 
-      const projectRoot = getProjectRootFolder();
+      const projectRoot = filePathUtilities.getProjectRootFolder();
       assert.strictEqual(projectRoot, projectDir);
     });
 
@@ -277,7 +279,7 @@ suite('filePathUtilities', () => {
 
       assert.throws(
         () => {
-          getProjectRootFolder();
+          filePathUtilities.getProjectRootFolder();
         },
         {
           message: 'Project root folder not found',
@@ -285,4 +287,18 @@ suite('filePathUtilities', () => {
       );
     });
   });
+
+  // suite('getRelativePath', () => {
+  //   test('should get the relative path of a folder from the project root folder', () => {
+  //     const projectRootFolder = 'C:\\workspace\\project';
+  //     const folderPath = 'C:\\workspace\\project\\src\\components';
+
+  //     sinon
+  //       .stub(filePathUtilities, 'getProjectRootFolder')
+  //       .returns(projectRootFolder);
+
+  //     const relativePath = filePathUtilities.getRelativePath(folderPath);
+  //     assert.strictEqual(relativePath, 'src/components');
+  //   });
+  // });
 });

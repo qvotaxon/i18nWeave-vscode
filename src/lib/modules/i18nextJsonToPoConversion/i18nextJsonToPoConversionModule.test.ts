@@ -1,12 +1,28 @@
 import * as assert from 'assert';
 import { i18next2po } from 'gettext-converter';
+import sinon from 'sinon';
 import vscode from 'vscode';
 import { Uri, workspace } from 'vscode';
 
 import FileReader from '../../services/fileIo/fileReader';
+import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
 import I18nextJsonToPoConversionModule from './i18nextJsonToPoConversionModule';
 
 suite('I18nextJsonToPoConversionModule Tests', () => {
+  setup(() => {
+    const getConfigStub = sinon.stub(
+      ConfigurationStoreManager.getInstance(),
+      'getConfig'
+    );
+    getConfigStub
+      .withArgs('i18nextJsonToPoConversionModule')
+      .returns({ enabled: true });
+  });
+
+  teardown(() => {
+    sinon.restore();
+  });
+
   let extensionContext = {} as vscode.ExtensionContext;
 
   const potCreationDateRegex = /"POT-Creation-Date: .+\\n"/g;
