@@ -32,16 +32,10 @@ i18nWeave is a Visual Studio Code extension designed to streamline the managemen
 
 - **Installation Wizard**: Get up and running in no time using the build-in configuration wizard. Pick any of the build-in framework configurations and get started in just a few clicks. Or with just a few more clicks setup a custom project using i18next translations.
 - **Translation Key Extraction**: This feature allows for the easy extraction of translation keys from code files, which ensures the accurate localization of your application.
-- **PO File Support**: You have the option to use PO files for managing translations. This feature enables seamless integration with your existing localization workflows.
-- **PO to i18n-next JSON Conversion**: Effortlessly convert PO files into the i18n-next JSON format and vice versa. This conversion facilitates compatibility with a variety of localization tools and libraries.
 - **Automatic Translations**: When you add a translation for one locale, translations for all other locales are automatically generated. The following translators have been (or will be) implemented:
   - [DeepL](https://www.deepl.com/translator) (requires an Api key)
   - [Google Translate](https://translate.google.com) (not implemented yet)
-
-<!-- ### Modes
-
-- **Manual Mode**: Take control of translation key extraction by manually clicking on status bar icons, allowing for precise management of translation files.
-- **Automatic Mode**: Enable automatic translation key extraction upon file save, ensuring real-time updates and effortless synchronization of translation files with your codebase. -->
+- **PO File Support**: Temporarily disabled.
 
 <!-- ## Installation
 
@@ -66,6 +60,11 @@ TODO
 - show code samples and required configuration -->
 
 ## 🚧 Roadmap
+
+### (Temporarily disabled)
+
+- **PO File Support**: You have the option to use PO files for managing translations. This feature enables seamless integration with your existing localization workflows.
+- **PO to i18n-next JSON Conversion**: Effortlessly convert PO files into the i18n-next JSON format and vice versa. This conversion facilitates compatibility with a variety of localization tools and libraries.
 
 ### Somewhere in the nearer future
 

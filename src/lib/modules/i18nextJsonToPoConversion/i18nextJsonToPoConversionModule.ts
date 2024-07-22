@@ -11,6 +11,8 @@ import I18nextJsonToPoConversionModuleContext from './i18nextJsonToPoConversionM
  * Module for converting JSON to PO using i18next library.
  */
 export default class I18nextJsonToPoConversionModule extends BaseActionModule {
+  private temporarilyDisabled = true;
+
   /**
    * Executes the conversion of JSON to PO.
    * @param context - The context for the conversion.
@@ -20,6 +22,7 @@ export default class I18nextJsonToPoConversionModule extends BaseActionModule {
     context: I18nextJsonToPoConversionModuleContext
   ): Promise<void> {
     if (
+      !this.temporarilyDisabled &&
       ConfigurationStoreManager.getInstance().getConfig<I18nextJsonToPoConversionModuleConfiguration>(
         'i18nextJsonToPoConversionModule'
       ).enabled
