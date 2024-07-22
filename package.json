@@ -105,12 +105,12 @@
       },
       {
         "id": "i18nextJsonToPoConversionModule",
-        "title": "(Temporarily Disabled) --- i18next Json To Po Conversion Module",
+        "title": "i18next Json To Po Conversion Module",
         "properties": {
           "i18nWeave.i18nextJsonToPoConversionModule.enabled": {
             "type": "boolean",
             "default": "",
-            "description": "Enable the i18next Json To Po Conversion module."
+            "description": "(Temporarily Disabled) --- Enable the i18next Json To Po Conversion module."
           }
         }
       },
