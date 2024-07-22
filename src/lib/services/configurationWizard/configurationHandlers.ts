@@ -6,7 +6,7 @@ import { sanitizeLocations } from '../../utilities/filePathUtilities';
 import {
   promptForFolderAsync,
   promptForFoldersAsync,
-} from '../../utilities/windowUtilities';
+} from '../../utilities/promptUtilities';
 
 export async function configureCustomProjectAsync(
   config: I18nextScannerModuleConfiguration

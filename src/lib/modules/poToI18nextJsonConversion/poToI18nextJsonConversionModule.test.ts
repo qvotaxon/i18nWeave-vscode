@@ -1,15 +1,28 @@
 import * as assert from 'assert';
+import sinon from 'sinon';
 import vscode from 'vscode';
 import { Uri, workspace } from 'vscode';
 
 import FileReader from '../../services/fileIo/fileReader';
+import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
 import PoToI18nextJsonConversionModule from './poToI18nextJsonConversionModule';
 
 suite('PoToI18nextJsonConversionModule Tests', () => {
   let extensionContext: vscode.ExtensionContext;
 
   setup(() => {
+    const getConfigStub = sinon.stub(
+      ConfigurationStoreManager.getInstance(),
+      'getConfig'
+    );
+    getConfigStub
+      .withArgs('i18nextJsonToPoConversionModule')
+      .returns({ enabled: true });
     extensionContext = {} as vscode.ExtensionContext;
+  });
+
+  teardown(() => {
+    sinon.restore();
   });
 
   test('doExecute should convert PO to JSON and write to file', async () => {

@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import vscode from 'vscode';
 
 import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
-import * as windowUtilities from '../../utilities/windowUtilities';
+import * as promptUtilities from '../../utilities/promptUtilities';
 import * as configurationHandlers from './configurationHandlers';
 
 suite('ConfigurationHandlers', () => {
@@ -20,7 +20,7 @@ suite('ConfigurationHandlers', () => {
   test('configureTranslationFilesLocationAsync should set translationFilesLocation', async () => {
     const config = new I18nextScannerModuleConfiguration();
     sandbox
-      .stub(windowUtilities, 'promptForFolderAsync')
+      .stub(promptUtilities, 'promptForFolderAsync')
       .resolves('/path/to/translations');
 
     const result =
@@ -38,7 +38,7 @@ suite('ConfigurationHandlers', () => {
   test('configureCodeFileLocationsAsync should set codeFileLocations', async () => {
     const config = new I18nextScannerModuleConfiguration();
     sandbox
-      .stub(windowUtilities, 'promptForFoldersAsync')
+      .stub(promptUtilities, 'promptForFoldersAsync')
       .resolves(['path/to/code']);
 
     const result =
@@ -51,7 +51,7 @@ suite('ConfigurationHandlers', () => {
   test('configureCodeFileLocationsAsync should sanitizeLocations codeFileLocations', async () => {
     const config = new I18nextScannerModuleConfiguration();
     sandbox
-      .stub(windowUtilities, 'promptForFoldersAsync')
+      .stub(promptUtilities, 'promptForFoldersAsync')
       .resolves(['/path/to/code']);
 
     const result =

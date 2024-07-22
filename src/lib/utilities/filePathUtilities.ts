@@ -153,3 +153,16 @@ export function sanitizeLocations(locations: string[]): string[] {
 
   return sanitizedLocations;
 }
+
+/**
+ * Gets the relative path of a folder from the project root folder.
+ * @param folderPath - The path of the folder.
+ * @returns The relative path of the folder.
+ * @throws Error if the project root folder is not found.
+ */
+//TODO: find out why this doesn't actually return a relative path
+export function getRelativePath(folderPath: string) {
+  const projectRootFolder = getProjectRootFolder();
+
+  return getPosixPathFromUri(folderPath.replace(projectRootFolder, ''));
+}
