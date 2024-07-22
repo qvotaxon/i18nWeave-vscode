@@ -48,6 +48,9 @@ suite('I18nextJsonToPoConversionModule Tests', () => {
       locale,
     };
 
+    // @ts-ignore - temporarilyDisabled is private
+    module.temporarilyDisabled = false;
+
     await module.executeAsync(context);
 
     let expectedOutput = i18next2po(locale, jsonContent, {
@@ -70,6 +73,9 @@ suite('I18nextJsonToPoConversionModule Tests', () => {
       jsonContent,
       locale,
     };
+
+    // @ts-ignore - temporarilyDisabled is private
+    module.temporarilyDisabled = false;
 
     await module.executeAsync(context);
 
@@ -104,6 +110,9 @@ suite('I18nextJsonToPoConversionModule Tests', () => {
       jsonContent: null,
       locale,
     };
+
+    // @ts-ignore - temporarilyDisabled is private
+    module.temporarilyDisabled = false;
 
     await module.executeAsync(context);
 

@@ -34,6 +34,7 @@ suite('JsonFileChangeHandler', () => {
             nextModule: {
               extensionContext: {},
               nextModule: null,
+              temporarilyDisabled: true,
             },
           },
         },

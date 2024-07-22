@@ -62,6 +62,9 @@ msgstr "${Date.now().toString()}"`;
       locale,
     };
 
+    // @ts-ignore - temporarilyDisabled is private
+    module.temporarilyDisabled = false;
+
     await module.executeAsync(context);
 
     let outputFileContent = await FileReader.readFileAsync(outputPath.fsPath);
@@ -86,6 +89,9 @@ msgstr "${Date.now().toString()}"`;
       poContent: null,
       locale,
     };
+
+    // @ts-ignore - temporarilyDisabled is private
+    module.temporarilyDisabled = false;
 
     await module.executeAsync(context);
 

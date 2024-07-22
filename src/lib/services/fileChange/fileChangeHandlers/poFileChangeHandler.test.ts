@@ -30,6 +30,7 @@ suite('PoFileChangeHandler', () => {
           nextModule: {
             extensionContext: {},
             nextModule: null,
+            temporarilyDisabled: true,
           },
         },
       },
