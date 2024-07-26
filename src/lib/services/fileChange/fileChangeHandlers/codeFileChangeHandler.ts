@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/node';
 import fs from 'fs';
 import vscode from 'vscode';
 import { Uri } from 'vscode';
@@ -10,6 +9,7 @@ import ModuleContext from '../../../interfaces/moduleContext';
 import I18nextScannerModule from '../../../modules/i18nextScanner/i18nextScannerModule';
 import ModuleChainManager from '../../../modules/moduleChainManager';
 import CodeTranslationStore from '../../../stores/codeTranslation/codeTranslationStore';
+import {TraceMethod} from '../../../decorators/methodDecorators';
 
 export default class CodeFileChangeHandler extends FileChangeHandler {
   private static i18nextScannerModule: I18nextScannerModule;
@@ -36,51 +36,44 @@ export default class CodeFileChangeHandler extends FileChangeHandler {
     return CodeFileChangeHandler.i18nextScannerModule;
   }
 
+  @TraceMethod
   public async handleFileChangeAsync(
     changeFileLocation?: Uri,
     isFileDeletionChange: boolean = false
   ): Promise<void> {
-    Sentry.startSpan(
-      {
-        op: 'codeFile.handleFileChange',
-        name: 'Code File Change Handler',
-      },
-      async () => {
-        if (!changeFileLocation) {
-          return;
-        }
+    if (!changeFileLocation) {
+      return;
+    }
 
-        let hasTranslationFunctions = false;
+    let hasTranslationFunctions = false;
 
-        if (fs.existsSync(changeFileLocation.fsPath)) {
-          hasTranslationFunctions =
-            await CodeTranslationStore.getInstance().fileChangeContainsTranslationFunctionsAsync(
-              changeFileLocation.fsPath
-            );
-        }
-
-        if (!isFileDeletionChange && !hasTranslationFunctions) {
-          return;
-        }
-
-        const context: ModuleContext = {
-          inputPath: changeFileLocation,
-          locale: '',
-          outputPath: changeFileLocation,
-        };
-
-        await CodeFileChangeHandler.moduleChainManager.executeChainAsync(
-          ChainType.Code,
-          context
+    if (fs.existsSync(changeFileLocation.fsPath)) {
+      hasTranslationFunctions =
+        await CodeTranslationStore.getInstance().fileChangeContainsTranslationFunctionsAsync(
+          changeFileLocation.fsPath
         );
+    }
 
-        if (!isFileDeletionChange) {
-          await CodeTranslationStore.getInstance().updateStoreRecordAsync(
-            changeFileLocation.fsPath
-          );
-        }
-      }
+    if (!isFileDeletionChange && !hasTranslationFunctions) {
+      return;
+    }
+
+    const context: ModuleContext = {
+      inputPath: changeFileLocation,
+      locale: '',
+      outputPath: changeFileLocation,
+    };
+
+    await CodeFileChangeHandler.moduleChainManager.executeChainAsync(
+      ChainType.Code,
+      context
     );
+
+    if (!isFileDeletionChange) {
+      await CodeTranslationStore.getInstance().updateStoreRecordAsync(
+        changeFileLocation.fsPath
+      );
+    }
   }
 
   public async handleFileDeletionAsync(

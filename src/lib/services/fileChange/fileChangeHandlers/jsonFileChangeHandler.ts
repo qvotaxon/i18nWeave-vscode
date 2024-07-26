@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/node';
 import vscode from 'vscode';
 import { Uri } from 'vscode';
 
@@ -10,10 +9,10 @@ import I18nextJsonToPoConversionModule from '../../../modules/i18nextJsonToPoCon
 import ModuleChainManager from '../../../modules/moduleChainManager';
 import ReadJsonFileModule from '../../../modules/readJsonFile/readJsonFileModule';
 import TranslationModule from '../../../modules/translation/translationModule';
-import FileLocationStore from '../../../stores/fileLocation/fileLocationStore';
 import FileLockStoreStore from '../../../stores/fileLock/fileLockStore';
 import { extractFilePathParts } from '../../../utilities/filePathUtilities';
 import FileWatcherCreator from '../fileWatcherCreator';
+import {TraceMethod} from '../../../decorators/methodDecorators';
 
 export default class JsonFileChangeHandler extends FileChangeHandler {
   private static fileWatcherCreator: FileWatcherCreator;
@@ -83,46 +82,39 @@ export default class JsonFileChangeHandler extends FileChangeHandler {
    * @param changeFileLocation - The location of the changed file.
    * @returns A promise that resolves when the file change is handled.
    */
+  @TraceMethod
   async handleFileChangeAsync(
     changeFileLocation?: Uri | undefined
   ): Promise<void> {
-    await Sentry.startSpan(
-      {
-        op: 'json.handleFileChange',
-        name: 'Json File Change Handler',
-      },
-      async () => {
-        if (
-          !changeFileLocation ||
-          FileLockStoreStore.getInstance().hasFileLock(changeFileLocation)
-        ) {
-          return Promise.resolve();
-        }
+    if (
+      !changeFileLocation ||
+      FileLockStoreStore.getInstance().hasFileLock(changeFileLocation)
+    ) {
+      return Promise.resolve();
+    }
 
-        const extractedFileParts = extractFilePathParts(
-          changeFileLocation.fsPath
-        );
+    const extractedFileParts = extractFilePathParts(
+      changeFileLocation.fsPath
+    );
 
-        const context: ModuleContext = {
-          inputPath: changeFileLocation,
-          locale: extractedFileParts.locale,
-          outputPath: extractedFileParts.outputPath,
-        };
+    const context: ModuleContext = {
+      inputPath: changeFileLocation,
+      locale: extractedFileParts.locale,
+      outputPath: extractedFileParts.outputPath,
+    };
 
-        FileLockStoreStore.getInstance().add(extractedFileParts.outputPath);
+    FileLockStoreStore.getInstance().add(extractedFileParts.outputPath);
 
-        await JsonFileChangeHandler.moduleChainManager.executeChainAsync(
-          ChainType.Json,
-          context
-        );
+    await JsonFileChangeHandler.moduleChainManager.executeChainAsync(
+      ChainType.Json,
+      context
+    );
 
-        JsonFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
-          extractedFileParts.outputPath.fsPath,
-          () => {
-            FileLockStoreStore.getInstance().delete(
-              extractedFileParts.outputPath
-            );
-          }
+    JsonFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
+      extractedFileParts.outputPath.fsPath,
+      () => {
+        FileLockStoreStore.getInstance().delete(
+          extractedFileParts.outputPath
         );
       }
     );

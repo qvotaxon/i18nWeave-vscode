@@ -134,7 +134,7 @@ export default class DeeplService {
     return await Sentry.startSpan(
       { op: 'http.client', name: `Retrieve DeepL Translations` },
       async span => {
-        return await translator!.translateText(
+        return await translator.translateText(
           text,
           null,
           targetLanguage as deepl.TargetLanguageCode,

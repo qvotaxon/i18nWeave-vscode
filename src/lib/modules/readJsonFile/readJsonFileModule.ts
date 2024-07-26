@@ -1,5 +1,3 @@
-import * as Sentry from '@sentry/node';
-
 import FileReader from '../../services/fileIo/fileReader';
 import { BaseActionModule } from '../baseActionModule';
 import { ReadJsonFileModuleContext } from './readJsonFileModuleContext';
@@ -17,22 +15,14 @@ export default class ReadJsonFileModule extends BaseActionModule {
   protected async doExecuteAsync(
     context: ReadJsonFileModuleContext
   ): Promise<void> {
-    await Sentry.startSpan(
-      {
-        op: 'json.readJsonFile',
-        name: 'Read Json File Module',
-      },
-      async () => {
-        console.log(`Reading Json file contents: ${context.inputPath.fsPath}`);
+    console.log(`Reading Json file contents: ${context.inputPath.fsPath}`);
 
-        const jsonContent = await FileReader.readFileAsync(
-          context.inputPath.fsPath
-        );
-
-        if (jsonContent) {
-          context.jsonContent = jsonContent;
-        }
-      }
+    const jsonContent = await FileReader.readFileAsync(
+      context.inputPath.fsPath
     );
+
+    if (jsonContent) {
+      context.jsonContent = jsonContent;
+    }
   }
 }

@@ -15,7 +15,7 @@ export default class FileReader {
       return await fs.promises.readFile(filePath, 'utf8');
     } catch (error) {
       Sentry.captureException(error);
-      return Promise.reject(error);
+      return Promise.reject(error as Error);
     }
   }
 }

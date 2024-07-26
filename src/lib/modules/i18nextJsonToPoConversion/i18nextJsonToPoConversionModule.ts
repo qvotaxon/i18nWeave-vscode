@@ -6,6 +6,7 @@ import FileWriter from '../../services/fileIo/fileWriter';
 import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
 import { BaseActionModule } from '../baseActionModule';
 import I18nextJsonToPoConversionModuleContext from './i18nextJsonToPoConversionModuleContext';
+import {TraceMethod} from '../../decorators/methodDecorators';
 
 /**
  * Module for converting JSON to PO using i18next library.
@@ -18,6 +19,7 @@ export default class I18nextJsonToPoConversionModule extends BaseActionModule {
    * @param context - The context for the conversion.
    * @returns A Promise that resolves when the conversion is complete.
    */
+  @TraceMethod
   protected async doExecuteAsync(
     context: I18nextJsonToPoConversionModuleContext
   ): Promise<void> {
@@ -27,31 +29,23 @@ export default class I18nextJsonToPoConversionModule extends BaseActionModule {
         'i18nextJsonToPoConversionModule'
       ).enabled
     ) {
-      await Sentry.startSpan(
-        {
-          op: 'json.convertJsonToPo',
-          name: 'JSON to PO Conversion Module',
-        },
-        async () => {
-          console.log(
-            `Converting json to po using : ${context.inputPath.fsPath}`
-          );
-          if (context.jsonContent) {
-            try {
-              const res = i18next2po(context.locale, context.jsonContent, {
-                compatibilityJSON: 'v3',
-              });
-              await FileWriter.writeToFileAsync(context.outputPath, res);
-            } catch (error) {
-              if (error instanceof SyntaxError) {
-                Sentry.captureException(error);
-              } else {
-                Sentry.captureException(error, { extra: { context } });
-              }
-            }
+      console.log(
+        `Converting json to po using : ${context.inputPath.fsPath}`
+      );
+      if (context.jsonContent) {
+        try {
+          const res = i18next2po(context.locale, context.jsonContent, {
+            compatibilityJSON: 'v3',
+          });
+          await FileWriter.writeToFileAsync(context.outputPath, res);
+        } catch (error) {
+          if (error instanceof SyntaxError) {
+            Sentry.captureException(error);
+          } else {
+            Sentry.captureException(error, { extra: { context } });
           }
         }
-      );
+      }
     }
   }
 }

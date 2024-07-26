@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/node';
 import sort from 'gulp-sort';
 import I18nextScanner from 'i18next-scanner';
 import vfs from 'vinyl-fs';
@@ -7,6 +6,7 @@ import I18nextScannerModuleConfiguration from '../../entities/configuration/modu
 import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
 import { I18nextScannerOptions } from '../../types/i18nextScannerOptions';
 import { getProjectRootFolder } from '../../utilities/filePathUtilities';
+import {TraceMethod} from '../../decorators/methodDecorators';
 
 /**
  * Service for scanning code using i18next-scanner.
@@ -30,93 +30,80 @@ export default class I18nextScannerService {
   /**
    * Scan code for translation keys in the code file for which the path is provided.
    */
+  @TraceMethod
   public scanCode(): void {
-    Sentry.startSpan(
-      {
-        op: 'typeScript.scanCodeFori18next',
-        name: 'TypeScript i18next Scanner Module',
+    const configManager = ConfigurationStoreManager.getInstance();
+    const config =
+      configManager.getConfig<I18nextScannerModuleConfiguration>(
+        'i18nextScannerModule'
+      );
+    let projectRoot = getProjectRootFolder();
+
+    if (!projectRoot) {
+      throw new Error('No project root found');
+    }
+
+    const options: I18nextScannerOptions = {
+      compatibilityJSON: 'v3',
+      debug: false,
+      removeUnusedKeys: true,
+      sort: true,
+      func: {
+        list: config.translationFunctionNames,
+        extensions: config.fileExtensions.map(
+          fileExtension => `.${fileExtension}`
+        ),
       },
-      span => {
-        try {
-          const configManager = ConfigurationStoreManager.getInstance();
-          const config =
-            configManager.getConfig<I18nextScannerModuleConfiguration>(
-              'i18nextScannerModule'
-            );
-          let projectRoot = getProjectRootFolder();
+      lngs: config.languages,
+      ns: config.namespaces,
+      defaultLng: config.defaultLanguage,
+      defaultNs: config.defaultNamespace,
+      defaultValue: '',
+      resource: {
+        loadPath: `${projectRoot}/${config.translationFilesLocation}/{{lng}}/{{ns}}.json`,
+        savePath: `${projectRoot}/${config.translationFilesLocation}/{{lng}}/{{ns}}.json`,
+        jsonIndent: 4,
+        lineEnding: 'CRLF',
+      },
+      nsSeparator: ':',
+      keySeparator: '.',
+      pluralSeparator: '_',
+      contextSeparator: ':',
+      contextDefaultValues: [],
+      interpolation: {
+        prefix: '{{',
+        suffix: '}}',
+      },
+      metadata: {},
+      allowDynamicKeys: true,
+      trans: {
+        component: config.translationComponentName,
+        i18nKey: config.translationComponentTranslationKey,
+        defaultsKey: 'defaults',
+        extensions: config.fileExtensions,
+        fallbackKey: false,
+        supportBasicHtmlNodes: true,
+        keepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p'],
+        acorn: {
+          ecmaVersion: 2020,
+          sourceType: 'module',
+        },
+      },
+    };
 
-          if (!projectRoot) {
-            throw new Error('No project root found');
-          }
+    const scanSources = [
+      ...config.codeFileLocations.map(
+        location =>
+          `${location.replace(/^\//, '')}/**/*.{${config.fileExtensions}}`
+      ),
+      ...config.codeFileLocations.map(
+        location =>
+          `!${location.replace(/^\//, '')}/**/*.spec.{${config.fileExtensions}}`
+      ),
+      '!node_modules/**',
+    ];
 
-          const options: I18nextScannerOptions = {
-            compatibilityJSON: 'v3',
-            debug: false,
-            removeUnusedKeys: true,
-            sort: true,
-            func: {
-              list: config.translationFunctionNames,
-              extensions: config.fileExtensions.map(
-                fileExtension => `.${fileExtension}`
-              ),
-            },
-            lngs: config.languages,
-            ns: config.namespaces,
-            defaultLng: config.defaultLanguage,
-            defaultNs: config.defaultNamespace,
-            defaultValue: '',
-            resource: {
-              loadPath: `${projectRoot}/${config.translationFilesLocation}/{{lng}}/{{ns}}.json`,
-              savePath: `${projectRoot}/${config.translationFilesLocation}/{{lng}}/{{ns}}.json`,
-              jsonIndent: 4,
-              lineEnding: 'CRLF',
-            },
-            nsSeparator: ':',
-            keySeparator: '.',
-            pluralSeparator: '_',
-            contextSeparator: ':',
-            contextDefaultValues: [],
-            interpolation: {
-              prefix: '{{',
-              suffix: '}}',
-            },
-            metadata: {},
-            allowDynamicKeys: true,
-            trans: {
-              component: config.translationComponentName,
-              i18nKey: config.translationComponentTranslationKey,
-              defaultsKey: 'defaults',
-              extensions: config.fileExtensions,
-              fallbackKey: false,
-              supportBasicHtmlNodes: true,
-              keepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p'],
-              acorn: {
-                ecmaVersion: 2020,
-                sourceType: 'module',
-              },
-            },
-          };
-
-          const scanSources = [
-            ...config.codeFileLocations.map(
-              location =>
-                `${location.replace(/^\//, '')}/**/*.{${config.fileExtensions}}`
-            ),
-            ...config.codeFileLocations.map(
-              location =>
-                `!${location.replace(/^\//, '')}/**/*.spec.{${config.fileExtensions}}`
-            ),
-            '!node_modules/**',
-          ];
-
-          this.executeScanner(options, projectRoot, scanSources);
-        } catch (error) {
-          console.error(error);
-        } finally {
-          span.end();
-        }
-      }
-    );
+    this.executeScanner(options, projectRoot, scanSources);;
   }
 
   private executeScanner(
