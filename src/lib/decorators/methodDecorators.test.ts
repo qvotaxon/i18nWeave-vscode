@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/node';
-import { describe, it, beforeEach, afterEach } from 'mocha';
 import sinon from 'sinon';
 import * as assert from 'assert';
 import { TraceMethod } from './methodDecorators';  // Adjust import according to your file structure

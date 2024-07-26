@@ -1,6 +1,3 @@
-import * as Sentry from '@sentry/node';
-
-import { TraceMethod } from '../../decorators/methodDecorators';
 import FileReader from '../../services/fileIo/fileReader';
 import { BaseActionModule } from '../baseActionModule';
 import { ReadPoFileModuleContext } from './readPoFileModuleContext';

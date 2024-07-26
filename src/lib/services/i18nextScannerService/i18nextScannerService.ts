@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/node';
 import sort from 'gulp-sort';
 import I18nextScanner from 'i18next-scanner';
 import vfs from 'vinyl-fs';

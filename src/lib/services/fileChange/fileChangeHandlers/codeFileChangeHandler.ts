@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/node';
 import fs from 'fs';
 import vscode from 'vscode';
 import { Uri } from 'vscode';

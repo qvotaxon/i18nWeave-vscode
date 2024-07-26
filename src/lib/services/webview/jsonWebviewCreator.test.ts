@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/node';
 import fs from 'fs';
 import sinon from 'sinon';
 import vscode from 'vscode';
