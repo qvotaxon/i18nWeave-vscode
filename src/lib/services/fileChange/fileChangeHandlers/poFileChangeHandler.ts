@@ -13,6 +13,7 @@ import FileLocationStore from '../../../stores/fileLocation/fileLocationStore';
 import FileLockStoreStore from '../../../stores/fileLock/fileLockStore';
 import { extractFilePathParts } from '../../../utilities/filePathUtilities';
 import FileWatcherCreator from '../fileWatcherCreator';
+import {TraceMethod} from '../../../decorators/methodDecorators';
 
 export default class PoFileChangeHandler extends FileChangeHandler {
   private static fileWatcherCreator: FileWatcherCreator;
@@ -72,51 +73,44 @@ export default class PoFileChangeHandler extends FileChangeHandler {
    * @param changeFileLocation - The location of the changed file.
    * @returns A promise that resolves when the file change is handled.
    */
+  @TraceMethod
   async handleFileChangeAsync(
     changeFileLocation?: Uri | undefined
   ): Promise<void> {
-    await Sentry.startSpan(
-      {
-        op: 'po.handleFileChange',
-        name: 'Po File Change Handler',
-      },
-      async () => {
-        if (
-          !changeFileLocation ||
-          FileLockStoreStore.getInstance().hasFileLock(changeFileLocation)
-        ) {
-          return Promise.resolve();
-        }
+    if (
+      !changeFileLocation ||
+      FileLockStoreStore.getInstance().hasFileLock(changeFileLocation)
+    ) {
+      return Promise.resolve();
+    }
 
-        const extractedFileParts = extractFilePathParts(
-          changeFileLocation.fsPath
-        );
-
-        const context: ModuleContext = {
-          inputPath: changeFileLocation,
-          locale: extractedFileParts.locale,
-          outputPath: extractedFileParts.outputPath,
-        };
-
-        FileLockStoreStore.getInstance().add(extractedFileParts.outputPath);
-
-        await PoFileChangeHandler.moduleChainManager.executeChainAsync(
-          ChainType.Po,
-          context
-        );
-
-        const poFileChangeHandler =
-          PoFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
-            extractedFileParts.outputPath.fsPath,
-            () => {
-              FileLockStoreStore.getInstance().delete(
-                extractedFileParts.outputPath
-              );
-
-              poFileChangeHandler.dispose();
-            }
-          );
-      }
+    const extractedFileParts = extractFilePathParts(
+      changeFileLocation.fsPath
     );
+
+    const context: ModuleContext = {
+      inputPath: changeFileLocation,
+      locale: extractedFileParts.locale,
+      outputPath: extractedFileParts.outputPath,
+    };
+
+    FileLockStoreStore.getInstance().add(extractedFileParts.outputPath);
+
+    await PoFileChangeHandler.moduleChainManager.executeChainAsync(
+      ChainType.Po,
+      context
+    );
+
+    const poFileChangeHandler =
+      PoFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
+        extractedFileParts.outputPath.fsPath,
+        () => {
+          FileLockStoreStore.getInstance().delete(
+            extractedFileParts.outputPath
+          );
+
+          poFileChangeHandler.dispose();
+        }
+      );
   }
 }
