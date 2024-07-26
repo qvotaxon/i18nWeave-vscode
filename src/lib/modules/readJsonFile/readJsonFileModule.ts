@@ -1,9 +1,9 @@
 import * as Sentry from '@sentry/node';
 
+import { TraceMethod } from '../../decorators/methodDecorators';
 import FileReader from '../../services/fileIo/fileReader';
 import { BaseActionModule } from '../baseActionModule';
 import { ReadJsonFileModuleContext } from './readJsonFileModuleContext';
-import {TraceMethod} from '../../decorators/methodDecorators';
 
 /**
  * Module for reading JSON files.
@@ -15,7 +15,6 @@ export default class ReadJsonFileModule extends BaseActionModule {
    * @param context The context object for the readJsonFile module.
    * @returns A Promise that resolves when the execution is complete.
    */
-  @TraceMethod
   protected async doExecuteAsync(
     context: ReadJsonFileModuleContext
   ): Promise<void> {

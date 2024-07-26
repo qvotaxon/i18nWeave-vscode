@@ -1,7 +1,6 @@
 import * as assert from 'assert';
 import * as mock from 'mock-fs';
-import vscode from 'vscode';
-import { Uri } from 'vscode';
+import vscode, { Uri } from 'vscode';
 
 import FileReader from '../../services/fileIo/fileReader';
 import ReadPoFileModule from './readPoFileModule';
