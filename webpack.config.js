@@ -18,7 +18,15 @@ module.exports = (env, argv) => {
         target: 'node',
         mode: isProduction ? 'production' : 'development',
         resolve: {
-            extensions: ['.ts', '.js']
+            extensions: ['.ts', '.js'],
+            alias: {
+                '@i18n-weave/core': path.resolve(__dirname, 'src/core'),
+                '@i18n-weave/commands': path.resolve(__dirname, 'src/commands'),
+                '@i18n-weave/feature': path.resolve(__dirname, 'src/feature'),
+                '@i18n-weave/util': path.resolve(__dirname, 'src/util'),
+                '@i18n-weave/data-access': path.resolve(__dirname, 'src/data-access'),
+                '@i18n-weave/ui': path.resolve(__dirname, 'src/ui'),
+            }
         },
         module: {
             rules: [

@@ -1,30 +1,83 @@
 {
-    "root": true,
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": 6,
-        "sourceType": "module"
-    },
-    "plugins": [
-        "@typescript-eslint"
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint", "import", "no-relative-import-paths"],
+  "rules": {
+    "@typescript-eslint/naming-convention": [
+      "warn",
+      {
+        "selector": "import",
+        "format": ["camelCase", "PascalCase"]
+      }
     ],
-    "rules": {
-        "@typescript-eslint/naming-convention": [
-            "warn",
-            {
-                "selector": "import",
-                "format": [ "camelCase", "PascalCase" ]
-            }
-        ],
-        "@typescript-eslint/semi": "warn",
-        "curly": "warn",
-        "eqeqeq": "warn",
-        "no-throw-literal": "warn",
-        "semi": "off"
-    },
-    "ignorePatterns": [
-        "out",
-        "dist",
-        "**/*.d.ts"
+    "@typescript-eslint/semi": "warn",
+    "curly": "warn",
+    "eqeqeq": "warn",
+    "no-throw-literal": "warn",
+    "semi": "off",
+    // "import/no-extraneous-dependencies": [
+    //   "error",
+    //   {
+    //     "devDependencies": false,
+    //     "optionalDependencies": false,
+    //     "peerDependencies": false
+    //   }
+    // ],
+    "import/no-cycle": ["error", { "maxDepth": 1 }],
+    // "import/order": [
+    //   "error",
+    //   {
+    //     "groups": [
+    //       ["builtin", "external"],
+    //       "internal",
+    //       ["parent", "sibling", "index"]
+    //     ],
+    //     "newlines-between": "always",
+    //     "alphabetize": { "order": "asc", "caseInsensitive": true }
+    //   }
+    // ]
+    "no-relative-import-paths/no-relative-import-paths": [
+      "warn",
+      { "allowSameFolder": true, "rootDir": "src", "prefix": "" }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["@i18n-weave/file-io/**"],
+            "message": "Core should not import from FileIO directly."
+          },
+          {
+            "group": ["@i18n-weave/store/**"],
+            "message": "Core should not import from Store directly."
+          },
+          {
+            "group": ["@i18n-weave/feature/**"],
+            "message": "Core should not import from Feature directly."
+          },
+          {
+            "group": ["@i18n-weave/http/**"],
+            "message": "Core should not import from Http directly."
+          },
+          {
+            "group": ["@i18n-weave/core/**"],
+            "message": "Core should not import other Core directly."
+          }
+        ]
+      }
     ]
+  },
+  "ignorePatterns": ["out", "dist", "**/*.d.ts"],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".ts"]
+      }
+    }
+  }
 }

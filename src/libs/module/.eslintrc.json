@@ -1,0 +1,32 @@
+{
+  "extends": ["../../../.eslintrc.json"],
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["@i18n-weave/core/**"],
+            "message": "Modules should not import from Core directly."
+          },
+          {
+            "group": ["@i18n-weave/http/**"],
+            "message": "Modules should not import from Http directly."
+          },
+          {
+            "group": ["@i18n-weave/file-io/**"],
+            "message": "Modules should not import from FileIO directly."
+          },
+          {
+            "group": ["@i18n-weave/store/**"],
+            "message": "Modules should not import from Store directly."
+          },
+          {
+            "group": ["@i18n-weave/module/**"],
+            "message": "Modules should not import other Modules directly."
+          }
+        ]
+      }
+    ]
+  }
+}

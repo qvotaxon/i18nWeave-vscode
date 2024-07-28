@@ -1,5 +1,19 @@
 {
   "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@i18n-weave/core/*": ["src/core/*"],
+      "@i18n-weave/feature/*": ["src/libs/feature/*/src/"],
+      "@i18n-weave/file-io/*": ["src/libs/file-io/*/src/"],
+      "@i18n-weave/http/*": ["src/libs/http/*/src/"],
+      "@i18n-weave/module/*": ["src/libs/module/*/src/"],
+      "@i18n-weave/store/*": ["src/libs/store/*/src/"],
+      "@i18n-weave/util/*": ["src/libs/util/*/src/"]
+      // "@i18n-weave/ui/*": ["src/libs/ui/*/src/"],
+      // "@i18n-weave/util/*": ["src/util/*"],
+      // "@i18n-weave/data-access/*": ["src/data-access/*"],
+    },
+
     "module": "CommonJS",
     "target": "ES2022",
     "outDir": "out",
@@ -24,4 +38,6 @@
     // This improves issue grouping in Sentry.
     // "sourceRoot": "/"
   }
+  // "include": ["src/**/*"], // Include the appropriate directories for TypeScript to process
+  // "exclude": ["node_modules", "dist"] // Exclude directories as needed
 }
