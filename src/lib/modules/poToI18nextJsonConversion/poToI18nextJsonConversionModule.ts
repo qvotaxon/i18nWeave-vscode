@@ -3,7 +3,7 @@ import stringify from 'json-stable-stringify';
 
 import I18nextJsonToPoConversionModuleConfiguration from '../../entities/configuration/modules/I18nextJsonToPoConversionModule/i18nextJsonToPoConversionModuleConfiguration';
 import FileWriter from '../../services/fileIo/fileWriter';
-import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
+import ConfigurationStoreManager from '../../../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
 import { BaseActionModule } from '../baseActionModule';
 import PoToI18nextJsonConversionModuleContext from './poToI18nextJsonConversionModuleContext';
 import {TraceMethod} from '../../decorators/methodDecorators';

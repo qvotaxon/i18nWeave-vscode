@@ -10,7 +10,7 @@ import PoToI18nextJsonConversionModule from '../../../modules/poToI18nextJsonCon
 import ReadPoFileModule from '../../../modules/readPoFile/readPoFileModule';
 import FileLocationStore from '../../../stores/fileLocation/fileLocationStore';
 import FileLockStoreStore from '../../../stores/fileLock/fileLockStore';
-import { extractFilePathParts } from '../../../utilities/filePathUtilities';
+import { extractFilePathParts } from '../../../../libs/util/util-file-path-utilities/src/lib/file-path-utilities';
 import FileWatcherCreator from '../fileWatcherCreator';
 import {TraceMethod} from '../../../decorators/methodDecorators';
 

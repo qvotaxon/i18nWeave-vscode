@@ -4,8 +4,8 @@ import sinon from 'sinon';
 import vscode from 'vscode';
 import { Uri, workspace } from 'vscode';
 
+import ConfigurationStoreManager from '../../../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
 import FileReader from '../../services/fileIo/fileReader';
-import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
 import I18nextJsonToPoConversionModule from './i18nextJsonToPoConversionModule';
 
 suite('I18nextJsonToPoConversionModule Tests', () => {

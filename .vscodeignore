@@ -19,5 +19,8 @@ codecov.yml
 package.json
 release-please-config.json
 artwork/**
+docs/**
 node_modules/**
 package.json
+.prettierrc
+.eslintrc.json

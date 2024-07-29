@@ -1,6 +1,6 @@
 import vscode from 'vscode';
 
-import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
+import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18next-scanner-module-configuration';
 import { Framework } from '../../enums/framework';
 import { ProjectType } from '../../enums/projectType';
 import {

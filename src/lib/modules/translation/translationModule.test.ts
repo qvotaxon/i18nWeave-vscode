@@ -1,8 +1,8 @@
 import sinon from 'sinon';
 import vscode from 'vscode';
 
+import ConfigurationStoreManager from '../../../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
 import TranslationService from '../../services/translate/translationService';
-import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
 import TranslationModule from './translationModule';
 import { TranslationModuleContext } from './translationModuleContext';
 

@@ -5,9 +5,9 @@ import * as deepl from 'deepl-node';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
+import ConfigurationStoreManager from '../../../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
 import TranslationModuleConfiguration from '../../entities/configuration/modules/translationModule/translationModuleConfiguration';
 import ConfigurationStore from '../../stores/configuration/configurationStore';
-import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
 import { CacheEntry } from '../caching/cacheEntry';
 import DeeplService from './deeplService';
 

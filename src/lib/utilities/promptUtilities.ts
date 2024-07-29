@@ -1,8 +1,8 @@
+import { getRelativePath } from '@i18n-weave/util/util-file-path-utilities';
 import vscode, { MessageItem } from 'vscode';
 
 import { Framework } from '../enums/framework';
 import { ProjectType } from '../enums/projectType';
-import { getRelativePath } from './filePathUtilities';
 import { getLocalizedTexts } from './localizationUtilities';
 
 export async function selectProjectTypeAsync(): Promise<string | undefined> {

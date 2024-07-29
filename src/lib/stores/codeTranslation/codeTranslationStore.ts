@@ -1,10 +1,10 @@
 import fs from 'fs';
 import { ExtensionContext, ProgressLocation, window } from 'vscode';
 
-import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
+import ConfigurationStoreManager from '../../../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
+import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18next-scanner-module-configuration';
 import FileReader from '../../services/fileIo/fileReader';
 import { arraysEqual } from '../../utilities/arrayUtilities';
-import ConfigurationStoreManager from '../configuration/configurationStoreManager';
 import FileLocationStore from '../fileLocation/fileLocationStore';
 
 type CodeTranslation = {

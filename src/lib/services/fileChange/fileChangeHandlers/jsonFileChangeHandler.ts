@@ -10,7 +10,7 @@ import ModuleChainManager from '../../../modules/moduleChainManager';
 import ReadJsonFileModule from '../../../modules/readJsonFile/readJsonFileModule';
 import TranslationModule from '../../../modules/translation/translationModule';
 import FileLockStoreStore from '../../../stores/fileLock/fileLockStore';
-import { extractFilePathParts } from '../../../utilities/filePathUtilities';
+import { extractFilePathParts } from '../../../../libs/util/util-file-path-utilities/src/lib/file-path-utilities';
 import FileWatcherCreator from '../fileWatcherCreator';
 import {TraceMethod} from '../../../decorators/methodDecorators';
 

@@ -12,10 +12,6 @@
           {
             "group": ["@i18n-weave/module/**"],
             "message": "Features should not import from Module directly."
-          },
-          {
-            "group": ["@i18n-weave/feature/**"],
-            "message": "Features should not import other Features directly."
           }
         ]
       }

@@ -1,8 +1,8 @@
 import vscode from 'vscode';
 
-import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
-import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
-import { sanitizeLocations } from '../../utilities/filePathUtilities';
+import ConfigurationStoreManager from '../../../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
+import { sanitizeLocations } from '../../../libs/util/util-file-path-utilities/src/lib/file-path-utilities';
+import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18next-scanner-module-configuration';
 import {
   promptForFolderAsync,
   promptForFoldersAsync,

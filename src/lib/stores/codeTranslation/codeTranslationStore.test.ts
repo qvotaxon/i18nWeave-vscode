@@ -3,8 +3,8 @@ import fs from 'fs';
 import sinon from 'sinon';
 import { ExtensionContext, window } from 'vscode';
 
+import ConfigurationStoreManager from '../../../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
 import FileReader from '../../services/fileIo/fileReader';
-import ConfigurationStoreManager from '../configuration/configurationStoreManager';
 import FileLocationStore from '../fileLocation/fileLocationStore';
 import CodeTranslationStore from './codeTranslationStore';
 

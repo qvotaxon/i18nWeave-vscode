@@ -2,7 +2,7 @@ import assert from 'assert';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
+import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18next-scanner-module-configuration';
 import * as promptUtilities from '../../utilities/promptUtilities';
 import * as configurationHandlers from './configurationHandlers';
 

@@ -2,7 +2,7 @@ import BaseConfiguration from './baseConfiguration';
 import DebuggingConfiguration from './debugging/debuggingConfiguration';
 import GeneralConfiguration from './general/generalConfiguration';
 import I18nextJsonToPoConversionModuleConfiguration from './modules/I18nextJsonToPoConversionModule/i18nextJsonToPoConversionModuleConfiguration';
-import I18nextScannerModuleConfiguration from './modules/i18nextScanner/i18nextScannerModuleConfiguration';
+import I18nextScannerModuleConfiguration from './modules/i18nextScanner/i18next-scanner-module-configuration';
 import TranslationModuleConfiguration from './modules/translationModule/translationModuleConfiguration';
 
 /**

@@ -1,0 +1,23 @@
+@startuml Library Dependency Constraints
+
+component core
+component module
+component feature
+component http
+component util
+component store
+component fileIo as "file-io"
+
+core -d-> module
+core -> util
+feature -l-> http
+feature -d-> fileIo
+feature -r-> store
+feature -> util
+feature -> feature
+module -r-> util
+module -d-> feature
+store -u-> util
+util -> util
+
+@enduml

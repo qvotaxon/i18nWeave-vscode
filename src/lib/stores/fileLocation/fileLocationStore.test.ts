@@ -2,8 +2,8 @@ import assert from 'assert';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
+import * as filePathUtilities from '../../../libs/util/util-file-path-utilities/src/lib/file-path-utilities';
 import { FileSearchLocation } from '../../types/fileSearchLocation';
-import * as filePathUtilities from '../../utilities/filePathUtilities';
 import FileLocationStore from './fileLocationStore';
 
 suite('FileLocationStore Tests', function () {

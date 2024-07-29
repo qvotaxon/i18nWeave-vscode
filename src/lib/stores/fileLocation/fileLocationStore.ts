@@ -1,7 +1,7 @@
 import vscode from 'vscode';
 
+import { getFileExtension } from '../../../libs/util/util-file-path-utilities/src/lib/file-path-utilities';
 import { FileSearchLocation } from '../../types/fileSearchLocation';
-import { getFileExtension } from '../../utilities/filePathUtilities';
 
 export default class FileLocationStore {
   private static instance: FileLocationStore;

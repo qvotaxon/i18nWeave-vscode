@@ -2,8 +2,8 @@ import * as Sentry from '@sentry/node';
 import * as deepl from 'deepl-node';
 import vscode from 'vscode';
 
+import ConfigurationStoreManager from '../../../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
 import TranslationModuleConfiguration from '../../entities/configuration/modules/translationModule/translationModuleConfiguration';
-import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
 import { sharedCacheKeys } from '../caching/cacheKeys';
 import { CachingService } from '../caching/cachingService';
 

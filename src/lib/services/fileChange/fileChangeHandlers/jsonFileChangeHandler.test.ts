@@ -3,12 +3,12 @@ import sinon from 'sinon';
 import vscode from 'vscode';
 import { Uri } from 'vscode';
 
+import * as filePathUtilities from '../../../../libs/util/util-file-path-utilities/src/lib/file-path-utilities';
 import { ChainType } from '../../../enums/chainType';
 import ModuleChainManager from '../../../modules/moduleChainManager';
 import ReadJsonFileModule from '../../../modules/readJsonFile/readJsonFileModule';
 import TranslationModule from '../../../modules/translation/translationModule';
 import FileLockStoreStore from '../../../stores/fileLock/fileLockStore';
-import * as filePathUtilities from '../../../utilities/filePathUtilities';
 import FileWatcherCreator from '../fileWatcherCreator';
 import JsonFileChangeHandler from './jsonFileChangeHandler';
 
