@@ -1,5 +1,6 @@
-import ConfigurationStoreManager from '../../../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
-import TranslationModuleConfiguration from '../../entities/configuration/modules/translationModule/translationModuleConfiguration';
+import { TranslationModuleConfiguration } from '@i18n-weave/util/util-configuration';
+import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
+
 import TranslationService from '../../services/translate/translationService';
 import { BaseActionModule } from '../baseActionModule';
 import { TranslationModuleContext } from './translationModuleContext';

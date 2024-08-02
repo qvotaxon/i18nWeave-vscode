@@ -1,15 +1,15 @@
+import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
+import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
+import * as filePathUtilities from '@i18n-weave/util/util-file-path-utilities';
 import * as assert from 'assert';
 import sinon from 'sinon';
 import vscode from 'vscode';
 import { Uri } from 'vscode';
 
-import * as filePathUtilities from '../../../../libs/util/util-file-path-utilities/src/lib/file-path-utilities';
 import { ChainType } from '../../../enums/chainType';
 import ModuleChainManager from '../../../modules/moduleChainManager';
 import ReadJsonFileModule from '../../../modules/readJsonFile/readJsonFileModule';
 import TranslationModule from '../../../modules/translation/translationModule';
-import FileLockStoreStore from '../../../stores/fileLock/fileLockStore';
-import FileWatcherCreator from '../fileWatcherCreator';
 import JsonFileChangeHandler from './jsonFileChangeHandler';
 
 suite('JsonFileChangeHandler', () => {
@@ -104,10 +104,7 @@ suite('JsonFileChangeHandler', () => {
       .stub(JsonFileChangeHandler.moduleChainManager, 'executeChainAsync')
       .returns(Promise.resolve());
 
-    const fileLockStoreAddStub = sinon.stub(
-      FileLockStoreStore.getInstance(),
-      'add'
-    );
+    const fileLockStoreAddStub = sinon.stub(FileLockStore.getInstance(), 'add');
 
     await JsonFileChangeHandler.create(extensionContext).handleFileChangeAsync(
       changeFileLocation

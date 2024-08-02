@@ -3,15 +3,41 @@
     "baseUrl": "./",
     "paths": {
       "@i18n-weave/core/*": ["src/core/*"],
-      "@i18n-weave/feature/*": ["src/libs/feature/feature-*/src/"],
+      // "@i18n-weave/feature/*": ["src/libs/feature/feature-*/src/"],
       "@i18n-weave/file-io/*": ["src/libs/file-io/file-io-*/src/"],
       "@i18n-weave/http/*": ["src/libs/http/http-*/src/"],
       "@i18n-weave/module/*": ["src/libs/module/module-*/src/"],
+
+      "@i18n-weave/feature/feature-file-watcher-creator": [
+        "src/libs/feature/feature-file-watcher-creator/src"
+      ],
+      "@i18n-weave/feature/feature-i18next-scanner-service": [
+        "src/libs/feature/feature-i18next-scanner-service/src"
+      ],
+      "@i18n-weave/util/util-configuration": [
+        "src/libs/util/util-configuration/src"
+      ],
+      "@i18n-weave/util/util-environment-utilities": [
+        "src/libs/util/util-environment-utilities/src"
+      ],
+      "@i18n-weave/util/util-prompt-utilities": [
+        "src/libs/util/util-prompt-utilities/src"
+      ],
+      "@i18n-weave/util/util-localization-utilities": [
+        "src/libs/util/util-localization-utilities/src"
+      ],
+      "@i18n-weave/util/util-array-utilities": [
+        "src/libs/util/util-array-utilities/src"
+      ],
+      "@i18n-weave/util/util-decorators": ["src/libs/util/util-decorators/src"],
       "@i18n-weave/store/store-configuration-store": [
-        "src/libs/store/store-configuration-store/src/"
+        "src/libs/util/util-configuration/src/lib/configuration-store/src"
       ],
       "@i18n-weave/store/store-configuration-store-manager": [
-        "src/libs/store/store-configuration-store-manager/src/"
+        "src/libs/util/util-configuration/src/lib/configuration-store-manager/src"
+      ],
+      "@i18n-weave/store/store-file-lock-store": [
+        "src/libs/store/store-file-lock-store/src/"
       ],
       "@i18n-weave/util/util-file-path-utilities": [
         "src/libs/util/util-file-path-utilities/src/"

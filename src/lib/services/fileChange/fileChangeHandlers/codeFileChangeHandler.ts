@@ -9,7 +9,7 @@ import ModuleContext from '../../../interfaces/moduleContext';
 import I18nextScannerModule from '../../../modules/i18nextScanner/i18nextScannerModule';
 import ModuleChainManager from '../../../modules/moduleChainManager';
 import CodeTranslationStore from '../../../stores/codeTranslation/codeTranslationStore';
-import {TraceMethod} from '../../../decorators/methodDecorators';
+import { TraceMethod } from '@i18n-weave/util/util-decorators';
 
 export default class CodeFileChangeHandler extends FileChangeHandler {
   private static i18nextScannerModule: I18nextScannerModule;

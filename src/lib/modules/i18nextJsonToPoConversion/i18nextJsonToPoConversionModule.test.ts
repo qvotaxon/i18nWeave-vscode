@@ -1,10 +1,10 @@
+import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import * as assert from 'assert';
 import { i18next2po } from 'gettext-converter';
 import sinon from 'sinon';
 import vscode from 'vscode';
 import { Uri, workspace } from 'vscode';
 
-import ConfigurationStoreManager from '../../../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
 import FileReader from '../../services/fileIo/fileReader';
 import I18nextJsonToPoConversionModule from './i18nextJsonToPoConversionModule';
 

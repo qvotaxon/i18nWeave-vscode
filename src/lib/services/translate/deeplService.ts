@@ -1,9 +1,9 @@
+import { TranslationModuleConfiguration } from '@i18n-weave/util/util-configuration';
 import * as Sentry from '@sentry/node';
 import * as deepl from 'deepl-node';
+import { ConfigurationStoreManager } from 'src/libs/util/util-configuration/src/lib/store-configuration-store-manager/src';
 import vscode from 'vscode';
 
-import ConfigurationStoreManager from '../../../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
-import TranslationModuleConfiguration from '../../entities/configuration/modules/translationModule/translationModuleConfiguration';
 import { sharedCacheKeys } from '../caching/cacheKeys';
 import { CachingService } from '../caching/cachingService';
 

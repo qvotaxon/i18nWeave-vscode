@@ -1,12 +1,12 @@
 import { po2i18next } from 'gettext-converter';
 import stringify from 'json-stable-stringify';
 
-import I18nextJsonToPoConversionModuleConfiguration from '../../entities/configuration/modules/I18nextJsonToPoConversionModule/i18nextJsonToPoConversionModuleConfiguration';
+import { I18nextJsonToPoConversionModuleConfiguration } from '@i18n-weave/util/util-configuration';
 import FileWriter from '../../services/fileIo/fileWriter';
-import ConfigurationStoreManager from '../../../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
+import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import { BaseActionModule } from '../baseActionModule';
 import PoToI18nextJsonConversionModuleContext from './poToI18nextJsonConversionModuleContext';
-import {TraceMethod} from '../../decorators/methodDecorators';
+import { TraceMethod } from '@i18n-weave/util/util-decorators';
 
 /**
  * Module for converting PO to JSON using i18next library.

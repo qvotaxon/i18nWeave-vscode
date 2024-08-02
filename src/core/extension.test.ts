@@ -1,12 +1,14 @@
+import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
+import {
+  I18nextJsonToPoConversionModuleConfiguration,
+  I18nextScannerModuleConfiguration,
+} from '@i18n-weave/util/util-configuration';
+import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import sinon from 'sinon';
 import { ExtensionContext } from 'vscode';
 
-import I18nextJsonToPoConversionModuleConfiguration from '../lib/entities/configuration/modules/I18nextJsonToPoConversionModule/i18nextJsonToPoConversionModuleConfiguration';
-import I18nextScannerModuleConfiguration from '../lib/entities/configuration/modules/i18nextScanner/i18next-scanner-module-configuration';
 import { FileType } from '../lib/enums/fileType';
-import FileWatcherCreator from '../lib/services/fileChange/fileWatcherCreator';
 import CodeTranslationStore from '../lib/stores/codeTranslation/codeTranslationStore';
-import ConfigurationStoreManager from '../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
 import { activate, deactivate } from './extension';
 
 suite('Extension Activation', () => {

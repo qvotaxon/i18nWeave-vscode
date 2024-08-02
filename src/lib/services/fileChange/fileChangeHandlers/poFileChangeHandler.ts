@@ -9,10 +9,10 @@ import ModuleChainManager from '../../../modules/moduleChainManager';
 import PoToI18nextJsonConversionModule from '../../../modules/poToI18nextJsonConversion/poToI18nextJsonConversionModule';
 import ReadPoFileModule from '../../../modules/readPoFile/readPoFileModule';
 import FileLocationStore from '../../../stores/fileLocation/fileLocationStore';
-import FileLockStoreStore from '../../../stores/fileLock/fileLockStore';
-import { extractFilePathParts } from '../../../../libs/util/util-file-path-utilities/src/lib/file-path-utilities';
-import FileWatcherCreator from '../fileWatcherCreator';
-import {TraceMethod} from '../../../decorators/methodDecorators';
+import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
+import { extractFilePathParts } from '@i18n-weave/util/util-file-path-utilities';
+import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
+import { TraceMethod } from '@i18n-weave/util/util-decorators';
 
 export default class PoFileChangeHandler extends FileChangeHandler {
   private static fileWatcherCreator: FileWatcherCreator;
@@ -78,7 +78,7 @@ export default class PoFileChangeHandler extends FileChangeHandler {
   ): Promise<void> {
     if (
       !changeFileLocation ||
-      FileLockStoreStore.getInstance().hasFileLock(changeFileLocation)
+      FileLockStore.getInstance().hasFileLock(changeFileLocation)
     ) {
       return Promise.resolve();
     }
@@ -93,7 +93,7 @@ export default class PoFileChangeHandler extends FileChangeHandler {
       outputPath: extractedFileParts.outputPath,
     };
 
-    FileLockStoreStore.getInstance().add(extractedFileParts.outputPath);
+    FileLockStore.getInstance().add(extractedFileParts.outputPath);
 
     await PoFileChangeHandler.moduleChainManager.executeChainAsync(
       ChainType.Po,
@@ -104,7 +104,7 @@ export default class PoFileChangeHandler extends FileChangeHandler {
       PoFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
         extractedFileParts.outputPath.fsPath,
         () => {
-          FileLockStoreStore.getInstance().delete(
+          FileLockStore.getInstance().delete(
             extractedFileParts.outputPath
           );
 

@@ -1,10 +1,10 @@
+import { I18nextScannerModuleConfiguration } from '@i18n-weave/util/util-configuration';
 import fs from 'fs';
+import { ConfigurationStoreManager } from 'src/libs/util/util-configuration/src/lib/store-configuration-store-manager/src';
 import { ExtensionContext, ProgressLocation, window } from 'vscode';
 
-import ConfigurationStoreManager from '../../../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
-import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18next-scanner-module-configuration';
+import { arraysEqual } from '../../../libs/util/array-utilities/src/lib/array-utilities';
 import FileReader from '../../services/fileIo/fileReader';
-import { arraysEqual } from '../../utilities/arrayUtilities';
 import FileLocationStore from '../fileLocation/fileLocationStore';
 
 type CodeTranslation = {

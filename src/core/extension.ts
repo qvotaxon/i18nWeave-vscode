@@ -1,21 +1,23 @@
+import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
+import {
+  ConfigurationStoreManager,
+  GeneralConfiguration,
+  I18nextScannerModuleConfiguration,
+} from '@i18n-weave/util/util-configuration';
+import { isProduction } from '@i18n-weave/util/util-environment-utilities';
 import * as Sentry from '@sentry/node';
 import * as dotenv from 'dotenv';
 import path from 'path';
 import vscode, { ExtensionContext } from 'vscode';
 
-import GeneralConfiguration from '../lib/entities/configuration/general/generalConfiguration';
-import I18nextScannerModuleConfiguration from '../lib/entities/configuration/modules/i18nextScanner/i18next-scanner-module-configuration';
 import { FileType } from '../lib/enums/fileType';
 import WebviewFactory from '../lib/factories/webviewFactory';
 import ConfigurationWizardService from '../lib/services/configurationWizard/configurationWizardService';
-import FileWatcherCreator from '../lib/services/fileChange/fileWatcherCreator';
 import WebviewService from '../lib/services/webview/webviewService';
 import CodeTranslationStore from '../lib/stores/codeTranslation/codeTranslationStore';
 import FileLocationStore from '../lib/stores/fileLocation/fileLocationStore';
 import WebviewStore from '../lib/stores/webview/webviewStore';
 import { FileSearchLocation } from '../lib/types/fileSearchLocation';
-import { isProduction } from '../lib/utilities/environmentUtilities';
-import ConfigurationStoreManager from '../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
 
 const envFilePath =
   process.env.DOTENV_CONFIG_PATH ??

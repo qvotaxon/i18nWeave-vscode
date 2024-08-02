@@ -1,4 +1,4 @@
-import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18next-scanner-module-configuration';
+import { I18nextScannerModuleConfiguration } from '@i18n-weave/util/util-configuration';
 
 export async function scanNextI18nextConfigFileAsync(): Promise<
   string | undefined

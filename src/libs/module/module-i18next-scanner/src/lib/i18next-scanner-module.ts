@@ -1,9 +1,9 @@
-import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
-import I18nextScannerService from '../../services/i18nextScannerService/i18nextScannerService';
-import ConfigurationStoreManager from '../../stores/configuration/configurationStoreManager';
+import { I18nextScannerModuleConfiguration } from '../../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
+import { I18nextScannerService } from '@i18n-weave/feature/feature-i18next-scanner-service';
+import { ConfigurationStoreManager } from 'src/libs/util/util-configuration/src/lib/store-configuration-store-manager/src';
 import { BaseActionModule } from '../baseActionModule';
 import I18nextScannerModuleContext from './i18next-scanner-module-context';
-import {TraceMethod} from '../../decorators/methodDecorators';
+import { TraceMethod } from '@i18n-weave/util/util-decorators';
 
 /**
  * Module for handling i18next scanner execution.

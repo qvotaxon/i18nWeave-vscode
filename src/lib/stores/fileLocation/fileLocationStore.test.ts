@@ -1,8 +1,8 @@
+import * as filePathUtilities from '@i18n-weave/util/util-file-path-utilities';
 import assert from 'assert';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import * as filePathUtilities from '../../../libs/util/util-file-path-utilities/src/lib/file-path-utilities';
 import { FileSearchLocation } from '../../types/fileSearchLocation';
 import FileLocationStore from './fileLocationStore';
 

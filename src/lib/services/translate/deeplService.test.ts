@@ -1,3 +1,8 @@
+import {
+  ConfigurationStore,
+  ConfigurationStoreManager,
+  TranslationModuleConfiguration,
+} from '@i18n-weave/util/util-configuration';
 import * as Sentry from '@sentry/node';
 import { Span } from '@sentry/node';
 import assert from 'assert';
@@ -5,9 +10,6 @@ import * as deepl from 'deepl-node';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import ConfigurationStoreManager from '../../../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
-import TranslationModuleConfiguration from '../../entities/configuration/modules/translationModule/translationModuleConfiguration';
-import ConfigurationStore from '../../stores/configuration/configurationStore';
 import { CacheEntry } from '../caching/cacheEntry';
 import DeeplService from './deeplService';
 

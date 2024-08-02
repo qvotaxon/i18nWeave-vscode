@@ -1,14 +1,14 @@
+import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
+import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
+import * as filePathUtilities from '@i18n-weave/util/util-file-path-utilities';
 import * as assert from 'assert';
 import sinon from 'sinon';
 import vscode from 'vscode';
 import { Uri } from 'vscode';
 
-import * as filePathUtilities from '../../../../libs/util/util-file-path-utilities/src/lib/file-path-utilities';
 import { ChainType } from '../../../enums/chainType';
 import ModuleChainManager from '../../../modules/moduleChainManager';
 import ReadPoFileModule from '../../../modules/readPoFile/readPoFileModule';
-import FileLockStoreStore from '../../../stores/fileLock/fileLockStore';
-import FileWatcherCreator from '../fileWatcherCreator';
 import PoFileChangeHandler from './poFileChangeHandler';
 
 suite('PoFileChangeHandler', () => {
@@ -92,10 +92,7 @@ suite('PoFileChangeHandler', () => {
       .stub(PoFileChangeHandler.moduleChainManager, 'executeChainAsync')
       .returns(Promise.resolve());
 
-    const fileLockStoreAddStub = sinon.stub(
-      FileLockStoreStore.getInstance(),
-      'add'
-    );
+    const fileLockStoreAddStub = sinon.stub(FileLockStore.getInstance(), 'add');
 
     await PoFileChangeHandler.create(extensionContext).handleFileChangeAsync(
       changeFileLocation

@@ -1,12 +1,11 @@
 import * as Sentry from '@sentry/node';
 import { i18next2po } from 'gettext-converter';
 
-import I18nextJsonToPoConversionModuleConfiguration from '../../entities/configuration/modules/I18nextJsonToPoConversionModule/i18nextJsonToPoConversionModuleConfiguration';
+import { I18nextJsonToPoConversionModuleConfiguration, ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import FileWriter from '../../services/fileIo/fileWriter';
-import ConfigurationStoreManager from '../../../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
 import { BaseActionModule } from '../baseActionModule';
 import I18nextJsonToPoConversionModuleContext from './i18nextJsonToPoConversionModuleContext';
-import {TraceMethod} from '../../decorators/methodDecorators';
+import { TraceMethod } from '@i18n-weave/util/util-decorators';
 
 /**
  * Module for converting JSON to PO using i18next library.

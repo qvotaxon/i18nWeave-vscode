@@ -1,13 +1,13 @@
-import vscode from 'vscode';
-
-import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18next-scanner-module-configuration';
-import { Framework } from '../../enums/framework';
-import { ProjectType } from '../../enums/projectType';
+import { I18nextScannerModuleConfiguration } from '@i18n-weave/util/util-configuration';
 import {
   selectFrameworkAsync,
   selectProjectTypeAsync,
   showConfigurationToUserAsync,
-} from '../../utilities/promptUtilities';
+} from '@i18n-weave/util/util-prompt-utilities';
+import vscode from 'vscode';
+
+import { Framework } from '../../enums/framework';
+import { ProjectType } from '../../enums/projectType';
 import {
   configureCustomProjectAsync,
   configureGeneralSettingsAsync,

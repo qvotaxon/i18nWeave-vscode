@@ -1,9 +1,9 @@
+import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import assert from 'assert';
 import fs from 'fs';
 import sinon from 'sinon';
 import { ExtensionContext, window } from 'vscode';
 
-import ConfigurationStoreManager from '../../../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
 import FileReader from '../../services/fileIo/fileReader';
 import FileLocationStore from '../fileLocation/fileLocationStore';
 import CodeTranslationStore from './codeTranslationStore';

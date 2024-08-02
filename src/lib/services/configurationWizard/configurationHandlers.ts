@@ -1,12 +1,13 @@
-import vscode from 'vscode';
-
-import ConfigurationStoreManager from '../../../libs/store/store-configuration-store-manager/src/lib/configuration-store-manager';
-import { sanitizeLocations } from '../../../libs/util/util-file-path-utilities/src/lib/file-path-utilities';
-import I18nextScannerModuleConfiguration from '../../entities/configuration/modules/i18nextScanner/i18next-scanner-module-configuration';
+import {
+  ConfigurationStoreManager,
+  I18nextScannerModuleConfiguration,
+} from '@i18n-weave/util/util-configuration';
+import { sanitizeLocations } from '@i18n-weave/util/util-file-path-utilities';
 import {
   promptForFolderAsync,
   promptForFoldersAsync,
-} from '../../utilities/promptUtilities';
+} from '@i18n-weave/util/util-prompt-utilities';
+import vscode from 'vscode';
 
 export async function configureCustomProjectAsync(
   config: I18nextScannerModuleConfiguration
