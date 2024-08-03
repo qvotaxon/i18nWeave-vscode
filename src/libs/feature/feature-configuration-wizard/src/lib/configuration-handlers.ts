@@ -7,6 +7,7 @@ import {
   promptForFolderAsync,
   promptForFoldersAsync,
 } from '@i18n-weave/util/util-prompt-utilities';
+
 import vscode from 'vscode';
 
 export async function configureCustomProjectAsync(

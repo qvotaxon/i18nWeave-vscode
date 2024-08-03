@@ -1,5 +1,6 @@
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
 import { WebviewFactory } from '@i18n-weave/feature/feature-webview-factory';
+
 import {
   ConfigurationStoreManager,
   GeneralConfiguration,
@@ -7,6 +8,7 @@ import {
 } from '@i18n-weave/util/util-configuration';
 import { FileType } from '@i18n-weave/util/util-enums';
 import { isProduction } from '@i18n-weave/util/util-environment-utilities';
+
 import * as Sentry from '@sentry/node';
 import * as dotenv from 'dotenv';
 import ConfigurationWizardService from 'lib/services/configurationWizard/configurationWizardService';

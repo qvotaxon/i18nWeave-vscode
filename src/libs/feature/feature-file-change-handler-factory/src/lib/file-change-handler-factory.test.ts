@@ -1,4 +1,5 @@
 import { FileType } from '@i18n-weave/util/util-enums';
+
 import * as assert from 'assert';
 import vscode from 'vscode';
 

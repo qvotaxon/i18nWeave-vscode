@@ -2,6 +2,7 @@ import {
   ConfigurationStore,
   ExtensionConfiguration,
 } from '@i18n-weave/util/util-configuration';
+
 import * as vscode from 'vscode';
 
 /**

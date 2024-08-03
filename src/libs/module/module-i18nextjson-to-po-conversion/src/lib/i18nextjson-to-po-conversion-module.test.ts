@@ -1,5 +1,7 @@
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
+
 import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
+
 import * as assert from 'assert';
 import { i18next2po } from 'gettext-converter';
 import sinon from 'sinon';

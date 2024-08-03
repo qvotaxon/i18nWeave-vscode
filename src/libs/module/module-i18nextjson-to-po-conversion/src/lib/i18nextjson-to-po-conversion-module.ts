@@ -1,11 +1,17 @@
+import { BaseActionModule } from '@i18n-weave/module/module-base-action';
+
+import { FileWriter } from '@i18n-weave/file-io/file-io-file-writer';
+
+import {
+  ConfigurationStoreManager,
+  I18nextJsonToPoConversionModuleConfiguration,
+} from '@i18n-weave/util/util-configuration';
+import { TraceMethod } from '@i18n-weave/util/util-decorators';
+
 import * as Sentry from '@sentry/node';
 import { i18next2po } from 'gettext-converter';
 
-import { I18nextJsonToPoConversionModuleConfiguration, ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
-import { FileWriter } from '@i18n-weave/file-io/file-io-file-writer';
-import { BaseActionModule } from '@i18n-weave/module/module-base-action';
 import { I18nextJsonToPoConversionModuleContext } from './i18nextjson-to-po-conversion-module-context';
-import { TraceMethod } from '@i18n-weave/util/util-decorators';
 
 /**
  * Module for converting JSON to PO using i18next library.
@@ -28,9 +34,7 @@ export class I18nextJsonToPoConversionModule extends BaseActionModule {
         'i18nextJsonToPoConversionModule'
       ).enabled
     ) {
-      console.log(
-        `Converting json to po using : ${context.inputPath.fsPath}`
-      );
+      console.log(`Converting json to po using : ${context.inputPath.fsPath}`);
       if (context.jsonContent) {
         try {
           const res = i18next2po(context.locale, context.jsonContent, {

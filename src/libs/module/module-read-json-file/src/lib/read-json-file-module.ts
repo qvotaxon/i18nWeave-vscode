@@ -1,5 +1,6 @@
-import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 import { BaseActionModule } from '@i18n-weave/module/module-base-action';
+
+import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
 import { ReadJsonFileModuleContext } from './read-json-file-module-context';
 

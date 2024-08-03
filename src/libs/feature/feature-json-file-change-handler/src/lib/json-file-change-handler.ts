@@ -1,17 +1,23 @@
-import vscode from 'vscode';
-import { Uri } from 'vscode';
-
-import { ChainType } from '@i18n-weave/util/util-enums';
-import FileChangeHandler from 'lib/interfaces/fileChangeHandler';
-import { ActionModule, BaseModuleContext } from '@i18n-weave/module/module-base-action';
-import { I18nextJsonToPoConversionModule} from '@i18n-weave/module/module-i18nextjson-to-po-conversion';
-import { ModuleChainManager} from '@i18n-weave/feature/feature-module-chain-manager';
+import {
+  ActionModule,
+  BaseModuleContext,
+} from '@i18n-weave/module/module-base-action';
+import { I18nextJsonToPoConversionModule } from '@i18n-weave/module/module-i18nextjson-to-po-conversion';
 import { ReadJsonFileModule } from '@i18n-weave/module/module-read-json-file';
 import { TranslationModule } from '@i18n-weave/module/module-translation';
-import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
-import { extractFilePathParts } from '@i18n-weave/util/util-file-path-utilities';
+
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
+import { ModuleChainManager } from '@i18n-weave/feature/feature-module-chain-manager';
+
+import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
+
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
+import { ChainType } from '@i18n-weave/util/util-enums';
+import { extractFilePathParts } from '@i18n-weave/util/util-file-path-utilities';
+
+import FileChangeHandler from 'lib/interfaces/fileChangeHandler';
+import vscode from 'vscode';
+import { Uri } from 'vscode';
 
 export class JsonFileChangeHandler extends FileChangeHandler {
   private static fileWatcherCreator: FileWatcherCreator;
@@ -92,9 +98,7 @@ export class JsonFileChangeHandler extends FileChangeHandler {
       return Promise.resolve();
     }
 
-    const extractedFileParts = extractFilePathParts(
-      changeFileLocation.fsPath
-    );
+    const extractedFileParts = extractFilePathParts(changeFileLocation.fsPath);
 
     const context: BaseModuleContext = {
       inputPath: changeFileLocation,
@@ -112,9 +116,7 @@ export class JsonFileChangeHandler extends FileChangeHandler {
     JsonFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
       extractedFileParts.outputPath.fsPath,
       () => {
-        FileLockStore.getInstance().delete(
-          extractedFileParts.outputPath
-        );
+        FileLockStore.getInstance().delete(extractedFileParts.outputPath);
       }
     );
   }

@@ -1,5 +1,7 @@
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
+
 import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
+
 import assert from 'assert';
 import fs from 'fs';
 import FileLocationStore from 'lib/stores/fileLocation/fileLocationStore';

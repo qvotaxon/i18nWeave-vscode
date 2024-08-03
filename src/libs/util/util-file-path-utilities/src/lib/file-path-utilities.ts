@@ -1,10 +1,9 @@
 import fs from 'fs';
-import path from 'path';
-import vscode, { Uri, workspace } from 'vscode';
-
 import { ExtractedFileParts as FilePathParts } from 'lib/types/extractedFileParts';
 import ConfigurationStoreManager from 'libs/util/util-configuration/src/lib/configuration-store-manager/configuration-store-manager';
 import I18nextScannerModuleConfiguration from 'libs/util/util-configuration/src/lib/modules/i18next-scanner-module/i18next-scanner-module-configuration';
+import path from 'path';
+import vscode, { Uri, workspace } from 'vscode';
 
 export function extractLocale(filePath: string): string {
   const translationFilesLocation =

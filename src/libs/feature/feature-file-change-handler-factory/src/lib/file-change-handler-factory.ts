@@ -1,4 +1,5 @@
 import { FileType } from '@i18n-weave/util/util-enumsz';
+
 import FileChangeHandler from 'lib/interfaces/fileChangeHandler';
 import vscode from 'vscode';
 

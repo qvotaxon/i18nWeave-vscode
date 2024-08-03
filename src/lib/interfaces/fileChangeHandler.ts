@@ -1,6 +1,5 @@
-import { Uri } from 'vscode';
-
 import FileLocationStore from 'lib/stores/fileLocation/fileLocationStore';
+import { Uri } from 'vscode';
 
 export default abstract class FileChangeHandler {
   public abstract handleFileChangeAsync(

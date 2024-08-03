@@ -1,10 +1,10 @@
+import assert from 'assert';
 import fs from 'fs';
+import WebviewStore from 'lib/stores/webview/webviewStore';
 import sinon from 'sinon';
 import vscode from 'vscode';
-import assert from 'assert';
 
-import WebviewStore from 'lib/stores/webview/webviewStore';
-import { JsonWebviewCreator} from './json-webview-creator';
+import { JsonWebviewCreator } from './json-webview-creator';
 
 suite('JsonWebviewCreator Tests', () => {
   let context: vscode.ExtensionContext;
@@ -14,11 +14,9 @@ suite('JsonWebviewCreator Tests', () => {
 
   setup(() => {
     context = <vscode.ExtensionContext>{};
-    webviewStoreStub = sinon.stub(
-        WebviewStore.getInstance()
-      );
+    webviewStoreStub = sinon.stub(WebviewStore.getInstance());
     sinon.stub(WebviewStore, 'getInstance').returns(webviewStoreStub);
-    
+
     webviewCreator = new JsonWebviewCreator(context);
     uri = vscode.Uri.parse('file://fake/path');
   });
@@ -33,18 +31,32 @@ suite('JsonWebviewCreator Tests', () => {
     const tableContent = webviewCreator.generateTableContent(jsonData);
 
     assert.strictEqual(tableContent.includes('<td>key</td>'), true);
-    assert.strictEqual(tableContent.includes('<td>nested.nestedKey</td>'), true);
+    assert.strictEqual(
+      tableContent.includes('<td>nested.nestedKey</td>'),
+      true
+    );
   });
 
   test('should save JSON file', () => {
     const jsonData = JSON.stringify({ key: 'value' });
     const writeFileSyncStub = sinon.stub(fs, 'writeFileSync');
-    const showInformationMessageStub = sinon.stub(vscode.window, 'showInformationMessage');
+    const showInformationMessageStub = sinon.stub(
+      vscode.window,
+      'showInformationMessage'
+    );
 
     webviewCreator['saveJsonFile'](uri, jsonData);
 
-    assert.strictEqual(writeFileSyncStub.calledOnceWith(uri.fsPath, jsonData, { encoding: 'utf8' }), true);
-    assert.strictEqual(showInformationMessageStub.calledOnceWith('File saved successfully'), true);
+    assert.strictEqual(
+      writeFileSyncStub.calledOnceWith(uri.fsPath, jsonData, {
+        encoding: 'utf8',
+      }),
+      true
+    );
+    assert.strictEqual(
+      showInformationMessageStub.calledOnceWith('File saved successfully'),
+      true
+    );
   });
 
   test('should handle error while saving JSON file', () => {
@@ -55,6 +67,9 @@ suite('JsonWebviewCreator Tests', () => {
 
     webviewCreator['saveJsonFile'](uri, jsonData);
 
-    assert.strictEqual(showErrorMessageStub.calledOnceWith(`Error saving file: ${errorMessage}`), true);
+    assert.strictEqual(
+      showErrorMessageStub.calledOnceWith(`Error saving file: ${errorMessage}`),
+      true
+    );
   });
 });

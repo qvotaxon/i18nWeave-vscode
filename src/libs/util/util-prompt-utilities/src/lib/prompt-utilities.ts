@@ -1,5 +1,6 @@
 import { Framework, ProjectType } from '@i18n-weave/util/util-enums';
 import { getRelativePath } from '@i18n-weave/util/util-file-path-utilities';
+
 import { getLocalizedTexts } from 'libs/util/util-localization-utilities/src/lib/localization-utilities';
 import vscode, { MessageItem } from 'vscode';
 

@@ -1,11 +1,15 @@
+import {
+  ConfigurationStoreManager,
+  I18nextScannerModuleConfiguration,
+} from '@i18n-weave/util/util-configuration';
+import { TraceMethod } from '@i18n-weave/util/util-decorators';
+import { getProjectRootFolder } from '@i18n-weave/util/util-file-path-utilities';
+
 import sort from 'gulp-sort';
 import I18nextScanner from 'i18next-scanner';
 import vfs from 'vinyl-fs';
 
-import { I18nextScannerModuleConfiguration, ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import { I18nextScannerOptions } from './i18nextScannerOptions';
-import { TraceMethod } from '@i18n-weave/util/util-decorators';
-import { getProjectRootFolder } from '@i18n-weave/util/util-file-path-utilities';
 
 /**
  * Service for scanning code using i18next-scanner.
@@ -32,10 +36,9 @@ export class I18nextScannerService {
   @TraceMethod
   public scanCode(): void {
     const configManager = ConfigurationStoreManager.getInstance();
-    const config =
-      configManager.getConfig<I18nextScannerModuleConfiguration>(
-        'i18nextScannerModule'
-      );
+    const config = configManager.getConfig<I18nextScannerModuleConfiguration>(
+      'i18nextScannerModule'
+    );
     let projectRoot = getProjectRootFolder();
 
     if (!projectRoot) {
@@ -102,7 +105,7 @@ export class I18nextScannerService {
       '!node_modules/**',
     ];
 
-    this.executeScanner(options, projectRoot, scanSources);;
+    this.executeScanner(options, projectRoot, scanSources);
   }
 
   private executeScanner(

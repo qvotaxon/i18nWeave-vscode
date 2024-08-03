@@ -1,14 +1,19 @@
+import {
+  ActionModule,
+  BaseModuleContext,
+} from '@i18n-weave/module/module-base-action';
+import { I18nextScannerModule } from '@i18n-weave/module/module-i18next-scanner';
+
+import { ModuleChainManager } from '@i18n-weave/feature/feature-module-chain-manager';
+
+import { TraceMethod } from '@i18n-weave/util/util-decorators';
+import { ChainType } from '@i18n-weave/util/util-enums';
+
 import fs from 'fs';
+import FileChangeHandler from 'lib/interfaces/fileChangeHandler';
+import CodeTranslationStore from 'lib/stores/codeTranslation/codeTranslationStore';
 import vscode from 'vscode';
 import { Uri } from 'vscode';
-
-import { ChainType } from '@i18n-weave/util/util-enums';
-import FileChangeHandler from 'lib/interfaces/fileChangeHandler';
-import { ActionModule, BaseModuleContext } from '@i18n-weave/module/module-base-action';
-import { I18nextScannerModule } from '@i18n-weave/module/module-i18next-scanner';
-import { ModuleChainManager} from '@i18n-weave/feature/feature-module-chain-manager';
-import CodeTranslationStore from 'lib/stores/codeTranslation/codeTranslationStore';
-import { TraceMethod } from '@i18n-weave/util/util-decorators';
 
 export class CodeFileChangeHandler extends FileChangeHandler {
   private static i18nextScannerModule: I18nextScannerModule;

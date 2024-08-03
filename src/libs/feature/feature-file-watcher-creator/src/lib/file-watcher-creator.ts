@@ -1,4 +1,5 @@
 import { FileType } from '@i18n-weave/util/util-enums';
+
 import FileChangeHandlerFactory from 'lib/services/fileChange/fileChangeHandlerFactory';
 import { FileSearchLocation } from 'lib/types/fileSearchLocation';
 import * as vscode from 'vscode';

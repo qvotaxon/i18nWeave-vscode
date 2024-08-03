@@ -1,4 +1,5 @@
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
+
 import * as assert from 'assert';
 import * as mock from 'mock-fs';
 import vscode from 'vscode';

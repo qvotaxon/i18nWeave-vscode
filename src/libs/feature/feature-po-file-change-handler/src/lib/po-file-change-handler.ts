@@ -1,17 +1,23 @@
+import {
+  ActionModule,
+  BaseModuleContext,
+} from '@i18n-weave/module/module-base-action';
+import { PoToI18nextJsonConversionModule } from '@i18n-weave/module/module-po-to-i18nextjson-conversion';
+import { ReadPoFileModule } from '@i18n-weave/module/module-read-po-file';
+
+import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
+import { ModuleChainManager } from '@i18n-weave/feature/feature-module-chain-manager';
+
+import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
+
+import { TraceMethod } from '@i18n-weave/util/util-decorators';
+import { ChainType } from '@i18n-weave/util/util-enums';
+import { extractFilePathParts } from '@i18n-weave/util/util-file-path-utilities';
+
+import FileChangeHandler from 'lib/interfaces/fileChangeHandler';
+import FileLocationStore from 'lib/stores/fileLocation/fileLocationStore';
 import vscode from 'vscode';
 import { Uri } from 'vscode';
-
-import { ChainType } from '@i18n-weave/util/util-enums';
-import FileChangeHandler from 'lib/interfaces/fileChangeHandler';
-import { ActionModule, BaseModuleContext } from '@i18n-weave/module/module-base-action';
-import { ModuleChainManager} from '@i18n-weave/feature/feature-module-chain-manager';
-import { PoToI18nextJsonConversionModule}  from '@i18n-weave/module/module-po-to-i18nextjson-conversion';
-import { ReadPoFileModule} from '@i18n-weave/module/module-read-po-file';
-import FileLocationStore from 'lib/stores/fileLocation/fileLocationStore';
-import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
-import { extractFilePathParts } from '@i18n-weave/util/util-file-path-utilities';
-import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
-import { TraceMethod } from '@i18n-weave/util/util-decorators';
 
 export class PoFileChangeHandler extends FileChangeHandler {
   private static fileWatcherCreator: FileWatcherCreator;
@@ -82,9 +88,7 @@ export class PoFileChangeHandler extends FileChangeHandler {
       return Promise.resolve();
     }
 
-    const extractedFileParts = extractFilePathParts(
-      changeFileLocation.fsPath
-    );
+    const extractedFileParts = extractFilePathParts(changeFileLocation.fsPath);
 
     const context: BaseModuleContext = {
       inputPath: changeFileLocation,
@@ -103,9 +107,7 @@ export class PoFileChangeHandler extends FileChangeHandler {
       PoFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
         extractedFileParts.outputPath.fsPath,
         () => {
-          FileLockStore.getInstance().delete(
-            extractedFileParts.outputPath
-          );
+          FileLockStore.getInstance().delete(extractedFileParts.outputPath);
 
           poFileChangeHandler.dispose();
         }

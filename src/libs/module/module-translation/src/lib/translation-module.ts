@@ -1,5 +1,7 @@
-import { TranslationService } from '@i18n-weave/feature/feature-translation-service';
 import { BaseActionModule } from '@i18n-weave/module/module-base-action';
+
+import { TranslationService } from '@i18n-weave/feature/feature-translation-service';
+
 import {
   ConfigurationStoreManager,
   TranslationModuleConfiguration,
