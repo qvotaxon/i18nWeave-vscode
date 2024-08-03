@@ -1,6 +1,6 @@
+import * as vscode from 'vscode';
 import assert from 'assert';
 import sinon from 'sinon';
-import * as vscode from 'vscode';
 
 import { CacheEntry } from './cache-entry';
 import { CachingService } from './cachingService';

@@ -10,8 +10,8 @@ import { ModuleChainManager } from '@i18n-weave/feature/feature-module-chain-man
 
 import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 
-import { ChainType } from '@i18n-weave/util/util-enums';
 import * as filePathUtilities from '@i18n-weave/util/util-file-path-utilities';
+import { ChainType } from '@i18n-weave/util/util-enums';
 
 import JsonFileChangeHandler from '../../../json-file-change-handler';
 

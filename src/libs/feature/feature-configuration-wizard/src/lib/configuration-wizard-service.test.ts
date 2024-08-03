@@ -5,8 +5,8 @@ import vscode from 'vscode';
 import * as prompts from '@i18n-weave/util/util-prompt-utilities';
 
 import * as configurationHandlers from './configuration-handlers';
-import ConfigurationWizardService from './configuration-wizard-service';
 import * as nextI18nextConfigHandlers from './next-i18next-config-handlers';
+import ConfigurationWizardService from './configuration-wizard-service';
 
 suite('ConfigurationWizardService', () => {
   let sandbox: sinon.SinonSandbox;

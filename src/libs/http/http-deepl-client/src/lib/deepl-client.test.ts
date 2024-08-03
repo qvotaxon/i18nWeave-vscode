@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/node';
+import * as deepl from 'deepl-node';
 import { Span } from '@sentry/node';
 import assert from 'assert';
-import * as deepl from 'deepl-node';
 import sinon from 'sinon';
 import vscode from 'vscode';
 

@@ -1,6 +1,6 @@
 import * as assert from 'assert';
-import sinon from 'sinon';
 import * as vscode from 'vscode';
+import sinon from 'sinon';
 
 import {
   ConfigurationStore,

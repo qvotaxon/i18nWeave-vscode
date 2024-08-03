@@ -1,8 +1,8 @@
 import * as assert from 'assert';
+import * as vscode from 'vscode';
 import FileChangeHandlerFactory from 'lib/services/fileChange/fileChangeHandlerFactory';
 import { FileSearchLocation } from 'lib/types/fileSearchLocation';
 import sinon from 'sinon';
-import * as vscode from 'vscode';
 
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
 

@@ -2,8 +2,8 @@ import assert from 'assert';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import { I18nextScannerModuleConfiguration } from '@i18n-weave/util/util-configuration';
 import * as promptUtilities from '@i18n-weave/util/util-prompt-utilities';
+import { I18nextScannerModuleConfiguration } from '@i18n-weave/util/util-configuration';
 
 import * as configurationHandlers from './configuration-handlers';
 

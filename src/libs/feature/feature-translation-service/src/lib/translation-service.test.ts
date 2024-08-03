@@ -1,5 +1,5 @@
-import assert from 'assert';
 import * as deepl from 'deepl-node';
+import assert from 'assert';
 import fs from 'fs';
 import sinon from 'sinon';
 import vscode from 'vscode';
