@@ -1,13 +1,13 @@
+import * as assert from 'assert';
+import sinon from 'sinon';
+import * as vscode from 'vscode';
+
 import {
   ConfigurationStore,
   ConfigurationStoreManager,
   ExtensionConfiguration,
   TranslationModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
-
-import * as assert from 'assert';
-import sinon from 'sinon';
-import * as vscode from 'vscode';
 
 suite('ConfigurationStoreManager', () => {
   let getConfigurationStub: sinon.SinonStub;

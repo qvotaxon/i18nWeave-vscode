@@ -1,6 +1,6 @@
-import { ExtensionConfiguration } from '@i18n-weave/util/util-configuration';
-
 import vscode, { ConfigurationTarget } from 'vscode';
+
+import { ExtensionConfiguration } from '@i18n-weave/util/util-configuration';
 
 export class ConfigurationStore {
   private options: Partial<ExtensionConfiguration> = {};

@@ -1,8 +1,8 @@
-import * as prompts from '@i18n-weave/util/util-prompt-utilities';
-
 import assert from 'assert';
 import sinon from 'sinon';
 import vscode from 'vscode';
+
+import * as prompts from '@i18n-weave/util/util-prompt-utilities';
 
 import * as configurationHandlers from './configuration-handlers';
 import ConfigurationWizardService from './configuration-wizard-service';

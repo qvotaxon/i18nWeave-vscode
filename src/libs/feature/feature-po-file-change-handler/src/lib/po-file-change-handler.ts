@@ -1,3 +1,8 @@
+import FileChangeHandler from 'lib/interfaces/fileChangeHandler';
+import FileLocationStore from 'lib/stores/fileLocation/fileLocationStore';
+import vscode from 'vscode';
+import { Uri } from 'vscode';
+
 import {
   ActionModule,
   BaseModuleContext,
@@ -13,11 +18,6 @@ import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
 import { ChainType } from '@i18n-weave/util/util-enums';
 import { extractFilePathParts } from '@i18n-weave/util/util-file-path-utilities';
-
-import FileChangeHandler from 'lib/interfaces/fileChangeHandler';
-import FileLocationStore from 'lib/stores/fileLocation/fileLocationStore';
-import vscode from 'vscode';
-import { Uri } from 'vscode';
 
 export class PoFileChangeHandler extends FileChangeHandler {
   private static fileWatcherCreator: FileWatcherCreator;

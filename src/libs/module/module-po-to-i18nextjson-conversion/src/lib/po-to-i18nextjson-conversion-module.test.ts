@@ -1,11 +1,11 @@
-import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
-
-import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
-
 import * as assert from 'assert';
 import sinon from 'sinon';
 import vscode from 'vscode';
 import { Uri, workspace } from 'vscode';
+
+import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
+
+import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 
 import { PoToI18nextJsonConversionModule } from './po-to-i18nextjson-conversion-module';
 

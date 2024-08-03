@@ -1,9 +1,9 @@
+import * as vscode from 'vscode';
+
 import {
   ConfigurationStore,
   ExtensionConfiguration,
 } from '@i18n-weave/util/util-configuration';
-
-import * as vscode from 'vscode';
 
 /**
  * Represents a configuration store manager that manages the options for the extension.

@@ -1,7 +1,7 @@
-import { FileType } from '@i18n-weave/util/util-enums';
-
 import * as assert from 'assert';
 import vscode from 'vscode';
+
+import { FileType } from '@i18n-weave/util/util-enums';
 
 import FileChangeHandlerFactory from '../../../file-change-handler-factory';
 import CodeFileChangeHandler from '../../../fileChangeHandlers/feature-code-file-change-handler/src/lib/code-file-change-handler';

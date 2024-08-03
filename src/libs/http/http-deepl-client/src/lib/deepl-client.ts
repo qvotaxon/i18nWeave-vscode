@@ -1,13 +1,13 @@
+import * as Sentry from '@sentry/node';
+import * as deepl from 'deepl-node';
+import vscode from 'vscode';
+
 import {
   CachingService,
   sharedCacheKeys,
 } from '@i18n-weave/feature/feature-caching-service';
 
 import { TranslationModuleConfiguration } from '@i18n-weave/util/util-configuration';
-
-import * as Sentry from '@sentry/node';
-import * as deepl from 'deepl-node';
-import vscode from 'vscode';
 
 /**
  * Singleton class for managing DeepL translation services.

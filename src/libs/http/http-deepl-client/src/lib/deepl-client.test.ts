@@ -1,3 +1,10 @@
+import * as Sentry from '@sentry/node';
+import { Span } from '@sentry/node';
+import assert from 'assert';
+import * as deepl from 'deepl-node';
+import sinon from 'sinon';
+import vscode from 'vscode';
+
 import { CacheEntry } from '@i18n-weave/feature/feature-caching-service';
 
 import {
@@ -5,13 +12,6 @@ import {
   ConfigurationStoreManager,
   TranslationModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
-
-import * as Sentry from '@sentry/node';
-import { Span } from '@sentry/node';
-import assert from 'assert';
-import * as deepl from 'deepl-node';
-import sinon from 'sinon';
-import vscode from 'vscode';
 
 import { DeeplClient } from './deepl-client';
 

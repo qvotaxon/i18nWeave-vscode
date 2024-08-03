@@ -1,9 +1,9 @@
-import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
-
 import * as assert from 'assert';
 import * as mock from 'mock-fs';
 import vscode from 'vscode';
 import { Uri } from 'vscode';
+
+import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
 import ReadJsonFileModule from './read-json-file-module';
 import { ReadJsonFileModuleContext } from './read-json-file-module-context';

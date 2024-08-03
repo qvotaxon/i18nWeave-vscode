@@ -1,13 +1,13 @@
+import sort from 'gulp-sort';
+import I18nextScanner from 'i18next-scanner';
+import vfs from 'vinyl-fs';
+
 import {
   ConfigurationStoreManager,
   I18nextScannerModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
 import { getProjectRootFolder } from '@i18n-weave/util/util-file-path-utilities';
-
-import sort from 'gulp-sort';
-import I18nextScanner from 'i18next-scanner';
-import vfs from 'vinyl-fs';
 
 import { I18nextScannerOptions } from './i18nextScannerOptions';
 

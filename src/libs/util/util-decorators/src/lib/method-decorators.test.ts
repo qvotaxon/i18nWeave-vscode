@@ -1,8 +1,8 @@
-import { TraceMethod } from '@i18n-weave/util/util-decorators';
-
 import * as Sentry from '@sentry/node';
 import * as assert from 'assert';
 import sinon from 'sinon';
+
+import { TraceMethod } from '@i18n-weave/util/util-decorators';
 
 suite('TraceMethod Decorator', () => {
   let startSpan: sinon.SinonStub;

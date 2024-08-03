@@ -1,3 +1,10 @@
+import * as assert from 'assert';
+import ReadJsonFileModule from 'lib/modules/readJsonFile/read-json-file-module';
+import TranslationModule from 'lib/modules/translation/translation-module';
+import sinon from 'sinon';
+import vscode from 'vscode';
+import { Uri } from 'vscode';
+
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
 import { ModuleChainManager } from '@i18n-weave/feature/feature-module-chain-manager';
 
@@ -5,13 +12,6 @@ import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 
 import { ChainType } from '@i18n-weave/util/util-enums';
 import * as filePathUtilities from '@i18n-weave/util/util-file-path-utilities';
-
-import * as assert from 'assert';
-import ReadJsonFileModule from 'lib/modules/readJsonFile/read-json-file-module';
-import TranslationModule from 'lib/modules/translation/translation-module';
-import sinon from 'sinon';
-import vscode from 'vscode';
-import { Uri } from 'vscode';
 
 import JsonFileChangeHandler from '../../../json-file-change-handler';
 

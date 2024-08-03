@@ -1,5 +1,17 @@
+import * as Sentry from '@sentry/node';
+import * as dotenv from 'dotenv';
+import path from 'path';
+import vscode, { ExtensionContext } from 'vscode';
+
+import { ConfigurationWizardService } from '@i18n-weave/feature/feature-configuration-wizard';
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
 import { WebviewFactory } from '@i18n-weave/feature/feature-webview-factory';
+import { WebviewService } from '@i18n-weave/feature/feature-webview-service';
+
+import { CodeTranslationStore } from '@i18n-weave/store/store-code-translation-store';
+import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+import { FileSearchLocation } from '@i18n-weave/store/store-file-location-store';
+import { WebviewStore } from '@i18n-weave/store/store-webview-store';
 
 import {
   ConfigurationStoreManager,
@@ -8,17 +20,6 @@ import {
 } from '@i18n-weave/util/util-configuration';
 import { FileType } from '@i18n-weave/util/util-enums';
 import { isProduction } from '@i18n-weave/util/util-environment-utilities';
-
-import * as Sentry from '@sentry/node';
-import * as dotenv from 'dotenv';
-import ConfigurationWizardService from 'lib/services/configurationWizard/configurationWizardService';
-import WebviewService from 'lib/services/webview/webviewService';
-import CodeTranslationStore from 'lib/stores/codeTranslation/codeTranslationStore';
-import FileLocationStore from 'lib/stores/fileLocation/fileLocationStore';
-import WebviewStore from 'lib/stores/webview/webviewStore';
-import { FileSearchLocation } from 'lib/types/fileSearchLocation';
-import path from 'path';
-import vscode, { ExtensionContext } from 'vscode';
 
 const envFilePath =
   process.env.DOTENV_CONFIG_PATH ??

@@ -1,8 +1,8 @@
-import { BaseActionModule } from '@i18n-weave/module/module-base-action';
-
 import * as assert from 'assert';
 import sinon from 'sinon';
 import vscode from 'vscode';
+
+import { BaseActionModule } from '@i18n-weave/module/module-base-action';
 
 import { ModuleContext } from './ibase-action-module-context';
 

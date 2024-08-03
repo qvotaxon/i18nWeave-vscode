@@ -1,3 +1,6 @@
+import { po2i18next } from 'gettext-converter';
+import stringify from 'json-stable-stringify';
+
 import { BaseActionModule } from '@i18n-weave/module/module-base-action';
 
 import { FileWriter } from '@i18n-weave/file-io/file-io-file-writer';
@@ -5,9 +8,6 @@ import { FileWriter } from '@i18n-weave/file-io/file-io-file-writer';
 import { I18nextJsonToPoConversionModuleConfiguration } from '@i18n-weave/util/util-configuration';
 import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
-
-import { po2i18next } from 'gettext-converter';
-import stringify from 'json-stable-stringify';
 
 import PoToI18nextJsonConversionModuleContext from './po-to-i18nextjson-conversion-module-context';
 

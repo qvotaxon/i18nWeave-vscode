@@ -1,7 +1,7 @@
-import { getFileExtension } from '@i18n-weave/util/util-file-path-utilities';
-
 import { FileSearchLocation } from 'lib/types/fileSearchLocation';
 import vscode from 'vscode';
+
+import { getFileExtension } from '@i18n-weave/util/util-file-path-utilities';
 
 export default class FileLocationStore {
   private static instance: FileLocationStore;

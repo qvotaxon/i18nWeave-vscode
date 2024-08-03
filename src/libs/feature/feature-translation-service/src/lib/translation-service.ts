@@ -1,7 +1,7 @@
-import { DeeplClient } from '@i18n-weave/http/http-deepl-client';
-
 import fs from 'fs';
 import vscode from 'vscode';
+
+import { DeeplClient } from '@i18n-weave/http/http-deepl-client';
 
 /**
  * Singleton class for managing translation services.

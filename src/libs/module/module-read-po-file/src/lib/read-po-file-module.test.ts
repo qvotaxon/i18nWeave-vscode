@@ -1,8 +1,8 @@
-import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
-
 import * as assert from 'assert';
 import * as mock from 'mock-fs';
 import vscode, { Uri } from 'vscode';
+
+import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
 import ReadPoFileModule from './read-po-file-module';
 import { ReadPoFileModuleContext } from './read-po-file-module-context';

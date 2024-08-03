@@ -1,9 +1,9 @@
+import { IWebviewStore } from 'lib/interfaces/webviewStore';
+import vscode from 'vscode';
+
 import { IWebviewFactory } from '@i18n-weave/feature/feature-webview-factory';
 
 import { FileType } from '@i18n-weave/util/util-enums';
-
-import { IWebviewStore } from 'lib/interfaces/webviewStore';
-import vscode from 'vscode';
 
 /**
  * Service class for managing webviews.

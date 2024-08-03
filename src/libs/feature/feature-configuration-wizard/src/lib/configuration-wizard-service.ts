@@ -1,3 +1,5 @@
+import vscode from 'vscode';
+
 import { I18nextScannerModuleConfiguration } from '@i18n-weave/util/util-configuration';
 import { Framework, ProjectType } from '@i18n-weave/util/util-enums';
 import {
@@ -5,8 +7,6 @@ import {
   selectProjectTypeAsync,
   showConfigurationToUserAsync,
 } from '@i18n-weave/util/util-prompt-utilities';
-
-import vscode from 'vscode';
 
 import {
   configureCustomProjectAsync,

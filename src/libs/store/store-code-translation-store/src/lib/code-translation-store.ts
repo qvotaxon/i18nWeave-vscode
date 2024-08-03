@@ -1,14 +1,14 @@
+import fs from 'fs';
+import FileLocationStore from 'lib/stores/fileLocation/fileLocationStore';
+import { arraysEqual } from 'libs/util/array-utilities/src/lib/array-utilities';
+import { ExtensionContext, ProgressLocation, window } from 'vscode';
+
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
 import {
   ConfigurationStoreManager,
   I18nextScannerModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
-
-import fs from 'fs';
-import FileLocationStore from 'lib/stores/fileLocation/fileLocationStore';
-import { arraysEqual } from 'libs/util/array-utilities/src/lib/array-utilities';
-import { ExtensionContext, ProgressLocation, window } from 'vscode';
 
 type CodeTranslation = {
   filePath: string;

@@ -1,12 +1,12 @@
+import * as assert from 'assert';
+import sinon from 'sinon';
+
 import { I18nextScannerService } from '@i18n-weave/feature/feature-i18next-scanner-service';
 
 import {
   ConfigurationStoreManager,
   I18nextScannerModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
-
-import * as assert from 'assert';
-import sinon from 'sinon';
 
 suite('I18nextScannerService', () => {
   let scannerService: I18nextScannerService;
