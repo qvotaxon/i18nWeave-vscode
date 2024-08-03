@@ -8,6 +8,8 @@
   "plugins": ["@trivago/prettier-plugin-sort-imports"],
   "importOrderParserPlugins" : ["decorators", "typescript"],
   "importOrder": [
+    "^@/(.*)$",
+    "<THIRD_PARTY_MODULES>",
     "^@i18n-weave/core/(.*)$",
     "^@i18n-weave/module/(.*)$",
     "^@i18n-weave/feature/(.*)$",
@@ -15,8 +17,6 @@
     "^@i18n-weave/file-io/(.*)$",
     "^@i18n-weave/store/(.*)$",
     "^@i18n-weave/util/(.*)$",
-    "<THIRD_PARTY_MODULES>",
-    "^@/(.*)$",
     "^[./]"
   ],
   "importOrderSeparation": true,
