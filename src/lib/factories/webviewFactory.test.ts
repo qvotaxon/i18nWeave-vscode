@@ -1,9 +1,9 @@
+import { FileType } from '@i18n-weave/util/util-enums';
 import assert from 'assert';
+import WebviewCreator from 'lib/interfaces/webviewCreator';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import { FileType } from '../enums/fileType';
-import WebviewCreator from '../interfaces/webviewCreator';
 import WebviewFactory from './webviewFactory';
 
 suite('WebviewFactory', () => {

@@ -1,7 +1,7 @@
 import vscode from 'vscode';
 
-import ActionModule from '../../../../../lib/interfaces/actionModule';
-import ModuleContext from '../../../../../lib/interfaces/moduleContext';
+import ActionModule from './ibase-action-module';
+import ModuleContext from './ibase-action-module-context';
 
 /**
  * Represents a base class for action modules.

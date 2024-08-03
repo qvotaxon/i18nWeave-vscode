@@ -2,13 +2,12 @@ import fs from 'fs';
 import vscode from 'vscode';
 import { Uri } from 'vscode';
 
-import { ChainType } from '../../../enums/chainType';
-import ActionModule from '../../../interfaces/actionModule';
-import FileChangeHandler from '../../../interfaces/fileChangeHandler';
-import ModuleContext from '../../../interfaces/moduleContext';
-import I18nextScannerModule from '../../../modules/i18nextScanner/i18nextScannerModule';
+import { ChainType } from '@i18n-weave/util/util-enums';
+import FileChangeHandler from 'lib/interfaces/fileChangeHandler';
+import { ActionModule, BaseModuleContext } from '@i18n-weave/module/module-base-action';
+import { I18nextScannerModule } from '@i18n-weave/module/module-i18next-scanner';
 import { ModuleChainManager} from '@i18n-weave/feature/feature-module-chain-manager';
-import CodeTranslationStore from '../../../stores/codeTranslation/codeTranslationStore';
+import CodeTranslationStore from 'lib/stores/codeTranslation/codeTranslationStore';
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
 
 export default class CodeFileChangeHandler extends FileChangeHandler {
@@ -58,7 +57,7 @@ export default class CodeFileChangeHandler extends FileChangeHandler {
       return;
     }
 
-    const context: ModuleContext = {
+    const context: BaseModuleContext = {
       inputPath: changeFileLocation,
       locale: '',
       outputPath: changeFileLocation,

@@ -1,6 +1,7 @@
-import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 import * as assert from 'assert';
 import { Uri } from 'vscode';
+
+import { FileLockStore } from './file-lock-store';
 
 suite('FileLockStore', () => {
   let fileLockStore: FileLockStore;

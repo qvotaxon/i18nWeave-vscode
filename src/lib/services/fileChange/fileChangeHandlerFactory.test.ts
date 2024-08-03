@@ -1,7 +1,7 @@
+import { FileType } from '@i18n-weave/util/util-enums';
 import * as assert from 'assert';
 import vscode from 'vscode';
 
-import { FileType } from '../../enums/fileType';
 import FileChangeHandlerFactory from './fileChangeHandlerFactory';
 import CodeFileChangeHandler from './fileChangeHandlers/codeFileChangeHandler';
 import JsonFileChangeHandler from './fileChangeHandlers/jsonFileChangeHandler';

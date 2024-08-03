@@ -49,6 +49,8 @@
       "@i18n-weave/feature/feature-module-chain-manager": [
         "src/libs/feature/feature-module-chain-manager/src"
       ],
+      "@i18n-weave/util/util-types": ["src/libs/util/util-types/src"],
+      "@i18n-weave/util/util-enums": ["src/libs/util/util-enums/src"],
       "@i18n-weave/util/util-configuration": [
         "src/libs/util/util-configuration/src"
       ],

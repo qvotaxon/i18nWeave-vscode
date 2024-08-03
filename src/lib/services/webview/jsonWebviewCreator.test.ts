@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import vscode from 'vscode';
 import assert from 'assert';
 
-import WebviewStore from '../../stores/webview/webviewStore';
+import WebviewStore from 'lib/stores/webview/webviewStore';
 import JsonWebviewCreator from './jsonWebviewCreator';
 
 suite('JsonWebviewCreator Tests', () => {

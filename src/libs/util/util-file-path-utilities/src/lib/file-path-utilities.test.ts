@@ -4,7 +4,7 @@ import path from 'path';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import ConfigurationStoreManager from '../../../util-configuration/src/lib/configuration-store-manager/configuration-store-manager';
+import ConfigurationStoreManager from 'libs/util/util-configuration/src/lib/configuration-store-manager/configuration-store-manager';
 // import {
 //   determineOutputPath,
 //   extractFilePathParts,

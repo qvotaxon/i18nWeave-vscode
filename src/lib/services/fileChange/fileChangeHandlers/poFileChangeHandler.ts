@@ -1,14 +1,13 @@
 import vscode from 'vscode';
 import { Uri } from 'vscode';
 
-import { ChainType } from '../../../enums/chainType';
-import ActionModule from '../../../interfaces/actionModule';
-import FileChangeHandler from '../../../interfaces/fileChangeHandler';
-import ModuleContext from '../../../interfaces/moduleContext';
+import { ChainType } from '@i18n-weave/util/util-enums';
+import FileChangeHandler from 'lib/interfaces/fileChangeHandler';
+import { ActionModule, BaseModuleContext } from '@i18n-weave/module/module-base-action';
 import { ModuleChainManager} from '@i18n-weave/feature/feature-module-chain-manager';
-import PoToI18nextJsonConversionModule from '../../../../libs/module/module-po-to-i18nextjson-conversion/src/lib/po-to-i18nextjson-conversion-module';
-import ReadPoFileModule from '../../../../libs/module/module-read-po-file/src/lib/read-po-file-module';
-import FileLocationStore from '../../../stores/fileLocation/fileLocationStore';
+import { PoToI18nextJsonConversionModule}  from '@i18n-weave/module/module-po-to-i18nextjson-conversion';
+import { ReadPoFileModule} from '@i18n-weave/module/module-read-po-file';
+import FileLocationStore from 'lib/stores/fileLocation/fileLocationStore';
 import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 import { extractFilePathParts } from '@i18n-weave/util/util-file-path-utilities';
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
@@ -87,7 +86,7 @@ export default class PoFileChangeHandler extends FileChangeHandler {
       changeFileLocation.fsPath
     );
 
-    const context: ModuleContext = {
+    const context: BaseModuleContext = {
       inputPath: changeFileLocation,
       locale: extractedFileParts.locale,
       outputPath: extractedFileParts.outputPath,

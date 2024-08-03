@@ -1,4 +1,4 @@
-import { BaseModuleContext } from '../../../module-base-action/src/lib/base-action-module-context';
+import { BaseModuleContext } from '@i18n-weave/module/module-base-action';
 
 export default abstract class PoToI18nextJsonConversionModuleContext extends BaseModuleContext {
   poContent: any;

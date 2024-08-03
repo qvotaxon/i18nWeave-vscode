@@ -4,7 +4,7 @@ import { i18next2po } from 'gettext-converter';
 import { I18nextJsonToPoConversionModuleConfiguration, ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import { FileWriter } from '@i18n-weave/file-io/file-io-file-writer';
 import { BaseActionModule } from '@i18n-weave/module/module-base-action';
-import { I18nextJsonToPoConversionModuleContext } from '@i18n-weave/module/module-i18nextjson-to-po-conversion';
+import { I18nextJsonToPoConversionModuleContext } from './i18nextjson-to-po-conversion-module-context';
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
 
 /**

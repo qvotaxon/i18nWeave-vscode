@@ -1,6 +1,5 @@
+import { FileType } from '@i18n-weave/util/util-enums';
 import vscode from 'vscode';
-
-import { FileType } from '../enums/fileType';
 
 export interface IWebviewFactory {
   createWebview(

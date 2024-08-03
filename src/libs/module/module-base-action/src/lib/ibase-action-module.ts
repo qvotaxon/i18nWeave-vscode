@@ -1,6 +1,6 @@
-import ModuleContext from './moduleContext';
+import { ModuleContext } from './ibase-action-module-context';
 
-export default interface ActionModule {
+export interface ActionModule {
   setNext(module: ActionModule | null): void;
   executeAsync(context: ModuleContext): Promise<void>;
 }

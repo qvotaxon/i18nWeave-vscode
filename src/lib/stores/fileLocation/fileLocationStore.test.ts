@@ -3,7 +3,7 @@ import assert from 'assert';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import { FileSearchLocation } from '../../types/fileSearchLocation';
+import { FileSearchLocation } from 'lib/types/fileSearchLocation';
 import FileLocationStore from './fileLocationStore';
 
 suite('FileLocationStore Tests', function () {

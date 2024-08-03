@@ -3,7 +3,7 @@ import * as assert from 'assert';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import ModuleContext from '../../../../../lib/interfaces/moduleContext';
+import { ModuleContext } from './ibase-action-module-context';
 
 class TestActionModule extends BaseActionModule {
   public doExecuteAsync = sinon.stub().resolves();

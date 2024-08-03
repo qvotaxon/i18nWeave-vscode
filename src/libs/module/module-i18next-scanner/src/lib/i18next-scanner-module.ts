@@ -8,7 +8,7 @@ import { TraceMethod } from '@i18n-weave/util/util-decorators';
 /**
  * Module for handling i18next scanner execution.
  */
-export default class I18nextScannerModule extends BaseActionModule {
+export class I18nextScannerModule extends BaseActionModule {
   /**
    * Executes the i18next scanner module.
    * @param context The context for the i18next scanner module.

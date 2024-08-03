@@ -6,8 +6,8 @@ import {
 import fs from 'fs';
 import { ExtensionContext, ProgressLocation, window } from 'vscode';
 
-import { arraysEqual } from '../../../libs/util/array-utilities/src/lib/array-utilities';
-import FileLocationStore from '../fileLocation/fileLocationStore';
+import { arraysEqual } from 'libs/util/array-utilities/src/lib/array-utilities';
+import FileLocationStore from 'lib/stores/fileLocation/fileLocationStore';
 
 type CodeTranslation = {
   filePath: string;

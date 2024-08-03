@@ -1,9 +1,7 @@
+import { Framework, ProjectType } from '@i18n-weave/util/util-enums';
 import { getRelativePath } from '@i18n-weave/util/util-file-path-utilities';
+import { getLocalizedTexts } from 'libs/util/util-localization-utilities/src/lib/localization-utilities';
 import vscode, { MessageItem } from 'vscode';
-
-import { Framework } from '../../../../../lib/enums/framework';
-import { ProjectType } from '../../../../../lib/enums/projectType';
-import { getLocalizedTexts } from '../../../util-localization-utilities/src/lib/localization-utilities';
 
 export async function selectProjectTypeAsync(): Promise<string | undefined> {
   return await vscode.window.showQuickPick(Object.values(ProjectType), {

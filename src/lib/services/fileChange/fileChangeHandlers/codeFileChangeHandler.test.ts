@@ -1,11 +1,11 @@
+import { BaseModuleContext } from '@i18n-weave/module/module-base-action';
+import { ChainType } from '@i18n-weave/util/util-enums';
 import assert from 'assert';
 import fs from 'fs';
+import CodeTranslationStore from 'lib/stores/codeTranslation/codeTranslationStore';
 import sinon from 'sinon';
 import vscode, { Uri } from 'vscode';
 
-import { ChainType } from '../../../enums/chainType';
-import ModuleContext from '../../../interfaces/moduleContext';
-import CodeTranslationStore from '../../../stores/codeTranslation/codeTranslationStore';
 import CodeFileChangeHandler from './codeFileChangeHandler';
 
 suite('CodeFileChangeHandler', () => {
@@ -58,7 +58,7 @@ suite('CodeFileChangeHandler', () => {
 
       await handler.handleFileChangeAsync(uri);
 
-      const expectedContext: ModuleContext = {
+      const expectedContext: BaseModuleContext = {
         inputPath: uri,
         locale: '',
         outputPath: uri,
@@ -108,7 +108,7 @@ suite('CodeFileChangeHandler', () => {
 
       await handler.handleFileChangeAsync(uri, true);
 
-      const expectedContext: ModuleContext = {
+      const expectedContext: BaseModuleContext = {
         inputPath: uri,
         locale: '',
         outputPath: uri,
@@ -139,7 +139,7 @@ suite('CodeFileChangeHandler', () => {
 
       await handler.handleFileChangeAsync(uri);
 
-      const expectedContext: ModuleContext = {
+      const expectedContext: BaseModuleContext = {
         inputPath: uri,
         locale: '',
         outputPath: uri,
@@ -169,7 +169,7 @@ suite('CodeFileChangeHandler', () => {
 
       await handler.handleFileChangeAsync(uri, true);
 
-      const expectedContext: ModuleContext = {
+      const expectedContext: BaseModuleContext = {
         inputPath: uri,
         locale: '',
         outputPath: uri,

@@ -1,7 +1,7 @@
+import { FileType } from '@i18n-weave/util/util-enumsz';
+import FileChangeHandler from 'lib/interfaces/fileChangeHandler';
 import vscode from 'vscode';
 
-import { FileType } from '../../enums/fileType';
-import FileChangeHandler from '../../interfaces/fileChangeHandler';
 import CodeFileChangeHandler from './fileChangeHandlers/codeFileChangeHandler';
 import JsonFileChangeHandler from './fileChangeHandlers/jsonFileChangeHandler';
 import PoFileChangeHandler from './fileChangeHandlers/poFileChangeHandler';

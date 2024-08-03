@@ -2,8 +2,8 @@ import * as Sentry from '@sentry/node';
 import fs from 'fs';
 import vscode from 'vscode';
 
-import WebviewCreator from '../../interfaces/webviewCreator';
-import WebviewStore from '../../stores/webview/webviewStore';
+import WebviewCreator from 'lib/interfaces/webviewCreator';
+import WebviewStore from 'lib/stores/webview/webviewStore';
 
 export default class JsonWebviewCreator implements WebviewCreator {
   private context: vscode.ExtensionContext;

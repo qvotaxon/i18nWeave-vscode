@@ -1,10 +1,11 @@
 import { TranslationService } from '@i18n-weave/feature/feature-translation-service';
 import { BaseActionModule } from '@i18n-weave/module/module-base-action';
-import { TranslationModuleContext } from '@i18n-weave/module/module-translation';
 import {
   ConfigurationStoreManager,
   TranslationModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
+
+import { TranslationModuleContext } from './translation-module-context';
 
 export class TranslationModule extends BaseActionModule {
   protected async doExecuteAsync(

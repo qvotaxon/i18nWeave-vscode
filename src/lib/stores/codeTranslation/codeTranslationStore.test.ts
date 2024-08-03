@@ -5,7 +5,7 @@ import fs from 'fs';
 import sinon from 'sinon';
 import { ExtensionContext, window } from 'vscode';
 
-import FileLocationStore from '../fileLocation/fileLocationStore';
+import FileLocationStore from 'lib/stores/fileLocation/fileLocationStore';
 import CodeTranslationStore from './codeTranslationStore';
 
 suite('CodeTranslationStore', () => {

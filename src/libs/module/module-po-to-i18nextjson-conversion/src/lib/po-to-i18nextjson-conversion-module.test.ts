@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import vscode from 'vscode';
 import { Uri, workspace } from 'vscode';
 
-import PoToI18nextJsonConversionModule from './po-to-i18nextjson-conversion-module';
+import { PoToI18nextJsonConversionModule } from './po-to-i18nextjson-conversion-module';
 
 suite('PoToI18nextJsonConversionModule Tests', () => {
   let extensionContext: vscode.ExtensionContext;

@@ -1,6 +1,8 @@
-import { ChainType } from '../../../../../lib/enums/chainType';
-import ActionModule from '../../../../../lib/interfaces/actionModule';
-import ModuleContext from '../../../../../lib/interfaces/moduleContext';
+import {
+  ActionModule,
+  ModuleContext,
+} from '@i18n-weave/module/module-base-action';
+import { ChainType } from '@i18n-weave/util/util-enums';
 
 /**
  * Manages the module chains for the i18nWeave extension.

@@ -1,9 +1,9 @@
 import { TranslationService } from '@i18n-weave/feature/feature-translation-service';
-import { TranslationModule } from '@i18n-weave/module/module-translation';
 import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
+import { TranslationModule } from './translation-module';
 import { TranslationModuleContext } from './translation-module-context';
 
 suite('TranslationModule', () => {

@@ -1,9 +1,9 @@
+import { FileType } from '@i18n-weave/util/util-enums';
+import { IWebviewFactory } from 'lib/interfaces/webviewFactory';
+import { IWebviewStore } from 'lib/interfaces/webviewStore';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import { FileType } from '../../enums/fileType';
-import { IWebviewFactory } from '../../interfaces/webviewFactory';
-import { IWebviewStore } from '../../interfaces/webviewStore';
 import WebviewService from './webviewService';
 
 suite('WebviewService', () => {

@@ -1,10 +1,9 @@
+import { Framework, ProjectType } from '@i18n-weave/util/util-enums';
 import assert from 'assert';
+import { getLocalizedTexts } from 'libs/util/util-localization-utilities/src/lib/localization-utilities';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import { Framework } from '../../../../../lib/enums/framework';
-import { ProjectType } from '../../../../../lib/enums/projectType';
-import { getLocalizedTexts } from '../../../util-localization-utilities/src/lib/localization-utilities';
 import {
   selectFrameworkAsync,
   selectProjectTypeAsync,

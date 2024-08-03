@@ -4,20 +4,19 @@ import {
   GeneralConfiguration,
   I18nextScannerModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
+import { FileType } from '@i18n-weave/util/util-enums';
 import { isProduction } from '@i18n-weave/util/util-environment-utilities';
 import * as Sentry from '@sentry/node';
 import * as dotenv from 'dotenv';
+import WebviewFactory from 'lib/factories/webviewFactory';
+import ConfigurationWizardService from 'lib/services/configurationWizard/configurationWizardService';
+import WebviewService from 'lib/services/webview/webviewService';
+import CodeTranslationStore from 'lib/stores/codeTranslation/codeTranslationStore';
+import FileLocationStore from 'lib/stores/fileLocation/fileLocationStore';
+import WebviewStore from 'lib/stores/webview/webviewStore';
+import { FileSearchLocation } from 'lib/types/fileSearchLocation';
 import path from 'path';
 import vscode, { ExtensionContext } from 'vscode';
-
-import { FileType } from '../lib/enums/fileType';
-import WebviewFactory from '../lib/factories/webviewFactory';
-import ConfigurationWizardService from '../lib/services/configurationWizard/configurationWizardService';
-import WebviewService from '../lib/services/webview/webviewService';
-import CodeTranslationStore from '../lib/stores/codeTranslation/codeTranslationStore';
-import FileLocationStore from '../lib/stores/fileLocation/fileLocationStore';
-import WebviewStore from '../lib/stores/webview/webviewStore';
-import { FileSearchLocation } from '../lib/types/fileSearchLocation';
 
 const envFilePath =
   process.env.DOTENV_CONFIG_PATH ??

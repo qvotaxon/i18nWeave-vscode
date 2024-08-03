@@ -4,11 +4,11 @@ import {
   I18nextScannerModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
 import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
+import { FileType } from '@i18n-weave/util/util-enums';
+import CodeTranslationStore from 'lib/stores/codeTranslation/codeTranslationStore';
 import sinon from 'sinon';
 import { ExtensionContext } from 'vscode';
 
-import { FileType } from '../lib/enums/fileType';
-import CodeTranslationStore from '../lib/stores/codeTranslation/codeTranslationStore';
 import { activate, deactivate } from './extension';
 
 suite('Extension Activation', () => {

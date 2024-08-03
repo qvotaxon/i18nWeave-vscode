@@ -1,10 +1,9 @@
 import vscode from 'vscode';
 import { Uri } from 'vscode';
 
-import { ChainType } from '../../../enums/chainType';
-import ActionModule from '../../../interfaces/actionModule';
-import FileChangeHandler from '../../../interfaces/fileChangeHandler';
-import ModuleContext from '../../../interfaces/moduleContext';
+import { ChainType } from '@i18n-weave/util/util-enums';
+import FileChangeHandler from 'lib/interfaces/fileChangeHandler';
+import { ActionModule, BaseModuleContext } from '@i18n-weave/module/module-base-action';
 import { I18nextJsonToPoConversionModule} from '@i18n-weave/module/module-i18nextjson-to-po-conversion';
 import { ModuleChainManager} from '@i18n-weave/feature/feature-module-chain-manager';
 import { ReadJsonFileModule } from '@i18n-weave/module/module-read-json-file';
@@ -97,7 +96,7 @@ export default class JsonFileChangeHandler extends FileChangeHandler {
       changeFileLocation.fsPath
     );
 
-    const context: ModuleContext = {
+    const context: BaseModuleContext = {
       inputPath: changeFileLocation,
       locale: extractedFileParts.locale,
       outputPath: extractedFileParts.outputPath,
