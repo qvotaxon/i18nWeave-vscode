@@ -1,10 +1,10 @@
+import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import assert from 'assert';
 import fs from 'fs';
 import sinon from 'sinon';
 import { ExtensionContext, window } from 'vscode';
 
-import FileReader from '../../services/fileIo/fileReader';
 import FileLocationStore from '../fileLocation/fileLocationStore';
 import CodeTranslationStore from './codeTranslationStore';
 

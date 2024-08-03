@@ -22,8 +22,15 @@
             "message": "Modules should not import from Store directly."
           },
           {
-            "group": ["@i18n-weave/module/**"],
-            "message": "Modules should not import other Modules directly."
+            "group": [
+              "@i18n-weave/module/**",
+              "!@i18n-weave/module/module-base-action"
+            ],
+            "message": "Modules should not import other Modules directly. Except for module-base-action which is an allowed import."
+          },
+          {
+            "group": [],
+            "message": ""
           }
         ]
       }

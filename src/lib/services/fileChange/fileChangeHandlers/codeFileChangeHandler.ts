@@ -7,7 +7,7 @@ import ActionModule from '../../../interfaces/actionModule';
 import FileChangeHandler from '../../../interfaces/fileChangeHandler';
 import ModuleContext from '../../../interfaces/moduleContext';
 import I18nextScannerModule from '../../../modules/i18nextScanner/i18nextScannerModule';
-import ModuleChainManager from '../../../modules/moduleChainManager';
+import { ModuleChainManager} from '@i18n-weave/feature/feature-module-chain-manager';
 import CodeTranslationStore from '../../../stores/codeTranslation/codeTranslationStore';
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
 

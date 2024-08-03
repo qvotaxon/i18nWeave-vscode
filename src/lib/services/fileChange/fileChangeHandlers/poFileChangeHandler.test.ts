@@ -1,4 +1,5 @@
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
+import { ModuleChainManager } from '@i18n-weave/feature/feature-module-chain-manager';
 import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 import * as filePathUtilities from '@i18n-weave/util/util-file-path-utilities';
 import * as assert from 'assert';
@@ -6,9 +7,8 @@ import sinon from 'sinon';
 import vscode from 'vscode';
 import { Uri } from 'vscode';
 
+import ReadPoFileModule from '../../../../libs/module/module-read-po-file/src/lib/read-po-file-module';
 import { ChainType } from '../../../enums/chainType';
-import ModuleChainManager from '../../../modules/moduleChainManager';
-import ReadPoFileModule from '../../../modules/readPoFile/readPoFileModule';
 import PoFileChangeHandler from './poFileChangeHandler';
 
 suite('PoFileChangeHandler', () => {

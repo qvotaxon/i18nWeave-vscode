@@ -1,4 +1,5 @@
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
+import { ModuleChainManager } from '@i18n-weave/feature/feature-module-chain-manager';
 import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 import * as filePathUtilities from '@i18n-weave/util/util-file-path-utilities';
 import * as assert from 'assert';
@@ -7,9 +8,8 @@ import vscode from 'vscode';
 import { Uri } from 'vscode';
 
 import { ChainType } from '../../../enums/chainType';
-import ModuleChainManager from '../../../modules/moduleChainManager';
-import ReadJsonFileModule from '../../../modules/readJsonFile/readJsonFileModule';
-import TranslationModule from '../../../modules/translation/translationModule';
+import ReadJsonFileModule from '../../../modules/readJsonFile/read-json-file-module';
+import TranslationModule from '../../../modules/translation/translation-module';
 import JsonFileChangeHandler from './jsonFileChangeHandler';
 
 suite('JsonFileChangeHandler', () => {

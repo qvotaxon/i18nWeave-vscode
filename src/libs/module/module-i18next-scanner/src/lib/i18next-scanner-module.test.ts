@@ -1,6 +1,6 @@
 import { I18nextScannerService } from '@i18n-weave/feature/feature-i18next-scanner-service';
+import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import sinon from 'sinon';
-import { ConfigurationStoreManager } from 'src/libs/util/util-configuration/src/lib/store-configuration-store-manager/src';
 import vscode from 'vscode';
 
 import I18nextScannerModule from './i18next-scanner-module';

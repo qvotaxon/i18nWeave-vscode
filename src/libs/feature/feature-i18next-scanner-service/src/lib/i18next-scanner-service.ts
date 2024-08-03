@@ -2,8 +2,7 @@ import sort from 'gulp-sort';
 import I18nextScanner from 'i18next-scanner';
 import vfs from 'vinyl-fs';
 
-import { I18nextScannerModuleConfiguration } from 'src/libs/util/util-configuration/src';
-import { ConfigurationStoreManager } from 'src/libs/util/util-configuration/src/lib/store-configuration-store-manager/src';
+import { I18nextScannerModuleConfiguration, ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import { I18nextScannerOptions } from './i18nextScannerOptions';
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
 import { getProjectRootFolder } from '@i18n-weave/util/util-file-path-utilities';

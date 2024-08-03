@@ -1,7 +1,7 @@
-import { I18nextScannerModuleConfiguration } from '../../entities/configuration/modules/i18nextScanner/i18nextScannerModuleConfiguration';
+
 import { I18nextScannerService } from '@i18n-weave/feature/feature-i18next-scanner-service';
-import { ConfigurationStoreManager } from 'src/libs/util/util-configuration/src/lib/store-configuration-store-manager/src';
-import { BaseActionModule } from '../baseActionModule';
+import { I18nextScannerModuleConfiguration, ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
+import { BaseActionModule } from '@i18n-weave/module/module-base-action';
 import I18nextScannerModuleContext from './i18next-scanner-module-context';
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
 
