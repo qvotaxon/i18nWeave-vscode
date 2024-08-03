@@ -34,6 +34,24 @@
       "@i18n-weave/file-io/file-io-file-reader": [
         "src/libs/file-io/file-io-file-reader/src/"
       ],
+      "@i18n-weave/feature/feature-code-file-change-handler": [
+        "src/libs/feature/feature-code-file-change-handler/src"
+      ],
+      "@i18n-weave/feature/feature-json-file-change-handler": [
+        "src/libs/feature/feature-json-file-change-handler/src"
+      ],
+      "@i18n-weave/feature/feature-po-file-change-handler": [
+        "src/libs/feature/feature-po-file-change-handler/src"
+      ],
+      "@i18n-weave/feature/feature-file-change-handler-factory": [
+        "src/libs/feature/feature-file-change-handler-factory/src"
+      ],
+      "@i18n-weave/feature/feature-webview-service": [
+        "src/libs/feature/feature-webview-service/src"
+      ],
+      "@i18n-weave/feature/feature-webview-creator": [
+        "src/libs/feature/feature-webview-creator/src"
+      ],
       "@i18n-weave/feature/feature-configuration-wizard": [
         "src/libs/feature/feature-configuration-wizard/src"
       ],
@@ -73,14 +91,17 @@
         "src/libs/util/util-array-utilities/src"
       ],
       "@i18n-weave/util/util-decorators": ["src/libs/util/util-decorators/src"],
-      "@i18n-weave/store/store-configuration-store": [
-        "src/libs/util/util-configuration/src/lib/configuration-store/src"
+      "@i18n-weave/store/store-code-translation-store": [
+        "src/libs/store/store-code-translation-store/src/"
       ],
-      "@i18n-weave/store/store-configuration-store-manager": [
-        "src/libs/util/util-configuration/src/lib/configuration-store-manager/src"
+      "@i18n-weave/store/store-file-location-store": [
+        "src/libs/store/store-file-location-store/src/"
       ],
       "@i18n-weave/store/store-file-lock-store": [
         "src/libs/store/store-file-lock-store/src/"
+      ],
+      "@i18n-weave/store/store-webview-store": [
+        "src/libs/store/store-webview-store/src/"
       ],
       "@i18n-weave/util/util-file-path-utilities": [
         "src/libs/util/util-file-path-utilities/src/"
