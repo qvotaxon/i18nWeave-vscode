@@ -11,13 +11,13 @@ import {
   configureCustomProjectAsync,
   configureGeneralSettingsAsync,
   setConfigurationAsync,
-} from './configurationHandlers';
+} from './configuration-handlers';
 import {
   readNextI18nextConfigFileAsync,
   scanNextI18nextConfigFileAsync,
-} from './nextI18nextConfigHandlers';
+} from './next-i18next-config-handlers';
 
-export default class ConfigurationWizardService {
+export class ConfigurationWizardService {
   public async startConfigurationWizardAsync(): Promise<
     Partial<I18nextScannerModuleConfiguration> | undefined
   > {

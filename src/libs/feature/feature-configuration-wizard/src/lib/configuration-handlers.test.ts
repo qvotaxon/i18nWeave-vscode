@@ -4,7 +4,7 @@ import assert from 'assert';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import * as configurationHandlers from './configurationHandlers';
+import * as configurationHandlers from './configuration-handlers';
 
 suite('ConfigurationHandlers', () => {
   let sandbox: sinon.SinonSandbox;

@@ -6,7 +6,7 @@ import vscode from 'vscode';
 /**
  * Factory class for creating webviews.
  */
-export default class WebviewFactory {
+export class WebviewFactory {
   private creators: Map<FileType, WebviewCreator>;
 
   /**

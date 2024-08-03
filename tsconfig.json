@@ -34,6 +34,12 @@
       "@i18n-weave/file-io/file-io-file-reader": [
         "src/libs/file-io/file-io-file-reader/src/"
       ],
+      "@i18n-weave/feature/feature-configuration-wizard": [
+        "src/libs/feature/feature-configuration-wizard/src"
+      ],
+      "@i18n-weave/feature/feature-webview-factory": [
+        "src/libs/feature/feature-webview-factory/src"
+      ],
       "@i18n-weave/feature/feature-caching-service": [
         "src/libs/feature/feature-caching-service/src"
       ],

@@ -4,7 +4,7 @@ import WebviewCreator from 'lib/interfaces/webviewCreator';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import WebviewFactory from './webviewFactory';
+import { WebviewFactory } from './webview-factory';
 
 suite('WebviewFactory', () => {
   let webviewFactory: WebviewFactory;

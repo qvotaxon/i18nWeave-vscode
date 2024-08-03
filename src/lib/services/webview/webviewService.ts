@@ -1,5 +1,5 @@
+import { IWebviewFactory } from '@i18n-weave/feature/feature-webview-factory';
 import { FileType } from '@i18n-weave/util/util-enums';
-import { IWebviewFactory } from 'lib/interfaces/webviewFactory';
 import { IWebviewStore } from 'lib/interfaces/webviewStore';
 import vscode from 'vscode';
 

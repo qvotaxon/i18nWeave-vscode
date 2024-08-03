@@ -1,7 +1,7 @@
 import assert from 'assert';
 import sinon from 'sinon';
 
-import * as nextI18nextConfigHandlers from './nextI18nextConfigHandlers';
+import * as nextI18nextConfigHandlers from './next-i18next-config-handlers';
 
 suite('NextI18nextConfigHandlers', () => {
   let sandbox: sinon.SinonSandbox;

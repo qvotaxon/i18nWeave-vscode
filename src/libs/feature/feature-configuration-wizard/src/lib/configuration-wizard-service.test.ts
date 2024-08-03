@@ -3,9 +3,9 @@ import assert from 'assert';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import * as configurationHandlers from './configurationHandlers';
-import ConfigurationWizardService from './configurationWizardService';
-import * as nextI18nextConfigHandlers from './nextI18nextConfigHandlers';
+import * as configurationHandlers from './configuration-handlers';
+import ConfigurationWizardService from './configuration-wizard-service';
+import * as nextI18nextConfigHandlers from './next-i18next-config-handlers';
 
 suite('ConfigurationWizardService', () => {
   let sandbox: sinon.SinonSandbox;
