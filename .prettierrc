@@ -6,7 +6,19 @@
   "arrowParens": "avoid",
   "endOfLine": "crlf",
   "plugins": ["@trivago/prettier-plugin-sort-imports"],
-  "importOrder": ["^@i18n-weave/(.*)$", "<THIRD_PARTY_MODULES>", "^@/(.*)$", "^[./]"],
+  "importOrderParserPlugins" : ["decorators", "typescript"],
+  "importOrder": [
+    "^@i18n-weave/core/(.*)$",
+    "^@i18n-weave/module/(.*)$",
+    "^@i18n-weave/feature/(.*)$",
+    "^@i18n-weave/http/(.*)$",
+    "^@i18n-weave/file-io/(.*)$",
+    "^@i18n-weave/store/(.*)$",
+    "^@i18n-weave/util/(.*)$",
+    "<THIRD_PARTY_MODULES>",
+    "^@/(.*)$",
+    "^[./]"
+  ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true
 }

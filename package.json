@@ -245,7 +245,8 @@
     "publish": "npm run compile:production && npm run package",
     "test:coverage": "npm run test -- --coverage --coverage-reporter=clover",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org i18nweave --project i18nweave-vscode-r3 ./out && sentry-cli sourcemaps upload --org i18nweave --project i18nweave-vscode-r3 ./out",
-    "copyfiles": "copyfiles -u 1 ./src/media/**/* out/"
+    "copyfiles": "copyfiles -u 1 ./src/media/**/* out/",
+    "pretty": "prettier --write \"./src/**/*.ts\""
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
