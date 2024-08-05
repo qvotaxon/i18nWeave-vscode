@@ -13,7 +13,7 @@ import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 import * as filePathUtilities from '@i18n-weave/util/util-file-path-utilities';
 import { ChainType } from '@i18n-weave/util/util-enums';
 
-import JsonFileChangeHandler from '../../../json-file-change-handler';
+import JsonFileChangeHandler from 'libs/feature/json-file-change-handler';
 
 suite('JsonFileChangeHandler', () => {
   let extensionContext: vscode.ExtensionContext;

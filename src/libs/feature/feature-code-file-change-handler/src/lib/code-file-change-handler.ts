@@ -1,6 +1,5 @@
 import fs from 'fs';
-import FileChangeHandler from 'lib/interfaces/fileChangeHandler';
-import CodeTranslationStore from 'lib/stores/codeTranslation/codeTranslationStore';
+import { CodeTranslationStore } from 'lib/stores/codeTranslation/codeTranslationStore';
 import vscode from 'vscode';
 import { Uri } from 'vscode';
 
@@ -10,12 +9,13 @@ import {
 } from '@i18n-weave/module/module-base-action';
 import { I18nextScannerModule } from '@i18n-weave/module/module-i18next-scanner';
 
+import { BaseFileChangeHandler } from '@i18n-weave/feature/feature-base-file-change-handler';
 import { ModuleChainManager } from '@i18n-weave/feature/feature-module-chain-manager';
 
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
 import { ChainType } from '@i18n-weave/util/util-enums';
 
-export class CodeFileChangeHandler extends FileChangeHandler {
+export class CodeFileChangeHandler extends BaseFileChangeHandler {
   private static i18nextScannerModule: I18nextScannerModule;
   private static moduleChainManager: ModuleChainManager =
     new ModuleChainManager();

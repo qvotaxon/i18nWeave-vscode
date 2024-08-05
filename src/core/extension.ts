@@ -10,7 +10,6 @@ import { WebviewService } from '@i18n-weave/feature/feature-webview-service';
 
 import { CodeTranslationStore } from '@i18n-weave/store/store-code-translation-store';
 import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
-import { FileSearchLocation } from '@i18n-weave/store/store-file-location-store';
 import { WebviewStore } from '@i18n-weave/store/store-webview-store';
 
 import {
@@ -20,6 +19,7 @@ import {
 } from '@i18n-weave/util/util-configuration';
 import { FileType } from '@i18n-weave/util/util-enums';
 import { isProduction } from '@i18n-weave/util/util-environment-utilities';
+import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
 const envFilePath =
   process.env.DOTENV_CONFIG_PATH ??

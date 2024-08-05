@@ -1,14 +1,14 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import FileChangeHandlerFactory from 'lib/services/fileChange/fileChangeHandlerFactory';
-import { FileSearchLocation } from 'lib/types/fileSearchLocation';
 import sinon from 'sinon';
 
+import { FileChangeHandlerFactory } from '@i18n-weave/feature/feature-file-change-handler-factory';
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
 
 import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 
 import { FileType } from '@i18n-weave/util/util-enums';
+import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
 suite('FileWatcherCreator', () => {
   let extensionContext: vscode.ExtensionContext;

@@ -1,11 +1,11 @@
 import assert from 'assert';
-import { FileSearchLocation } from 'lib/types/fileSearchLocation';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
 import * as filePathUtilities from '@i18n-weave/util/util-file-path-utilities';
+import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
-import FileLocationStore from './file-location-store';
+import { FileLocationStore } from './file-location-store';
 
 suite('FileLocationStore Tests', function () {
   let store: FileLocationStore;

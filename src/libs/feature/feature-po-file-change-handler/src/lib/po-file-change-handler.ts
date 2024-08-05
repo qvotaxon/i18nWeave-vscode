@@ -1,7 +1,4 @@
-import FileChangeHandler from 'lib/interfaces/fileChangeHandler';
-import FileLocationStore from 'lib/stores/fileLocation/fileLocationStore';
-import vscode from 'vscode';
-import { Uri } from 'vscode';
+import vscode, { Uri } from 'vscode';
 
 import {
   ActionModule,
@@ -10,16 +7,18 @@ import {
 import { PoToI18nextJsonConversionModule } from '@i18n-weave/module/module-po-to-i18nextjson-conversion';
 import { ReadPoFileModule } from '@i18n-weave/module/module-read-po-file';
 
+import { BaseFileChangeHandler } from '@i18n-weave/feature/feature-base-file-change-handler';
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
 import { ModuleChainManager } from '@i18n-weave/feature/feature-module-chain-manager';
 
+import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
 import { ChainType } from '@i18n-weave/util/util-enums';
 import { extractFilePathParts } from '@i18n-weave/util/util-file-path-utilities';
 
-export class PoFileChangeHandler extends FileChangeHandler {
+export class PoFileChangeHandler extends BaseFileChangeHandler {
   private static fileWatcherCreator: FileWatcherCreator;
   private static readPoFileModule: ReadPoFileModule;
   private static poToI18nextJsonConversionModule: PoToI18nextJsonConversionModule;

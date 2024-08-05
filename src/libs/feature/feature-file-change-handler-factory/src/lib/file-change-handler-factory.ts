@@ -3,9 +3,9 @@ import vscode from 'vscode';
 
 import { FileType } from '@i18n-weave/util/util-enumsz';
 
-import CodeFileChangeHandler from '../../../fileChangeHandlers/feature-code-file-change-handler/src/lib/code-file-change-handler';
-import JsonFileChangeHandler from '../../../fileChangeHandlers/feature-json-file-change-handler/src/lib/json-file-change-handler';
-import PoFileChangeHandler from '../../../fileChangeHandlers/feature-po-file-change-handler/src/lib/po-file-change-handler';
+import CodeFileChangeHandler from 'libs/feature/fileChangeHandlers/feature-code-file-change-handler/src/lib/code-file-change-handler';
+import JsonFileChangeHandler from 'libs/feature/fileChangeHandlers/feature-json-file-change-handler/src/lib/json-file-change-handler';
+import PoFileChangeHandler from 'libs/feature/fileChangeHandlers/feature-po-file-change-handler/src/lib/po-file-change-handler';
 
 export class FileChangeHandlerFactory {
   public createFileChangeHandler(

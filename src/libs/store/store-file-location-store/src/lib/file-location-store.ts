@@ -1,9 +1,9 @@
-import { FileSearchLocation } from 'lib/types/fileSearchLocation';
 import vscode from 'vscode';
 
 import { getFileExtension } from '@i18n-weave/util/util-file-path-utilities';
+import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
-export default class FileLocationStore {
+export class FileLocationStore {
   private static instance: FileLocationStore;
   private fileLocations: Map<string, Set<string>> = new Map();
 

@@ -1,10 +1,11 @@
 import fs from 'fs';
-import FileLocationStore from 'lib/stores/fileLocation/fileLocationStore';
-import { arraysEqual } from 'libs/util/array-utilities/src/lib/array-utilities';
 import { ExtensionContext, ProgressLocation, window } from 'vscode';
 
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
+import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+
+import { arraysEqual } from '@i18n-weave/util/util-array-utilities';
 import {
   ConfigurationStoreManager,
   I18nextScannerModuleConfiguration,
@@ -16,7 +17,7 @@ type CodeTranslation = {
   dateModified: Date;
 };
 
-export default class CodeTranslationStore {
+export class CodeTranslationStore {
   private _context: ExtensionContext | undefined;
   private _cacheKey = 'i18nWeave.translationFunctionCache';
   private static _instance: CodeTranslationStore;

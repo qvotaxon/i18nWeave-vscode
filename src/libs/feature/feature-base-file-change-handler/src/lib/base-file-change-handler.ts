@@ -1,7 +1,8 @@
-import FileLocationStore from 'lib/stores/fileLocation/fileLocationStore';
 import { Uri } from 'vscode';
 
-export default abstract class FileChangeHandler {
+import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+
+export abstract class BaseFileChangeHandler {
   public abstract handleFileChangeAsync(
     changeFileLocation?: Uri | undefined
   ): Promise<void>;

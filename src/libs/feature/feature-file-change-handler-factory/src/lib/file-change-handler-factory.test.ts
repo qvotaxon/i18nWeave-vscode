@@ -3,10 +3,10 @@ import vscode from 'vscode';
 
 import { FileType } from '@i18n-weave/util/util-enums';
 
-import FileChangeHandlerFactory from '../../../file-change-handler-factory';
-import CodeFileChangeHandler from '../../../fileChangeHandlers/feature-code-file-change-handler/src/lib/code-file-change-handler';
-import JsonFileChangeHandler from '../../../fileChangeHandlers/feature-json-file-change-handler/src/lib/json-file-change-handler';
-import PoFileChangeHandler from '../../../fileChangeHandlers/feature-po-file-change-handler/src/lib/po-file-change-handler';
+import FileChangeHandlerFactory from 'libs/feature/file-change-handler-factory';
+import CodeFileChangeHandler from 'libs/feature/fileChangeHandlers/feature-code-file-change-handler/src/lib/code-file-change-handler';
+import JsonFileChangeHandler from 'libs/feature/fileChangeHandlers/feature-json-file-change-handler/src/lib/json-file-change-handler';
+import PoFileChangeHandler from 'libs/feature/fileChangeHandlers/feature-po-file-change-handler/src/lib/po-file-change-handler';
 
 suite('FileChangeHandlerFactory Tests', () => {
   let extensionContext: vscode.ExtensionContext;

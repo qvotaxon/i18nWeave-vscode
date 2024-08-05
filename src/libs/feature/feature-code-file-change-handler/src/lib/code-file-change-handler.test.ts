@@ -8,7 +8,7 @@ import { BaseModuleContext } from '@i18n-weave/module/module-base-action';
 
 import { ChainType } from '@i18n-weave/util/util-enums';
 
-import CodeFileChangeHandler from '../../../code-file-change-handler';
+import CodeFileChangeHandler from 'libs/feature/code-file-change-handler';
 
 suite('CodeFileChangeHandler', () => {
   let extensionContext: vscode.ExtensionContext;

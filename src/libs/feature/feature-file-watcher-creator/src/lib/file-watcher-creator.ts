@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
-import FileChangeHandlerFactory from 'lib/services/fileChange/fileChangeHandlerFactory';
-import { FileSearchLocation } from 'lib/types/fileSearchLocation';
+
+import { FileChangeHandlerFactory } from '@i18n-weave/feature/feature-file-change-handler-factory';
 
 import { FileType } from '@i18n-weave/util/util-enums';
+import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
 /**
  * Class responsible for creating file watchers for files matching a given glob pattern.

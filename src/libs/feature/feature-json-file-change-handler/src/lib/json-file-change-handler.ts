@@ -1,4 +1,3 @@
-import FileChangeHandler from 'lib/interfaces/fileChangeHandler';
 import vscode from 'vscode';
 import { Uri } from 'vscode';
 
@@ -10,6 +9,7 @@ import { I18nextJsonToPoConversionModule } from '@i18n-weave/module/module-i18ne
 import { ReadJsonFileModule } from '@i18n-weave/module/module-read-json-file';
 import { TranslationModule } from '@i18n-weave/module/module-translation';
 
+import { BaseFileChangeHandler } from '@i18n-weave/feature/feature-base-file-change-handler';
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
 import { ModuleChainManager } from '@i18n-weave/feature/feature-module-chain-manager';
 
@@ -19,7 +19,7 @@ import { TraceMethod } from '@i18n-weave/util/util-decorators';
 import { ChainType } from '@i18n-weave/util/util-enums';
 import { extractFilePathParts } from '@i18n-weave/util/util-file-path-utilities';
 
-export class JsonFileChangeHandler extends FileChangeHandler {
+export class JsonFileChangeHandler extends BaseFileChangeHandler {
   private static fileWatcherCreator: FileWatcherCreator;
   private static readJsonFileModule: ReadJsonFileModule;
   private static translationModule: TranslationModule;

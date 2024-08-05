@@ -34,6 +34,9 @@
       "@i18n-weave/file-io/file-io-file-reader": [
         "src/libs/file-io/file-io-file-reader/src/"
       ],
+      "@i18n-weave/feature/feature-base-file-change-handler": [
+        "src/libs/feature/feature-base-file-change-handler/src"
+      ],
       "@i18n-weave/feature/feature-code-file-change-handler": [
         "src/libs/feature/feature-code-file-change-handler/src"
       ],

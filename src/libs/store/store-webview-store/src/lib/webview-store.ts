@@ -3,7 +3,7 @@ import vscode from 'vscode';
 /**
  * Represents a store for managing webviews in VS Code.
  */
-export default class WebviewStore {
+export class WebviewStore {
   private static _instance: WebviewStore;
   private static _webviews: Map<string, vscode.WebviewPanel> = new Map();
 

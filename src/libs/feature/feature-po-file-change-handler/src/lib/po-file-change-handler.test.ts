@@ -13,7 +13,7 @@ import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 import * as filePathUtilities from '@i18n-weave/util/util-file-path-utilities';
 import { ChainType } from '@i18n-weave/util/util-enums';
 
-import PoFileChangeHandler from '../../../po-file-change-handler';
+import PoFileChangeHandler from 'libs/feature/po-file-change-handler';
 
 suite('PoFileChangeHandler', () => {
   let extensionContext: vscode.ExtensionContext;
