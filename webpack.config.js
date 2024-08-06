@@ -1,5 +1,6 @@
 const path = require('path');
 const Dotenv = require('dotenv');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 // Load the environment variables from the specified .env file
 Dotenv.config({ path: process.env.DOTENV_CONFIG_PATH || '.env.production' });
@@ -8,7 +9,7 @@ module.exports = (env, argv) => {
     const isProduction = argv.mode === 'production';
 
     return {
-        entry: './src/core/extension.ts', // This should be your main file
+        entry: './src/core/extension.ts',
         devtool: 'source-map',
         output: {
             filename: 'extension.js',
@@ -19,15 +20,11 @@ module.exports = (env, argv) => {
         mode: isProduction ? 'production' : 'development',
         resolve: {
             extensions: ['.ts', '.js'],
-            alias: {
-                '@i18n-weave/core': path.resolve(__dirname, 'src/core'),
-                '@i18n-weave/feature': path.resolve(__dirname, 'src/libs/feature/feature-*/src'),
-                '@i18n-weave/file-io': path.resolve(__dirname, 'src/libs/file-io/file-io-*/src'),
-                '@i18n-weave/http': path.resolve(__dirname, 'src/libs/http/http-*/src'),
-                '@i18n-weave/module': path.resolve(__dirname, 'src/libs/module/module-*/src'),
-                '@i18n-weave/store': path.resolve(__dirname, 'src/libs/store/store-*/src'),
-                '@i18n-weave/util': path.resolve(__dirname, 'src/libs/util/util-*/src'),
-            }
+            plugins: [
+                new TsconfigPathsPlugin({
+                    configFile: path.resolve(__dirname, 'tsconfig.json')
+                })
+            ]
         },
         module: {
             rules: [
