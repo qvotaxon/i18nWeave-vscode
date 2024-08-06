@@ -7,7 +7,10 @@ import {
   sharedCacheKeys,
 } from '@i18n-weave/feature/feature-caching-service';
 
-import { TranslationModuleConfiguration } from '@i18n-weave/util/util-configuration';
+import {
+  ConfigurationStoreManager,
+  TranslationModuleConfiguration,
+} from '@i18n-weave/util/util-configuration';
 
 /**
  * Singleton class for managing DeepL translation services.

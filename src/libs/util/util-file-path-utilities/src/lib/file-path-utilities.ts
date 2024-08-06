@@ -1,9 +1,12 @@
 import fs from 'fs';
-import { ExtractedFileParts as FilePathParts } from 'lib/types/extractedFileParts';
-import ConfigurationStoreManager from 'libs/util/util-configuration/src/lib/configuration-store-manager/configuration-store-manager';
-import I18nextScannerModuleConfiguration from 'libs/util/util-configuration/src/lib/modules/i18next-scanner-module/i18next-scanner-module-configuration';
 import path from 'path';
 import vscode, { Uri, workspace } from 'vscode';
+
+import {
+  ConfigurationStoreManager,
+  I18nextScannerModuleConfiguration,
+} from '@i18n-weave/util/util-configuration';
+import { ExtractedFileParts } from '@i18n-weave/util/util-types';
 
 export function extractLocale(filePath: string): string {
   const translationFilesLocation =
@@ -41,11 +44,11 @@ export function determineOutputPath(filePath: string): Uri {
  * @param filePath - The file path to process.
  * @returns A {@link FilePathParts} object containing the extracted locale and output path.
  */
-export function extractFilePathParts(filePath: string): FilePathParts {
+export function extractFilePathParts(filePath: string): ExtractedFileParts {
   const locale = extractLocale(filePath);
   const outputPath = determineOutputPath(filePath);
 
-  return { locale, outputPath } as FilePathParts;
+  return { locale, outputPath } as ExtractedFileParts;
 }
 
 /**

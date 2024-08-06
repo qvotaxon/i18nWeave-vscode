@@ -5,7 +5,7 @@ import { Uri } from 'vscode';
 
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
-import ReadJsonFileModule from './read-json-file-module';
+import { ReadJsonFileModule } from './read-json-file-module';
 import { ReadJsonFileModuleContext } from './read-json-file-module-context';
 
 suite('ReadJsonFileModule Tests', () => {

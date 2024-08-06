@@ -1,6 +1,9 @@
-import WebviewCreator from 'lib/interfaces/webviewCreator';
-import JsonWebviewCreator from 'lib/services/webview/jsonWebviewCreator';
 import vscode from 'vscode';
+
+import {
+  IWebviewCreator,
+  JsonWebviewCreator,
+} from '@i18n-weave/feature/feature-webview-creator';
 
 import { FileType } from '@i18n-weave/util/util-enums';
 
@@ -8,7 +11,7 @@ import { FileType } from '@i18n-weave/util/util-enums';
  * Factory class for creating webviews.
  */
 export class WebviewFactory {
-  private creators: Map<FileType, WebviewCreator>;
+  private creators: Map<FileType, IWebviewCreator>;
 
   /**
    * Creates an instance of WebviewFactory.

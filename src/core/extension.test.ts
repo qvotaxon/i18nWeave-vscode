@@ -1,8 +1,9 @@
-import CodeTranslationStore from 'lib/stores/codeTranslation/codeTranslationStore';
 import sinon from 'sinon';
 import { ExtensionContext } from 'vscode';
 
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
+
+import { CodeTranslationStore } from '@i18n-weave/store/store-code-translation-store';
 
 import {
   I18nextJsonToPoConversionModuleConfiguration,

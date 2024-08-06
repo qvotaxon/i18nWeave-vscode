@@ -8,7 +8,7 @@ import {
 
 import { ChainType } from '@i18n-weave/util/util-enums';
 
-import ModuleChainManager from './module-chain-manager';
+import { ModuleChainManager } from './module-chain-manager';
 
 suite('ModuleChainManager Tests', () => {
   let moduleChainManager: ModuleChainManager;

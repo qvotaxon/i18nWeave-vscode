@@ -1,8 +1,8 @@
-import { getLocalizedTexts } from 'libs/util/util-localization-utilities/src/lib/localization-utilities';
 import vscode, { MessageItem } from 'vscode';
 
 import { Framework, ProjectType } from '@i18n-weave/util/util-enums';
 import { getRelativePath } from '@i18n-weave/util/util-file-path-utilities';
+import { getLocalizedTexts } from '@i18n-weave/util/util-localization-utilities';
 
 export async function selectProjectTypeAsync(): Promise<string | undefined> {
   return await vscode.window.showQuickPick(Object.values(ProjectType), {

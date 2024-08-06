@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 
-import ConfigurationStore from './configuration-store';
+import { ConfigurationStore } from './configuration-store';
 
 suite('ConfigurationStore Tests', () => {
   test('get should return the value associated with the given key', () => {

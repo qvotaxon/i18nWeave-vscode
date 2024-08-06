@@ -3,7 +3,7 @@ import assert from 'assert';
 import sinon from 'sinon';
 
 import { CacheEntry } from './cache-entry';
-import { CachingService } from './cachingService';
+import { CachingService } from './caching-service';
 
 suite('CachingService', () => {
   let extensionContext: vscode.ExtensionContext;

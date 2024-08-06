@@ -1,12 +1,13 @@
 import * as assert from 'assert';
 import vscode from 'vscode';
 
+import { CodeFileChangeHandler } from '@i18n-weave/feature/feature-code-file-change-handler';
+import { JsonFileChangeHandler } from '@i18n-weave/feature/feature-json-file-change-handler';
+import { PoFileChangeHandler } from '@i18n-weave/feature/feature-po-file-change-handler';
+
 import { FileType } from '@i18n-weave/util/util-enums';
 
-import FileChangeHandlerFactory from 'libs/feature/file-change-handler-factory';
-import CodeFileChangeHandler from 'libs/feature/fileChangeHandlers/feature-code-file-change-handler/src/lib/code-file-change-handler';
-import JsonFileChangeHandler from 'libs/feature/fileChangeHandlers/feature-json-file-change-handler/src/lib/json-file-change-handler';
-import PoFileChangeHandler from 'libs/feature/fileChangeHandlers/feature-po-file-change-handler/src/lib/po-file-change-handler';
+import { FileChangeHandlerFactory } from './file-change-handler-factory';
 
 suite('FileChangeHandlerFactory Tests', () => {
   let extensionContext: vscode.ExtensionContext;

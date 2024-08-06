@@ -6,7 +6,7 @@
   "arrowParens": "avoid",
   "endOfLine": "crlf",
   "plugins": ["@trivago/prettier-plugin-sort-imports"],
-  "importOrderParserPlugins" : ["decorators", "typescript"],
+  "importOrderParserPlugins": ["decorators", "typescript"],
   "importOrder": [
     "^@/(.*)$",
     "<THIRD_PARTY_MODULES>",

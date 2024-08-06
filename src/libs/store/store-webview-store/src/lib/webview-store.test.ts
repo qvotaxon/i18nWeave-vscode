@@ -1,7 +1,7 @@
 import assert from 'assert';
 import vscode from 'vscode';
 
-import WebviewStore from './webview-store';
+import { WebviewStore } from './webview-store';
 
 suite('WebviewStore', () => {
   let webviewStore: WebviewStore;

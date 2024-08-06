@@ -4,7 +4,7 @@ import * as mock from 'mock-fs';
 import path from 'path';
 import { Uri } from 'vscode';
 
-import FileWriter from './file-writer';
+import { FileWriter } from './file-writer';
 
 suite('FileWriter Tests', () => {
   teardown(() => {

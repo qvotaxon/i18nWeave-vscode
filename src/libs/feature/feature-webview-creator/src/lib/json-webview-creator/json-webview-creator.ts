@@ -1,10 +1,12 @@
 import * as Sentry from '@sentry/node';
 import fs from 'fs';
-import WebviewCreator from 'lib/interfaces/webviewCreator';
-import WebviewStore from 'lib/stores/webview/webviewStore';
 import vscode from 'vscode';
 
-export class JsonWebviewCreator implements WebviewCreator {
+import { IWebviewCreator } from '@i18n-weave/feature/feature-webview-creator';
+
+import { WebviewStore } from '@i18n-weave/store/store-webview-store';
+
+export class JsonWebviewCreator implements IWebviewCreator {
   private context: vscode.ExtensionContext;
   private panel: vscode.WebviewPanel | undefined;
   private webviewStore: WebviewStore;

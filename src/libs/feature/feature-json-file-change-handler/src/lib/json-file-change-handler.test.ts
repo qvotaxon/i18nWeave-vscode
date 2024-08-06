@@ -1,19 +1,19 @@
 import * as assert from 'assert';
-import ReadJsonFileModule from 'lib/modules/readJsonFile/read-json-file-module';
-import TranslationModule from 'lib/modules/translation/translation-module';
 import sinon from 'sinon';
 import vscode from 'vscode';
 import { Uri } from 'vscode';
 
+import { ReadJsonFileModule } from '@i18n-weave/module/module-read-json-file';
+import { TranslationModule } from '@i18n-weave/module/module-translation';
+
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
+import { JsonFileChangeHandler } from '@i18n-weave/feature/feature-json-file-change-handler';
 import { ModuleChainManager } from '@i18n-weave/feature/feature-module-chain-manager';
 
 import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 
 import * as filePathUtilities from '@i18n-weave/util/util-file-path-utilities';
 import { ChainType } from '@i18n-weave/util/util-enums';
-
-import JsonFileChangeHandler from 'libs/feature/json-file-change-handler';
 
 suite('JsonFileChangeHandler', () => {
   let extensionContext: vscode.ExtensionContext;

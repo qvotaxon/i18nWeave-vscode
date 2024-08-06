@@ -1,14 +1,15 @@
 import assert from 'assert';
 import fs from 'fs';
-import FileLocationStore from 'lib/stores/fileLocation/fileLocationStore';
 import sinon from 'sinon';
 import { ExtensionContext, window } from 'vscode';
 
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
+import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+
 import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 
-import CodeTranslationStore from './code-translation-store';
+import { CodeTranslationStore } from './code-translation-store';
 
 suite('CodeTranslationStore', () => {
   suite('general tests', () => {

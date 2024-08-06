@@ -5,7 +5,7 @@ import { I18nextScannerService } from '@i18n-weave/feature/feature-i18next-scann
 
 import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 
-import I18nextScannerModule from './i18next-scanner-module';
+import { I18nextScannerModule } from './i18next-scanner-module';
 import I18nextScannerModuleContext from './i18next-scanner-module-context';
 
 suite('I18nextScannerModule', () => {

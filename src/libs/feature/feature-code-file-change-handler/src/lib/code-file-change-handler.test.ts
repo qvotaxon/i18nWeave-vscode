@@ -1,14 +1,15 @@
 import assert from 'assert';
 import fs from 'fs';
-import CodeTranslationStore from 'lib/stores/codeTranslation/codeTranslationStore';
 import sinon from 'sinon';
 import vscode, { Uri } from 'vscode';
 
 import { BaseModuleContext } from '@i18n-weave/module/module-base-action';
 
-import { ChainType } from '@i18n-weave/util/util-enums';
+import { CodeFileChangeHandler } from '@i18n-weave/feature/feature-code-file-change-handler';
 
-import CodeFileChangeHandler from 'libs/feature/code-file-change-handler';
+import { CodeTranslationStore } from '@i18n-weave/store/store-code-translation-store';
+
+import { ChainType } from '@i18n-weave/util/util-enums';
 
 suite('CodeFileChangeHandler', () => {
   let extensionContext: vscode.ExtensionContext;

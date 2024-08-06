@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as mock from 'mock-fs';
 import { Uri } from 'vscode';
 
-import FileReader from './file-reader';
+import { FileReader } from './file-reader';
 
 suite('FileReader Tests', () => {
   setup(() => {

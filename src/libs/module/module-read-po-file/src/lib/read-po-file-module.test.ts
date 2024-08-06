@@ -4,7 +4,7 @@ import vscode, { Uri } from 'vscode';
 
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
-import ReadPoFileModule from './read-po-file-module';
+import { ReadPoFileModule } from './read-po-file-module';
 import { ReadPoFileModuleContext } from './read-po-file-module-context';
 
 suite('ReadPoFileModule Tests', () => {

@@ -1,6 +1,6 @@
 import { Uri } from 'vscode';
 
-import ModuleContext from './ibase-action-module-context';
+import { ModuleContext } from './ibase-action-module-context';
 
 export abstract class BaseModuleContext implements ModuleContext {
   inputPath: Uri;

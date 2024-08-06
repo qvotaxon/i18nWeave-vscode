@@ -1,7 +1,8 @@
 import assert from 'assert';
-import WebviewCreator from 'lib/interfaces/webviewCreator';
 import sinon from 'sinon';
 import vscode from 'vscode';
+
+import { IWebviewCreator } from '@i18n-weave/feature/feature-webview-creator';
 
 import { FileType } from '@i18n-weave/util/util-enums';
 
@@ -10,7 +11,7 @@ import { WebviewFactory } from './webview-factory';
 suite('WebviewFactory', () => {
   let webviewFactory: WebviewFactory;
   let context: vscode.ExtensionContext;
-  let jsonWebviewCreator: WebviewCreator;
+  let jsonWebviewCreator: IWebviewCreator;
 
   setup(() => {
     context = {} as vscode.ExtensionContext;

@@ -1,19 +1,11 @@
 import assert from 'assert';
 import fs from 'fs';
-import ConfigurationStoreManager from 'libs/util/util-configuration/src/lib/configuration-store-manager/configuration-store-manager';
 import path from 'path';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-// import {
-//   determineOutputPath,
-//   extractFilePathParts,
-//   extractLocale,
-//   findProjectRoot,
-//   getFileExtension,
-//   getProjectRootFolder,
-//   getRelativePath,
-// } from './filePathUtilities';
+import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
+
 import * as filePathUtilities from './file-path-utilities';
 
 suite('filePathUtilities', () => {

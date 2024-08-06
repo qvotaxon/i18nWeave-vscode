@@ -1,8 +1,9 @@
 import assert from 'assert';
 import fs from 'fs';
-import WebviewStore from 'lib/stores/webview/webviewStore';
 import sinon from 'sinon';
 import vscode from 'vscode';
+
+import { WebviewStore } from '@i18n-weave/store/store-webview-store';
 
 import { JsonWebviewCreator } from './json-webview-creator';
 

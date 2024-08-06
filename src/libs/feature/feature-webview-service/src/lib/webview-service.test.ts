@@ -1,11 +1,13 @@
-import { IWebviewFactory } from 'lib/interfaces/webviewFactory';
-import { IWebviewStore } from 'lib/interfaces/webviewStore';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
+import { IWebviewFactory } from '@i18n-weave/feature/feature-webview-factory';
+
+import { IWebviewStore } from '@i18n-weave/store/store-webview-store';
+
 import { FileType } from '@i18n-weave/util/util-enums';
 
-import WebviewService from './webview-service';
+import { WebviewService } from './webview-service';
 
 suite('WebviewService', () => {
   let webviewService: WebviewService;
