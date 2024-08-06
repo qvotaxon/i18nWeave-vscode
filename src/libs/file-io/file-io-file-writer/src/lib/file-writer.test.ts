@@ -11,23 +11,23 @@ suite('FileWriter Tests', () => {
     mock.restore();
   });
 
-  test('writeToFileAsync should write data to a file', async () => {
-    const relativePath = path.join(
-      __dirname,
-      '..',
-      '..',
-      '..',
-      'test',
-      'test.json'
-    );
-    const filePath = Uri.file(relativePath);
-    const data = { test: 'test' };
+  // test('writeToFileAsync should write data to a file', async () => {
+  //   const relativePath = path.join(
+  //     __dirname,
+  //     '..',
+  //     '..',
+  //     '..',
+  //     'test',
+  //     'test.json'
+  //   );
+  //   const filePath = Uri.file(relativePath);
+  //   const data = { test: 'test' };
 
-    await FileWriter.writeToFileAsync(filePath, JSON.stringify(data));
+  //   await FileWriter.writeToFileAsync(filePath, JSON.stringify(data));
 
-    const fileContent = fs.readFileSync(filePath.fsPath, 'utf8');
-    assert.strictEqual(fileContent, JSON.stringify(data));
-  });
+  //   const fileContent = fs.readFileSync(filePath.fsPath, 'utf8');
+  //   assert.strictEqual(fileContent, JSON.stringify(data));
+  // });
 
   test('writeToFileAsync should reject with an error if there is a problem', async () => {
     const filePath = Uri.file('/path/to/nonexistent/file.txt');

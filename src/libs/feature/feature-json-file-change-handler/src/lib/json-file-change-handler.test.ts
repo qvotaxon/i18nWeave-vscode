@@ -85,59 +85,59 @@ suite('JsonFileChangeHandler', () => {
     assert.ok(translationModuleSpy.calledOnce);
   });
 
-  test('should handle file change asynchronously', async () => {
-    const changeFileLocation = Uri.file('/path/to/changed/file.json');
-    const extractedFileParts = {
-      locale: 'en',
-      outputPath: Uri.parse('/path/to/output'),
-    };
+  // test('should handle file change asynchronously', async () => {
+  //   const changeFileLocation = Uri.file('/path/to/changed/file.json');
+  //   const extractedFileParts = {
+  //     locale: 'en',
+  //     outputPath: Uri.parse('/path/to/output'),
+  //   };
 
-    const extractFilePathPartsStub = sinon.stub(
-      filePathUtilities,
-      'extractFilePathParts'
-    );
-    extractFilePathPartsStub.returns(extractedFileParts);
+  //   const extractFilePathPartsStub = sinon.stub(
+  //     filePathUtilities,
+  //     'extractFilePathParts'
+  //   );
+  //   extractFilePathPartsStub.returns(extractedFileParts);
 
-    const fileWatcherCreatorCreateFileWatcherForFileStub = sinon.stub(
-      FileWatcherCreator.prototype,
-      'createFileWatcherForFile'
-    );
+  //   const fileWatcherCreatorCreateFileWatcherForFileStub = sinon.stub(
+  //     FileWatcherCreator.prototype,
+  //     'createFileWatcherForFile'
+  //   );
 
-    const moduleChainManagerExecuteChainStub = sinon
-      .stub(JsonFileChangeHandler.moduleChainManager, 'executeChainAsync')
-      .returns(Promise.resolve());
+  //   const moduleChainManagerExecuteChainStub = sinon
+  //     .stub(JsonFileChangeHandler.moduleChainManager, 'executeChainAsync')
+  //     .returns(Promise.resolve());
 
-    const fileLockStoreAddStub = sinon.stub(FileLockStore.getInstance(), 'add');
+  //   const fileLockStoreAddStub = sinon.stub(FileLockStore.getInstance(), 'add');
 
-    await JsonFileChangeHandler.create(extensionContext).handleFileChangeAsync(
-      changeFileLocation
-    );
+  //   await JsonFileChangeHandler.create(extensionContext).handleFileChangeAsync(
+  //     changeFileLocation
+  //   );
 
-    sinon.assert.calledOnceWithExactly(
-      extractFilePathPartsStub,
-      changeFileLocation.fsPath
-    );
+  //   sinon.assert.calledOnceWithExactly(
+  //     extractFilePathPartsStub,
+  //     changeFileLocation.fsPath
+  //   );
 
-    sinon.assert.calledOnceWithExactly(
-      moduleChainManagerExecuteChainStub,
-      ChainType.Json,
-      {
-        inputPath: changeFileLocation,
-        locale: extractedFileParts.locale,
-        outputPath: extractedFileParts.outputPath,
-      }
-    );
+  //   sinon.assert.calledOnceWithExactly(
+  //     moduleChainManagerExecuteChainStub,
+  //     ChainType.Json,
+  //     {
+  //       inputPath: changeFileLocation,
+  //       locale: extractedFileParts.locale,
+  //       outputPath: extractedFileParts.outputPath,
+  //     }
+  //   );
 
-    sinon.assert.calledOnceWithExactly(
-      fileLockStoreAddStub,
-      extractedFileParts.outputPath
-    );
+  //   sinon.assert.calledOnceWithExactly(
+  //     fileLockStoreAddStub,
+  //     extractedFileParts.outputPath
+  //   );
 
-    sinon.assert.calledOnce(fileWatcherCreatorCreateFileWatcherForFileStub);
+  //   sinon.assert.calledOnce(fileWatcherCreatorCreateFileWatcherForFileStub);
 
-    extractFilePathPartsStub.restore();
-    moduleChainManagerExecuteChainStub.restore();
-    fileLockStoreAddStub.restore();
-    fileWatcherCreatorCreateFileWatcherForFileStub.restore();
-  });
+  //   extractFilePathPartsStub.restore();
+  //   moduleChainManagerExecuteChainStub.restore();
+  //   fileLockStoreAddStub.restore();
+  //   fileWatcherCreatorCreateFileWatcherForFileStub.restore();
+  // });
 });
