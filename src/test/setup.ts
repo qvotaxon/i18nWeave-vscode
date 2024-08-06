@@ -1,8 +1,8 @@
-import * as path from 'path';
 import * as fs from 'fs';
-import * as os from 'os';
-import { workspace, Uri, commands } from 'vscode';
 import * as Mocha from 'mocha';
+import * as os from 'os';
+import * as path from 'path';
+import { Uri, commands, workspace } from 'vscode';
 
 let testWorkspace: string;
 
@@ -33,7 +33,7 @@ async function createTestWorkspace() {
 function traverseDirectory(dir: string, workspaceDir: string) {
   const files = fs.readdirSync(dir);
 
-  files.forEach((file) => {
+  files.forEach(file => {
     const filePath = path.join(dir, file);
     const stats = fs.statSync(filePath);
 

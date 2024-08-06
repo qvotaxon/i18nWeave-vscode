@@ -1,0 +1,20 @@
+{
+  "extends": ["../../../.eslintrc.json"],
+  "rules": {
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": ["@i18n-weave/core/**"],
+            "message": "Features should not import from Core directly."
+          },
+          {
+            "group": ["@i18n-weave/module/**"],
+            "message": "Features should not import from Module directly."
+          }
+        ]
+      }
+    ]
+  }
+}

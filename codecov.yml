@@ -31,6 +31,6 @@ github_checks:
 
 ignore:
   - 'src/lib/enums/*.ts'
-  - 'src/extension.ts'
+  - 'src/core/extension.ts'
   - 'src/media/**/*'
   - '**/jsonWebviewCreator.ts'

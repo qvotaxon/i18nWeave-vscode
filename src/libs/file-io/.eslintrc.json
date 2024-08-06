@@ -1,0 +1,40 @@
+{
+  "extends": ["../../../.eslintrc.json"],
+  "rules": {
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": ["@i18n-weave/core/**"],
+            "message": "FileIO should not import from Core directly."
+          },
+          {
+            "group": ["@i18n-weave/module/**"],
+            "message": "FileIO should not import from Module directly."
+          },
+          {
+            "group": ["@i18n-weave/http/**"],
+            "message": "FileIO should not import from Http directly."
+          },
+          {
+            "group": ["@i18n-weave/util/**"],
+            "message": "FileIO should not import from Util directly."
+          },
+          {
+            "group": ["@i18n-weave/store/**"],
+            "message": "FileIO should not import from Store directly."
+          },
+          {
+            "group": ["@i18n-weave/feature/**"],
+            "message": "FileIO should not import from Feature directly."
+          },
+          {
+            "group": ["@i18n-weave/file-io/**"],
+            "message": "FileIO should not import other FileIO directly."
+          }
+        ]
+      }
+    ]
+  }
+}
