@@ -7,13 +7,13 @@ import vscode from 'vscode';
 
 import { CacheEntry } from '@i18n-weave/feature/feature-caching-service';
 
+import { DeeplClient } from '@i18n-weave/http/http-deepl-client';
+
 import {
   ConfigurationStore,
   ConfigurationStoreManager,
   TranslationModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
-
-import { DeeplClient } from './deepl-client';
 
 suite('DeeplClient', () => {
   let extensionContext: vscode.ExtensionContext;
