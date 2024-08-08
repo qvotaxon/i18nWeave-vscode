@@ -39,3 +39,4 @@ ignore:
   - 'src/core/extension.ts'
   - 'src/media/**/*'
   - 'src/libs/feature/feature-webview-*'
+  - 'out/**/*'
