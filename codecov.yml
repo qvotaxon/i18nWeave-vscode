@@ -25,12 +25,18 @@ coverage:
         target: 80%
         threshold: 0%
         base: auto
+    paths:
+      include:
+        - 'src/**/*.ts'
+      exclude:
+        - 'out/**/*'
+        - '**/*.d.ts'
 
 github_checks:
   annotations: true
 
 ignore:
-  - 'src/lib/enums/*.ts'
   - 'src/core/extension.ts'
   - 'src/media/**/*'
-  - '**/jsonWebviewCreator.ts'
+  - 'src/libs/feature/feature-webview-*'
+  - 'out/**/*'
