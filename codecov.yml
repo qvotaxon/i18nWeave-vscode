@@ -25,6 +25,12 @@ coverage:
         target: 80%
         threshold: 0%
         base: auto
+    paths:
+      include:
+        - 'src/**/*.ts'
+      exclude:
+        - 'out/**/*'
+        - '**/*.d.ts'
 
 github_checks:
   annotations: true
