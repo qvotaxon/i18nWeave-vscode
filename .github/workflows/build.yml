@@ -53,9 +53,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build
-        run: npm run compile:sourcemaps
-
       - name: Lint & Test
         if: matrix.os == 'macos-latest' || matrix.os == 'windows-latest'
         run: npm run test:coverage
@@ -66,3 +63,6 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
+
+      - name: Build
+        run: npm run compile:sourcemaps
