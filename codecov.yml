@@ -30,7 +30,6 @@ github_checks:
   annotations: true
 
 ignore:
-  - 'src/lib/enums/*.ts'
   - 'src/core/extension.ts'
   - 'src/media/**/*'
-  - '**/jsonWebviewCreator.ts'
+  - 'src/libs/feature/feature-webview-*'
