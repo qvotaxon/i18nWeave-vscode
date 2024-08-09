@@ -32,4 +32,7 @@ github_checks:
 ignore:
   - 'src/core/extension.ts'
   - 'src/media/**/*'
-  - 'src/libs/feature/feature-webview-*'
+  - 'src/libs/feature/feature-webview-creator/**/*'
+  - 'src/libs/feature/feature-webview-service/**/*'
+  - 'src/libs/feature/feature-webview-factory/**/*'
+  - 'src/libs/feature/feature-po-file-change-handler/**/*'
