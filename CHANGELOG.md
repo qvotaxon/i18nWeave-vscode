@@ -4,6 +4,20 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.8.0](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.7.1...v0.8.0) (2024-08-11)
+
+
+### Features
+
+* **deepl:** implement formality handling ([#170](https://github.com/qvotaxon/i18nWeave-vscode/issues/170)) ([e39ebf0](https://github.com/qvotaxon/i18nWeave-vscode/commit/e39ebf0b491e2eca21b264a4a8d309343966c08e))
+
+
+### Bug Fixes
+
+* Clarify Status of i18next Module Option ([#173](https://github.com/qvotaxon/i18nWeave-vscode/issues/173)) ([c137fa8](https://github.com/qvotaxon/i18nWeave-vscode/commit/c137fa8e44bb88a30b0bd6112188bb8acdb6f249))
+* **config-wizard:** persist configuration after wizard completion ([23cafb6](https://github.com/qvotaxon/i18nWeave-vscode/commit/23cafb6fe7d0af55e86565e76ab97acac8661359))
+* temporarily disable PO &lt;&gt; JSON conversion ([#172](https://github.com/qvotaxon/i18nWeave-vscode/issues/172)) ([6f4cdc0](https://github.com/qvotaxon/i18nWeave-vscode/commit/6f4cdc035f5798421a453eaefef0937135c4a9b7))
+
 ## [0.7.1](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.7.0...v0.7.1) (2024-07-18)
 
 
