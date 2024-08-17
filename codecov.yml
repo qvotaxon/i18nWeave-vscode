@@ -35,6 +35,5 @@ ignore:
   - 'src/libs/feature/feature-webview-creator/**/*'
   - 'src/libs/feature/feature-webview-service/**/*'
   - 'src/libs/feature/feature-webview-factory/**/*'
-  - 'src/libs/feature/feature-po-file-change-handler/**/*'
   - 'src/libs/feature/feature-json-file-change-handler/**/*'
   - 'src/libs/feature/feature-configuration-wizard/**/*'
