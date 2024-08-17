@@ -75,8 +75,10 @@ export async function activate(
         await reinitialize(fileWatcherCreator, context);
       });
 
-    const { codeFileWatchers, jsonFileWatchers, poFileWatchers } =
-      await createFileWatchers(fileWatcherCreator, context);
+    const { codeFileWatchers, jsonFileWatchers } = await createFileWatchers(
+      fileWatcherCreator,
+      context
+    );
 
     const configurationWizardCommandDisposable =
       await registerConfigurationWizardCommand(
@@ -88,7 +90,6 @@ export async function activate(
     context.subscriptions.push(
       ...codeFileWatchers,
       ...jsonFileWatchers,
-      ...poFileWatchers,
       onDidOpenTextDocumentDisposable,
       configurationWizardCommandDisposable,
       configurationWatcherDisposable
@@ -179,22 +180,9 @@ async function createFileWatchers(
     context
   );
 
-  const poFileWatchers = await createWatchersForFileType(
-    FileType.Po,
-    {
-      filePattern: `**${translationFilesLocation}/**/*.po`,
-      ignorePattern:
-        '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
-    } as FileSearchLocation,
-    fileWatcherCreator,
-    context,
-    'i18nextJsonToPoConversionModule'
-  );
-
   return {
     codeFileWatchers,
     jsonFileWatchers,
-    poFileWatchers,
   };
 }
 
@@ -203,7 +191,7 @@ async function createWatchersForFileType(
   fileSearchLocation: FileSearchLocation,
   fileWatcherCreator: FileWatcherCreator,
   context: vscode.ExtensionContext,
-  disableFlag?: 'i18nextScannerModule' | 'i18nextJsonToPoConversionModule'
+  disableFlag?: 'i18nextScannerModule'
 ) {
   return await fileWatcherCreator.createFileWatchersForFileTypeAsync(
     fileType,
@@ -270,14 +258,12 @@ async function reinitialize(
 ) {
   initializeFileLocations(context);
 
-  const { codeFileWatchers, jsonFileWatchers, poFileWatchers } =
-    await createFileWatchers(fileWatcherCreator, context);
-
-  context.subscriptions.push(
-    ...codeFileWatchers,
-    ...jsonFileWatchers,
-    ...poFileWatchers
+  const { codeFileWatchers, jsonFileWatchers } = await createFileWatchers(
+    fileWatcherCreator,
+    context
   );
+
+  context.subscriptions.push(...codeFileWatchers, ...jsonFileWatchers);
 }
 
 export function deactivate() {

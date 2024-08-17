@@ -5,10 +5,7 @@ import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-cre
 
 import { CodeTranslationStore } from '@i18n-weave/store/store-code-translation-store';
 
-import {
-  I18nextJsonToPoConversionModuleConfiguration,
-  I18nextScannerModuleConfiguration,
-} from '@i18n-weave/util/util-configuration';
+import { I18nextScannerModuleConfiguration } from '@i18n-weave/util/util-configuration';
 import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import { FileType } from '@i18n-weave/util/util-enums';
 
@@ -39,11 +36,6 @@ suite('Extension Activation', () => {
         codeFileLocations: ['src'],
         translationFilesLocation: 'src/locales',
       } as I18nextScannerModuleConfiguration);
-    (configurationStoreManagerStub().getConfig as sinon.SinonStub)
-      .withArgs('i18nextJsonToPoConversionModule')
-      .returns({
-        enabled: true,
-      } as I18nextJsonToPoConversionModuleConfiguration);
 
     codeTranslationStoreStub = sinon.createStubInstance(CodeTranslationStore);
     sinon
@@ -60,7 +52,7 @@ suite('Extension Activation', () => {
 
     await activate(context, fileWatcherCreator);
 
-    sinon.assert.calledThrice(
+    sinon.assert.calledTwice(
       fileWatcherCreator.createFileWatchersForFileTypeAsync
     );
 
@@ -74,13 +66,6 @@ suite('Extension Activation', () => {
     sinon.assert.calledWith(
       fileWatcherCreator.createFileWatchersForFileTypeAsync,
       FileType.Json,
-      sinon.match.object,
-      sinon.match.object,
-      sinon.match.func
-    );
-    sinon.assert.calledWith(
-      fileWatcherCreator.createFileWatchersForFileTypeAsync,
-      FileType.Po,
       sinon.match.object,
       sinon.match.object,
       sinon.match.func
