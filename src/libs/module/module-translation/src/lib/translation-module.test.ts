@@ -36,7 +36,9 @@ suite('TranslationModule', () => {
       ConfigurationStoreManager.getInstance(),
       'getConfig'
     );
-    getConfigStub.withArgs('translationModule').returns({ enabled: true });
+    getConfigStub.withArgs('general').returns({
+      betaFeaturesConfiguration: { enableTranslationModule: true },
+    });
 
     const translateOtherI18nFilesStub = sinon.stub(
       TranslationService.getInstance(extensionContext),
@@ -46,7 +48,7 @@ suite('TranslationModule', () => {
     await translationModule.executeAsync(context);
 
     sinon.assert.calledOnce(getConfigStub);
-    sinon.assert.calledWith(getConfigStub, 'translationModule');
+    sinon.assert.calledWith(getConfigStub, 'general');
     sinon.assert.calledOnce(translateOtherI18nFilesStub);
     sinon.assert.calledWith(
       translateOtherI18nFilesStub,
@@ -60,7 +62,9 @@ suite('TranslationModule', () => {
       ConfigurationStoreManager.getInstance(),
       'getConfig'
     );
-    getConfigStub.withArgs('translationModule').returns({ enabled: false });
+    getConfigStub.withArgs('general').returns({
+      betaFeaturesConfiguration: { enableTranslationModule: false },
+    });
 
     const translateOtherI18nFilesStub = sinon.stub(
       TranslationService.getInstance(extensionContext),
@@ -70,7 +74,7 @@ suite('TranslationModule', () => {
     await translationModule.executeAsync(context);
 
     sinon.assert.calledOnce(getConfigStub);
-    sinon.assert.calledWith(getConfigStub, 'translationModule');
+    sinon.assert.calledWith(getConfigStub, 'general');
     sinon.assert.notCalled(translateOtherI18nFilesStub);
   });
 });
