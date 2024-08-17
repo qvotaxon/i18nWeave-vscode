@@ -35,7 +35,6 @@ i18nWeave is a Visual Studio Code extension designed to streamline the managemen
 - **Automatic Translations**: When you add a translation for one locale, translations for all other locales are automatically generated. The following translators have been (or will be) implemented:
   - [DeepL](https://www.deepl.com/translator) (requires an Api key)
   - [Google Translate](https://translate.google.com) (not implemented yet)
-- **PO File Support**: Temporarily disabled.
 
 <!-- ## Installation
 
@@ -61,11 +60,6 @@ TODO
 
 ## 🚧 Roadmap
 
-### (Temporarily disabled)
-
-- **PO File Support**: You have the option to use PO files for managing translations. This feature enables seamless integration with your existing localization workflows.
-- **PO to i18n-next JSON Conversion**: Effortlessly convert PO files into the i18n-next JSON format and vice versa. This conversion facilitates compatibility with a variety of localization tools and libraries.
-
 ### Somewhere in the nearer future
 
 - Support More Automatic Configurations For Other Frameworks. Such as React and Angular.
@@ -78,7 +72,6 @@ TODO
 
 This extension leans on at least the following libraries / packages.
 
-- [gettext-converter](https://github.com/locize/gettext-converter)
 - [i18next-scanner](https://github.com/i18next/i18next-scanner)
 
 ## 🤓 Authors
@@ -93,7 +86,7 @@ I needed a way to have the translation files be consistent for every developer, 
 
 I couldn't really find a good solution to my problem, so, I decided to take matters into my own hands and create i18nWeave, a versatile Visual Studio Code extension designed to streamline the management of translation files within your development projects. With its intuitive features, i18nWeave simplifies the process of handling translation keys, providing flexibility and efficiency in your workflow.
 
-I have designed the extension to be modular, allowing for the easy addition of functionalities. These functionalities, referred to as modules, can be easily enabled or disabled through the configuration settings. Currently, the extension includes a translation key extraction module, a PO to JSON file converter module, and a JSON to PO file converter module, see [Features](#-features).
+I have designed the extension to be modular, allowing for the easy addition of functionalities. These functionalities, referred to as modules, can be easily enabled or disabled through the configuration settings. Have a look at the features for more info: [Features](#-features).
 
 Now, you can say goodbye to those mind-numbing merge conflicts and hello to a more enjoyable and productive development experience. Let i18nWeave do the heavy lifting for you, so you can focus on what you do best - writing amazing code!
 
