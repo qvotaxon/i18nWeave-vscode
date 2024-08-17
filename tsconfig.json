@@ -16,17 +16,8 @@
       "@i18n-weave/module/module-read-json-file": [
         "src/libs/module/module-read-json-file/src/"
       ],
-      "@i18n-weave/module/module-read-po-file": [
-        "src/libs/module/module-read-po-file/src/"
-      ],
       "@i18n-weave/module/module-i18next-scanner": [
         "src/libs/module/module-i18next-scanner/src/"
-      ],
-      "@i18n-weave/module/module-i18nextjson-to-po-conversion": [
-        "src/libs/module/module-i18nextjson-to-po-conversion/src/"
-      ],
-      "@i18n-weave/module/module-po-to-i18nextjson-conversion": [
-        "src/libs/module/module-po-to-i18nextjson-conversion/src/"
       ],
       "@i18n-weave/file-io/file-io-file-writer": [
         "src/libs/file-io/file-io-file-writer/src/"
@@ -42,9 +33,6 @@
       ],
       "@i18n-weave/feature/feature-json-file-change-handler": [
         "src/libs/feature/feature-json-file-change-handler/src"
-      ],
-      "@i18n-weave/feature/feature-po-file-change-handler": [
-        "src/libs/feature/feature-po-file-change-handler/src"
       ],
       "@i18n-weave/feature/feature-file-change-handler-factory": [
         "src/libs/feature/feature-file-change-handler-factory/src"

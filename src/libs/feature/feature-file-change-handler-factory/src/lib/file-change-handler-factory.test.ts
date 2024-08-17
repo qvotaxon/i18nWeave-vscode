@@ -3,7 +3,6 @@ import vscode from 'vscode';
 
 import { CodeFileChangeHandler } from '@i18n-weave/feature/feature-code-file-change-handler';
 import { JsonFileChangeHandler } from '@i18n-weave/feature/feature-json-file-change-handler';
-import { PoFileChangeHandler } from '@i18n-weave/feature/feature-po-file-change-handler';
 
 import { FileType } from '@i18n-weave/util/util-enums';
 
@@ -25,17 +24,6 @@ suite('FileChangeHandlerFactory Tests', () => {
     );
 
     assert.strictEqual(handler instanceof JsonFileChangeHandler, true);
-  });
-
-  test('createFileChangeHandler should return an instance of PoFileChangeHandler for po file', () => {
-    const factory = new FileChangeHandlerFactory();
-
-    const handler = factory.createFileChangeHandler(
-      FileType.Po,
-      extensionContext
-    );
-
-    assert.strictEqual(handler instanceof PoFileChangeHandler, true);
   });
 
   test('createFileChangeHandler should return an instance of CodeFileChangeHandler for ts file', () => {

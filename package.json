@@ -104,17 +104,6 @@
         }
       },
       {
-        "id": "i18nextJsonToPoConversionModule",
-        "title": "i18next Json To Po Conversion Module",
-        "properties": {
-          "i18nWeave.i18nextJsonToPoConversionModule.enabled": {
-            "type": "boolean",
-            "default": "",
-            "description": "(Temporarily Disabled) --- Enable the i18next Json To Po Conversion module."
-          }
-        }
-      },
-      {
         "id": "i18nextScannerModule",
         "title": "i18nextScanner Module",
         "properties": {
