@@ -1,18 +1,12 @@
 import * as assert from 'assert';
 import sinon from 'sinon';
 import vscode from 'vscode';
-import { Uri } from 'vscode';
 
 import { ReadJsonFileModule } from '@i18n-weave/module/module-read-json-file';
-import { TranslationModule } from '@i18n-weave/module/module-translation';
 
-import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
 import { JsonFileChangeHandler } from '@i18n-weave/feature/feature-json-file-change-handler';
 import { ModuleChainManager } from '@i18n-weave/feature/feature-module-chain-manager';
 
-import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
-
-import * as filePathUtilities from '@i18n-weave/util/util-file-path-utilities';
 import { ChainType } from '@i18n-weave/util/util-enums';
 
 suite('JsonFileChangeHandler', () => {
@@ -34,11 +28,7 @@ suite('JsonFileChangeHandler', () => {
           extensionContext: {},
           nextModule: {
             extensionContext: {},
-            nextModule: {
-              extensionContext: {},
-              nextModule: null,
-              temporarilyDisabled: true,
-            },
+            nextModule: null,
           },
         },
       },
@@ -69,10 +59,6 @@ suite('JsonFileChangeHandler', () => {
       ReadJsonFileModule.prototype,
       'setNext'
     );
-    const translationModuleSpy = sinon.spy(
-      TranslationModule.prototype,
-      'setNext'
-    );
 
     const jsonFileChangeHandler =
       JsonFileChangeHandler.create(extensionContext);
@@ -82,62 +68,5 @@ suite('JsonFileChangeHandler', () => {
       JsonFileChangeHandler.moduleChainManager instanceof ModuleChainManager
     );
     assert.ok(readJsonFileModuleSpy.calledOnce);
-    assert.ok(translationModuleSpy.calledOnce);
   });
-
-  // test('should handle file change asynchronously', async () => {
-  //   const changeFileLocation = Uri.file('/path/to/changed/file.json');
-  //   const extractedFileParts = {
-  //     locale: 'en',
-  //     outputPath: Uri.parse('/path/to/output'),
-  //   };
-
-  //   const extractFilePathPartsStub = sinon.stub(
-  //     filePathUtilities,
-  //     'extractFilePathParts'
-  //   );
-  //   extractFilePathPartsStub.returns(extractedFileParts);
-
-  //   const fileWatcherCreatorCreateFileWatcherForFileStub = sinon.stub(
-  //     FileWatcherCreator.prototype,
-  //     'createFileWatcherForFile'
-  //   );
-
-  //   const moduleChainManagerExecuteChainStub = sinon
-  //     .stub(JsonFileChangeHandler.moduleChainManager, 'executeChainAsync')
-  //     .returns(Promise.resolve());
-
-  //   const fileLockStoreAddStub = sinon.stub(FileLockStore.getInstance(), 'add');
-
-  //   await JsonFileChangeHandler.create(extensionContext).handleFileChangeAsync(
-  //     changeFileLocation
-  //   );
-
-  //   sinon.assert.calledOnceWithExactly(
-  //     extractFilePathPartsStub,
-  //     changeFileLocation.fsPath
-  //   );
-
-  //   sinon.assert.calledOnceWithExactly(
-  //     moduleChainManagerExecuteChainStub,
-  //     ChainType.Json,
-  //     {
-  //       inputPath: changeFileLocation,
-  //       locale: extractedFileParts.locale,
-  //       outputPath: extractedFileParts.outputPath,
-  //     }
-  //   );
-
-  //   sinon.assert.calledOnceWithExactly(
-  //     fileLockStoreAddStub,
-  //     extractedFileParts.outputPath
-  //   );
-
-  //   sinon.assert.calledOnce(fileWatcherCreatorCreateFileWatcherForFileStub);
-
-  //   extractFilePathPartsStub.restore();
-  //   moduleChainManagerExecuteChainStub.restore();
-  //   fileLockStoreAddStub.restore();
-  //   fileWatcherCreatorCreateFileWatcherForFileStub.restore();
-  // });
 });
