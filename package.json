@@ -57,11 +57,6 @@
         "id": "translationModule",
         "title": "Translation Module",
         "properties": {
-          "i18nWeave.translationModule.enabled": {
-            "type": "boolean",
-            "default": "",
-            "description": "Enable the translation module."
-          },
           "i18nWeave.translationModule.googleTranslate.enabled": {
             "type": "boolean",
             "default": "",
@@ -201,6 +196,11 @@
             "type": "boolean",
             "default": false,
             "description": "Enable the Json File Web View. This feature is still in beta and may not work as expected."
+          },
+          "i18nWeave.betaFeaturesConfiguration.enableTranslationModule": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable the Translation Module. This feature is still in beta and may not work as expected."
           }
         }
       },

@@ -4,6 +4,7 @@ import { TranslationService } from '@i18n-weave/feature/feature-translation-serv
 
 import {
   ConfigurationStoreManager,
+  GeneralConfiguration,
   TranslationModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
 
@@ -14,9 +15,9 @@ export class TranslationModule extends BaseActionModule {
     context: TranslationModuleContext
   ): Promise<void> {
     if (
-      ConfigurationStoreManager.getInstance().getConfig<TranslationModuleConfiguration>(
-        'translationModule'
-      ).enabled
+      ConfigurationStoreManager.getInstance().getConfig<GeneralConfiguration>(
+        'general'
+      ).betaFeaturesConfiguration.enableTranslationModule
     ) {
       if (context.jsonContent) {
         TranslationService.getInstance(
