@@ -37,3 +37,5 @@ ignore:
   - 'src/libs/feature/feature-webview-factory/**/*'
   - 'src/libs/feature/feature-json-file-change-handler/**/*'
   - 'src/libs/feature/feature-configuration-wizard/**/*'
+  - 'src/libs/http/http-deepl-client/**/*'
+  - 'src/libs/feature/feature-translation-service/**/*'
