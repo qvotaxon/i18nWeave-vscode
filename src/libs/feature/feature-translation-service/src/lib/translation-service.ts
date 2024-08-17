@@ -68,10 +68,12 @@ export class TranslationService {
     fileLocation: string,
     changedFileContent: string
   ): Promise<void> {
+    const deeplClient = await DeeplClient.getInstanceAsync(this.context);
+
     const otherFilePaths = this.getOtherTranslationFilesPaths(fileLocation);
     const changedTranslations = JSON.parse(changedFileContent);
 
-    for (const filePath of otherFilePaths) {
+    const translationPromises = otherFilePaths.map(async filePath => {
       const existingTranslations = JSON.parse(
         fs.readFileSync(filePath, 'utf-8')
       );
@@ -82,24 +84,55 @@ export class TranslationService {
         filePath
       );
 
-      for (const missingTranslation of missingTranslations) {
-        const deeplClient = await DeeplClient.getInstanceAsync(this.context);
-        const translatedValue = await deeplClient.fetchTranslation(
-          missingTranslation.originalValue,
-          missingTranslation.locale
-        );
+      // Group missingTranslation to groups with locale and all values to be translated.
+      const groupedValuesToBeTranslated: { [locale: string]: string[] }[] = [];
 
-        this.updateTranslation(
-          existingTranslations,
-          missingTranslation.key.split('.'),
-          translatedValue
-        );
+      for (const missingTranslation of missingTranslations) {
+        const locale = missingTranslation.locale;
+        const value = missingTranslation.originalValue;
+
+        const group = groupedValuesToBeTranslated.find(group => group[locale]);
+        if (group) {
+          group[locale].push(value);
+        } else {
+          groupedValuesToBeTranslated.push({ [locale]: [value] });
+        }
+      }
+
+      const translationPromises = groupedValuesToBeTranslated.map(
+        async valueToBeTranslated => {
+          const locale = Object.keys(valueToBeTranslated)[0];
+          const values = valueToBeTranslated[locale];
+
+          const translatedValues = await deeplClient.fetchTranslations(
+            values,
+            locale
+          );
+
+          for (let i = 0; i < values.length; i++) {
+            this.updateTranslation(
+              existingTranslations,
+              missingTranslations[i].key.split('.'),
+              translatedValues[i]
+            );
+          }
+        }
+      );
+
+      await Promise.all(translationPromises);
+
+      if (
+        groupedValuesToBeTranslated &&
+        groupedValuesToBeTranslated.length > 0
+      ) {
         fs.writeFileSync(
           filePath,
           JSON.stringify(existingTranslations, null, 2)
         );
       }
-    }
+    });
+
+    await Promise.all(translationPromises);
   }
 
   private findMissingTranslations(

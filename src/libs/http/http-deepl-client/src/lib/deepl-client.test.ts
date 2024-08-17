@@ -87,7 +87,6 @@ suite('DeeplClient', () => {
 
       const translationModuleConfiguration =
         new TranslationModuleConfiguration();
-      translationModuleConfiguration.enabled = true;
       translationModuleConfiguration.deepL.apiKey = 'api-key';
       translationModuleConfiguration.deepL.enabled = true;
 

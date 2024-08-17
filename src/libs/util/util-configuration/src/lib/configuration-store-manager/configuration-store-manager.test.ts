@@ -6,6 +6,7 @@ import {
   ConfigurationStore,
   ConfigurationStoreManager,
   ExtensionConfiguration,
+  I18nextScannerModuleConfiguration,
   TranslationModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
 
@@ -158,21 +159,21 @@ suite('ConfigurationStoreManager', () => {
     });
 
     test('should return the configuration for the specified key', () => {
-      const translationModuleConfiguration =
-        new TranslationModuleConfiguration();
-      translationModuleConfiguration.enabled = true;
+      const i18nextScannerModuleConfiguration =
+        new I18nextScannerModuleConfiguration();
+      i18nextScannerModuleConfiguration.enabled = true;
 
       const mockConfigStore = new ConfigurationStore({
-        translationModule: translationModuleConfiguration,
+        i18nextScannerModule: i18nextScannerModuleConfiguration,
       });
       ConfigurationStoreManager.getInstance()['_configurationStore'] =
         mockConfigStore;
 
       const result =
-        ConfigurationStoreManager.getInstance().getConfig<TranslationModuleConfiguration>(
-          'translationModule'
+        ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+          'i18nextScannerModule'
         );
-      assert.strictEqual(result, translationModuleConfiguration);
+      assert.strictEqual(result, i18nextScannerModuleConfiguration);
     });
   });
 });

@@ -58,7 +58,6 @@ suite('ConfigurationStore Tests', () => {
         },
       },
       translationModule: {
-        enabled: true,
         deepL: {
           apiKey: 'apiKey',
           enabled: true,

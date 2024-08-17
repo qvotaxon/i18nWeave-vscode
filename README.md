@@ -30,11 +30,29 @@ i18nWeave is a Visual Studio Code extension designed to streamline the managemen
 
 ## ⭐ Features
 
-- **Installation Wizard**: Get up and running in no time using the build-in configuration wizard. Pick any of the build-in framework configurations and get started in just a few clicks. Or with just a few more clicks setup a custom project using i18next translations.
-- **Translation Key Extraction**: This feature allows for the easy extraction of translation keys from code files, which ensures the accurate localization of your application.
-- **Automatic Translations**: When you add a translation for one locale, translations for all other locales are automatically generated. The following translators have been (or will be) implemented:
-  - [DeepL](https://www.deepl.com/translator) (requires an Api key)
+- **Installation Wizard**
+
+  Get up and running in no time using the build-in configuration wizard. Pick any of the build-in framework configurations and get started in just a few clicks. Or with just a few more clicks setup a custom project using i18next translations.
+
+- **Translation Key Extraction**
+
+  This feature allows for the easy extraction of translation keys from code files, which ensures the accurate localization of your application.
+
+- **Automatic Translations**
+
+  When you add a translation for one locale, translations for all other locales are automatically generated. The following translators have been (or will be) implemented:
+
+  - [DeepL](https://www.deepl.com/translator) - Is now in beta - (requires an Api key)
   - [Google Translate](https://translate.google.com) (not implemented yet)
+
+## Beta Features
+
+- [DeepL](https://www.deepl.com/translator) - (requires an Api key)
+
+  Please be aware that since this is still a beta feature, you should take extra care when enabling this feature.
+  If the feature missbehaves it could possibly cause token to be spend is massive amounts.
+
+  > **If you have a paid account, you probably shouldn't enable this feature yet.**
 
 <!-- ## Installation
 
