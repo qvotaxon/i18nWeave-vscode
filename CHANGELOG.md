@@ -4,6 +4,13 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.8.2](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.8.1...v0.8.2) (2024-08-31)
+
+
+### Bug Fixes
+
+* update logo assets for branding ([#187](https://github.com/qvotaxon/i18nWeave-vscode/issues/187)) ([204e4bc](https://github.com/qvotaxon/i18nWeave-vscode/commit/204e4bcf0e8ab1a105879ff7fe8b19321786f556))
+
 ## [0.8.1](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.8.0...v0.8.1) (2024-08-17)
 
 
