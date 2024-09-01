@@ -93,15 +93,22 @@ export class I18nextScannerService {
       },
     };
 
+    const fileExtensions = config.fileExtensions;
+    const hasMultipleExtensions = fileExtensions.length > 1;
+
+    const extensionPattern = hasMultipleExtensions
+      ? `{${fileExtensions.join(',')}}`
+      : fileExtensions[0];
+
     const scanSources = [
-      ...config.codeFileLocations.map(
-        location =>
-          `${location.replace(/^\//, '')}/**/*.{${config.fileExtensions}}`
-      ),
-      ...config.codeFileLocations.map(
-        location =>
-          `!${location.replace(/^\//, '')}/**/*.spec.{${config.fileExtensions}}`
-      ),
+      ...config.codeFileLocations.map(location => {
+        const normalizedLocation = location.replace(/^\//, '');
+        return `${normalizedLocation}/**/*.${extensionPattern}`;
+      }),
+      ...config.codeFileLocations.map(location => {
+        const normalizedLocation = location.replace(/^\//, '');
+        return `!${normalizedLocation}/**/*.spec.${extensionPattern}`;
+      }),
       '!node_modules/**',
     ];
 
