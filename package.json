@@ -4,6 +4,7 @@
   "description": "Developer's i18n Companion",
   "icon": "static/logo-128x128.png",
   "publisher": "qvotaxon",
+  "homepage": "https://i18nweave.com",
   "license": "SEE LICENSE IN LICENSE.txt",
   "repository": {
     "type": "git",
