@@ -145,10 +145,10 @@ export function sanitizeLocations(locations: string[]): string[] {
   const sanitizedLocations: string[] = [];
 
   locations.forEach(location => {
-    location = location.endsWith('/')
+    location = location.endsWith(path.sep)
       ? location.substring(location.length)
       : location;
-    location = location.startsWith('/') ? location.substring(1) : location;
+    location = location.startsWith(path.sep) ? location.substring(1) : location;
 
     sanitizedLocations.push(location);
   });
