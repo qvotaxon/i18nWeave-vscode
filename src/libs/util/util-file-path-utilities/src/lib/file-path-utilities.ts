@@ -16,12 +16,12 @@ export function extractLocale(filePath: string): string {
       .pop() ?? '';
 
   const localePattern = new RegExp(
-    `\\\\${translationFilesLocation}\\\\([^\\\\]+)\\\\`
+    `[\\\\/]${translationFilesLocation}[\\\\/]([^\\\\/]+)[\\\\/]`
   );
 
   const match = localePattern.exec(filePath);
   if (!match || match.length < 2) {
-    throw new Error('Invalid file path format');
+    throw new Error('Unable to extract locale from file path.');
   }
   return match[1];
 }
