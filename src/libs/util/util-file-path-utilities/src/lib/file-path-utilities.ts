@@ -16,12 +16,12 @@ export function extractLocale(filePath: string): string {
       .pop() ?? '';
 
   const localePattern = new RegExp(
-    `\\\\${translationFilesLocation}\\\\([^\\\\]+)\\\\`
+    `[\\\\/]${translationFilesLocation}[\\\\/]([^\\\\/]+)[\\\\/]`
   );
 
   const match = localePattern.exec(filePath);
   if (!match || match.length < 2) {
-    throw new Error('Invalid file path format');
+    throw new Error('Unable to extract locale from file path.');
   }
   return match[1];
 }
@@ -145,10 +145,10 @@ export function sanitizeLocations(locations: string[]): string[] {
   const sanitizedLocations: string[] = [];
 
   locations.forEach(location => {
-    location = location.endsWith('/')
+    location = location.endsWith(path.sep)
       ? location.substring(location.length)
       : location;
-    location = location.startsWith('/') ? location.substring(1) : location;
+    location = location.startsWith(path.sep) ? location.substring(1) : location;
 
     sanitizedLocations.push(location);
   });

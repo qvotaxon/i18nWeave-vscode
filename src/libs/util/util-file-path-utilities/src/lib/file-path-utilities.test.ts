@@ -32,6 +32,22 @@ suite('filePathUtilities', () => {
       assert.equal(locale, 'en');
     });
 
+    test('should extract the locale from a Mac OS file path', () => {
+      const config = {
+        i18nextScannerModule: {
+          translationFilesLocation: 'locales',
+        },
+      };
+
+      getConfigStub = sinon //NOSONAR
+        .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
+        .returns(config.i18nextScannerModule);
+
+      const filePath = '/Users/someuser/project/locales/en/file.json';
+      const locale = filePathUtilities.extractLocale(filePath);
+      assert.equal(locale, 'en');
+    });
+
     test('should extract the locale from the file path with nested translation files location', () => {
       const config = {
         i18nextScannerModule: {
@@ -48,7 +64,7 @@ suite('filePathUtilities', () => {
       assert.equal(locale, 'en');
     });
 
-    test('should throw an error for invalid file path format', () => {
+    test('should throw an error when unable to extract locale from file path', () => {
       const config = {
         i18nextScannerModule: {
           translationFilesLocation: 'src/i18n',
@@ -61,7 +77,7 @@ suite('filePathUtilities', () => {
 
       const filePath = 'C:\\invalid\\file.path';
       assert.throws(() => filePathUtilities.extractLocale(filePath), {
-        message: 'Invalid file path format',
+        message: 'Unable to extract locale from file path.',
       });
     });
   });
