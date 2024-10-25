@@ -3,6 +3,8 @@ import vscode from 'vscode';
 
 import { DeeplClient } from '@i18n-weave/http/http-deepl-client';
 
+const path = require('path');
+
 /**
  * Singleton class for managing translation services.
  */
@@ -34,18 +36,26 @@ export class TranslationService {
    * @returns An array of file paths for other translation files.
    */
   public getOtherTranslationFilesPaths(fileLocation: string): string[] {
-    const directory = fileLocation.substring(0, fileLocation.lastIndexOf('\\'));
-    const parentDirectory = directory.substring(0, directory.lastIndexOf('\\'));
-    const fileName = fileLocation.substring(fileLocation.lastIndexOf('\\') + 1);
+    const directory = fileLocation.substring(
+      0,
+      fileLocation.lastIndexOf(path.sep)
+    );
+    const parentDirectory = directory.substring(
+      0,
+      directory.lastIndexOf(path.sep)
+    );
+    const fileName = fileLocation.substring(
+      fileLocation.lastIndexOf(path.sep) + 1
+    );
 
     const files: string[] = [];
     fs.readdirSync(parentDirectory).forEach(file => {
-      const filePath = `${parentDirectory}\\${file}`;
+      const filePath = `${parentDirectory}${path.sep}${file}`;
       const stat = fs.statSync(filePath);
       if (stat.isDirectory()) {
         fs.readdirSync(filePath).forEach(subFile => {
           if (subFile === fileName) {
-            files.push(`${filePath}\\${subFile}`);
+            files.push(`${filePath}${path.sep}${subFile}`);
           }
         });
       }
@@ -185,7 +195,7 @@ export class TranslationService {
   }
 
   private getLocaleFromFilePath(filePath: string): string {
-    const parts = filePath.split('\\');
+    const parts = filePath.split(path.sep);
     return parts[parts.length - 2];
   }
 
