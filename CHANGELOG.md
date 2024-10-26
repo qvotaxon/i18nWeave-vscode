@@ -4,6 +4,14 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.8.4](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.8.3...v0.8.4) (2024-10-26)
+
+
+### Bug Fixes
+
+* cross-platform path support magic ([#193](https://github.com/qvotaxon/i18nWeave-vscode/issues/193)) ([0dd27dd](https://github.com/qvotaxon/i18nWeave-vscode/commit/0dd27ddd598fb5974efa05f336189173e8f42bb0))
+* enhance file path utility for cross-platform use ([#191](https://github.com/qvotaxon/i18nWeave-vscode/issues/191)) ([4dc83aa](https://github.com/qvotaxon/i18nWeave-vscode/commit/4dc83aa92810d7a88f0bb00530d977e7dfd1f2e8))
+
 ## [0.8.3](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.8.2...v0.8.3) (2024-09-01)
 
 
