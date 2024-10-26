@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 import * as deepl from 'deepl-node';
 import assert from 'assert';
 import fs from 'fs';
@@ -15,8 +16,8 @@ import {
   ConfigurationStore,
   ConfigurationStoreManager,
   GeneralConfiguration,
+  TranslationModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
-import { TranslationModuleConfiguration } from '@i18n-weave/util/util-configuration';
 
 suite('TranslationService', () => {
   let extensionContext: vscode.ExtensionContext;
