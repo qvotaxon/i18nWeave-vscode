@@ -91,10 +91,10 @@ suite('TranslationService', () => {
 
       readdirSyncStub.withArgs(parentDirectory).returns(['en', 'fr']);
       statSyncStub
-        .withArgs(`${parentDirectory}\\en`)
+        .withArgs(`${parentDirectory}${path.sep}en`)
         .returns({ isDirectory: () => true });
       statSyncStub
-        .withArgs(`${parentDirectory}\\fr`)
+        .withArgs(`${parentDirectory}${path.sep}fr`)
         .returns({ isDirectory: () => true });
       readdirSyncStub
         .withArgs(`${parentDirectory}${path.sep}en`)
