@@ -1,9 +1,8 @@
 import fs from 'fs';
+import path from 'path';
 import vscode from 'vscode';
 
 import { DeeplClient } from '@i18n-weave/http/http-deepl-client';
-
-const path = require('path');
 
 /**
  * Singleton class for managing translation services.
