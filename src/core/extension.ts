@@ -155,7 +155,7 @@ class JsonTreeProvider implements vscode.TreeDataProvider<JsonTreeItem> {
         children,
         vscode.TreeItemCollapsibleState.Collapsed
       );
-    } else {
+    } else if (typeof value === 'string' && value.length > 0) {
       return new JsonTreeItem(
         key,
         fullKey,
@@ -163,6 +163,14 @@ class JsonTreeProvider implements vscode.TreeDataProvider<JsonTreeItem> {
         [],
         vscode.TreeItemCollapsibleState.None,
         value
+      );
+    } else {
+      return new JsonTreeItem(
+        key + ' (empty)',
+        fullKey,
+        namespace,
+        [],
+        vscode.TreeItemCollapsibleState.None
       );
     }
   }
