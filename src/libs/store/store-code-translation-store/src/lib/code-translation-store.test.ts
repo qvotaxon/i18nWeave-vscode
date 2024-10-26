@@ -17,7 +17,7 @@ suite('CodeTranslationStore', () => {
     let codeTranslationStore: CodeTranslationStore;
     let readFileAsyncStub: sinon.SinonStub;
     let getConfigStub: sinon.SinonStub;
-    let getFilesByTypeStub: sinon.SinonStub;
+    let getFileLocationsByTypeStub: sinon.SinonStub;
     let showErrorMessageStub: sinon.SinonStub;
     let updateStoreRecordAsyncStub: sinon.SinonStub;
     let globalStateUpdateStub: sinon.SinonStub;
@@ -34,9 +34,9 @@ suite('CodeTranslationStore', () => {
         ConfigurationStoreManager.getInstance(),
         'getConfig'
       );
-      getFilesByTypeStub = sinon.stub(
+      getFileLocationsByTypeStub = sinon.stub(
         FileLocationStore.getInstance(),
-        'getFilesByType'
+        'getFileLocationsByType'
       );
       showErrorMessageStub = sinon.stub(window, 'showErrorMessage');
       updateStoreRecordAsyncStub = sinon.stub(
@@ -58,7 +58,7 @@ suite('CodeTranslationStore', () => {
       updateStoreRecordAsyncStub.callThrough();
 
       context.globalState.get('i18nWeave.translationFunctionCache');
-      getFilesByTypeStub.returns(fsPaths);
+      getFileLocationsByTypeStub.returns(fsPaths);
       sinon.stub(fs, 'statSync').returns(stats as unknown as fs.Stats);
       readFileAsyncStub.resolves('fileContents');
       getConfigStub
@@ -67,8 +67,8 @@ suite('CodeTranslationStore', () => {
 
       await codeTranslationStore.initializeAsync(context);
 
-      sinon.assert.calledOnce(getFilesByTypeStub);
-      sinon.assert.calledWith(getFilesByTypeStub, ['ts', 'tsx']);
+      sinon.assert.calledOnce(getFileLocationsByTypeStub);
+      sinon.assert.calledWith(getFileLocationsByTypeStub, ['ts', 'tsx']);
       sinon.assert.calledTwice(readFileAsyncStub);
       sinon.assert.calledWith(readFileAsyncStub.firstCall, 'path1');
       sinon.assert.calledWith(readFileAsyncStub.secondCall, 'path2');
@@ -87,7 +87,7 @@ suite('CodeTranslationStore', () => {
 
     test('should handle error during initialization', async () => {
       const error = new Error('Initialization error');
-      getFilesByTypeStub.throws(error);
+      getFileLocationsByTypeStub.throws(error);
 
       getConfigStub
         .withArgs('i18nextScannerModule')
@@ -95,7 +95,7 @@ suite('CodeTranslationStore', () => {
 
       await codeTranslationStore.initializeAsync(context);
 
-      sinon.assert.calledOnce(getFilesByTypeStub);
+      sinon.assert.calledOnce(getFileLocationsByTypeStub);
       sinon.assert.calledOnce(showErrorMessageStub);
       sinon.assert.calledWith(
         showErrorMessageStub,
@@ -179,7 +179,7 @@ suite('CodeTranslationStore', () => {
     let codeTranslationStore: CodeTranslationStore;
     let readFileAsyncStub: sinon.SinonStub;
     let getConfigStub: sinon.SinonStub;
-    let getFilesByTypeStub: sinon.SinonStub;
+    let getFileLocationsByTypeStub: sinon.SinonStub;
     let showErrorMessageStub: sinon.SinonStub;
     let updateStoreRecordAsyncStub: sinon.SinonStub;
     let globalStateUpdateStub: sinon.SinonStub;
@@ -196,9 +196,9 @@ suite('CodeTranslationStore', () => {
         ConfigurationStoreManager.getInstance(),
         'getConfig'
       );
-      getFilesByTypeStub = sinon.stub(
+      getFileLocationsByTypeStub = sinon.stub(
         FileLocationStore.getInstance(),
-        'getFilesByType'
+        'getFileLocationsByType'
       );
       showErrorMessageStub = sinon.stub(window, 'showErrorMessage');
       updateStoreRecordAsyncStub = sinon.stub(

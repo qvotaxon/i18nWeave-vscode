@@ -68,7 +68,7 @@ suite('FileLocationStore Tests', function () {
   //   sandbox.stub(filePathUtilities, 'getFileExtension').returns('json');
   //   store.addOrUpdateFile(uri);
 
-  //   const files = store.getFilesByType(['json']);
+  //   const files = store.getFileLocationsByType(['json']);
   //   assert.ok(
   //     files.includes(uri.fsPath),
   //     'The file was not added to the store'
@@ -81,14 +81,14 @@ suite('FileLocationStore Tests', function () {
   //   store.addOrUpdateFile(uri);
   //   store.deleteFile(uri);
 
-  //   const files = store.getFilesByType(['json']);
+  //   const files = store.getFileLocationsByType(['json']);
   //   assert.ok(
   //     !files.includes(uri.fsPath),
   //     'The file was not removed from the store'
   //   );
   // });
 
-  // test('getFilesByType should return all files of specific types', function () {
+  // test('getFileLocationsByType should return all files of specific types', function () {
   //   const uri1 = vscode.Uri.file('/path/to/file1.json');
   //   const uri2 = vscode.Uri.file('/path/to/file2.ts');
   //   sandbox
@@ -101,8 +101,8 @@ suite('FileLocationStore Tests', function () {
   //   store.addOrUpdateFile(uri1);
   //   store.addOrUpdateFile(uri2);
 
-  //   const jsonFiles = store.getFilesByType(['json']);
-  //   const tsFiles = store.getFilesByType(['ts']);
+  //   const jsonFiles = store.getFileLocationsByType(['json']);
+  //   const tsFiles = store.getFileLocationsByType(['ts']);
 
   //   assert.ok(
   //     jsonFiles.includes(uri1.fsPath),
