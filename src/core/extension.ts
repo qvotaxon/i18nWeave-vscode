@@ -5,10 +5,9 @@ import vscode, { ExtensionContext } from 'vscode';
 
 import { ConfigurationWizardService } from '@i18n-weave/feature/feature-configuration-wizard';
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
+import { TranslationsManager } from '@i18n-weave/feature/feature-translations-manager';
 import { WebviewFactory } from '@i18n-weave/feature/feature-webview-factory';
 import { WebviewService } from '@i18n-weave/feature/feature-webview-service';
-
-import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
 import { CodeTranslationStore } from '@i18n-weave/store/store-code-translation-store';
 import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
@@ -49,161 +48,6 @@ function initializeSentry() {
   Sentry.startSession();
 }
 
-class JsonSymbolProvider implements vscode.DocumentSymbolProvider {
-  provideDocumentSymbols(
-    document: vscode.TextDocument
-  ): vscode.ProviderResult<vscode.SymbolInformation[]> {
-    const text = document.getText();
-    const jsonObject = JSON.parse(text);
-    return this.parseJsonObject(jsonObject, '', document.uri, text);
-  }
-
-  private parseJsonObject(
-    obj: any,
-    parentKey: string,
-    uri: vscode.Uri,
-    originalText: string
-  ): vscode.SymbolInformation[] {
-    const symbols: vscode.SymbolInformation[] = [];
-    for (const key in obj) {
-      const value = obj[key];
-      const fullKey = parentKey ? `${parentKey}.${key}` : key;
-
-      const startPos = this.findKeyPosition(originalText, key);
-      const location = new vscode.Location(uri, startPos);
-      const kind =
-        typeof value === 'object' && value !== null
-          ? vscode.SymbolKind.Object
-          : vscode.SymbolKind.Field;
-
-      symbols.push(new vscode.SymbolInformation(key, kind, fullKey, location));
-      if (typeof value === 'object' && value !== null) {
-        symbols.push(
-          ...this.parseJsonObject(value, fullKey, uri, originalText)
-        );
-      }
-    }
-    return symbols;
-  }
-
-  private findKeyPosition(text: string, key: string): vscode.Position {
-    const regex = new RegExp(`"${key}"`, 'g');
-    const match = regex.exec(text);
-    if (match) {
-      const index = match.index;
-      return this.indexToPosition(index, text);
-    }
-    return new vscode.Position(0, 0); // Fallback if not found
-  }
-
-  private indexToPosition(index: number, text: string): vscode.Position {
-    const lines = text.slice(0, index).split('\n');
-    return new vscode.Position(
-      lines.length - 1,
-      lines[lines.length - 1].length
-    );
-  }
-}
-
-class JsonTreeItem extends vscode.TreeItem {
-  constructor(
-    public readonly label: string,
-    public readonly fullKey: string,
-    public readonly namespace: string,
-    public readonly children: JsonTreeItem[] = [],
-    collapsibleState: vscode.TreeItemCollapsibleState,
-    public readonly value?: string
-  ) {
-    super(label, collapsibleState);
-  }
-}
-
-class JsonTreeProvider implements vscode.TreeDataProvider<JsonTreeItem> {
-  constructor(private jsonData: any) {}
-
-  getTreeItem(element: JsonTreeItem): vscode.TreeItem {
-    return element;
-  }
-
-  getChildren(element?: JsonTreeItem): Thenable<JsonTreeItem[]> {
-    if (!element) {
-      // For root elements, each will have its own namespace (root key)
-      return Promise.resolve(
-        Object.keys(this.jsonData).map(rootKey =>
-          this.createTreeItem(rootKey, this.jsonData[rootKey], rootKey, '')
-        )
-      );
-    }
-    return Promise.resolve(element.children || []);
-  }
-
-  private createTreeItem(
-    key: string,
-    value: any,
-    namespace: string,
-    parentKey: string
-  ): JsonTreeItem {
-    const fullKey = parentKey ? `${parentKey}.${key}` : key;
-    if (typeof value === 'object' && value !== null) {
-      const children = Object.keys(value).map(childKey =>
-        this.createTreeItem(childKey, value[childKey], namespace, fullKey)
-      );
-      return new JsonTreeItem(
-        key,
-        fullKey,
-        namespace,
-        children,
-        vscode.TreeItemCollapsibleState.Collapsed
-      );
-    } else if (typeof value === 'string' && value.length > 0) {
-      return new JsonTreeItem(
-        key,
-        fullKey,
-        namespace,
-        [],
-        vscode.TreeItemCollapsibleState.None,
-        value
-      );
-    } else {
-      return new JsonTreeItem(
-        key + ' (empty)',
-        fullKey,
-        namespace,
-        [],
-        vscode.TreeItemCollapsibleState.None
-      );
-    }
-  }
-}
-
-async function openFileAndNavigate(filePath: string, fullKeyPath: string) {
-  const uri = vscode.Uri.file(filePath);
-  const document = await vscode.workspace.openTextDocument(uri);
-  await vscode.window.showTextDocument(document);
-
-  const symbols = await vscode.commands.executeCommand<
-    vscode.SymbolInformation[]
-  >('vscode.executeDocumentSymbolProvider', uri);
-  if (symbols) {
-    const symbol = symbols.find(
-      sym => sym.name === fullKeyPath.split('.').pop()
-    );
-    if (symbol) {
-      const range = symbol.location.range;
-      const editor = vscode.window.activeTextEditor;
-
-      if (editor) {
-        editor.revealRange(range);
-        editor.selection = new vscode.Selection(range.start, range.end);
-      }
-    } else {
-      vscode.window.showErrorMessage(
-        `Key "${fullKeyPath}" not found in the JSON file ${filePath}.`
-      );
-    }
-  }
-}
-
 export async function activate(
   context: ExtensionContext,
   fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator(),
@@ -223,118 +67,10 @@ export async function activate(
 
     await initializeFileLocations(context);
 
+    await initializeTranslationsManager(context);
+
     const onDidOpenTextDocumentDisposable =
       await createWebViewForFilesMatchingPattern(webviewService);
-
-    // ----
-    const config =
-      configurationStoreManager.getConfig<I18nextScannerModuleConfiguration>(
-        'i18nextScannerModule'
-      );
-    const defaultLanguageJsonFilePaths =
-      FileLocationStore.getInstance().getFileLocationsByType(
-        ['json'],
-        new RegExp(`.*\\${path.sep}${config.defaultLanguage}\\${path.sep}.*`)
-      );
-
-    const jsonData: { [key: string]: any } = {};
-    const fileReadPromises: Promise<void>[] = [];
-    defaultLanguageJsonFilePaths.forEach(defaultLanguageJsonFilePath => {
-      const promise = FileReader.readFileAsync(
-        defaultLanguageJsonFilePath
-      ).then(namespaceJsonContent => {
-        const namespace = path.basename(
-          defaultLanguageJsonFilePath,
-          path.extname(defaultLanguageJsonFilePath)
-        );
-        jsonData[namespace] = JSON.parse(namespaceJsonContent);
-      });
-      fileReadPromises.push(promise);
-    });
-
-    Promise.all(fileReadPromises).then(() => {
-      const treeDataProvider = new JsonTreeProvider(jsonData);
-      const treeView = vscode.window.createTreeView('translationsManagerView', {
-        treeDataProvider,
-      });
-
-      treeView.onDidChangeSelection(async event => {
-        const selectedItem = event.selection[0];
-        if (selectedItem.value) {
-          vscode.window.showInformationMessage(
-            `Selected: ${selectedItem.fullKey} ${selectedItem.value}`
-          );
-
-          const fileToOpen = defaultLanguageJsonFilePaths.find(filePath =>
-            filePath.includes(selectedItem.namespace)
-          );
-
-          if (fileToOpen) {
-            await openFileAndNavigate(fileToOpen, selectedItem.fullKey);
-          }
-        }
-      });
-
-      context.subscriptions.push(
-        vscode.commands.registerCommand(
-          'translationsManagerView.showItemDetails',
-          (item: JsonTreeItem) => {
-            vscode.window.showInformationMessage(
-              `Details of ${item.label}: ${item.value}`
-            );
-          }
-        )
-      );
-
-      // Copy item value command
-      context.subscriptions.push(
-        vscode.commands.registerCommand(
-          'translationsManagerView.copyItemValue',
-          (item: JsonTreeItem) => {
-            if (item.value) {
-              vscode.env.clipboard.writeText(item.value).then(() => {
-                vscode.window.showInformationMessage(`Copied: ${item.value}`);
-              });
-            }
-          }
-        )
-      );
-
-      context.subscriptions.push(
-        vscode.commands.registerCommand(
-          'translationsManagerView.showLanguages',
-          async () => {
-            // const configManager = ConfigurationStoreManager.getInstance();
-            const config =
-              configurationStoreManager.getConfig<I18nextScannerModuleConfiguration>(
-                'i18nextScannerModule'
-              );
-            const selectedLang = await vscode.window.showQuickPick(
-              config.languages,
-              {
-                placeHolder: 'Select a language',
-              }
-            );
-
-            if (selectedLang) {
-              vscode.window.showInformationMessage(
-                `Selected language: ${selectedLang}`
-              );
-              // await vscode.workspace.getConfiguration().update('i18nWeave.selectedLanguage', selectedLang, vscode.ConfigurationTarget.Global);
-              // treeDataProvider.refresh(selectedLang);
-            }
-          }
-        )
-      );
-    });
-
-    context.subscriptions.push(
-      vscode.languages.registerDocumentSymbolProvider(
-        { language: 'json' },
-        new JsonSymbolProvider()
-      )
-    );
-    // ----
 
     const configurationWatcherDisposable =
       vscode.workspace.onDidChangeConfiguration(async () => {
@@ -365,6 +101,11 @@ export async function activate(
   } catch (error) {
     Sentry.captureException(error);
   }
+}
+
+async function initializeTranslationsManager(context: ExtensionContext) {
+  const translationsManager = new TranslationsManager(context);
+  translationsManager.initialize();
 }
 
 async function initializeFileLocations(context: ExtensionContext) {
