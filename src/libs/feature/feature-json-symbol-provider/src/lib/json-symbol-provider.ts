@@ -21,7 +21,7 @@ export class JsonSymbolProvider implements vscode.DocumentSymbolProvider {
       const value = obj[key];
       const fullKey = parentKey ? `${parentKey}.${key}` : key;
 
-      const startPos = this.findKeyPosition(originalText, key);
+      const startPos = this.findKeyPosition(originalText, fullKey);
       const location = new vscode.Location(uri, startPos);
       const kind =
         typeof value === 'object' && value !== null
@@ -38,14 +38,26 @@ export class JsonSymbolProvider implements vscode.DocumentSymbolProvider {
     return symbols;
   }
 
-  private findKeyPosition(text: string, key: string): vscode.Position {
-    const regex = new RegExp(`"${key}"`, 'g');
-    const match = regex.exec(text);
-    if (match) {
-      const index = match.index;
-      return this.indexToPosition(index, text);
+  private findKeyPosition(text: string, fullKey: string): vscode.Position {
+    const keyPath = fullKey.split('.');
+    let currentPosition = 0;
+
+    for (const key of keyPath) {
+      const regex = new RegExp(`"(${key})"\\s*:`, 'g');
+      regex.lastIndex = currentPosition;
+
+      const match = regex.exec(text);
+      if (!match) {
+        return new vscode.Position(0, 0); // Fallback if not found
+      }
+
+      currentPosition = match.index + match[0].length;
     }
-    return new vscode.Position(0, 0); // Fallback if not found
+
+    return this.indexToPosition(
+      currentPosition - keyPath[keyPath.length - 1].length,
+      text
+    );
   }
 
   private indexToPosition(index: number, text: string): vscode.Position {

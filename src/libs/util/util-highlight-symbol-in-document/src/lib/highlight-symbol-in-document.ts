@@ -5,15 +5,20 @@ export async function highlightSymbolInDocumentAsync(
   fullKeyPath: string
 ) {
   const uri = document.uri;
-  const symbols = await vscode.commands.executeCommand<
-    vscode.SymbolInformation[]
-  >('vscode.executeDocumentSymbolProvider', uri);
+
+  // Split the fullKeyPath and remove the first segment (namespace)
+  const pathSegments = fullKeyPath.split('.').slice(1); // Remove the namespace part
+
+  const symbols = await vscode.commands.executeCommand<vscode.DocumentSymbol[]>(
+    'vscode.executeDocumentSymbolProvider',
+    uri
+  );
+
   if (symbols) {
-    const symbol = symbols.find(
-      sym => sym.name === fullKeyPath.split('.').pop()
-    );
+    const symbol = findSymbolByFullPath(symbols, pathSegments);
+
     if (symbol) {
-      const range = symbol.location.range;
+      const range = symbol.range;
       const editor = vscode.window.activeTextEditor;
 
       if (editor) {
@@ -26,4 +31,22 @@ export async function highlightSymbolInDocumentAsync(
       );
     }
   }
+}
+
+/**
+ * Recursively searches for a symbol matching the full key path, starting from the stripped path segments.
+ */
+function findSymbolByFullPath(
+  symbols: vscode.DocumentSymbol[],
+  pathSegments: string[]
+): vscode.DocumentSymbol | undefined {
+  if (pathSegments.length === 0) return undefined;
+
+  const [currentSegment, ...remainingSegments] = pathSegments;
+  const matchingSymbol = symbols.find(sym => sym.name === currentSegment);
+
+  if (!matchingSymbol) return undefined;
+  if (remainingSegments.length === 0) return matchingSymbol;
+
+  return findSymbolByFullPath(matchingSymbol.children, remainingSegments);
 }
