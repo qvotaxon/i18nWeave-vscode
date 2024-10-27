@@ -21,9 +21,11 @@ export class JsonTreeDataProvider
   getChildren(element?: JsonTreeItem): Thenable<JsonTreeItem[]> {
     if (!element) {
       // Handle root elements with each namespace as root key
-      const rootItems = Object.keys(this.jsonData).map(rootKey =>
-        this.createTreeItem(rootKey, this.jsonData[rootKey], rootKey, '')
-      );
+      const rootItems = Object.keys(this.jsonData)
+        .sort((a, b) => a.localeCompare(b))
+        .map(rootKey =>
+          this.createTreeItem(rootKey, this.jsonData[rootKey], rootKey, '')
+        );
 
       // Check for data and add placeholder item if no root items found
       return Promise.resolve(
