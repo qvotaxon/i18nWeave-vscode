@@ -17,6 +17,9 @@ import { highlightSymbolInDocumentAsync } from '@i18n-weave/util/util-highlight-
 import { openFileByUriAsync } from '@i18n-weave/util/util-open-file-by-uri';
 
 export class TranslationsManager {
+  private treeDataProvider: JsonTreeDataProvider | undefined;
+  private defaultLanguageJsonFilePaths: string[] = [];
+
   constructor(private readonly context: vscode.ExtensionContext) {}
 
   private async openFileAndHighlightSymbolAsync(
@@ -28,20 +31,22 @@ export class TranslationsManager {
     await highlightSymbolInDocumentAsync(document, fullKeyPath);
   }
 
-  public initialize() {
+  private async loadJsonData(selectedLanguage?: string) {
     const config =
       ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
         'i18nextScannerModule'
       );
-    const defaultLanguageJsonFilePaths =
+    this.defaultLanguageJsonFilePaths =
       FileLocationStore.getInstance().getFileLocationsByType(
         ['json'],
-        new RegExp(`.*\\${path.sep}${config.defaultLanguage}\\${path.sep}.*`)
+        new RegExp(
+          `.*\\${path.sep}${selectedLanguage ?? config.defaultLanguage}\\${path.sep}.*`
+        )
       );
 
     const jsonData: { [key: string]: any } = {};
     const fileReadPromises: Promise<void>[] = [];
-    defaultLanguageJsonFilePaths.forEach(defaultLanguageJsonFilePath => {
+    this.defaultLanguageJsonFilePaths.forEach(defaultLanguageJsonFilePath => {
       const promise = FileReader.readFileAsync(
         defaultLanguageJsonFilePath
       ).then(namespaceJsonContent => {
@@ -54,20 +59,28 @@ export class TranslationsManager {
       fileReadPromises.push(promise);
     });
 
-    Promise.all(fileReadPromises).then(() => {
-      const treeDataProvider = new JsonTreeDataProvider(jsonData);
+    await Promise.all(fileReadPromises);
+    return jsonData;
+  }
+
+  private async refreshTreeView(selectedLanguage?: string) {
+    const jsonData = await this.loadJsonData(selectedLanguage);
+    if (this.treeDataProvider) {
+      this.treeDataProvider.refresh(jsonData);
+    }
+  }
+
+  public initialize() {
+    this.loadJsonData().then(jsonData => {
+      this.treeDataProvider = new JsonTreeDataProvider(jsonData);
       const treeView = vscode.window.createTreeView('translationsManagerView', {
-        treeDataProvider,
+        treeDataProvider: this.treeDataProvider,
       });
 
       treeView.onDidChangeSelection(async event => {
         const selectedItem = event.selection[0];
         if (selectedItem.value) {
-          vscode.window.showInformationMessage(
-            `Selected: ${selectedItem.fullKey} ${selectedItem.value}`
-          );
-
-          const fileToOpen = defaultLanguageJsonFilePaths.find(filePath =>
+          const fileToOpen = this.defaultLanguageJsonFilePaths.find(filePath =>
             filePath.includes(selectedItem.namespace)
           );
 
@@ -80,17 +93,6 @@ export class TranslationsManager {
         }
       });
 
-      this.context.subscriptions.push(
-        vscode.commands.registerCommand(
-          'translationsManagerView.showItemDetails',
-          (item: JsonTreeItem) => {
-            vscode.window.showInformationMessage(
-              `Details of ${item.label}: ${item.value}`
-            );
-          }
-        )
-      );
-
       // Copy item value command
       this.context.subscriptions.push(
         vscode.commands.registerCommand(
@@ -98,7 +100,24 @@ export class TranslationsManager {
           (item: JsonTreeItem) => {
             if (item.value) {
               vscode.env.clipboard.writeText(item.value).then(() => {
-                vscode.window.showInformationMessage(`Copied: ${item.value}`);
+                vscode.window.showInformationMessage(
+                  `Copied value for key '${item.fullKey}' to clipboard.`
+                );
+              });
+            }
+          }
+        )
+      );
+
+      this.context.subscriptions.push(
+        vscode.commands.registerCommand(
+          'translationsManagerView.copyItemKey',
+          (item: JsonTreeItem) => {
+            if (item.value) {
+              vscode.env.clipboard.writeText(item.fullKey).then(() => {
+                vscode.window.showInformationMessage(
+                  `Copied '${item.fullKey}' to clipboard.`
+                );
               });
             }
           }
@@ -119,21 +138,31 @@ export class TranslationsManager {
             );
 
             if (selectedLang) {
-              vscode.window.showInformationMessage(
-                `Selected language: ${selectedLang}`
-              );
+              await this.refreshTreeView(selectedLang).then(() => {
+                vscode.window.showInformationMessage(
+                  `Selected language: ${selectedLang}`
+                );
+              });
             }
           }
         )
       );
-    });
 
-    this.context.subscriptions.push(
-      vscode.languages.registerDocumentSymbolProvider(
-        { language: 'json' },
-        new JsonSymbolProvider()
-      )
-    );
+      this.context.subscriptions.push(
+        vscode.languages.registerDocumentSymbolProvider(
+          { language: 'json' },
+          new JsonSymbolProvider()
+        )
+      );
+
+      // Watch for changes in JSON files
+      const fileWatcher = vscode.workspace.createFileSystemWatcher('**/*.json');
+      fileWatcher.onDidChange(() => this.refreshTreeView());
+      fileWatcher.onDidCreate(() => this.refreshTreeView());
+      fileWatcher.onDidDelete(() => this.refreshTreeView());
+
+      this.context.subscriptions.push(fileWatcher);
+    });
   }
 }
 

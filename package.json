@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/qvotaxon/i18nWeave-vscode"
   },
-  "version": "0.9.0-alpha.2",
+  "version": "0.8.4",
   "engines": {
     "vscode": "^1.89.0"
   },
@@ -57,12 +57,12 @@
         "title": "Select Language"
       },
       {
-        "command": "translationsManagerView.showItemDetails",
-        "title": "Show Item Details"
+        "command": "translationsManagerView.copyItemValue",
+        "title": "Copy Translation Value"
       },
       {
-        "command": "translationsManagerView.copyItemValue",
-        "title": "Copy Item Value"
+        "command": "translationsManagerView.copyItemKey",
+        "title": "Copy Translation Key"
       }
     ],
     "configuration": [
@@ -232,12 +232,12 @@
     "menus": {
       "view/item/context": [
         {
-          "command": "translationsManagerView.showItemDetails",
+          "command": "translationsManagerView.copyItemValue",
           "when": "view == translationsManagerView",
           "group": "navigation"
         },
         {
-          "command": "translationsManagerView.copyItemValue",
+          "command": "translationsManagerView.copyItemKey",
           "when": "view == translationsManagerView",
           "group": "navigation"
         },
