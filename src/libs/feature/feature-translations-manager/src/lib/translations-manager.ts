@@ -1,13 +1,15 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { FileReader } from 'src/libs/file-io/file-io-file-reader/src';
-import { FileLocationStore } from 'src/libs/store/store-file-location-store/src';
 
 import { JsonSymbolProvider } from '@i18n-weave/feature/feature-json-symbol-provider';
 import {
   JsonTreeDataProvider,
   JsonTreeItem,
 } from '@i18n-weave/feature/feature-json-tree-data-provider';
+
+import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
+
+import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 
 import {
   ConfigurationStoreManager,
