@@ -193,6 +193,11 @@
         "id": "general",
         "title": "General",
         "properties": {
+          "i18nWeave.format.numberOfSpacesForIndentation": {
+            "type": "number",
+            "default": 4,
+            "description": "Define the number of spaces that will be used to indent the JSON files."
+          },
           "i18nWeave.betaFeaturesConfiguration.enableJsonFileWebView": {
             "type": "boolean",
             "default": false,

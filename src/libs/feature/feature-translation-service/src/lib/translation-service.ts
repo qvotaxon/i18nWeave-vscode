@@ -1,8 +1,14 @@
 import fs from 'fs';
 import path from 'path';
+import { FormatConfiguration } from 'src/libs/util/util-configuration/src/lib/general/format-configuration';
 import vscode from 'vscode';
 
 import { DeeplClient } from '@i18n-weave/http/http-deepl-client';
+
+import {
+  ConfigurationStoreManager,
+  GeneralConfiguration,
+} from '@i18n-weave/util/util-configuration';
 
 /**
  * Singleton class for managing translation services.
@@ -79,6 +85,9 @@ export class TranslationService {
   ): Promise<void> {
     const deeplClient = await DeeplClient.getInstanceAsync(this.context);
 
+    const configManager = ConfigurationStoreManager.getInstance();
+    const generalConfig =
+      configManager.getConfig<GeneralConfiguration>('general');
     const otherFilePaths = this.getOtherTranslationFilesPaths(fileLocation);
     const changedTranslations = JSON.parse(changedFileContent);
 
@@ -136,7 +145,11 @@ export class TranslationService {
       ) {
         fs.writeFileSync(
           filePath,
-          JSON.stringify(existingTranslations, null, 2)
+          JSON.stringify(
+            existingTranslations,
+            null,
+            generalConfig.format.numberOfSpacesForIndentation
+          )
         );
       }
     });

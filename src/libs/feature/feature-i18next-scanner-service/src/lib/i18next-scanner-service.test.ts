@@ -5,6 +5,7 @@ import { I18nextScannerService } from '@i18n-weave/feature/feature-i18next-scann
 
 import {
   ConfigurationStoreManager,
+  GeneralConfiguration,
   I18nextScannerModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
 
@@ -43,12 +44,25 @@ suite('I18nextScannerService', () => {
           translationComponentTranslationKey: 'i18nKey',
           translationComponentName: 'Trans',
           codeFileLocations: ['src'],
-        } as I18nextScannerModuleConfiguration,
+        } satisfies I18nextScannerModuleConfiguration,
       };
+
+      const secondConfig = {
+        betaFeaturesConfiguration: {
+          enableJsonFileWebView: false,
+          enableTranslationModule: true,
+        },
+        format: {
+          numberOfSpacesForIndentation: 4,
+        },
+      } satisfies GeneralConfiguration;
 
       getConfigStub = sinon
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
-        .returns(config.i18nextScannerModule);
+        .onFirstCall()
+        .returns(config.i18nextScannerModule)
+        .onSecondCall()
+        .returns(secondConfig);
 
       const executeScannerStub = (scannerService['executeScanner'] = sinon
         .stub()
@@ -56,7 +70,7 @@ suite('I18nextScannerService', () => {
 
       scannerService.scanCode();
 
-      sinon.assert.calledOnce(getConfigStub);
+      sinon.assert.calledTwice(getConfigStub);
       sinon.assert.calledOnce(executeScannerStub);
     });
   });

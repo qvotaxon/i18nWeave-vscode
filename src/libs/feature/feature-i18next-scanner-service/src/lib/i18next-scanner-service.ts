@@ -4,6 +4,7 @@ import vfs from 'vinyl-fs';
 
 import {
   ConfigurationStoreManager,
+  GeneralConfiguration,
   I18nextScannerModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
@@ -36,9 +37,12 @@ export class I18nextScannerService {
   @TraceMethod
   public scanCode(): void {
     const configManager = ConfigurationStoreManager.getInstance();
-    const config = configManager.getConfig<I18nextScannerModuleConfiguration>(
-      'i18nextScannerModule'
-    );
+    const i18nNextScannerModuleConfiguration =
+      configManager.getConfig<I18nextScannerModuleConfiguration>(
+        'i18nextScannerModule'
+      );
+    const generalConfig =
+      configManager.getConfig<GeneralConfiguration>('general');
     let projectRoot = getProjectRootFolder();
 
     if (!projectRoot) {
@@ -51,20 +55,20 @@ export class I18nextScannerService {
       removeUnusedKeys: true,
       sort: true,
       func: {
-        list: config.translationFunctionNames,
-        extensions: config.fileExtensions.map(
+        list: i18nNextScannerModuleConfiguration.translationFunctionNames,
+        extensions: i18nNextScannerModuleConfiguration.fileExtensions.map(
           fileExtension => `.${fileExtension}`
         ),
       },
-      lngs: config.languages,
-      ns: config.namespaces,
-      defaultLng: config.defaultLanguage,
-      defaultNs: config.defaultNamespace,
+      lngs: i18nNextScannerModuleConfiguration.languages,
+      ns: i18nNextScannerModuleConfiguration.namespaces,
+      defaultLng: i18nNextScannerModuleConfiguration.defaultLanguage,
+      defaultNs: i18nNextScannerModuleConfiguration.defaultNamespace,
       defaultValue: '',
       resource: {
-        loadPath: `${projectRoot}/${config.translationFilesLocation}/{{lng}}/{{ns}}.json`,
-        savePath: `${projectRoot}/${config.translationFilesLocation}/{{lng}}/{{ns}}.json`,
-        jsonIndent: 4,
+        loadPath: `${projectRoot}/${i18nNextScannerModuleConfiguration.translationFilesLocation}/{{lng}}/{{ns}}.json`,
+        savePath: `${projectRoot}/${i18nNextScannerModuleConfiguration.translationFilesLocation}/{{lng}}/{{ns}}.json`,
+        jsonIndent: generalConfig.format.numberOfSpacesForIndentation,
         lineEnding: 'CRLF',
       },
       nsSeparator: ':',
@@ -79,10 +83,11 @@ export class I18nextScannerService {
       metadata: {},
       allowDynamicKeys: true,
       trans: {
-        component: config.translationComponentName,
-        i18nKey: config.translationComponentTranslationKey,
+        component: i18nNextScannerModuleConfiguration.translationComponentName,
+        i18nKey:
+          i18nNextScannerModuleConfiguration.translationComponentTranslationKey,
         defaultsKey: 'defaults',
-        extensions: config.fileExtensions,
+        extensions: i18nNextScannerModuleConfiguration.fileExtensions,
         fallbackKey: false,
         supportBasicHtmlNodes: true,
         keepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p'],
@@ -93,7 +98,7 @@ export class I18nextScannerService {
       },
     };
 
-    const fileExtensions = config.fileExtensions;
+    const fileExtensions = i18nNextScannerModuleConfiguration.fileExtensions;
     const hasMultipleExtensions = fileExtensions.length > 1;
 
     const extensionPattern = hasMultipleExtensions
@@ -101,11 +106,11 @@ export class I18nextScannerService {
       : fileExtensions[0];
 
     const scanSources = [
-      ...config.codeFileLocations.map(location => {
+      ...i18nNextScannerModuleConfiguration.codeFileLocations.map(location => {
         const normalizedLocation = location.replace(/^\//, '');
         return `${normalizedLocation}/**/*.${extensionPattern}`;
       }),
-      ...config.codeFileLocations.map(location => {
+      ...i18nNextScannerModuleConfiguration.codeFileLocations.map(location => {
         const normalizedLocation = location.replace(/^\//, '');
         return `!${normalizedLocation}/**/*.spec.${extensionPattern}`;
       }),
