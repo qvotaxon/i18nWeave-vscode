@@ -56,7 +56,7 @@ suite('I18nextScannerService', () => {
 
       scannerService.scanCode();
 
-      sinon.assert.calledOnce(getConfigStub);
+      sinon.assert.calledTwice(getConfigStub);
       sinon.assert.calledOnce(executeScannerStub);
     });
   });
