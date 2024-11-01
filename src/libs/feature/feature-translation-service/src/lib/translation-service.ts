@@ -3,6 +3,11 @@ import path from 'path';
 import { FormatConfiguration } from 'src/libs/util/util-configuration/src/lib/general/format-configuration';
 import vscode from 'vscode';
 
+import {
+  StatusBarManager,
+  StatusBarState,
+} from '@i18n-weave/feature/feature-status-bar-manager';
+
 import { DeeplClient } from '@i18n-weave/http/http-deepl-client';
 
 import {
@@ -83,6 +88,11 @@ export class TranslationService {
     fileLocation: string,
     changedFileContent: string
   ): Promise<void> {
+    const statusBarManager = StatusBarManager.getInstance();
+    statusBarManager.updateState(
+      StatusBarState.Running,
+      'Translating missing keys in other i18n files...'
+    );
     const deeplClient = await DeeplClient.getInstanceAsync(this.context);
 
     const configManager = ConfigurationStoreManager.getInstance();
@@ -155,6 +165,8 @@ export class TranslationService {
     });
 
     await Promise.all(translationPromises);
+
+    statusBarManager.setIdle();
   }
 
   private findMissingTranslations(

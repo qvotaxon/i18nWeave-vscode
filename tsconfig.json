@@ -37,6 +37,9 @@
       "@i18n-weave/feature/feature-file-change-handler-factory": [
         "src/libs/feature/feature-file-change-handler-factory/src"
       ],
+      "@i18n-weave/feature/feature-status-bar-manager": [
+        "src/libs/feature/feature-status-bar-manager/src"
+      ],
       "@i18n-weave/feature/feature-webview-service": [
         "src/libs/feature/feature-webview-service/src"
       ],

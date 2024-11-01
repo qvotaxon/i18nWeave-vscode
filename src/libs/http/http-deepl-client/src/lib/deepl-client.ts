@@ -6,6 +6,10 @@ import {
   CachingService,
   sharedCacheKeys,
 } from '@i18n-weave/feature/feature-caching-service';
+import {
+  StatusBarManager,
+  StatusBarState,
+} from '@i18n-weave/feature/feature-status-bar-manager';
 
 import {
   ConfigurationStoreManager,
@@ -184,12 +188,20 @@ export class DeeplClient {
         formality = 'default';
       }
 
+      const statusBarManager = StatusBarManager.getInstance();
+      statusBarManager.updateState(
+        StatusBarState.FetchingData,
+        'Fetching translations from DeepL...'
+      );
+
       const result = await DeeplClient.translateUsingDeepl(
         DeeplClient.instance.translator,
         text,
         targetLanguage,
         formality
       );
+
+      statusBarManager.setIdle();
 
       return result.text;
     } catch (error) {
