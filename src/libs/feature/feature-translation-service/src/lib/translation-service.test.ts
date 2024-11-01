@@ -7,6 +7,7 @@ import sinon from 'sinon';
 import vscode from 'vscode';
 
 import { CacheEntry } from '@i18n-weave/feature/feature-caching-service';
+import { StatusBarManager } from '@i18n-weave/feature/feature-status-bar-manager';
 import { TranslationService } from '@i18n-weave/feature/feature-translation-service';
 
 import { DeeplClient } from '@i18n-weave/http/http-deepl-client';
@@ -61,6 +62,7 @@ suite('TranslationService', () => {
       subscriptions: [],
     } as unknown as vscode.ExtensionContext;
 
+    StatusBarManager.getInstance(extensionContext);
     translationService = TranslationService.getInstance(extensionContext);
     readFileSyncStub = sinon.stub(fs, 'readFileSync');
     readdirSyncStub = sinon.stub(fs, 'readdirSync');

@@ -1,7 +1,11 @@
-import * as assert from 'assert';
+import * as deepl from 'deepl-node';
+import assert from 'assert';
 import sinon from 'sinon';
+import vscode from 'vscode';
 
+import { CacheEntry } from '@i18n-weave/feature/feature-caching-service';
 import { I18nextScannerService } from '@i18n-weave/feature/feature-i18next-scanner-service';
+import { StatusBarManager } from '@i18n-weave/feature/feature-status-bar-manager';
 
 import {
   ConfigurationStoreManager,
@@ -31,6 +35,7 @@ suite('I18nextScannerService', () => {
 
   suite('scanCodeAsync', () => {
     test('should scan code for translation keys', async () => {
+      let extensionContext: vscode.ExtensionContext;
       const config = {
         i18nextScannerModule: {
           defaultLanguage: 'en',
@@ -57,6 +62,21 @@ suite('I18nextScannerService', () => {
         },
       } satisfies GeneralConfiguration;
 
+      extensionContext = {
+        globalState: {
+          get: sinon.stub().returns({
+            value: [{ code: 'fr', name: 'French', supportsFormality: true }],
+            timestamp: new Date().toISOString(),
+          } as CacheEntry<readonly deepl.Language[]>),
+          update: sinon.stub(),
+        },
+        workspaceState: {
+          get: sinon.stub(),
+          update: sinon.stub(),
+        },
+        subscriptions: [],
+      } as unknown as vscode.ExtensionContext;
+
       getConfigStub = sinon
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .onFirstCall()
@@ -67,6 +87,8 @@ suite('I18nextScannerService', () => {
       const executeScannerStub = (scannerService['executeScanner'] = sinon
         .stub()
         .resolves());
+
+      StatusBarManager.getInstance(extensionContext);
 
       scannerService.scanCode();
 

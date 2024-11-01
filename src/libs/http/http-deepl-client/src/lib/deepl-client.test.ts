@@ -6,6 +6,7 @@ import sinon from 'sinon';
 import vscode from 'vscode';
 
 import { CacheEntry } from '@i18n-weave/feature/feature-caching-service';
+import { StatusBarManager } from '@i18n-weave/feature/feature-status-bar-manager';
 
 import {
   ConfigurationStore,
@@ -98,6 +99,7 @@ suite('DeeplClient', () => {
       ConfigurationStoreManager.getInstance()['_configurationStore'] =
         mockConfigStore;
 
+      StatusBarManager.getInstance(extensionContext);
       const deeplClient = await DeeplClient.getInstanceAsync(extensionContext);
 
       const text = 'Hello';
