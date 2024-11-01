@@ -15,18 +15,21 @@ import {
   ConfigurationStoreManager,
   TranslationModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
+import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 /**
  * Singleton class for managing DeepL translation services.
  */
 export class DeeplClient {
-  private context: vscode.ExtensionContext;
+  private readonly _logger: Logger;
+  private readonly context: vscode.ExtensionContext;
   private static instance: DeeplClient;
   private translator: deepl.Translator | undefined;
   private static previousApiKey: string | undefined;
   private static supportedTargetLanguages: readonly deepl.Language[];
 
   private constructor(context: vscode.ExtensionContext) {
+    this._logger = Logger.getInstance();
     this.context = context;
   }
 
@@ -90,7 +93,8 @@ export class DeeplClient {
           .map(x => x.code)
           .indexOf(targetLanguage as deepl.LanguageCode) === -1
       ) {
-        console.info(
+        this._logger.log(
+          LogLevel.WARN,
           `Skipping translation for unsupported target language: ${targetLanguage}`
         );
 
@@ -114,11 +118,11 @@ export class DeeplClient {
 
       return result.map(x => x.text);
     } catch (error) {
-      console.error(
-        'Error fetching translation:',
-        error,
-        requestedTargetLanguage
+      this._logger.log(
+        LogLevel.ERROR,
+        `Error fetching translation for target language ${requestedTargetLanguage}.\r\nError: ${error}`
       );
+      this._logger.show();
       throw error;
     }
   }
@@ -154,6 +158,10 @@ export class DeeplClient {
           requestedTargetLanguage.match(languageRegex);
 
         if (!simplifiedTargetLanguage) {
+          this._logger.log(
+            LogLevel.ERROR,
+            `Invalid target language code. ${requestedTargetLanguage}`
+          );
           throw new Error(
             `Invalid target language code. ${requestedTargetLanguage}`
           );
@@ -173,7 +181,8 @@ export class DeeplClient {
           .map(x => x.code)
           .indexOf(targetLanguage as deepl.LanguageCode) === -1
       ) {
-        console.info(
+        this._logger.log(
+          LogLevel.WARN,
           `Skipping translation for unsupported target language: ${targetLanguage}`
         );
 
@@ -205,11 +214,12 @@ export class DeeplClient {
 
       return result.text;
     } catch (error) {
-      console.error(
-        'Error fetching translation:',
-        error,
-        requestedTargetLanguage
+      this._logger.log(
+        LogLevel.ERROR,
+        `Error fetching translation for target language ${requestedTargetLanguage}.\r\nError: ${error}`
       );
+      this._logger.show();
+
       throw error;
     }
   }
@@ -268,6 +278,11 @@ export class DeeplClient {
     const supportedTargetLanguages = await this.getSupportedTargetLanguages();
 
     if (!supportedTargetLanguages) {
+      DeeplClient.instance._logger.log(
+        LogLevel.ERROR,
+        'Failed to retrieve supported languages from DeepL.'
+      );
+      DeeplClient.instance._logger.show();
       throw new Error('Failed to retrieve supported languages from DeepL.');
     }
 
@@ -321,6 +336,11 @@ export class DeeplClient {
       ).deepL.apiKey;
 
     if (!apiKey) {
+      DeeplClient.instance._logger.log(
+        LogLevel.ERROR,
+        'No DeepL API key found in the configuration.'
+      );
+      DeeplClient.instance._logger.show();
       throw new Error('No DeepL API key found in the configuration.');
     }
 

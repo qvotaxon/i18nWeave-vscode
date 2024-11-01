@@ -23,6 +23,7 @@ import {
 } from '@i18n-weave/util/util-configuration';
 import { FileType } from '@i18n-weave/util/util-enums';
 import { isProduction } from '@i18n-weave/util/util-environment-utilities';
+import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
 const envFilePath =
@@ -65,8 +66,10 @@ export async function activate(
   initializeSentry();
 
   try {
+    const logger = Logger.getInstance();
     const statusBarManager = StatusBarManager.getInstance(context);
     statusBarManager.updateState(StatusBarState.Running, 'Initializing...');
+    logger.log(LogLevel.INFO, 'i18nWeave is now active!');
 
     ConfigurationStoreManager.getInstance().initialize();
 
@@ -80,6 +83,7 @@ export async function activate(
         ConfigurationStoreManager.getInstance().syncConfigurationStore();
 
         await reinitialize(fileWatcherCreator, context);
+        logger.log(LogLevel.INFO, 'Configuration changed, re-initializing...');
       });
 
     const { codeFileWatchers, jsonFileWatchers } = await createFileWatchers(

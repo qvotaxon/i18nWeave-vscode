@@ -1,14 +1,23 @@
 import vscode from 'vscode';
 
+import {
+  ConfigurationStoreManager,
+  I18nextScannerModuleConfiguration,
+} from '@i18n-weave/util/util-configuration';
 import { getFileExtension } from '@i18n-weave/util/util-file-path-utilities';
+import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
 export class FileLocationStore {
   private static instance: FileLocationStore;
-  private fileLocations: Map<string, Set<string>> = new Map();
+  private readonly fileLocations: Map<string, Set<string>> = new Map();
+  private readonly _logger: Logger;
+  private readonly _configurationStoreManager: ConfigurationStoreManager;
 
   private constructor() {
     // Private constructor to prevent instantiation
+    this._logger = Logger.getInstance();
+    this._configurationStoreManager = ConfigurationStoreManager.getInstance();
   }
 
   /**
@@ -25,6 +34,7 @@ export class FileLocationStore {
    * Scans the workspace for specific file types and populates the store.
    */
   public async scanWorkspaceAsync(fileSearchLocations: FileSearchLocation[]) {
+    this._logger.log(LogLevel.INFO, 'Scanning workspace for files...');
     for (const fileSearchLocation of fileSearchLocations) {
       const files = await vscode.workspace.findFiles(
         fileSearchLocation.filePattern,
@@ -32,6 +42,24 @@ export class FileLocationStore {
       );
       files.forEach(file => this.addOrUpdateFile(file));
     }
+
+    this.logResourceAndCodeFilesCount();
+  }
+
+  private logResourceAndCodeFilesCount() {
+    const fileExtensions =
+      this._configurationStoreManager.getConfig<I18nextScannerModuleConfiguration>(
+        'i18nextScannerModule'
+      ).fileExtensions;
+
+    this._logger.log(
+      LogLevel.INFO,
+      `Found ${this.getFileLocationsByType(['json']).length} number of resource files`
+    );
+    this._logger.log(
+      LogLevel.INFO,
+      `Found ${this.getFileLocationsByType(fileExtensions).length} number of code files`
+    );
   }
 
   /**
