@@ -24,6 +24,8 @@
 
 i18nWeave is a Visual Studio Code extension designed to streamline the management of translation files within development projects. Its goal is to reduce the amount of time software developers waste on translation-related tasks, allowing them to focus more on coding and improving productivity.
 
+See the website [i18nWeave.com](https://i18nweave.com) for more info.
+
 <!-- ## Screenshots -->
 
 <!-- ![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here) -->
