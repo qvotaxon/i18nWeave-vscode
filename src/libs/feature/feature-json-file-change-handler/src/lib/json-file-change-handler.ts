@@ -17,8 +17,10 @@ import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
 import { ChainType } from '@i18n-weave/util/util-enums';
 import { extractFilePathParts } from '@i18n-weave/util/util-file-path-utilities';
+import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 export class JsonFileChangeHandler extends BaseFileChangeHandler {
+  private readonly _logger: Logger;
   private static fileWatcherCreator: FileWatcherCreator;
   private static readJsonFileModule: ReadJsonFileModule;
   private static translationModule: TranslationModule;
@@ -32,6 +34,8 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
     translationModule: TranslationModule
   ) {
     super();
+
+    this._logger = Logger.getInstance();
 
     JsonFileChangeHandler.fileWatcherCreator = fileWatcherCreator;
     JsonFileChangeHandler.readJsonFileModule = readJsonFileModule;
@@ -98,6 +102,11 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
     await JsonFileChangeHandler.moduleChainManager.executeChainAsync(
       ChainType.Json,
       context
+    );
+
+    this._logger.log(
+      LogLevel.INFO,
+      `Json File change handled: ${changeFileLocation}`
     );
 
     JsonFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(

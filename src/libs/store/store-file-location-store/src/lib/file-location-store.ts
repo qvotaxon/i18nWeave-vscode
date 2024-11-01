@@ -41,25 +41,11 @@ export class FileLocationStore {
         fileSearchLocation.ignorePattern
       );
       files.forEach(file => this.addOrUpdateFile(file));
+      this._logger.log(
+        LogLevel.INFO,
+        `Found ${files.length} number of files for search pattern ${fileSearchLocation.filePattern}, ignoring ${fileSearchLocation.ignorePattern}`
+      );
     }
-
-    this.logResourceAndCodeFilesCount();
-  }
-
-  private logResourceAndCodeFilesCount() {
-    const fileExtensions =
-      this._configurationStoreManager.getConfig<I18nextScannerModuleConfiguration>(
-        'i18nextScannerModule'
-      ).fileExtensions;
-
-    this._logger.log(
-      LogLevel.INFO,
-      `Found ${this.getFileLocationsByType(['json']).length} number of resource files`
-    );
-    this._logger.log(
-      LogLevel.INFO,
-      `Found ${this.getFileLocationsByType(fileExtensions).length} number of code files`
-    );
   }
 
   /**
@@ -96,7 +82,7 @@ export class FileLocationStore {
    * @param extensions An array of file extensions (e.g., ['json', 'po', 'ts']).
    * @returns An array of URIs for files of the specified types.
    */
-  public getFilesByType(extensions: string[]): string[] {
+  public getFileLocationsByType(extensions: string[]): string[] {
     const files: string[] = [];
     for (const extension of extensions) {
       const extensionFiles = this.fileLocations.get(extension);

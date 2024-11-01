@@ -140,7 +140,7 @@ async function initializeFileLocations(context: ExtensionContext) {
         '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
     } as FileSearchLocation,
     {
-      filePattern: `**{${codeFileLocations}}/**/*{${codeFileExtensions}}`,
+      filePattern: `**/{${codeFileLocations}}/**/*.{${codeFileExtensions}}`,
       ignorePattern:
         '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**,**/*.spec.ts,**/*.spec.tsx}',
     } as FileSearchLocation,
