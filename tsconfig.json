@@ -81,6 +81,7 @@
       "@i18n-weave/util/util-localization-utilities": [
         "src/libs/util/util-localization-utilities/src"
       ],
+      "@i18n-weave/util/util-logger": ["src/libs/util/util-logger/src"],
       "@i18n-weave/util/util-array-utilities": [
         "src/libs/util/util-array-utilities/src"
       ],

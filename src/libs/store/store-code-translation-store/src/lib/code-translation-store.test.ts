@@ -36,7 +36,7 @@ suite('CodeTranslationStore', () => {
       );
       getFilesByTypeStub = sinon.stub(
         FileLocationStore.getInstance(),
-        'getFilesByType'
+        'getFileLocationsByType'
       );
       showErrorMessageStub = sinon.stub(window, 'showErrorMessage');
       updateStoreRecordAsyncStub = sinon.stub(
@@ -198,7 +198,7 @@ suite('CodeTranslationStore', () => {
       );
       getFilesByTypeStub = sinon.stub(
         FileLocationStore.getInstance(),
-        'getFilesByType'
+        'getFileLocationsByType'
       );
       showErrorMessageStub = sinon.stub(window, 'showErrorMessage');
       updateStoreRecordAsyncStub = sinon.stub(

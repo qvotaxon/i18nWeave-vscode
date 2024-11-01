@@ -14,6 +14,7 @@ import {
 } from '@i18n-weave/util/util-configuration';
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
 import { getProjectRootFolder } from '@i18n-weave/util/util-file-path-utilities';
+import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 import { I18nextScannerOptions } from './i18nextScannerOptions';
 
@@ -22,8 +23,11 @@ import { I18nextScannerOptions } from './i18nextScannerOptions';
  */
 export class I18nextScannerService {
   private static instance: I18nextScannerService;
+  private readonly _logger: Logger;
 
-  private constructor() {}
+  private constructor() {
+    this._logger = Logger.getInstance();
+  }
 
   /**
    * Get the singleton instance of I18nextScannerService.
@@ -46,6 +50,7 @@ export class I18nextScannerService {
       StatusBarState.Running,
       'Scanning code for translation keys...'
     );
+    this._logger.log(LogLevel.INFO, 'Scanning code for translation keys...');
 
     const configManager = ConfigurationStoreManager.getInstance();
     const i18nNextScannerModuleConfiguration =
@@ -57,6 +62,8 @@ export class I18nextScannerService {
     let projectRoot = getProjectRootFolder();
 
     if (!projectRoot) {
+      this._logger.log(LogLevel.ERROR, 'No project root found');
+      this._logger.show();
       throw new Error('No project root found');
     }
 
@@ -130,6 +137,10 @@ export class I18nextScannerService {
 
     this.executeScanner(options, projectRoot, scanSources);
 
+    this._logger.log(
+      LogLevel.INFO,
+      'Done scanning code for translation keys...'
+    );
     statusBarManager.setIdle();
   }
 

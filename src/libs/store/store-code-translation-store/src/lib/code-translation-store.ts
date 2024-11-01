@@ -57,7 +57,9 @@ export class CodeTranslationStore {
             ).fileExtensions;
 
           const fsPaths =
-            FileLocationStore.getInstance().getFilesByType(fileExtensions);
+            FileLocationStore.getInstance().getFileLocationsByType(
+              fileExtensions
+            );
 
           fsPaths.forEach(async fsPath => {
             const stats = fs.statSync(fsPath);
