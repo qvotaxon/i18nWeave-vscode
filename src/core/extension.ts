@@ -5,6 +5,10 @@ import vscode, { ExtensionContext } from 'vscode';
 
 import { ConfigurationWizardService } from '@i18n-weave/feature/feature-configuration-wizard';
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
+import {
+  StatusBarManager,
+  StatusBarState,
+} from '@i18n-weave/feature/feature-status-bar-manager';
 import { WebviewFactory } from '@i18n-weave/feature/feature-webview-factory';
 import { WebviewService } from '@i18n-weave/feature/feature-webview-service';
 
@@ -61,6 +65,9 @@ export async function activate(
   initializeSentry();
 
   try {
+    const statusBarManager = StatusBarManager.getInstance(context);
+    statusBarManager.updateState(StatusBarState.Running, 'Initializing...');
+
     ConfigurationStoreManager.getInstance().initialize();
 
     await initializeFileLocations(context);
@@ -94,6 +101,8 @@ export async function activate(
       configurationWizardCommandDisposable,
       configurationWatcherDisposable
     );
+
+    statusBarManager.updateState(StatusBarState.Idle, 'Idle');
   } catch (error) {
     Sentry.captureException(error);
   }

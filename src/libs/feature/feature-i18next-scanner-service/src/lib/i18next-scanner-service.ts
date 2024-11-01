@@ -3,6 +3,11 @@ import I18nextScanner from 'i18next-scanner';
 import vfs from 'vinyl-fs';
 
 import {
+  StatusBarManager,
+  StatusBarState,
+} from '@i18n-weave/feature/feature-status-bar-manager';
+
+import {
   ConfigurationStoreManager,
   GeneralConfiguration,
   I18nextScannerModuleConfiguration,
@@ -36,6 +41,12 @@ export class I18nextScannerService {
    */
   @TraceMethod
   public scanCode(): void {
+    const statusBarManager = StatusBarManager.getInstance();
+    statusBarManager.updateState(
+      StatusBarState.Running,
+      'Scanning code for translation keys...'
+    );
+
     const configManager = ConfigurationStoreManager.getInstance();
     const i18nNextScannerModuleConfiguration =
       configManager.getConfig<I18nextScannerModuleConfiguration>(
@@ -118,6 +129,8 @@ export class I18nextScannerService {
     ];
 
     this.executeScanner(options, projectRoot, scanSources);
+
+    statusBarManager.setIdle();
   }
 
   private executeScanner(
