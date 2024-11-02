@@ -3,22 +3,20 @@ import * as dotenv from 'dotenv';
 import path from 'path';
 import vscode, { ExtensionContext } from 'vscode';
 
+import { ActiveTextEditorChangedHandler } from '@i18n-weave/feature/feature-active-text-editor-changed-handler';
 import { ConfigurationWizardService } from '@i18n-weave/feature/feature-configuration-wizard';
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
 import {
   StatusBarManager,
   StatusBarState,
 } from '@i18n-weave/feature/feature-status-bar-manager';
-import { WebviewFactory } from '@i18n-weave/feature/feature-webview-factory';
-import { WebviewService } from '@i18n-weave/feature/feature-webview-service';
+import { TextDocumentChangedHandler } from '@i18n-weave/feature/feature-text-document-changed-handler';
 
 import { CodeTranslationStore } from '@i18n-weave/store/store-code-translation-store';
 import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
-import { WebviewStore } from '@i18n-weave/store/store-webview-store';
 
 import {
   ConfigurationStoreManager,
-  GeneralConfiguration,
   I18nextScannerModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
 import { FileType } from '@i18n-weave/util/util-enums';
@@ -55,11 +53,12 @@ function initializeSentry() {
 export async function activate(
   context: ExtensionContext,
   fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator(),
+  configurationManager: ConfigurationStoreManager = ConfigurationStoreManager.getInstance(),
   configurationWizardService: ConfigurationWizardService = new ConfigurationWizardService(),
-  webviewService: WebviewService = new WebviewService(
-    WebviewStore.getInstance(),
-    new WebviewFactory(context)
-  )
+  textDocumentOpenedHandler: ActiveTextEditorChangedHandler = new ActiveTextEditorChangedHandler(
+    context
+  ),
+  textDocumentChangedHandler: TextDocumentChangedHandler = new TextDocumentChangedHandler()
 ) {
   console.log('i18nWeave is now active!');
 
@@ -71,16 +70,19 @@ export async function activate(
     statusBarManager.updateState(StatusBarState.Running, 'Initializing...');
     logger.log(LogLevel.INFO, 'i18nWeave is now active!');
 
-    ConfigurationStoreManager.getInstance().initialize();
+    configurationManager.initialize();
 
     await initializeFileLocations(context);
 
     const onDidOpenTextDocumentDisposable =
-      await createWebViewForFilesMatchingPattern(webviewService);
+      textDocumentOpenedHandler.initialize();
+
+    const onDidChangeTextDocumentDisposable =
+      textDocumentChangedHandler.initialize();
 
     const configurationWatcherDisposable =
       vscode.workspace.onDidChangeConfiguration(async () => {
-        ConfigurationStoreManager.getInstance().syncConfigurationStore();
+        configurationManager.syncConfigurationStore();
 
         await reinitialize(fileWatcherCreator, context);
         logger.log(LogLevel.INFO, 'Configuration changed, re-initializing...');
@@ -102,6 +104,7 @@ export async function activate(
       ...codeFileWatchers,
       ...jsonFileWatchers,
       onDidOpenTextDocumentDisposable,
+      onDidChangeTextDocumentDisposable,
       configurationWizardCommandDisposable,
       configurationWatcherDisposable
     );
@@ -217,27 +220,6 @@ async function createWatchersForFileType(
             .enabled
         : true)
   );
-}
-
-async function createWebViewForFilesMatchingPattern(
-  webviewService: WebviewService
-) {
-  const onDidOpenTextDocumentDisposable =
-    vscode.workspace.onDidOpenTextDocument(document => {
-      const uri = document.uri;
-      if (
-        uri.scheme === 'file' &&
-        uri.path.endsWith('.json') &&
-        FileLocationStore.getInstance().hasFile(uri) &&
-        ConfigurationStoreManager.getInstance().getConfig<GeneralConfiguration>(
-          'general'
-        ).betaFeaturesConfiguration.enableJsonFileWebView
-      ) {
-        webviewService.showWebview(FileType.Json, uri);
-      }
-    });
-
-  return onDidOpenTextDocumentDisposable;
 }
 
 async function registerConfigurationWizardCommand(

@@ -96,9 +96,6 @@ export class FileLocationStore {
   public hasFile(uri: vscode.Uri): boolean {
     const extension = getFileExtension(uri);
 
-    const filesWithExtension = this.fileLocations.get(extension);
-    const hasFile = filesWithExtension?.has(uri.fsPath) ?? false;
-
     return this.fileLocations.get(extension)?.has(uri.fsPath) ?? false;
   }
 

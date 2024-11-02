@@ -31,6 +31,9 @@
       "@i18n-weave/feature/feature-code-file-change-handler": [
         "src/libs/feature/feature-code-file-change-handler/src"
       ],
+      "@i18n-weave/feature/feature-diagnostics-manager": [
+        "src/libs/feature/feature-diagnostics-manager/src"
+      ],
       "@i18n-weave/feature/feature-json-file-change-handler": [
         "src/libs/feature/feature-json-file-change-handler/src"
       ],
@@ -40,6 +43,12 @@
       "@i18n-weave/feature/feature-status-bar-manager": [
         "src/libs/feature/feature-status-bar-manager/src"
       ],
+      "@i18n-weave/feature/feature-text-document-changed-handler": [
+        "src/libs/feature/feature-text-document-changed-handler/src"
+      ],
+      "@i18n-weave/feature/feature-active-text-editor-changed-handler": [
+        "src/libs/feature/feature-active-text-editor-changed-handler/src"
+      ],
       "@i18n-weave/feature/feature-webview-service": [
         "src/libs/feature/feature-webview-service/src"
       ],
@@ -48,6 +57,9 @@
       ],
       "@i18n-weave/feature/feature-configuration-wizard": [
         "src/libs/feature/feature-configuration-wizard/src"
+      ],
+      "@i18n-weave/feature/feature-empty-json-value-symbol-provider": [
+        "src/libs/feature/feature-empty-json-value-symbol-provider/src"
       ],
       "@i18n-weave/feature/feature-webview-factory": [
         "src/libs/feature/feature-webview-factory/src"
@@ -74,6 +86,9 @@
       ],
       "@i18n-weave/util/util-environment-utilities": [
         "src/libs/util/util-environment-utilities/src"
+      ],
+      "@i18n-weave/util/util-highlight-missing-values": [
+        "src/libs/util/util-highlight-missing-values/src"
       ],
       "@i18n-weave/util/util-prompt-utilities": [
         "src/libs/util/util-prompt-utilities/src"
