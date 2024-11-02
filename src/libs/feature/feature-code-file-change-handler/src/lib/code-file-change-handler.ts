@@ -15,14 +15,18 @@ import { CodeTranslationStore } from '@i18n-weave/store/store-code-translation-s
 
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
 import { ChainType } from '@i18n-weave/util/util-enums';
+import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 export class CodeFileChangeHandler extends BaseFileChangeHandler {
+  private readonly _logger: Logger;
   private static i18nextScannerModule: I18nextScannerModule;
   private static moduleChainManager: ModuleChainManager =
     new ModuleChainManager();
 
   private constructor(i18nextScannerModule: I18nextScannerModule) {
     super();
+
+    this._logger = Logger.getInstance();
     CodeFileChangeHandler.i18nextScannerModule = i18nextScannerModule;
     CodeFileChangeHandler.moduleChainManager.registerChain(
       ChainType.Code,
@@ -72,6 +76,11 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
     await CodeFileChangeHandler.moduleChainManager.executeChainAsync(
       ChainType.Code,
       context
+    );
+
+    this._logger.log(
+      LogLevel.INFO,
+      `Code File change handled: ${changeFileLocation}`
     );
 
     if (!isFileDeletionChange) {
