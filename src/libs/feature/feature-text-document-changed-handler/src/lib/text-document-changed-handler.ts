@@ -1,8 +1,9 @@
-import { FileLocationStore } from 'src/libs/store/store-file-location-store/src';
 import vscode from 'vscode';
 
 import { DiagnosticsManager } from '@i18n-weave/feature/feature-diagnostics-manager';
 import { EmptyJsonValueSymbolProvider } from '@i18n-weave/feature/feature-empty-json-value-symbol-provider';
+
+import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 
 import { highlightEmptyValues } from '@i18n-weave/util/util-highlight-missing-values';
 
