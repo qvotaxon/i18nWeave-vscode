@@ -4,6 +4,15 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.10.0](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.9.0...v0.10.0) (2024-11-03)
+
+
+### Features
+
+* add highlighting for missing json values ([#202](https://github.com/qvotaxon/i18nWeave-vscode/issues/202)) ([b251d44](https://github.com/qvotaxon/i18nWeave-vscode/commit/b251d4418a3d73014bd866d25416c1eedda7ed43))
+* add status bar updates for better clarity ([#198](https://github.com/qvotaxon/i18nWeave-vscode/issues/198)) ([8d35340](https://github.com/qvotaxon/i18nWeave-vscode/commit/8d353404e83ba634fcfe4dbcad2ef27c356d8e85))
+* enhance logging ([#200](https://github.com/qvotaxon/i18nWeave-vscode/issues/200)) ([fcd8e53](https://github.com/qvotaxon/i18nWeave-vscode/commit/fcd8e538b8b5411a69c902538ca428edaa96aa2d))
+
 ## [0.9.0](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.8.4...v0.9.0) (2024-10-29)
 
 
