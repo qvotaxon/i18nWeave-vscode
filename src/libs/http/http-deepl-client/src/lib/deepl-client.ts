@@ -298,8 +298,18 @@ export class DeeplClient {
       DeeplClient.instance.context,
       sharedCacheKeys.SUPPORTED_TARGET_LANGUAGES,
       async () => {
+        this.instance._logger.log(
+          LogLevel.INFO,
+          'Retrieved supported target languages.'
+        );
+
         return DeeplClient.instance.translator?.getTargetLanguages();
       }
+    );
+
+    this.instance._logger.log(
+      LogLevel.INFO,
+      'Read from cache: Retrieved supported target languages.'
     );
 
     return targetLanguages;

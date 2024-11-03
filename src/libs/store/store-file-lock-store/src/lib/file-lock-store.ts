@@ -1,13 +1,18 @@
 import { Uri } from 'vscode';
 
+import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
+
 /**
  * Represents a store for managing file locks.
  */
 export class FileLockStore {
   private static instance: FileLockStore;
   private fileLocks: Map<string, number> = new Map<string, number>();
+  private readonly _logger: Logger;
 
-  private constructor() {}
+  private constructor() {
+    this._logger = Logger.getInstance();
+  }
 
   /**
    * Returns the singleton instance of FileLockStore.
@@ -25,6 +30,8 @@ export class FileLockStore {
    * @param uri - The URI of the file.
    */
   add(uri: Uri): void {
+    this._logger.log(LogLevel.VERBOSE, 'Added file lock for ' + uri.fsPath);
+
     const lockCount = this.fileLocks.get(uri.fsPath) || 0;
     this.fileLocks.set(uri.fsPath, lockCount + 1);
   }
@@ -34,6 +41,8 @@ export class FileLockStore {
    * @param uri - The URI of the file.
    */
   delete(uri: Uri): void {
+    this._logger.log(LogLevel.VERBOSE, 'Deleted file lock for ' + uri.fsPath);
+
     const lockCount = this.fileLocks.get(uri.fsPath) || 0;
     if (lockCount > 1) {
       this.fileLocks.set(uri.fsPath, lockCount - 1);
@@ -48,6 +57,7 @@ export class FileLockStore {
    * @returns `true` if a file lock exists, `false` otherwise.
    */
   hasFileLock(uri: Uri): boolean {
+    this._logger.log(LogLevel.VERBOSE, 'Checking file lock for ' + uri.fsPath);
     return this.fileLocks.has(uri.fsPath);
   }
 }

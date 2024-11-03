@@ -1,10 +1,14 @@
 import vscode from 'vscode';
 
+import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
+
 export class DiagnosticsManager {
   private static _instance: DiagnosticsManager;
+  private readonly _logger: Logger;
   private readonly _diagnosticCollection: vscode.DiagnosticCollection;
 
   private constructor() {
+    this._logger = Logger.getInstance();
     this._diagnosticCollection =
       vscode.languages.createDiagnosticCollection('missingValues');
   }
@@ -20,6 +24,8 @@ export class DiagnosticsManager {
     document: vscode.TextDocument,
     documentSymbols: vscode.DocumentSymbol[] | null | undefined
   ) {
+    this._logger.log(LogLevel.INFO, `Updating diagnostics for ${document.uri}`);
+
     if (documentSymbols) {
       // Create diagnostics for empty values
       const diagnostics: vscode.Diagnostic[] = documentSymbols.map(symbol => {

@@ -68,9 +68,9 @@ export async function activate(
     const logger = Logger.getInstance();
     const statusBarManager = StatusBarManager.getInstance(context);
     statusBarManager.updateState(StatusBarState.Running, 'Initializing...');
-    logger.log(LogLevel.INFO, 'i18nWeave is now active!');
 
     configurationManager.initialize();
+    logger.log(LogLevel.INFO, 'i18nWeave is now active!');
 
     await initializeFileLocations(context);
 
