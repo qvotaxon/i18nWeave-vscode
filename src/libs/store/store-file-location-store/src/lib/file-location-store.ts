@@ -40,7 +40,7 @@ export class FileLocationStore {
       files.forEach(file => this.addOrUpdateFile(file));
       this._logger.log(
         LogLevel.INFO,
-        `Found ${files.length} number of files for search pattern ${fileSearchLocation.filePattern.toString}, ignoring ${fileSearchLocation.ignorePattern.toString}`
+        `Found ${files.length} number of files for search pattern ${fileSearchLocation.filePattern}, ignoring ${fileSearchLocation.ignorePattern}`
       );
     }
   }
