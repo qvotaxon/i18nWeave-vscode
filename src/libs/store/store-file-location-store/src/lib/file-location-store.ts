@@ -1,9 +1,6 @@
 import vscode from 'vscode';
 
-import {
-  ConfigurationStoreManager,
-  I18nextScannerModuleConfiguration,
-} from '@i18n-weave/util/util-configuration';
+import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import { getFileExtension } from '@i18n-weave/util/util-file-path-utilities';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
@@ -43,7 +40,7 @@ export class FileLocationStore {
       files.forEach(file => this.addOrUpdateFile(file));
       this._logger.log(
         LogLevel.INFO,
-        `Found ${files.length} number of files for search pattern ${fileSearchLocation.filePattern}, ignoring ${fileSearchLocation.ignorePattern}`
+        `Found ${files.length} number of files for search pattern ${fileSearchLocation.filePattern.toString}, ignoring ${fileSearchLocation.ignorePattern.toString}`
       );
     }
   }
@@ -98,21 +95,4 @@ export class FileLocationStore {
 
     return this.fileLocations.get(extension)?.has(uri.fsPath) ?? false;
   }
-
-  //TODO: reenable this method and fix the related tests. I couldnt' get the mocking of the files to work and the method is unused for now.
-  /**
-   * Gets related files by replacing the extension of the given URI.
-   * @param uri The original URI.
-   * @param newExtension The new extension to look for.
-   * @returns An array of related URIs.
-   */
-  //   public getRelatedFiles(uri: vscode.Uri, newExtension: string): vscode.Uri[] {
-  //     const originalPath = uri.fsPath;
-  //     const baseName = originalPath.slice(0, originalPath.lastIndexOf('.'));
-  //     const relatedFilePath = vscode.Uri.file(`${baseName}.${newExtension}`);
-
-  //     return this.fileLocations.get(newExtension)?.has(relatedFilePath)
-  //       ? [relatedFilePath]
-  //       : [];
-  //   }
 }
