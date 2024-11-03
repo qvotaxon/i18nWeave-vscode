@@ -49,6 +49,8 @@ export class ActiveTextEditorChangedHandler {
     return vscode.window.onDidChangeActiveTextEditor(async editor => {
       if (
         editor &&
+        editor.document.uri.scheme === 'file' &&
+        editor.document.uri.path.endsWith('.json') &&
         FileLocationStore.getInstance().hasFile(editor.document.uri)
       ) {
         let documentSymbols = await this._provider.provideDocumentSymbols(
