@@ -39,3 +39,5 @@ ignore:
   - 'src/libs/feature/feature-configuration-wizard/**/*'
   - 'src/libs/http/http-deepl-client/**/*'
   - 'src/libs/feature/feature-translation-service/**/*'
+	- 'src/libs/util/util-highlight-missing-values/**/*'
+

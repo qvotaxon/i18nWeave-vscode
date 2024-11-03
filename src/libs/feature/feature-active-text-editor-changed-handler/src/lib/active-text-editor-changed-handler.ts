@@ -13,7 +13,6 @@ import {
   GeneralConfiguration,
 } from '@i18n-weave/util/util-configuration';
 import { FileType } from '@i18n-weave/util/util-enums';
-import { highlightEmptyValues } from '@i18n-weave/util/util-highlight-missing-values';
 
 /**
  * Handles the event when the active text editor changes in VS Code.
@@ -61,10 +60,6 @@ export class ActiveTextEditorChangedHandler {
           editor.document,
           documentSymbols
         );
-
-        if (documentSymbols) {
-          highlightEmptyValues(editor.document, documentSymbols);
-        }
       }
 
       if (

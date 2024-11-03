@@ -5,8 +5,6 @@ import { EmptyJsonValueSymbolProvider } from '@i18n-weave/feature/feature-empty-
 
 import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 
-import { highlightEmptyValues } from '@i18n-weave/util/util-highlight-missing-values';
-
 export class TextDocumentChangedHandler {
   private readonly _provider: EmptyJsonValueSymbolProvider;
   private readonly _diagnosticsManager: DiagnosticsManager;
@@ -32,10 +30,6 @@ export class TextDocumentChangedHandler {
           event.document,
           documentSymbols
         );
-
-        if (documentSymbols) {
-          highlightEmptyValues(event.document, documentSymbols);
-        }
       }
     });
   };
