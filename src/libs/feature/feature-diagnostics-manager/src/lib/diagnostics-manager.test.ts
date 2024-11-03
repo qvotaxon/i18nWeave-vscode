@@ -2,9 +2,12 @@ import * as sinon from 'sinon';
 import * as vscode from 'vscode';
 import assert from 'assert';
 
+import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
+
 import { DiagnosticsManager } from './diagnostics-manager';
 
 suite('DiagnosticsManager', () => {
+  let getConfigStub: sinon.SinonStub;
   let sandbox: sinon.SinonSandbox;
   let diagnosticCollectionStub: sinon.SinonStubbedInstance<vscode.DiagnosticCollection>;
   let createDiagnosticCollectionStub: sinon.SinonStub;
@@ -29,6 +32,31 @@ suite('DiagnosticsManager', () => {
     sandbox.restore();
   });
 
+  test('should update diagnostics with empty value errors', async () => {
+    getConfigStub = sinon
+      .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
+      .withArgs('debugging')
+      .returns({
+        logging: {
+          enableVerboseLogging: true,
+        },
+      });
+    const manager = DiagnosticsManager.getInstance();
+
+    // @ts-ignore
+    manager._diagnosticCollection = diagnosticCollectionStub;
+
+    const document = { uri: 'test-uri' } as unknown as vscode.TextDocument;
+    const documentSymbols = [
+      { name: 'key1', range: new vscode.Range(0, 0, 0, 5) },
+      { name: 'key2', range: new vscode.Range(1, 0, 1, 5) },
+    ] as vscode.DocumentSymbol[];
+
+    await manager.updateDiagnostics(document, documentSymbols);
+
+    assert.ok(diagnosticCollectionStub.set.calledOnce);
+  });
+
   test('should create a singleton instance', () => {
     const instance1 = DiagnosticsManager.getInstance();
     const instance2 = DiagnosticsManager.getInstance();
@@ -49,30 +77,7 @@ suite('DiagnosticsManager', () => {
 
     await manager.updateDiagnostics(document, documentSymbols);
 
-    const expectedDiagnostics = documentSymbols.map(symbol => {
-      const diagnostic = new vscode.Diagnostic(
-        symbol.range,
-        `Empty value for key "${symbol.name}"`,
-        vscode.DiagnosticSeverity.Error
-      );
-      diagnostic.source = 'i18nWeave';
-      return diagnostic;
-    });
-
-    // assert.ok(sinon.assert.calledOnceWithExactly(
-    //     diagnosticCollectionStub.set,
-    //     document.uri,
-    //     expectedDiagnostics
-    // ));
-
-    assert.ok(
-      diagnosticCollectionStub.set.calledOnce
-
-      //   diagnosticCollectionStub.set.calledOnceWith(
-      //     document.uri,
-      //     expectedDiagnostics
-      //   )
-    );
+    assert.ok(diagnosticCollectionStub.set.calledOnce);
   });
 
   test('should clear diagnostics if no issues are found', async () => {

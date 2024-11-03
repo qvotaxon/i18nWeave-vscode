@@ -2,7 +2,7 @@ import assert from 'assert';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import * as filePathUtilities from '@i18n-weave/util/util-file-path-utilities';
+import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
 import { FileLocationStore } from './file-location-store';
@@ -14,6 +14,8 @@ suite('FileLocationStore Tests', function () {
   setup(function () {
     sandbox = sinon.createSandbox();
     store = FileLocationStore.getInstance();
+
+    ConfigurationStoreManager.getInstance().initialize();
   });
 
   teardown(function () {
