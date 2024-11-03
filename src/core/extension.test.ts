@@ -19,6 +19,8 @@ suite('Extension Activation', () => {
   let codeTranslationStoreStub: sinon.SinonStubbedInstance<CodeTranslationStore>;
 
   setup(() => {
+    ConfigurationStoreManager.getInstance().initialize();
+
     context = { subscriptions: [] } as any;
     fileWatcherCreator = sinon.createStubInstance(FileWatcherCreator);
     configurationStoreManagerStub = sinon

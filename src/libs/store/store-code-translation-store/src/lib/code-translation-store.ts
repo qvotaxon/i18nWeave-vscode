@@ -10,6 +10,7 @@ import {
   ConfigurationStoreManager,
   I18nextScannerModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
+import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 type CodeTranslation = {
   filePath: string;
@@ -22,8 +23,11 @@ export class CodeTranslationStore {
   private _cacheKey = 'i18nWeave.translationFunctionCache';
   private static _instance: CodeTranslationStore;
   private _codeTranslations: Map<string, CodeTranslation> = new Map();
+  private readonly _logger: Logger;
 
-  private constructor() {}
+  private constructor() {
+    this._logger = Logger.getInstance();
+  }
 
   public static getInstance(): CodeTranslationStore {
     if (!CodeTranslationStore._instance) {
@@ -33,6 +37,8 @@ export class CodeTranslationStore {
   }
 
   public async initializeAsync(context: ExtensionContext): Promise<void> {
+    this._logger.log(LogLevel.INFO, 'Initializing code translation store');
+
     this._context = context;
     const storedCache = context.globalState.get<Map<string, CodeTranslation>>(
       this._cacheKey
@@ -42,6 +48,7 @@ export class CodeTranslationStore {
       storedCache.forEach(entry => {
         this._codeTranslations.set(entry.filePath, entry);
       });
+      this._logger.log(LogLevel.INFO, 'Restored code translation cache');
     }
 
     window.withProgress(
@@ -71,11 +78,23 @@ export class CodeTranslationStore {
                 this._codeTranslations.get(fsPath)!.dateModified
               ).getTime() !== new Date(dateModified).getTime()
             ) {
+              this._logger.log(
+                LogLevel.VERBOSE,
+                `File ${fsPath} does not exist in cache, updating cache`
+              );
               await this.updateStoreRecordAsync(fsPath, dateModified);
+            } else {
+              this._logger.log(
+                LogLevel.VERBOSE,
+                `File ${fsPath} already exists in cache`
+              );
             }
           });
         } catch (error) {
-          console.error('Error initializing initial file contents:', error);
+          this._logger.log(
+            LogLevel.ERROR,
+            'Error initializing initial file contents'
+          );
           window.showErrorMessage('Error initializing initial file contents');
         }
       }

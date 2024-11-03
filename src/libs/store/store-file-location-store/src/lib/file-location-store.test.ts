@@ -2,7 +2,7 @@ import assert from 'assert';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
-import * as filePathUtilities from '@i18n-weave/util/util-file-path-utilities';
+import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
 import { FileLocationStore } from './file-location-store';
@@ -14,6 +14,8 @@ suite('FileLocationStore Tests', function () {
   setup(function () {
     sandbox = sinon.createSandbox();
     store = FileLocationStore.getInstance();
+
+    ConfigurationStoreManager.getInstance().initialize();
   });
 
   teardown(function () {
@@ -62,77 +64,4 @@ suite('FileLocationStore Tests', function () {
       );
     });
   });
-
-  // test('addOrUpdateFile should add a file to the store', function () {
-  //   const uri = vscode.Uri.file('/path/to/file.json');
-  //   sandbox.stub(filePathUtilities, 'getFileExtension').returns('json');
-  //   store.addOrUpdateFile(uri);
-
-  //   const files = store.getFilesByType(['json']);
-  //   assert.ok(
-  //     files.includes(uri.fsPath),
-  //     'The file was not added to the store'
-  //   );
-  // });
-
-  // test('removeFile should remove a file from the store', function () {
-  //   const uri = vscode.Uri.file('/path/to/file.json');
-  //   sandbox.stub(filePathUtilities, 'getFileExtension').returns('json');
-  //   store.addOrUpdateFile(uri);
-  //   store.deleteFile(uri);
-
-  //   const files = store.getFilesByType(['json']);
-  //   assert.ok(
-  //     !files.includes(uri.fsPath),
-  //     'The file was not removed from the store'
-  //   );
-  // });
-
-  // test('getFilesByType should return all files of specific types', function () {
-  //   const uri1 = vscode.Uri.file('/path/to/file1.json');
-  //   const uri2 = vscode.Uri.file('/path/to/file2.ts');
-  //   sandbox
-  //     .stub(filePathUtilities, 'getFileExtension')
-  //     .onFirstCall()
-  //     .returns('json')
-  //     .onSecondCall()
-  //     .returns('ts');
-
-  //   store.addOrUpdateFile(uri1);
-  //   store.addOrUpdateFile(uri2);
-
-  //   const jsonFiles = store.getFilesByType(['json']);
-  //   const tsFiles = store.getFilesByType(['ts']);
-
-  //   assert.ok(
-  //     jsonFiles.includes(uri1.fsPath),
-  //     'The JSON file was not returned'
-  //   );
-  //   assert.ok(tsFiles.includes(uri2.fsPath), 'The TS file was not returned');
-  // });
-
-  //   test('getRelatedFiles should return related files by replacing the extension', function () {
-  //     // const uri = vscode.Uri.file('/path/to/file.json');
-  //     // const relatedUri = vscode.Uri.file('/path/to/file.ts');
-
-  //     const uri = vscode.Uri.parse('file:///path/to/file.json');
-  //     const relatedUri = vscode.Uri.parse('file:///path/to/file.ts');
-
-  //     // sandbox
-  //     //   .stub(filePathUtilities, 'getFileExtension')
-  //     //   .onFirstCall()
-  //     //   .returns('json')
-  //     //   .onSecondCall()
-  //     //   .returns('ts');
-  //     // @ts-ignore: access private method
-  //     store.addFile(uri);
-  //     // @ts-ignore: access private method
-  //     store.addFile(relatedUri);
-
-  //     const relatedFiles = store.getRelatedFiles(uri, 'ts');
-  //     assert.ok(
-  //       relatedFiles.includes(relatedUri),
-  //       'The related file was not returned'
-  //     );
-  //   });
 });

@@ -1,6 +1,8 @@
 import * as assert from 'assert';
 import { Uri } from 'vscode';
 
+import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
+
 import { FileLockStore } from './file-lock-store';
 
 suite('FileLockStore', () => {
@@ -8,6 +10,8 @@ suite('FileLockStore', () => {
 
   setup(() => {
     fileLockStore = FileLockStore.getInstance();
+
+    ConfigurationStoreManager.getInstance().initialize();
   });
 
   test('should add file lock', () => {

@@ -15,10 +15,10 @@ import {
 
 suite('I18nextScannerService', () => {
   let scannerService: I18nextScannerService;
-  let getConfigStub: sinon.SinonStub;
 
   setup(() => {
     scannerService = I18nextScannerService.getInstance();
+    ConfigurationStoreManager.getInstance().initialize();
   });
 
   teardown(() => {
@@ -77,13 +77,6 @@ suite('I18nextScannerService', () => {
         subscriptions: [],
       } as unknown as vscode.ExtensionContext;
 
-      getConfigStub = sinon
-        .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
-        .onFirstCall()
-        .returns(config.i18nextScannerModule)
-        .onSecondCall()
-        .returns(secondConfig);
-
       const executeScannerStub = (scannerService['executeScanner'] = sinon
         .stub()
         .resolves());
@@ -91,8 +84,6 @@ suite('I18nextScannerService', () => {
       StatusBarManager.getInstance(extensionContext);
 
       scannerService.scanCode();
-
-      sinon.assert.calledTwice(getConfigStub);
       sinon.assert.calledOnce(executeScannerStub);
     });
   });

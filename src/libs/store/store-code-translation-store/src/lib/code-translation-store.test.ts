@@ -64,6 +64,11 @@ suite('CodeTranslationStore', () => {
       getConfigStub
         .withArgs('i18nextScannerModule')
         .returns({ fileExtensions: ['ts', 'tsx'] });
+      getConfigStub.withArgs('debugging').returns({
+        logging: {
+          enableVerboseLogging: true,
+        },
+      });
 
       await codeTranslationStore.initializeAsync(context);
 
@@ -92,6 +97,11 @@ suite('CodeTranslationStore', () => {
       getConfigStub
         .withArgs('i18nextScannerModule')
         .returns({ fileExtensions: ['ts', 'tsx'] });
+      getConfigStub.withArgs('debugging').returns({
+        logging: {
+          enableVerboseLogging: true,
+        },
+      });
 
       await codeTranslationStore.initializeAsync(context);
 

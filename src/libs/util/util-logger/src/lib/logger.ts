@@ -1,13 +1,20 @@
 import * as vscode from 'vscode';
 
+import {
+  ConfigurationStoreManager,
+  DebuggingConfiguration,
+} from '@i18n-weave/util/util-configuration';
+
 import { LogLevel } from './logger.types';
 
 export class Logger {
   private static instance: Logger | null = null;
   private readonly outputChannel: vscode.OutputChannel;
+  private readonly configuration: ConfigurationStoreManager;
 
   private constructor() {
     this.outputChannel = vscode.window.createOutputChannel('i18nWeave');
+    this.configuration = ConfigurationStoreManager.getInstance();
   }
 
   /**
@@ -27,6 +34,14 @@ export class Logger {
    * @param message - The message to log
    */
   public log(level: LogLevel, message: string) {
+    const shouldLogVerbosely =
+      this.configuration.getConfig<DebuggingConfiguration>('debugging').logging
+        .enableVerboseLogging;
+
+    if (level === LogLevel.VERBOSE && !shouldLogVerbosely) {
+      return;
+    }
+
     const timestamp = new Date().toISOString();
     const formattedMessage = `[${level}] ${timestamp}: ${message}`;
     this.outputChannel.appendLine(formattedMessage);

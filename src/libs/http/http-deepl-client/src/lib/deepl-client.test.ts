@@ -58,6 +58,11 @@ suite('DeeplClient', () => {
     translateStub = sinon
       .stub(deepl.Translator.prototype, 'translateText')
       .resolves({ text: 'Translated text' } as deepl.TextResult);
+    getConfigStub.withArgs('debugging').returns({
+      logging: {
+        enableVerboseLogging: true,
+      },
+    });
 
     deeplClient = await DeeplClient.getInstanceAsync(extensionContext);
   });
