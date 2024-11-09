@@ -1,6 +1,5 @@
 import vscode from 'vscode';
 
-import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import { getFileExtension } from '@i18n-weave/util/util-file-path-utilities';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
@@ -9,12 +8,10 @@ export class FileLocationStore {
   private static instance: FileLocationStore;
   private readonly fileLocations: Map<string, Set<string>> = new Map();
   private readonly _logger: Logger;
-  private readonly _configurationStoreManager: ConfigurationStoreManager;
 
   private constructor() {
     // Private constructor to prevent instantiation
     this._logger = Logger.getInstance();
-    this._configurationStoreManager = ConfigurationStoreManager.getInstance();
   }
 
   /**
@@ -40,7 +37,7 @@ export class FileLocationStore {
       files.forEach(file => this.addOrUpdateFile(file));
       this._logger.log(
         LogLevel.INFO,
-        `Found ${files.length} number of files for search pattern ${fileSearchLocation.filePattern}, ignoring ${fileSearchLocation.ignorePattern}`
+        `Found ${files.length} number of files for search pattern ${fileSearchLocation.filePattern as string}, ignoring ${fileSearchLocation.ignorePattern as string} and .gitignore patterns.`
       );
     }
   }
@@ -63,6 +60,11 @@ export class FileLocationStore {
       this.fileLocations.set(extension, new Set());
     }
     this.fileLocations.get(extension)!.add(uri.fsPath);
+
+    this._logger.log(
+      LogLevel.VERBOSE,
+      `Added file ${uri.fsPath} to the store.`
+    );
   }
 
   /**
