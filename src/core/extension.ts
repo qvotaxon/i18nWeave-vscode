@@ -5,15 +5,13 @@ import vscode, { ExtensionContext } from 'vscode';
 
 import { ActiveTextEditorChangedHandler } from '@i18n-weave/feature/feature-active-text-editor-changed-handler';
 import { ConfigurationWizardService } from '@i18n-weave/feature/feature-configuration-wizard';
+import { FileLocationInitializer } from '@i18n-weave/feature/feature-file-location-initializer';
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
 import {
   StatusBarManager,
   StatusBarState,
 } from '@i18n-weave/feature/feature-status-bar-manager';
 import { TextDocumentChangedHandler } from '@i18n-weave/feature/feature-text-document-changed-handler';
-
-import { CodeTranslationStore } from '@i18n-weave/store/store-code-translation-store';
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 
 import {
   ConfigurationStoreManager,
@@ -55,6 +53,9 @@ export async function activate(
   fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator(),
   configurationManager: ConfigurationStoreManager = ConfigurationStoreManager.getInstance(),
   configurationWizardService: ConfigurationWizardService = new ConfigurationWizardService(),
+  fileLocationInitializer: FileLocationInitializer = new FileLocationInitializer(
+    context
+  ),
   textDocumentOpenedHandler: ActiveTextEditorChangedHandler = new ActiveTextEditorChangedHandler(
     context
   ),
@@ -72,7 +73,7 @@ export async function activate(
     configurationManager.initialize();
     logger.log(LogLevel.INFO, 'i18nWeave is now active!');
 
-    await initializeFileLocations(context);
+    await fileLocationInitializer.initializeFileLocations();
 
     const onDidOpenTextDocumentDisposable =
       textDocumentOpenedHandler.initialize();
@@ -84,7 +85,11 @@ export async function activate(
       vscode.workspace.onDidChangeConfiguration(async () => {
         configurationManager.syncConfigurationStore();
 
-        await reinitialize(fileWatcherCreator, context);
+        await reinitialize(
+          fileLocationInitializer,
+          fileWatcherCreator,
+          context
+        );
         logger.log(LogLevel.INFO, 'Configuration changed, re-initializing...');
       });
 
@@ -95,6 +100,7 @@ export async function activate(
 
     const configurationWizardCommandDisposable =
       await registerConfigurationWizardCommand(
+        fileLocationInitializer,
         configurationWizardService,
         fileWatcherCreator,
         context
@@ -113,45 +119,6 @@ export async function activate(
   } catch (error) {
     Sentry.captureException(error);
   }
-}
-
-async function initializeFileLocations(context: ExtensionContext) {
-  const translationFilesLocation =
-    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
-      'i18nextScannerModule'
-    ).translationFilesLocation;
-
-  const codeFileLocations =
-    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
-      'i18nextScannerModule'
-    ).codeFileLocations;
-
-  const codeFileExtensions =
-    ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
-      'i18nextScannerModule'
-    ).fileExtensions;
-
-  const fileSearchLocations = [
-    {
-      filePattern: `**${translationFilesLocation}/**/*.json`,
-      ignorePattern:
-        '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
-    } as FileSearchLocation,
-    {
-      filePattern: `**${translationFilesLocation}/**/*.po`,
-      ignorePattern:
-        '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
-    } as FileSearchLocation,
-    {
-      filePattern: `**/{${codeFileLocations}}/**/*.{${codeFileExtensions}}`,
-      ignorePattern:
-        '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**,**/*.spec.ts,**/*.spec.tsx}',
-    } as FileSearchLocation,
-  ];
-
-  await FileLocationStore.getInstance().scanWorkspaceAsync(fileSearchLocations);
-
-  await CodeTranslationStore.getInstance().initializeAsync(context);
 }
 
 async function createFileWatchers(
@@ -177,8 +144,6 @@ async function createFileWatchers(
     FileType.Code,
     {
       filePattern: `**/{${codeFileLocations}}/**/*.{${codeFileExtensions}}`,
-      ignorePattern:
-        '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**,**/*.spec.ts,**/*.spec.tsx}',
     } as FileSearchLocation,
     fileWatcherCreator,
     context,
@@ -189,8 +154,6 @@ async function createFileWatchers(
     FileType.Json,
     {
       filePattern: `**${translationFilesLocation}/**/*.json`,
-      ignorePattern:
-        '{**/node_modules/**,**/.next/**,**/.git/**,**/.nx/**,**/.coverage/**,**/.cache/**}',
     } as FileSearchLocation,
     fileWatcherCreator,
     context
@@ -223,6 +186,7 @@ async function createWatchersForFileType(
 }
 
 async function registerConfigurationWizardCommand(
+  fileLocationInitializer: FileLocationInitializer,
   configurationWizardService: ConfigurationWizardService,
   fileWatcherCreator: FileWatcherCreator,
   context: vscode.ExtensionContext
@@ -233,7 +197,11 @@ async function registerConfigurationWizardCommand(
       const config =
         await configurationWizardService.startConfigurationWizardAsync();
       if (config) {
-        await reinitialize(fileWatcherCreator, context);
+        await reinitialize(
+          fileLocationInitializer,
+          fileWatcherCreator,
+          context
+        );
 
         vscode.window.showInformationMessage(
           `Successfully configured i18nWeave. Happy weaving! 🌍`
@@ -248,10 +216,11 @@ async function registerConfigurationWizardCommand(
 }
 
 async function reinitialize(
+  fileLocationInitializer: FileLocationInitializer,
   fileWatcherCreator: FileWatcherCreator,
   context: vscode.ExtensionContext
 ) {
-  initializeFileLocations(context);
+  fileLocationInitializer.initializeFileLocations();
 
   const { codeFileWatchers, jsonFileWatchers } = await createFileWatchers(
     fileWatcherCreator,
