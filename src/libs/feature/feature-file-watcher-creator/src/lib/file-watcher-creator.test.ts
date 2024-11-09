@@ -5,6 +5,7 @@ import sinon from 'sinon';
 import { FileChangeHandlerFactory } from '@i18n-weave/feature/feature-file-change-handler-factory';
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
 
+import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 
 import { FileType } from '@i18n-weave/util/util-enums';
@@ -89,6 +90,8 @@ suite('FileWatcherCreator', () => {
       } as unknown as vscode.FileSystemWatcher;
       createFileSystemWatcherStub.returns(mockFileWatcher);
       hasFileLockStub.returns(false);
+
+      FileLocationStore.getInstance().addOrUpdateFile(mockUri);
 
       await fileWatcherCreator.createFileWatchersForFileTypeAsync(
         FileType.Code,
