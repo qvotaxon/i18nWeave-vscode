@@ -1,6 +1,7 @@
-import { CodeTranslationStore } from 'src/libs/store/store-code-translation-store/src';
-import { FileLocationStore } from 'src/libs/store/store-file-location-store/src';
 import { ExtensionContext } from 'vscode';
+
+import { CodeTranslationStore } from '@i18n-weave/store/store-code-translation-store';
+import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 
 import {
   ConfigurationStoreManager,
