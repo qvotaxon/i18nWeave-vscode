@@ -13,6 +13,8 @@ import {
 } from '@i18n-weave/feature/feature-status-bar-manager';
 import { TextDocumentChangedHandler } from '@i18n-weave/feature/feature-text-document-changed-handler';
 
+import { TranslationStore } from '@i18n-weave/store/store-translation-store';
+
 import {
   ConfigurationStoreManager,
   I18nextScannerModuleConfiguration,
@@ -53,6 +55,7 @@ export async function activate(
   fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator(),
   configurationManager: ConfigurationStoreManager = ConfigurationStoreManager.getInstance(),
   configurationWizardService: ConfigurationWizardService = new ConfigurationWizardService(),
+  translationStore: TranslationStore = TranslationStore.getInstance(),
   fileLocationInitializer: FileLocationInitializer = new FileLocationInitializer(
     context
   ),
@@ -74,6 +77,7 @@ export async function activate(
     logger.log(LogLevel.INFO, 'i18nWeave is now active!');
 
     await fileLocationInitializer.initializeFileLocations();
+    await translationStore.initializeAsync();
 
     const onDidOpenTextDocumentDisposable =
       textDocumentOpenedHandler.initialize();
