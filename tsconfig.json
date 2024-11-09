@@ -3,69 +3,29 @@
     "baseUrl": "./",
     "paths": {
       "@i18n-weave/core/*": ["src/core/*"],
-      "@i18n-weave/http/*": ["src/libs/http/http-*/src/"],
-      "@i18n-weave/http/http-deepl-client": [
-        "src/libs/http/http-deepl-client/src/"
-      ],
-      "@i18n-weave/module/module-base-action": [
-        "src/libs/module/module-base-action/src/"
-      ],
-      "@i18n-weave/module/module-translation": [
-        "src/libs/module/module-translation/src/"
-      ],
-      "@i18n-weave/module/module-read-json-file": [
-        "src/libs/module/module-read-json-file/src/"
-      ],
-      "@i18n-weave/module/module-i18next-scanner": [
-        "src/libs/module/module-i18next-scanner/src/"
-      ],
-      "@i18n-weave/file-io/file-io-file-writer": [
-        "src/libs/file-io/file-io-file-writer/src/"
-      ],
-      "@i18n-weave/file-io/file-io-file-reader": [
-        "src/libs/file-io/file-io-file-reader/src/"
+      "@i18n-weave/feature/feature-active-text-editor-changed-handler": [
+        "src/libs/feature/feature-active-text-editor-changed-handler/src"
       ],
       "@i18n-weave/feature/feature-base-file-change-handler": [
         "src/libs/feature/feature-base-file-change-handler/src"
       ],
+      "@i18n-weave/feature/feature-caching-service": [
+        "src/libs/feature/feature-caching-service/src"
+      ],
       "@i18n-weave/feature/feature-code-file-change-handler": [
         "src/libs/feature/feature-code-file-change-handler/src"
-      ],
-      "@i18n-weave/feature/feature-diagnostics-manager": [
-        "src/libs/feature/feature-diagnostics-manager/src"
-      ],
-      "@i18n-weave/feature/feature-json-file-change-handler": [
-        "src/libs/feature/feature-json-file-change-handler/src"
-      ],
-      "@i18n-weave/feature/feature-file-change-handler-factory": [
-        "src/libs/feature/feature-file-change-handler-factory/src"
-      ],
-      "@i18n-weave/feature/feature-status-bar-manager": [
-        "src/libs/feature/feature-status-bar-manager/src"
-      ],
-      "@i18n-weave/feature/feature-text-document-changed-handler": [
-        "src/libs/feature/feature-text-document-changed-handler/src"
-      ],
-      "@i18n-weave/feature/feature-active-text-editor-changed-handler": [
-        "src/libs/feature/feature-active-text-editor-changed-handler/src"
-      ],
-      "@i18n-weave/feature/feature-webview-service": [
-        "src/libs/feature/feature-webview-service/src"
-      ],
-      "@i18n-weave/feature/feature-webview-creator": [
-        "src/libs/feature/feature-webview-creator/src"
       ],
       "@i18n-weave/feature/feature-configuration-wizard": [
         "src/libs/feature/feature-configuration-wizard/src"
       ],
+      "@i18n-weave/feature/feature-diagnostics-manager": [
+        "src/libs/feature/feature-diagnostics-manager/src"
+      ],
       "@i18n-weave/feature/feature-empty-json-value-symbol-provider": [
         "src/libs/feature/feature-empty-json-value-symbol-provider/src"
       ],
-      "@i18n-weave/feature/feature-webview-factory": [
-        "src/libs/feature/feature-webview-factory/src"
-      ],
-      "@i18n-weave/feature/feature-caching-service": [
-        "src/libs/feature/feature-caching-service/src"
+      "@i18n-weave/feature/feature-file-change-handler-factory": [
+        "src/libs/feature/feature-file-change-handler-factory/src"
       ],
       "@i18n-weave/feature/feature-file-watcher-creator": [
         "src/libs/feature/feature-file-watcher-creator/src"
@@ -73,34 +33,52 @@
       "@i18n-weave/feature/feature-i18next-scanner-service": [
         "src/libs/feature/feature-i18next-scanner-service/src"
       ],
-      "@i18n-weave/feature/feature-translation-service": [
-        "src/libs/feature/feature-translation-service/src"
+      "@i18n-weave/feature/feature-json-file-change-handler": [
+        "src/libs/feature/feature-json-file-change-handler/src"
       ],
       "@i18n-weave/feature/feature-module-chain-manager": [
         "src/libs/feature/feature-module-chain-manager/src"
       ],
-      "@i18n-weave/util/util-types": ["src/libs/util/util-types/src"],
-      "@i18n-weave/util/util-enums": ["src/libs/util/util-enums/src"],
-      "@i18n-weave/util/util-configuration": [
-        "src/libs/util/util-configuration/src"
+      "@i18n-weave/feature/feature-status-bar-manager": [
+        "src/libs/feature/feature-status-bar-manager/src"
       ],
-      "@i18n-weave/util/util-environment-utilities": [
-        "src/libs/util/util-environment-utilities/src"
+      "@i18n-weave/feature/feature-text-document-changed-handler": [
+        "src/libs/feature/feature-text-document-changed-handler/src"
       ],
-      "@i18n-weave/util/util-highlight-missing-values": [
-        "src/libs/util/util-highlight-missing-values/src"
+      "@i18n-weave/feature/feature-translation-service": [
+        "src/libs/feature/feature-translation-service/src"
       ],
-      "@i18n-weave/util/util-prompt-utilities": [
-        "src/libs/util/util-prompt-utilities/src"
+      "@i18n-weave/feature/feature-webview-creator": [
+        "src/libs/feature/feature-webview-creator/src"
       ],
-      "@i18n-weave/util/util-localization-utilities": [
-        "src/libs/util/util-localization-utilities/src"
+      "@i18n-weave/feature/feature-webview-factory": [
+        "src/libs/feature/feature-webview-factory/src"
       ],
-      "@i18n-weave/util/util-logger": ["src/libs/util/util-logger/src"],
-      "@i18n-weave/util/util-array-utilities": [
-        "src/libs/util/util-array-utilities/src"
+      "@i18n-weave/feature/feature-webview-service": [
+        "src/libs/feature/feature-webview-service/src"
       ],
-      "@i18n-weave/util/util-decorators": ["src/libs/util/util-decorators/src"],
+      "@i18n-weave/file-io/file-io-file-reader": [
+        "src/libs/file-io/file-io-file-reader/src"
+      ],
+      "@i18n-weave/file-io/file-io-file-writer": [
+        "src/libs/file-io/file-io-file-writer/src"
+      ],
+      "@i18n-weave/http/*": ["src/libs/http/http-*/src/"],
+      "@i18n-weave/http/http-deepl-client": [
+        "src/libs/http/http-deepl-client/src/"
+      ],
+      "@i18n-weave/module/module-base-action": [
+        "src/libs/module/module-base-action/src/"
+      ],
+      "@i18n-weave/module/module-i18next-scanner": [
+        "src/libs/module/module-i18next-scanner/src/"
+      ],
+      "@i18n-weave/module/module-read-json-file": [
+        "src/libs/module/module-read-json-file/src/"
+      ],
+      "@i18n-weave/module/module-translation": [
+        "src/libs/module/module-translation/src/"
+      ],
       "@i18n-weave/store/store-code-translation-store": [
         "src/libs/store/store-code-translation-store/src/"
       ],
@@ -113,35 +91,47 @@
       "@i18n-weave/store/store-webview-store": [
         "src/libs/store/store-webview-store/src/"
       ],
+      "@i18n-weave/util/util-array-utilities": [
+        "src/libs/util/util-array-utilities/src"
+      ],
+      "@i18n-weave/util/util-configuration": [
+        "src/libs/util/util-configuration/src"
+      ],
+      "@i18n-weave/util/util-decorators": ["src/libs/util/util-decorators/src"],
+      "@i18n-weave/util/util-environment-utilities": [
+        "src/libs/util/util-environment-utilities/src"
+      ],
+      "@i18n-weave/util/util-enums": ["src/libs/util/util-enums/src"],
       "@i18n-weave/util/util-file-path-utilities": [
         "src/libs/util/util-file-path-utilities/src/"
+      ],
+      "@i18n-weave/util/util-highlight-missing-values": [
+        "src/libs/util/util-highlight-missing-values/src"
+      ],
+      "@i18n-weave/util/util-localization-utilities": [
+        "src/libs/util/util-localization-utilities/src"
+      ],
+      "@i18n-weave/util/util-logger": ["src/libs/util/util-logger/src"],
+      "@i18n-weave/util/util-prompt-utilities": [
+        "src/libs/util/util-prompt-utilities/src"
+      ],
+      "@i18n-weave/util/util-types": ["src/libs/util/util-types/src"],
+      "@i18n-weave/feature/feature-file-location-initializer": [
+        "src/libs/feature/feature-file-location-initializer/src"
       ]
     },
-
     "module": "CommonJS",
     "target": "ES2022",
     "outDir": "out",
-    "lib": ["ES6"], //TODO: check if ES2022 is supported
+    "lib": ["ES2022"],
     "sourceMap": true,
     "rootDir": "src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-
     "experimentalDecorators": true,
-
-    // "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
-    // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
-    // "noUnusedParameters": true,  /* Report errors on unused parameters. */
-    "resolveJsonModule": true /* enable all strict type-checking options */,
-    /* Additional Checks */ "inlineSources": true
-
-    // Set `sourceRoot` to  "/" to strip the build path prefix
-    // from generated source code references.
-    // This improves issue grouping in Sentry.
-    // "sourceRoot": "/"
+    "resolveJsonModule": true,
+    "inlineSources": true
   }
-  // "include": ["src/**/*"], // Include the appropriate directories for TypeScript to process
-  // "exclude": ["node_modules", "dist"] // Exclude directories as needed
 }
