@@ -36,7 +36,7 @@ export class ${className} {
     }
 }`;
     } else {
-        return `import * as vscode from 'vscode';
+        return `import vscode from 'vscode';
 
 export class ${className} {
     
