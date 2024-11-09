@@ -56,6 +56,65 @@ See the website [i18nWeave.com](https://i18nweave.com/) for more info. Of course
 
   > **If you have a paid account, you probably shouldn't enable this feature yet.**
 
+## Configuring Your i18nWeave Extension
+
+To configure the i18nWeave extension, follow these instructions:
+
+1. **Open Command Palette:**
+   - Open the command palette by pressing `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac).
+
+2. **Run Configure Command:**
+   - In the command palette, type `i18nWeave: Configure extension` and select it.
+
+```plaintext
+Ctrl+Shift+P (Windows/Linux) or Cmd+Shift+P (Mac)
+```
+
+3. **Single Project Configuration:**
+   - If you are not using a monorepo, select **Single Project** when prompted. Note that monorepos are not supported yet.
+
+4. **Choose Framework:**
+   - You will be prompted to choose among several frameworks. Since none are implemented yet, select **Custom**.
+   
+5. **Select Translation Files Location:**
+   - Choose the location of your translation files. A folder browser will appear for you to select the appropriate folder.
+
+   ```plaintext
+   📁 Select your translation files location
+   ```
+
+6. **Select Code Files Location:**
+   - Next, choose the location of your code files. A folder browser will appear, and you will be allowed to select multiple folders.
+
+   ```plaintext
+   📁 Select your code files location (multiple select allowed)
+   ```
+
+7. **Enter Default Language:**
+   - You will need to enter your default language. This can be in formats like `nl`, `en`, `nl-NL`, or `en-GB`.
+
+   ```plaintext
+   Enter your default language (e.g., en-GB)
+   ```
+
+8. **Enter Supported Languages:**
+   - Enter all the supported languages you want to include, separated by commas.
+
+   ```plaintext
+   Enter supported languages (e.g., en, nl, fr, de)
+   ```
+
+9. **Enter Translation Namespaces:**
+   - Finally, enter the namespaces of your translations, such as `common` and `navigation`.
+
+   ```plaintext
+   Enter translation namespaces (e.g., common, navigation)
+   ```
+
+---
+
+By following these steps, you will have successfully configured the i18nWeave extension.
+
 <!-- ## Installation
 
 Navigate to [Tagged Releases](https://github.com/qvotaxon/i18nweave-vscode/tags) and download the latest stable VSIX file.
