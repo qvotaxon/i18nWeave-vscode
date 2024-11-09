@@ -1,5 +1,7 @@
 import vscode from 'vscode';
 
+import { Logger } from '@i18n-weave/util/util-logger';
+
 import { ActionModule } from './ibase-action-module';
 import { ModuleContext } from './ibase-action-module-context';
 
@@ -9,6 +11,7 @@ import { ModuleContext } from './ibase-action-module-context';
 export abstract class BaseActionModule implements ActionModule {
   protected extensionContext: vscode.ExtensionContext;
   private nextModule: ActionModule | null = null;
+  protected logger: Logger = Logger.getInstance();
 
   /**
    *
