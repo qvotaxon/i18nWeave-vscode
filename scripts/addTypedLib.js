@@ -90,6 +90,8 @@ function addTypedLibrary(libType, libName, singleton) {
     } else {
         console.log(`Alias '${libAlias}' already exists in tsconfig paths.`);
     }
+
+    console.log(`Find your main library file at:: ${path.join(libsDir, libType, `${libType}-${libName}`, 'src', 'lib', `${libName}.ts`)}`);
 }
 
 // Prompt the user for library type, name, and singleton option
