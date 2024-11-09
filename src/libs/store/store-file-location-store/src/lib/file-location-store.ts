@@ -34,7 +34,7 @@ export class FileLocationStore {
         fileSearchLocation.filePattern,
         fileSearchLocation.ignorePattern
       );
-      files.forEach(file => this.addOrUpdateFile(file));
+      files.forEach(file => this.addFile(file));
       this._logger.log(
         LogLevel.INFO,
         `Found ${files.length} number of files for search pattern ${fileSearchLocation.filePattern as string}, ignoring ${fileSearchLocation.ignorePattern as string} and .gitignore patterns.`
@@ -54,7 +54,7 @@ export class FileLocationStore {
    * Adds a file to the store.
    * @param uri The URI of the file.
    */
-  public addOrUpdateFile(uri: vscode.Uri) {
+  public addFile(uri: vscode.Uri) {
     const extension = getFileExtension(uri);
     if (!this.fileLocations.has(extension)) {
       this.fileLocations.set(extension, new Set());
@@ -74,6 +74,11 @@ export class FileLocationStore {
   public deleteFile(uri: vscode.Uri) {
     const extension = getFileExtension(uri);
     this.fileLocations.get(extension)?.delete(uri.fsPath);
+
+    this._logger.log(
+      LogLevel.VERBOSE,
+      `Deleted file ${uri.fsPath} from the store.`
+    );
   }
 
   /**
