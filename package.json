@@ -224,6 +224,7 @@
     ]
   },
   "scripts": {
+    "add-lib": "node ./scripts/addTypedLib.js",
     "vscode:prepublish": "npm run compile:production",
     "compile:development": "cross-env DOTENV_CONFIG_PATH=.env.development && tsc -p ./",
     "compile:production": "cross-env DOTENV_CONFIG_PATH=.env.production webpack --mode production",
@@ -281,6 +282,7 @@
     "dotenv": "^16.4.5",
     "gulp-sort": "^2.0.0",
     "i18next-scanner": "^4.4.0",
+    "inquirer": "^12.0.1",
     "json-stable-stringify": "^1.1.1",
     "vinyl-fs": "^4.0.0"
   }
