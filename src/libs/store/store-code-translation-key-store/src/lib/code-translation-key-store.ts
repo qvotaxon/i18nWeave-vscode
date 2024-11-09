@@ -16,10 +16,10 @@ type CodeTranslation = {
   dateModified: Date;
 };
 
-export class CodeTranslationStore {
+export class CodeTranslationKeyStore {
   private _context: ExtensionContext | undefined;
   private readonly _cacheKey = 'i18nWeave.translationFunctionCache';
-  private static _instance: CodeTranslationStore;
+  private static _instance: CodeTranslationKeyStore;
   private readonly _codeTranslations: Map<string, CodeTranslation> = new Map();
   private readonly _logger: Logger;
 
@@ -27,11 +27,11 @@ export class CodeTranslationStore {
     this._logger = Logger.getInstance();
   }
 
-  public static getInstance(): CodeTranslationStore {
-    if (!CodeTranslationStore._instance) {
-      CodeTranslationStore._instance = new CodeTranslationStore();
+  public static getInstance(): CodeTranslationKeyStore {
+    if (!CodeTranslationKeyStore._instance) {
+      CodeTranslationKeyStore._instance = new CodeTranslationKeyStore();
     }
-    return CodeTranslationStore._instance;
+    return CodeTranslationKeyStore._instance;
   }
 
   public async initializeAsync(

@@ -79,8 +79,8 @@
       "@i18n-weave/module/module-translation": [
         "src/libs/module/module-translation/src/"
       ],
-      "@i18n-weave/store/store-code-translation-store": [
-        "src/libs/store/store-code-translation-store/src/"
+      "@i18n-weave/store/store-code-translation-key-store": [
+        "src/libs/store/store-code-translation-key-store/src"
       ],
       "@i18n-weave/store/store-file-location-store": [
         "src/libs/store/store-file-location-store/src/"

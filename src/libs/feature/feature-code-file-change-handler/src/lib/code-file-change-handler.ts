@@ -11,7 +11,7 @@ import { I18nextScannerModule } from '@i18n-weave/module/module-i18next-scanner'
 import { BaseFileChangeHandler } from '@i18n-weave/feature/feature-base-file-change-handler';
 import { ModuleChainManager } from '@i18n-weave/feature/feature-module-chain-manager';
 
-import { CodeTranslationStore } from '@i18n-weave/store/store-code-translation-store';
+import { CodeTranslationKeyStore } from '@i18n-weave/store/store-code-translation-key-store';
 
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
 import { ChainType } from '@i18n-weave/util/util-enums';
@@ -58,7 +58,7 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
 
     if (fs.existsSync(changeFileLocation.fsPath)) {
       hasTranslationFunctions =
-        await CodeTranslationStore.getInstance().fileChangeContainsTranslationFunctionsAsync(
+        await CodeTranslationKeyStore.getInstance().fileChangeContainsTranslationFunctionsAsync(
           changeFileLocation.fsPath
         );
     }
@@ -84,7 +84,7 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
     );
 
     if (!isFileDeletionChange) {
-      await CodeTranslationStore.getInstance().updateStoreRecordAsync(
+      await CodeTranslationKeyStore.getInstance().updateStoreRecordAsync(
         changeFileLocation.fsPath
       );
     }
@@ -98,7 +98,7 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
     }
     await super.handleFileDeletionAsync(changeFileLocation);
     await this.handleFileChangeAsync(changeFileLocation, true);
-    CodeTranslationStore.getInstance().deleteStoreRecord(
+    CodeTranslationKeyStore.getInstance().deleteStoreRecord(
       changeFileLocation.fsPath
     );
   }

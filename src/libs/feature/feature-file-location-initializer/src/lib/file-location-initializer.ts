@@ -1,6 +1,6 @@
 import { ExtensionContext } from 'vscode';
 
-import { CodeTranslationStore } from '@i18n-weave/store/store-code-translation-store';
+import { CodeTranslationKeyStore } from '@i18n-weave/store/store-code-translation-key-store';
 import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 
 import {
@@ -52,7 +52,7 @@ export class FileLocationInitializer {
         codeFileExtensions
       );
 
-    await CodeTranslationStore.getInstance().initializeAsync(
+    await CodeTranslationKeyStore.getInstance().initializeAsync(
       this.context,
       codeFilePaths
     );
