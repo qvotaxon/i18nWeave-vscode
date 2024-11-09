@@ -7,7 +7,7 @@ import { BaseModuleContext } from '@i18n-weave/module/module-base-action';
 
 import { CodeFileChangeHandler } from '@i18n-weave/feature/feature-code-file-change-handler';
 
-import { CodeTranslationStore } from '@i18n-weave/store/store-code-translation-store';
+import { CodeTranslationKeyStore } from '@i18n-weave/store/store-code-translation-key-store';
 
 import { ChainType } from '@i18n-weave/util/util-enums';
 
@@ -52,7 +52,7 @@ suite('CodeFileChangeHandler', () => {
       sinon.stub(fs, 'existsSync').returns(true);
       sinon
         .stub(
-          CodeTranslationStore.getInstance(),
+          CodeTranslationKeyStore.getInstance(),
           'fileChangeContainsTranslationFunctionsAsync'
         )
         .returns(Promise.resolve(true));
@@ -82,7 +82,7 @@ suite('CodeFileChangeHandler', () => {
 
       sinon
         .stub(
-          CodeTranslationStore.getInstance(),
+          CodeTranslationKeyStore.getInstance(),
           'fileChangeContainsTranslationFunctionsAsync'
         )
         .returns(Promise.resolve(false));
@@ -102,7 +102,7 @@ suite('CodeFileChangeHandler', () => {
 
       sinon
         .stub(
-          CodeTranslationStore.getInstance(),
+          CodeTranslationKeyStore.getInstance(),
           'fileChangeContainsTranslationFunctionsAsync'
         )
         .returns(Promise.resolve(false));
@@ -132,7 +132,7 @@ suite('CodeFileChangeHandler', () => {
 
       sinon
         .stub(
-          CodeTranslationStore.getInstance(),
+          CodeTranslationKeyStore.getInstance(),
           'fileChangeContainsTranslationFunctionsAsync'
         )
         .returns(Promise.resolve(true));
@@ -163,7 +163,7 @@ suite('CodeFileChangeHandler', () => {
 
       sinon
         .stub(
-          CodeTranslationStore.getInstance(),
+          CodeTranslationKeyStore.getInstance(),
           'fileChangeContainsTranslationFunctionsAsync'
         )
         .returns(Promise.resolve(true));
@@ -194,7 +194,7 @@ suite('CodeFileChangeHandler', () => {
         'handleFileChangeAsync'
       );
       const deleteStoreRecordStub = sinon.stub(
-        CodeTranslationStore.getInstance(),
+        CodeTranslationKeyStore.getInstance(),
         'deleteStoreRecord'
       );
 
@@ -210,7 +210,7 @@ suite('CodeFileChangeHandler', () => {
         'handleFileChangeAsync'
       );
       const deleteStoreRecordStub = sinon.stub(
-        CodeTranslationStore.getInstance(),
+        CodeTranslationKeyStore.getInstance(),
         'deleteStoreRecord'
       );
 

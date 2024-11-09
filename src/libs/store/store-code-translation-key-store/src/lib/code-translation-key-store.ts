@@ -3,8 +3,6 @@ import { ExtensionContext, ProgressLocation, window } from 'vscode';
 
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
-
 import { arraysEqual } from '@i18n-weave/util/util-array-utilities';
 import {
   ConfigurationStoreManager,
@@ -18,25 +16,28 @@ type CodeTranslation = {
   dateModified: Date;
 };
 
-export class CodeTranslationStore {
+export class CodeTranslationKeyStore {
   private _context: ExtensionContext | undefined;
-  private _cacheKey = 'i18nWeave.translationFunctionCache';
-  private static _instance: CodeTranslationStore;
-  private _codeTranslations: Map<string, CodeTranslation> = new Map();
+  private readonly _cacheKey = 'i18nWeave.translationFunctionCache';
+  private static _instance: CodeTranslationKeyStore;
+  private readonly _codeTranslations: Map<string, CodeTranslation> = new Map();
   private readonly _logger: Logger;
 
   private constructor() {
     this._logger = Logger.getInstance();
   }
 
-  public static getInstance(): CodeTranslationStore {
-    if (!CodeTranslationStore._instance) {
-      CodeTranslationStore._instance = new CodeTranslationStore();
+  public static getInstance(): CodeTranslationKeyStore {
+    if (!CodeTranslationKeyStore._instance) {
+      CodeTranslationKeyStore._instance = new CodeTranslationKeyStore();
     }
-    return CodeTranslationStore._instance;
+    return CodeTranslationKeyStore._instance;
   }
 
-  public async initializeAsync(context: ExtensionContext): Promise<void> {
+  public async initializeAsync(
+    context: ExtensionContext,
+    codeFilePaths: string[]
+  ): Promise<void> {
     this._logger.log(LogLevel.INFO, 'Initializing code translation store');
 
     this._context = context;
@@ -58,35 +59,25 @@ export class CodeTranslationStore {
       },
       async () => {
         try {
-          const fileExtensions =
-            ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
-              'i18nextScannerModule'
-            ).fileExtensions;
-
-          const fsPaths =
-            FileLocationStore.getInstance().getFileLocationsByType(
-              fileExtensions
-            );
-
-          fsPaths.forEach(async fsPath => {
-            const stats = fs.statSync(fsPath);
+          codeFilePaths.forEach(async codeFilePath => {
+            const stats = fs.statSync(codeFilePath);
             const dateModified = stats.mtime;
 
             if (
-              !this._codeTranslations.get(fsPath) ||
+              !this._codeTranslations.get(codeFilePath) ||
               new Date(
-                this._codeTranslations.get(fsPath)!.dateModified
+                this._codeTranslations.get(codeFilePath)!.dateModified
               ).getTime() !== new Date(dateModified).getTime()
             ) {
               this._logger.log(
                 LogLevel.VERBOSE,
-                `File ${fsPath} does not exist in cache, updating cache`
+                `File ${codeFilePath} does not exist in cache, updating cache`
               );
-              await this.updateStoreRecordAsync(fsPath, dateModified);
+              await this.updateStoreRecordAsync(codeFilePath, dateModified);
             } else {
               this._logger.log(
                 LogLevel.VERBOSE,
-                `File ${fsPath} already exists in cache`
+                `File ${codeFilePath} already exists in cache`
               );
             }
           });
@@ -101,39 +92,42 @@ export class CodeTranslationStore {
     );
   }
 
-  public async updateStoreRecordAsync(fsPath: string, dateModified?: Date) {
-    const codeFileContents = await FileReader.readFileAsync(fsPath);
+  public async updateStoreRecordAsync(
+    codeFilePath: string,
+    dateModified?: Date
+  ) {
+    const codeFileContents = await FileReader.readFileAsync(codeFilePath);
     const translationFunctionNames =
       this.scanCodeFileForTranslationFunctionNames(codeFileContents);
 
     const codeTranslation: CodeTranslation = {
       translationFunctionNames: translationFunctionNames,
       dateModified: dateModified ?? new Date(),
-      filePath: fsPath,
+      filePath: codeFilePath,
     };
 
-    this._codeTranslations.set(fsPath, codeTranslation);
+    this._codeTranslations.set(codeFilePath, codeTranslation);
     this.updateCache();
   }
 
-  public deleteStoreRecord(fsPath: string) {
-    this._codeTranslations.delete(fsPath);
+  public deleteStoreRecord(codeFilePath: string) {
+    this._codeTranslations.delete(codeFilePath);
     this.updateCache();
   }
 
-  private updateCache = () => {
+  private readonly updateCache = () => {
     const cacheArray = Array.from(this._codeTranslations.values());
     this._context!.globalState.update(this._cacheKey, cacheArray);
   };
 
   public async fileChangeContainsTranslationFunctionsAsync(
-    fsPath: string
+    codeFilePath: string
   ): Promise<boolean> {
-    const codeFileContents = await FileReader.readFileAsync(fsPath);
+    const codeFileContents = await FileReader.readFileAsync(codeFilePath);
     const newTranslationFunctionNames =
       this.scanCodeFileForTranslationFunctionNames(codeFileContents);
     const currentTranslationFunctionNames =
-      this._codeTranslations.get(fsPath)?.translationFunctionNames;
+      this._codeTranslations.get(codeFilePath)?.translationFunctionNames;
 
     if (newTranslationFunctionNames?.length === 0) {
       return false;

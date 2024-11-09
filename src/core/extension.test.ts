@@ -3,7 +3,7 @@ import { ExtensionContext } from 'vscode';
 
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
 
-import { CodeTranslationStore } from '@i18n-weave/store/store-code-translation-store';
+import { CodeTranslationKeyStore } from '@i18n-weave/store/store-code-translation-key-store';
 
 import { I18nextScannerModuleConfiguration } from '@i18n-weave/util/util-configuration';
 import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
@@ -16,7 +16,7 @@ suite('Extension Activation', () => {
   let fileWatcherCreator: sinon.SinonStubbedInstance<FileWatcherCreator>;
   let configurationStoreManagerStub: sinon.SinonStub;
 
-  let codeTranslationStoreStub: sinon.SinonStubbedInstance<CodeTranslationStore>;
+  let codeTranslationStoreStub: sinon.SinonStubbedInstance<CodeTranslationKeyStore>;
 
   setup(() => {
     ConfigurationStoreManager.getInstance().initialize();
@@ -39,9 +39,11 @@ suite('Extension Activation', () => {
         translationFilesLocation: 'src/locales',
       } as I18nextScannerModuleConfiguration);
 
-    codeTranslationStoreStub = sinon.createStubInstance(CodeTranslationStore);
+    codeTranslationStoreStub = sinon.createStubInstance(
+      CodeTranslationKeyStore
+    );
     sinon
-      .stub(CodeTranslationStore, 'getInstance')
+      .stub(CodeTranslationKeyStore, 'getInstance')
       .returns(codeTranslationStoreStub);
   });
 

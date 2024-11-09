@@ -79,7 +79,7 @@ export class FileLocationStore {
   /**
    * Gets all files of specific types.
    * @param extensions An array of file extensions (e.g., ['json', 'po', 'ts']).
-   * @returns An array of URIs for files of the specified types.
+   * @returns An array of strings for files of the specified types.
    */
   public getFileLocationsByType(extensions: string[]): string[] {
     const files: string[] = [];
