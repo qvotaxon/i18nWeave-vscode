@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { FileLocationStore } from 'src/libs/store/store-file-location-store/src';
 
 import { FileChangeHandlerFactory } from '@i18n-weave/feature/feature-file-change-handler-factory';
 
@@ -41,19 +42,25 @@ export class FileWatcherCreator {
 
     fileWatcher.onDidCreate(async uri => {
       if (!disableFlags.some(flag => flag())) {
-        await fileChangeHandler?.handleFileCreationAsync(uri);
+        if (FileLocationStore.getInstance().hasFile(uri)) {
+          await fileChangeHandler?.handleFileCreationAsync(uri);
+        }
       }
     });
 
     fileWatcher.onDidDelete(async uri => {
       if (!disableFlags.some(flag => flag())) {
-        await fileChangeHandler?.handleFileDeletionAsync(uri);
+        if (FileLocationStore.getInstance().hasFile(uri)) {
+          await fileChangeHandler?.handleFileDeletionAsync(uri);
+        }
       }
     });
 
     fileWatcher.onDidChange(async uri => {
       if (!disableFlags.some(flag => flag())) {
-        await fileChangeHandler?.handleFileChangeAsync(uri);
+        if (FileLocationStore.getInstance().hasFile(uri)) {
+          await fileChangeHandler?.handleFileChangeAsync(uri);
+        }
       }
     });
 
