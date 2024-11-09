@@ -2,8 +2,6 @@ import { Uri } from 'vscode';
 
 import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 
-import { Logger } from '@i18n-weave/util/util-logger';
-
 export abstract class BaseFileChangeHandler {
   public abstract handleFileChangeAsync(
     changeFileLocation?: Uri | undefined

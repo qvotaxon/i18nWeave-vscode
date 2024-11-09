@@ -7,10 +7,8 @@ import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import { DiagnosticsManager } from './diagnostics-manager';
 
 suite('DiagnosticsManager', () => {
-  let getConfigStub: sinon.SinonStub;
   let sandbox: sinon.SinonSandbox;
   let diagnosticCollectionStub: sinon.SinonStubbedInstance<vscode.DiagnosticCollection>;
-  let createDiagnosticCollectionStub: sinon.SinonStub;
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -23,7 +21,7 @@ suite('DiagnosticsManager', () => {
       has: sandbox.stub(),
       name: 'missingValues',
     } as unknown as sinon.SinonStubbedInstance<vscode.DiagnosticCollection>;
-    createDiagnosticCollectionStub = sandbox
+    sandbox
       .stub(vscode.languages, 'createDiagnosticCollection')
       .returns(diagnosticCollectionStub);
   });
@@ -33,7 +31,7 @@ suite('DiagnosticsManager', () => {
   });
 
   test('should update diagnostics with empty value errors', async () => {
-    getConfigStub = sinon
+    sinon
       .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
       .withArgs('debugging')
       .returns({
@@ -61,23 +59,6 @@ suite('DiagnosticsManager', () => {
     const instance1 = DiagnosticsManager.getInstance();
     const instance2 = DiagnosticsManager.getInstance();
     assert.strictEqual(instance1, instance2);
-  });
-
-  test('should update diagnostics with empty value errors', async () => {
-    const manager = DiagnosticsManager.getInstance();
-
-    // @ts-ignore
-    manager._diagnosticCollection = diagnosticCollectionStub;
-
-    const document = { uri: 'test-uri' } as unknown as vscode.TextDocument;
-    const documentSymbols = [
-      { name: 'key1', range: new vscode.Range(0, 0, 0, 5) },
-      { name: 'key2', range: new vscode.Range(1, 0, 1, 5) },
-    ] as vscode.DocumentSymbol[];
-
-    await manager.updateDiagnostics(document, documentSymbols);
-
-    assert.ok(diagnosticCollectionStub.set.calledOnce);
   });
 
   test('should clear diagnostics if no issues are found', async () => {
