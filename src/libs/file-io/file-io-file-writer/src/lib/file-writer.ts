@@ -13,13 +13,19 @@ export class FileWriter {
    * @returns A promise that resolves when the data has been written successfully, or rejects with an error if there was a problem.
    */
   public static async writeToFileAsync(
-    filePath: Uri,
+    filePath: Uri | string,
     data: string | NodeJS.ArrayBufferView
   ): Promise<void> {
     try {
+      if (typeof filePath === 'string') {
+        filePath = Uri.file(filePath);
+      }
+
       await fs.promises.writeFile(filePath.fsPath, data, 'utf8');
     } catch (err) {
-      Sentry.captureException(err);
+      if (Sentry) {
+        Sentry.captureException(err);
+      }
     }
   }
 }
