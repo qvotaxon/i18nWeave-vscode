@@ -1,5 +1,3 @@
-import deepDiff from 'deep-diff';
-
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
 import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
@@ -9,7 +7,6 @@ import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 export class TranslationStore {
   private static _instance: TranslationStore;
-
   private readonly _translationFileContents: Map<string, JSON> = new Map();
   private readonly _logger: Logger;
 
@@ -33,17 +30,16 @@ export class TranslationStore {
     const fileLocations =
       FileLocationStore.getInstance().getFileLocationsByType(['json']);
 
-    fileLocations.forEach(async fileLocation => {
+    for (const fileLocation of fileLocations) {
       const rawData = await FileReader.readFileAsync(fileLocation);
       const jsonObject = JSON.parse(rawData) as JSON;
-
       this._translationFileContents.set(fileLocation, jsonObject);
 
       this._logger.log(
         LogLevel.VERBOSE,
         `Added translation file ${fileLocation} to store`
       );
-    });
+    }
 
     this._logger.log(
       LogLevel.INFO,
@@ -55,15 +51,12 @@ export class TranslationStore {
     const newJsonObject = JSON.parse(newJsonContent) as JSON;
     const oldJsonObject = this._translationFileContents.get(filePath);
 
-    var one = deepDiff.diff(JSON.stringify(oldJsonObject), newJsonContent);
-    var two = diffJsonObjects(oldJsonObject ?? {}, newJsonObject);
-
-    return two;
+    const diffs = diffJsonObjects(oldJsonObject ?? {}, newJsonObject);
+    return diffs;
   }
 
   public updateEntry(filePath: string, updatedJsonContent: string) {
     const updatedJsonObject = JSON.parse(updatedJsonContent) as JSON;
-
     this._translationFileContents.set(filePath, updatedJsonObject);
 
     this._logger.log(
@@ -74,7 +67,6 @@ export class TranslationStore {
 
   public deleteEntry(filePath: string) {
     this._translationFileContents.delete(filePath);
-
     this._logger.log(
       LogLevel.VERBOSE,
       `Deleted translation file ${filePath} from store`

@@ -40,109 +40,67 @@ export class DeeplClient implements ITranslator {
     sourceLanguage: SourceLanguageCode,
     requestedTargetLanguage: string
   ): Promise<string[]> {
-    DeeplClient.instance._logger.log(
-      LogLevel.INFO,
-      `Translating ${texts.length} text(s) with (fake) DeepL from ${sourceLanguage ?? '[Auto Detect Language]'} to ${requestedTargetLanguage}.`
-    );
-    return (texts as string[]).map(
-      text => `Translated(${text}) to ${requestedTargetLanguage}`
+    // Mocking the translation for now
+    return texts.map(
+      text => `Translated (${text}) to ${requestedTargetLanguage}`
     );
 
-    // if (!DeeplClient.instance.translator) {
+    // Uncomment the following code to enable the actual translation
+
+    // if (!this.translator) {
     //   throw new Error('Translator not initialized.');
     // }
 
-    // let targetLanguage = requestedTargetLanguage;
-    // const shouldUseSimplifiedTargetLanguage =
-    //   requestedTargetLanguage !== 'en-US' &&
-    //   requestedTargetLanguage !== 'en-GB' &&
-    //   requestedTargetLanguage !== 'pt-BR' &&
-    //   requestedTargetLanguage !== 'pt-PT' &&
-    //   requestedTargetLanguage !== 'zh-Hans';
+    // let targetLanguage = this.getTargetLanguage(requestedTargetLanguage);
 
-    // if (shouldUseSimplifiedTargetLanguage) {
-    //   const languageRegex = new RegExp('([a-z]{2})(?:-[A-Z]{2})?');
-    //   const simplifiedTargetLanguage =
-    //     requestedTargetLanguage.match(languageRegex);
-
-    //   if (!simplifiedTargetLanguage) {
-    //     throw new Error(
-    //       `Invalid target language code. ${requestedTargetLanguage}`
-    //     );
-    //   }
-
-    //   targetLanguage = simplifiedTargetLanguage[1];
-    // }
-
-    // let formality: deepl.Formality | undefined = DeeplClient.getFormality();
-
-    // if (requestedTargetLanguage === 'en') {
-    //   targetLanguage = 'en-GB';
-    // }
-
-    // if (
-    //   DeeplClient.supportedTargetLanguages
-    //     .map(x => x.code)
-    //     .indexOf(targetLanguage as deepl.LanguageCode) === -1
-    // ) {
+    // if (!this.isSupportedTargetLanguage(targetLanguage)) {
     //   this._logger.log(
     //     LogLevel.WARN,
     //     `Skipping translation for unsupported target language: ${targetLanguage}`
     //   );
-
     //   return [''];
     // }
 
-    // const supportsFormality = DeeplClient.supportedTargetLanguages.find(
-    //   x => x.code === targetLanguage
-    // )?.supportsFormality;
+    // const formality = this.getFormality(targetLanguage);
 
-    // if (!supportsFormality) {
-    //   formality = 'default';
-    // }
-
-    // const translatedTexts = await DeeplClient.translateUsingDeepl(
-    //   DeeplClient.instance.translator,
+    // const translatedTexts = await this.translateUsingDeepl(
+    //   this.translator,
     //   texts,
     //   targetLanguage,
     //   formality,
-    //   sourceLang
+    //   sourceLanguage
     // );
 
     // this._logger.log(
     //   LogLevel.INFO,
-    //   `Translation completed from ${sourceLang} to ${targetLanguage}.`
+    //   `Translation completed from ${sourceLanguage} to ${targetLanguage}.`
     // );
 
     // return translatedTexts.map(x => x.text);
   }
 
-  /**
-   * Retrieves the singleton instance of DeeplService.
-   * @returns {DeeplClient} The singleton instance.
-   */
   public static async getInstanceAsync(
     context: vscode.ExtensionContext
   ): Promise<DeeplClient> {
-    const currentApiKey = DeeplClient.getApiKey();
+    const currentApiKey = this.getApiKey();
 
-    if (!DeeplClient.instance || DeeplClient.previousApiKey !== currentApiKey) {
-      DeeplClient.instance = new DeeplClient(context);
-      DeeplClient.previousApiKey = currentApiKey;
-      await DeeplClient.initializeTranslator(currentApiKey);
+    if (!this.instance || this.previousApiKey !== currentApiKey) {
+      this.instance = new DeeplClient(context);
+      this.previousApiKey = currentApiKey;
+      await this.initializeTranslator(currentApiKey);
     }
 
-    return DeeplClient.instance;
+    return this.instance;
   }
 
-  private static async translateUsingDeepl(
+  private async translateUsingDeepl(
     translator: deepl.Translator,
     texts: string[],
     targetLanguage: string,
     formality: deepl.Formality | undefined,
     sourceLanguage?: string
   ) {
-    this.instance._logger.log(
+    this._logger.log(
       LogLevel.INFO,
       `Translating ${texts.length} text(s) with DeepL from ${sourceLanguage ?? '[Auto Detect Language]'} to ${targetLanguage}.`
     );
@@ -150,38 +108,47 @@ export class DeeplClient implements ITranslator {
     return await Sentry.startSpan(
       { op: 'http.client', name: `Retrieve DeepL Translations` },
       async span => {
-        return await translator.translateText(
-          texts,
-          sourceLanguage ? (sourceLanguage as deepl.SourceLanguageCode) : null,
-          targetLanguage as deepl.TargetLanguageCode,
-          {
-            formality: formality ?? 'default',
-            preserveFormatting: DeeplClient.getPreserveFormatting() ?? false,
-          }
-        );
+        try {
+          return await translator.translateText(
+            texts,
+            sourceLanguage
+              ? (sourceLanguage as deepl.SourceLanguageCode)
+              : null,
+            targetLanguage as deepl.TargetLanguageCode,
+            {
+              formality: formality ?? 'default',
+              preserveFormatting: DeeplClient.getPreserveFormatting() ?? false,
+            }
+          );
+        } catch (error) {
+          this._logger.log(
+            LogLevel.ERROR,
+            `Failed to translate text with DeepL. Received error: ${error}`
+          );
+          this._logger.show();
+          throw error;
+        } finally {
+          span.end();
+        }
       }
     );
   }
 
-  /**
-   * Initializes the DeepL translator with the API key from the configuration.
-   * @throws Will throw an error if no API key is found in the configuration.
-   */
   private static async initializeTranslator(apiKey: string): Promise<void> {
-    DeeplClient.instance.translator = new deepl.Translator(apiKey);
+    this.instance.translator = new deepl.Translator(apiKey);
 
     const supportedTargetLanguages = await this.getSupportedTargetLanguages();
 
     if (!supportedTargetLanguages) {
-      DeeplClient.instance._logger.log(
+      this.instance._logger.log(
         LogLevel.ERROR,
         'Failed to retrieve supported languages from DeepL.'
       );
-      DeeplClient.instance._logger.show();
+      this.instance._logger.show();
       throw new Error('Failed to retrieve supported languages from DeepL.');
     }
 
-    DeeplClient.supportedTargetLanguages = supportedTargetLanguages;
+    this.supportedTargetLanguages = supportedTargetLanguages;
   }
 
   private static async getSupportedTargetLanguages(): Promise<
@@ -190,7 +157,7 @@ export class DeeplClient implements ITranslator {
     const targetLanguages = await CachingService.get<
       readonly deepl.Language[] | undefined
     >(
-      DeeplClient.instance.context,
+      this.instance.context,
       sharedCacheKeys.SUPPORTED_TARGET_LANGUAGES,
       async () => {
         this.instance._logger.log(
@@ -198,7 +165,7 @@ export class DeeplClient implements ITranslator {
           'Retrieved supported target languages.'
         );
 
-        return DeeplClient.instance.translator?.getTargetLanguages();
+        return this.instance.translator?.getTargetLanguages();
       }
     );
 
@@ -210,42 +177,70 @@ export class DeeplClient implements ITranslator {
     return targetLanguages;
   }
 
-  /**
-   * Retrieves the preserve formatting setting from the configuration.
-   * @returns {boolean} The preserve formatting setting.
-   */
+  private getTargetLanguage(requestedTargetLanguage: string): string {
+    const shouldUseSimplifiedTargetLanguage = ![
+      'en-US',
+      'en-GB',
+      'pt-BR',
+      'pt-PT',
+      'zh-Hans',
+    ].includes(requestedTargetLanguage);
+
+    if (shouldUseSimplifiedTargetLanguage) {
+      const languageRegex = new RegExp('([a-z]{2})(?:-[A-Z]{2})?');
+      const simplifiedTargetLanguage =
+        requestedTargetLanguage.match(languageRegex);
+
+      if (!simplifiedTargetLanguage) {
+        throw new Error(
+          `Invalid target language code. ${requestedTargetLanguage}`
+        );
+      }
+
+      return simplifiedTargetLanguage[1];
+    }
+
+    return requestedTargetLanguage === 'en' ? 'en-GB' : requestedTargetLanguage;
+  }
+
+  private isSupportedTargetLanguage(targetLanguage: string): boolean {
+    return DeeplClient.supportedTargetLanguages
+      .map(x => x.code)
+      .includes(targetLanguage as deepl.LanguageCode);
+  }
+
+  private getFormality(targetLanguage: string): deepl.Formality | undefined {
+    const supportsFormality = DeeplClient.supportedTargetLanguages.find(
+      x => x.code === targetLanguage
+    )?.supportsFormality;
+
+    return supportsFormality ? DeeplClient.getFormality() : 'default';
+  }
+
   private static getPreserveFormatting(): boolean {
     return ConfigurationStoreManager.getInstance().getConfig<TranslationModuleConfiguration>(
       'translationModule'
     ).deepL.preserveFormatting;
   }
 
-  /**
-   * Retrieves the formality setting from the configuration.
-   * @returns {deepl.Formality | undefined} The formality setting.
-   */
   private static getFormality(): deepl.Formality | undefined {
     return ConfigurationStoreManager.getInstance().getConfig<TranslationModuleConfiguration>(
       'translationModule'
     ).deepL.formality;
   }
 
-  /**
-   * Retrieves the DeepL API key from the configuration.
-   * @returns {string} The API key.
-   */
-  public static getApiKey(): string {
+  private static getApiKey(): string {
     const apiKey =
       ConfigurationStoreManager.getInstance().getConfig<TranslationModuleConfiguration>(
         'translationModule'
       ).deepL.apiKey;
 
     if (!apiKey) {
-      DeeplClient.instance._logger.log(
+      this.instance._logger.log(
         LogLevel.ERROR,
         'No DeepL API key found in the configuration.'
       );
-      DeeplClient.instance._logger.show();
+      this.instance._logger.show();
       throw new Error('No DeepL API key found in the configuration.');
     }
 

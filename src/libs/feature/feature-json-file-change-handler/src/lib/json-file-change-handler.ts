@@ -112,7 +112,7 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
     JsonFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
       extractedFileParts.outputPath.fsPath,
       () => {
-        FileLockStore.getInstance().delete(extractedFileParts.outputPath);
+        FileLockStore.getInstance().deleteAll(extractedFileParts.outputPath);
       }
     );
   }

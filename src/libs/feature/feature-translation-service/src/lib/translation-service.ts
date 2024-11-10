@@ -10,7 +10,7 @@ type NestedObject = { [key: string]: any };
  */
 export class TranslationService {
   private static instance: TranslationService;
-  private context: vscode.ExtensionContext;
+  private readonly context: vscode.ExtensionContext;
 
   private constructor(context: vscode.ExtensionContext) {
     this.context = context;
@@ -35,11 +35,9 @@ export class TranslationService {
     sourceLang: string,
     targetLang: string
   ): Promise<(object | string)[]> {
-    // Asynchronous translation logic
     const translateTexts = async (texts: string[]) => {
-      return await (
-        await DeeplClient.getInstanceAsync(this.context)
-      ).translateAsync(
+      const client = await DeeplClient.getInstanceAsync(this.context);
+      return await client.translateAsync(
         texts,
         sourceLang as SourceLanguageCode,
         targetLang as TargetLanguageCode
@@ -52,7 +50,6 @@ export class TranslationService {
       leaves: { path: string[]; value: string }[];
     }[] = [];
 
-    // Collect strings and leaf nodes from objects
     texts.forEach((text, index) => {
       if (typeof text === 'string') {
         stringsToTranslate.push(text);
@@ -62,13 +59,10 @@ export class TranslationService {
       }
     });
 
-    // Translate strings directly
     const translatedStrings =
       stringsToTranslate.length > 0
         ? await translateTexts(stringsToTranslate)
         : [];
-
-    // Translate all object leaf values together in one batch
     const leafValuesToTranslate = objectLeavesToTranslate.flatMap(
       ({ leaves }) => leaves.map(leaf => leaf.value)
     );
@@ -77,7 +71,6 @@ export class TranslationService {
         ? await translateTexts(leafValuesToTranslate)
         : [];
 
-    // Distribute translated leaf values back to their respective objects
     let translationIndex = 0;
     const updatedObjectLeaves = objectLeavesToTranslate.map(
       ({ objIndex, leaves }) => ({
@@ -89,7 +82,6 @@ export class TranslationService {
       })
     );
 
-    // Reconstruct each object with its translated values
     const translatedObjects = updatedObjectLeaves.map(
       ({ objIndex, leaves }) => {
         const originalObj = texts[objIndex] as object;
@@ -97,7 +89,6 @@ export class TranslationService {
       }
     );
 
-    // Merge translated strings and objects back into the final result
     const result: (object | string)[] = [];
     let stringIndex = 0;
     let objectIndex = 0;
@@ -113,19 +104,6 @@ export class TranslationService {
     return result;
   }
 
-  private async updateWithManipulations(
-    leaves: { path: string[]; value: any }[],
-    manipulationFn: (texts: string[]) => Promise<string[]>
-  ): Promise<{ path: string[]; value: any }[]> {
-    const texts = leaves.map(leaf => leaf.value); // Collect all texts that need to be translated
-    const translatedTexts = await manipulationFn(texts); // Get the translated texts
-
-    return leaves.map((leaf, index) => ({
-      ...leaf,
-      value: translatedTexts[index], // Replace the value with the translated text
-    }));
-  }
-
   private collectLeafValues(
     obj: NestedObject,
     path: string[] = []
@@ -137,7 +115,7 @@ export class TranslationService {
       const currentPath = [...path, key];
 
       if (typeof value === 'object' && value !== null) {
-        leaves = leaves.concat(this.collectLeafValues(value, currentPath)); // Recursively collect leaf values
+        leaves = leaves.concat(this.collectLeafValues(value, currentPath));
       } else {
         leaves.push({ path: currentPath, value });
       }
@@ -156,7 +134,6 @@ export class TranslationService {
       const lastKey = path.pop()!;
       let current = result;
 
-      // Navigate to the correct location and set the updated value
       path.forEach(key => {
         current = current[key];
       });
