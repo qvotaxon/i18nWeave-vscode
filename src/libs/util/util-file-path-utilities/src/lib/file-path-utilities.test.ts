@@ -28,7 +28,7 @@ suite('filePathUtilities', () => {
         .returns(config.i18nextScannerModule);
 
       const filePath = 'C:\\locales\\en\\file.po';
-      const locale = filePathUtilities.extractLocale(filePath);
+      const locale = filePathUtilities.extractLocaleFromFilePath(filePath);
       assert.equal(locale, 'en');
     });
 
@@ -44,7 +44,7 @@ suite('filePathUtilities', () => {
         .returns(config.i18nextScannerModule);
 
       const filePath = '/Users/someuser/project/locales/en/file.json';
-      const locale = filePathUtilities.extractLocale(filePath);
+      const locale = filePathUtilities.extractLocaleFromFilePath(filePath);
       assert.equal(locale, 'en');
     });
 
@@ -60,7 +60,7 @@ suite('filePathUtilities', () => {
         .returns(config.i18nextScannerModule);
 
       const filePath = 'C:\\src\\i18n\\en\\file.po';
-      const locale = filePathUtilities.extractLocale(filePath);
+      const locale = filePathUtilities.extractLocaleFromFilePath(filePath);
       assert.equal(locale, 'en');
     });
 
@@ -76,9 +76,12 @@ suite('filePathUtilities', () => {
         .returns(config.i18nextScannerModule);
 
       const filePath = 'C:\\invalid\\file.path';
-      assert.throws(() => filePathUtilities.extractLocale(filePath), {
-        message: 'Unable to extract locale from file path.',
-      });
+      assert.throws(
+        () => filePathUtilities.extractLocaleFromFilePath(filePath),
+        {
+          message: 'Unable to extract locale from file path.',
+        }
+      );
     });
   });
 

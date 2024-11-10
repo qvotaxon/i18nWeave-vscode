@@ -8,7 +8,7 @@ import {
 } from '@i18n-weave/util/util-configuration';
 import { ExtractedFileParts } from '@i18n-weave/util/util-types';
 
-export function extractLocale(filePath: string): string {
+export function extractLocaleFromFilePath(filePath: string): string {
   const translationFilesLocation =
     ConfigurationStoreManager.getInstance()
       .getConfig<I18nextScannerModuleConfiguration>('i18nextScannerModule')
@@ -45,7 +45,7 @@ export function determineOutputPath(filePath: string): Uri {
  * @returns A {@link FilePathParts} object containing the extracted locale and output path.
  */
 export function extractFilePathParts(filePath: string): ExtractedFileParts {
-  const locale = extractLocale(filePath);
+  const locale = extractLocaleFromFilePath(filePath);
   const outputPath = determineOutputPath(filePath);
 
   return { locale, outputPath } as ExtractedFileParts;
