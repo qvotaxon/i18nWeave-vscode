@@ -1,3 +1,5 @@
+import deepDiff from 'deep-diff';
+
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
 import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
@@ -53,7 +55,10 @@ export class TranslationStore {
     const newJsonObject = JSON.parse(newJsonContent) as JSON;
     const oldJsonObject = this._translationFileContents.get(filePath);
 
-    return diffJsonObjects(oldJsonObject ?? {}, newJsonObject);
+    var one = deepDiff.diff(JSON.stringify(oldJsonObject), newJsonContent);
+    var two = diffJsonObjects(oldJsonObject ?? {}, newJsonObject);
+
+    return two;
   }
 
   public updateEntry(filePath: string, updatedJsonContent: string) {
