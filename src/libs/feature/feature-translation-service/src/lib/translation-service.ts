@@ -1,3 +1,4 @@
+import { SourceLanguageCode, TargetLanguageCode } from 'deepl-node';
 import fs from 'fs';
 import path from 'path';
 import { FormatConfiguration } from 'src/libs/util/util-configuration/src/lib/general/format-configuration';
@@ -38,6 +39,20 @@ export class TranslationService {
       TranslationService.instance = new TranslationService(context);
     }
     return TranslationService.instance;
+  }
+
+  public async translateKeysAsync(
+    texts: string[],
+    sourceLang: string,
+    targetLang: string
+  ): Promise<string[]> {
+    // //TODO: enable for actual translation
+    // const translatedValues = await (
+    //   await DeeplClient.getInstanceAsync(this.context)
+    // ).translateAsync(texts, sourceLang, targetLang);
+
+    // return translatedValues;
+    return texts.map(text => `Translated(${text}) to ${targetLang}`);
   }
 
   /**
