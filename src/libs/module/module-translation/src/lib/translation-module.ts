@@ -1,5 +1,6 @@
 import deepDiff, { Diff } from 'deep-diff';
 import { SourceLanguageCode, TargetLanguageCode } from 'deepl-node';
+import { unset } from 'lodash';
 import path from 'path';
 
 import { BaseActionModule } from '@i18n-weave/module/module-base-action';
@@ -45,6 +46,8 @@ export class TranslationModule extends BaseActionModule {
             context.jsonContent
           );
 
+        const arrayChanges =
+          translationFileDiffs?.filter(d => d.kind === 'A') || [];
         const additions =
           translationFileDiffs?.filter(d => d.kind === 'N') || [];
         const deletions =
@@ -56,7 +59,8 @@ export class TranslationModule extends BaseActionModule {
 
         this.logger.log(
           LogLevel.INFO,
-          `Calculated diff for translation file ${context.inputPath}
+          `Calculated diff for translation file ${context.inputPath},
+          Array changes: ${arrayChanges.length}
           Additions: ${additions.length}
           Deletions: ${deletions.length}
           Updates: ${updates.length}`
@@ -77,12 +81,18 @@ export class TranslationModule extends BaseActionModule {
         // Filter diffs to collect all rhs values for translation
         const valuesToTranslate = translationFileDiffs
           .filter(change => change.kind === 'E' || change.kind === 'N')
-          .map(change => change.rhs.toString());
+          .map(change => {
+            var test = change.rhs;
+            return change.rhs;
+          });
+        const deletedToDelete = translationFileDiffs.filter(
+          change => change.kind === 'D'
+        );
 
-        if (valuesToTranslate.length === 0) {
+        if (valuesToTranslate.length === 0 && deletedToDelete.length === 0) {
           this.logger.log(
             LogLevel.VERBOSE,
-            `No values to translate found for file ${context.inputPath.fsPath}. Skipping translation.`
+            `No values to translate or remove found for file ${context.inputPath.fsPath}. Skipping translation.`
           );
           return;
         }
@@ -131,7 +141,13 @@ export class TranslationModule extends BaseActionModule {
           translationsByLanguage[targetLanguage] = translationFileDiffs.map(
             change => {
               if (change.kind === 'E' || change.kind === 'N') {
-                return { ...change, rhs: translatedValues[translationIndex++] };
+                const result = {
+                  ...change,
+                  // rhs: change.rhs,
+                  rhs: translatedValues[translationIndex++],
+                };
+
+                return result;
               }
               return change;
             }
@@ -219,13 +235,47 @@ export class TranslationModule extends BaseActionModule {
         // );
         // });
 
-        function applyDiffsToJSON(target: JSON, diffs: Diff<any, any>[]): JSON {
-          for (const change of diffs) {
-            // From the docs:
-            // NOTE: source is unused and may be removed.
-            // https://www.npmjs.com/package/deep-diff
-            deepDiff.applyChange(target, {}, change);
+        function applyChangeWithPath(target: any, change: Diff<any, any>) {
+          const { path, rhs } = change as { path: string[]; rhs: any };
+
+          if (path && path.length > 0) {
+            const lastKey = path.pop(); // Get the last key (the property we're changing)
+
+            // Navigate through the path to reach the correct location
+            const nestedTarget = path.reduce((acc, key) => {
+              if (acc[key] === undefined) {
+                acc[key] = {};
+              } // Create objects as needed
+              return acc[key];
+            }, target);
+
+            // Apply the change to the last key
+            if (lastKey !== undefined) {
+              nestedTarget[lastKey] = rhs;
+            }
           }
+
+          return target;
+        }
+
+        function applyDiffsToJSON(target: JSON, diffs: Diff<any, any>[]): JSON {
+          diffs.forEach(change => {
+            if (change.kind === 'D') {
+              // For deletions, remove the property at the specified path in target
+              const path = change.path?.join('.');
+              if (path) {
+                unset(target, path);
+              }
+            } else {
+              // var before = target;
+              // // For other changes, apply normally
+              // // applyChangeWithPath(target, change);
+              // var after = target;
+
+              deepDiff.applyChange(target, {}, change);
+              // var output = target;
+            }
+          });
           return target;
         }
 
