@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/node';
 import * as deepl from 'deepl-node';
+import { SourceLanguageCode, TargetLanguageCode, TextResult } from 'deepl-node';
 import vscode from 'vscode';
 
 import {
@@ -10,6 +11,7 @@ import {
   StatusBarManager,
   StatusBarState,
 } from '@i18n-weave/feature/feature-status-bar-manager';
+import { ITranslator } from '@i18n-weave/feature/feature-translation-service';
 
 import {
   ConfigurationStoreManager,
@@ -20,7 +22,7 @@ import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 /**
  * Singleton class for managing DeepL translation services.
  */
-export class DeeplClient {
+export class DeeplClient implements ITranslator {
   private readonly _logger: Logger;
   private readonly context: vscode.ExtensionContext;
   private static instance: DeeplClient;
@@ -31,6 +33,35 @@ export class DeeplClient {
   private constructor(context: vscode.ExtensionContext) {
     this._logger = Logger.getInstance();
     this.context = context;
+  }
+
+  public async translateAsync(
+    texts: string[],
+    sourceLang: SourceLanguageCode,
+    targetLang: TargetLanguageCode
+  ): Promise<string[]> {
+    if (!DeeplClient.instance.translator) {
+      throw new Error('Translator not initialized.');
+    }
+
+    let formality: deepl.Formality | undefined = DeeplClient.getFormality();
+
+    const translatedTexts = await DeeplClient.instance.translator.translateText(
+      texts,
+      sourceLang,
+      targetLang,
+      {
+        formality: formality ?? 'default',
+        preserveFormatting: DeeplClient.getPreserveFormatting() ?? false,
+      }
+    );
+
+    this._logger.log(
+      LogLevel.INFO,
+      `Translation completed from ${sourceLang} to ${targetLang}.`
+    );
+
+    return translatedTexts.map(x => x.text);
   }
 
   /**

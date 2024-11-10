@@ -49,10 +49,7 @@ export class TranslationStore {
     );
   }
 
-  public getTranslationFileDeltas(
-    filePath: string,
-    newJsonContent: string
-  ): { additions: any[]; deletions: any[]; updates: any[] } {
+  public getTranslationFileDiffs(filePath: string, newJsonContent: string) {
     const newJsonObject = JSON.parse(newJsonContent) as JSON;
     const oldJsonObject = this._translationFileContents.get(filePath);
 
