@@ -36,12 +36,29 @@ export class TranslationService {
     targetLang: string
   ): Promise<(object | string)[]> {
     const translateTexts = async (texts: string[]) => {
+      const nonEmptyTexts = texts
+        .map((text, index) => ({ text, index }))
+        .filter(({ text }) => text.trim() !== '');
+
       const client = await DeeplClient.getInstanceAsync(this.context);
-      return await client.translateAsync(
-        texts,
+      const translatedNonEmptyTexts = await client.translateAsync(
+        nonEmptyTexts.map(({ text }) => text),
         sourceLang as SourceLanguageCode,
         targetLang as TargetLanguageCode
       );
+
+      const translatedTexts: string[] = [];
+      let nonEmptyIndex = 0;
+
+      texts.forEach((text, index) => {
+        if (text.trim() === '') {
+          translatedTexts[index] = text;
+        } else {
+          translatedTexts[index] = translatedNonEmptyTexts[nonEmptyIndex++];
+        }
+      });
+
+      return translatedTexts;
     };
 
     const stringsToTranslate: string[] = [];
