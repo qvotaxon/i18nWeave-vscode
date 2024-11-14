@@ -153,6 +153,26 @@
             "default": "en",
             "description": "Default language used by your application."
           },
+          "i18nWeave.i18nextScannerModule.nsSeparator": {
+            "type": "string",
+            "default": ":",
+            "description": "Namespace separator used in your application."
+          },
+          "i18nWeave.i18nextScannerModule.keySeparator": {
+            "type": "string",
+            "default": ".",
+            "description": "Key separator used in your application."
+          },
+          "i18nWeave.i18nextScannerModule.pluralSeparator": {
+            "type": "string",
+            "default": "_",
+            "description": "Plural separator used in your application."
+          },
+          "i18nWeave.i18nextScannerModule.contextSeparator": {
+            "type": "string",
+            "default": "_",
+            "description": "Context separator used in your application."
+          },
           "i18nWeave.i18nextScannerModule.translationFunctionNames": {
             "type": "array",
             "items": {

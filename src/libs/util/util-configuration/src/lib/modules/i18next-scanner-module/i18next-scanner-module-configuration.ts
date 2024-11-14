@@ -9,6 +9,10 @@ export class I18nextScannerModuleConfiguration {
   namespaces = ['common'];
   languages: string[] = ['en'];
   defaultLanguage: string = 'en';
+  nsSeparator: string = ':';
+  keySeparator: string = '.';
+  pluralSeparator: string = '_';
+  contextSeparator: string = '_';
   translationFunctionNames: string[] = ['t', 'i18next.t'];
   translationComponentTranslationKey: string = 'i18nKey';
   translationComponentName: string = 'Trans';
