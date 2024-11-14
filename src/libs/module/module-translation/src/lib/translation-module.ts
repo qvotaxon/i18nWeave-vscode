@@ -1,6 +1,6 @@
-import deepDiff, { Diff } from 'deep-diff';
+import deepDiff, { Diff, applyChange } from 'deep-diff';
 import { SourceLanguageCode, TargetLanguageCode } from 'deepl-node';
-import { set, unset } from 'lodash';
+import { unset } from 'lodash';
 import path from 'path';
 import { Uri } from 'vscode';
 
@@ -35,79 +35,76 @@ export class TranslationModule extends BaseActionModule {
     if (!config.betaFeaturesConfiguration.enableTranslationModule) {
       return;
     }
-
     if (!context.jsonContent) {
       return;
     }
 
-    const translationFileDiffs =
-      TranslationStore.getInstance().getTranslationFileDiffs(
-        context.inputPath.fsPath,
-        context.jsonContent
-      );
-
-    if (!translationFileDiffs || translationFileDiffs.length === 0) {
+    const diffs = TranslationStore.getInstance().getTranslationFileDiffs(
+      context.inputPath.fsPath,
+      context.jsonContent
+    );
+    if (!diffs || diffs.length === 0) {
       this.logger.log(
         LogLevel.VERBOSE,
-        `No diffs found for file ${context.inputPath.fsPath}. Skipping translation.`
+        `No diffs found for file ${context.inputPath.fsPath}. Skipping.`
       );
       return;
     }
 
-    const arrayChanges = translationFileDiffs.filter(d => d.kind === 'A');
-    const additions = translationFileDiffs.filter(d => d.kind === 'N');
-    const deletions = translationFileDiffs.filter(d => d.kind === 'D');
-    const updates = translationFileDiffs.filter(d => d.kind === 'E');
-
-    this.logger.log(
-      LogLevel.VERBOSE,
-      `Calculated diff for translation file ${context.inputPath},
-      Array changes: ${arrayChanges.length}
-      Additions: ${additions.length}
-      Deletions: ${deletions.length}
-      Updates: ${updates.length}`
-    );
-
-    const valuesToTranslate = translationFileDiffs
-      .filter(change => change.kind === 'E' || change.kind === 'N')
-      .map(change => change.rhs);
-
-    var test = hasOnlyEmptyValues(valuesToTranslate);
-
-    if (
-      (valuesToTranslate.length === 0 ||
-        hasOnlyEmptyValues(valuesToTranslate)) &&
-      deletions.length === 0
-    ) {
+    const changesToTranslate = this.extractRelevantChanges(diffs);
+    if (changesToTranslate.length === 0) {
       this.logger.log(
         LogLevel.VERBOSE,
-        `No values to translate or remove found for file ${context.inputPath.fsPath}. Skipping translation.`
+        `No diff changes to translate. Skipping.`
       );
       return;
     }
 
-    const translationService = TranslationService.getInstance(
-      this.extensionContext
+    const sourceLanguage = extractLocaleFromFilePath(context.inputPath.fsPath);
+    const otherFiles = this.findRelatedFiles(context.inputPath.fsPath);
+    const translationsByLanguage = await this.translateChanges(
+      sourceLanguage,
+      changesToTranslate,
+      otherFiles
     );
-    const sourceLanguage = extractLocaleFromFilePath(
-      context.inputPath.fsPath
-    ) as SourceLanguageCode;
+    await this.applyTranslationsToFile(
+      otherFiles,
+      translationsByLanguage,
+      config
+    );
+    TranslationStore.getInstance().updateEntry(
+      context.inputPath.fsPath,
+      context.jsonContent
+    );
+  }
 
-    const otherI18nFilesWithSameNamespace = FileLocationStore.getInstance()
+  private extractRelevantChanges(diffs: any[]) {
+    return diffs.filter(({ kind }) => kind === 'N' || kind === 'E');
+  }
+
+  private findRelatedFiles(currentFilePath: string) {
+    return FileLocationStore.getInstance()
       .getFileLocationsByType(['json'])
       .filter(
         fileLocation =>
-          fileLocation !== context.inputPath.fsPath &&
-          fileLocation.split(path.sep).pop() ===
-            context.inputPath.fsPath.split(path.sep).pop()
+          fileLocation !== currentFilePath &&
+          path.basename(fileLocation) === path.basename(currentFilePath)
       );
+  }
 
-    const targetLanguages = otherI18nFilesWithSameNamespace.map(
-      fileWithSameNameSpace =>
-        extractLocaleFromFilePath(fileWithSameNameSpace) as TargetLanguageCode
+  private async translateChanges(
+    sourceLanguage: string,
+    changes: any[],
+    targetFiles: any[]
+  ) {
+    const translationService = TranslationService.getInstance(
+      this.extensionContext
     );
-
-    const translationsByLanguage: { [lang: string]: Diff<any, any>[] } = {};
+    const targetLanguages = targetFiles.map((file: string) =>
+      extractLocaleFromFilePath(file)
+    );
+    const valuesToTranslate = changes.map((change: { rhs: any }) => change.rhs);
+    let translationsByLanguage: { [key: string]: any[] } = {};
 
     for (const targetLanguage of targetLanguages) {
       const translatedValues = await translationService.translateKeysAsync(
@@ -115,108 +112,61 @@ export class TranslationModule extends BaseActionModule {
         sourceLanguage,
         targetLanguage
       );
-
-      let translationIndex = 0;
-      translationsByLanguage[targetLanguage] = translationFileDiffs.map(
-        change => {
-          if (change.kind === 'E' || change.kind === 'N') {
-            return { ...change, rhs: translatedValues[translationIndex++] };
-          }
-          return change;
-        }
+      translationsByLanguage[targetLanguage] = changes.map(
+        (change: any, index: number) => ({
+          ...change,
+          rhs: translatedValues[index],
+        })
       );
     }
 
-    function hasOnlyEmptyValues(obj: any): boolean {
-      // Check for null or undefined explicitly
-      if (obj === null || obj === undefined) {
-        return true;
-      }
+    return translationsByLanguage;
+  }
 
-      // Check if obj is an object and is not an array
-      if (typeof obj === 'object' && !Array.isArray(obj)) {
-        // Recursively check all values in the object
-        return Object.values(obj).every(value => hasOnlyEmptyValues(value));
-      }
-
-      // Check for empty string
-      if (typeof obj === 'string') {
-        return obj.trim() === '';
-      }
-
-      if (Array.isArray(obj)) {
-        return obj.every(value => hasOnlyEmptyValues(value));
-      }
-
-      // If it's any other data type (number, boolean, array, etc.), treat it as non-empty
-      return false;
-    }
-
-    function applyDiffsToJSON(target: JSON, diffs: Diff<any, any>[]): JSON {
-      diffs.forEach(change => {
-        if (change.kind === 'D') {
-          const path = change.path?.join('.');
-          if (path) {
-            unset(target, path);
-          }
-        } else {
-          deepDiff.applyChange(target, {}, change);
-        }
-      });
-      return target;
-    }
-
-    // FileLockStore.getInstance().add(
-    //   otherI18nFilesWithSameNamespace.map(file => Uri.file(file))
-    // );
-
-    for (const fileWithSameNameSpace of otherI18nFilesWithSameNamespace) {
-      if (
-        !fileWithSameNameSpace ||
-        FileLockStore.getInstance().hasFileLock(Uri.file(fileWithSameNameSpace))
-      ) {
+  private async applyTranslationsToFile(
+    targetFiles: string[],
+    translationsByLanguage: { [x: string]: any },
+    config: GeneralConfiguration
+  ) {
+    for (const filePath of targetFiles) {
+      if (FileLockStore.getInstance().hasFileLock(Uri.file(filePath))) {
         continue;
       }
 
-      const targetLanguage = extractLocaleFromFilePath(
-        fileWithSameNameSpace
-      ) as TargetLanguageCode;
-      const langContent = JSON.parse(
-        await FileReader.readFileAsync(fileWithSameNameSpace)
-      );
-      const updatedContent = applyDiffsToJSON(
-        langContent,
-        translationsByLanguage[targetLanguage]
-      );
+      const fileContent = JSON.parse(await FileReader.readFileAsync(filePath));
+      const targetLanguage = extractLocaleFromFilePath(filePath);
+      const diffs = translationsByLanguage[targetLanguage];
+      this.applyDiffsToJSON(fileContent, diffs);
 
-      FileLockStore.getInstance().add(Uri.file(fileWithSameNameSpace));
-
+      FileLockStore.getInstance().add(Uri.file(filePath));
       await FileWriter.writeToFileAsync(
-        fileWithSameNameSpace,
+        filePath,
         JSON.stringify(
-          updatedContent,
+          fileContent,
           null,
           config.format.numberOfSpacesForIndentation
         )
       ).then(() => {
         setTimeout(() => {
-          FileLockStore.getInstance().delete(Uri.file(fileWithSameNameSpace));
+          FileLockStore.getInstance().delete(Uri.file(filePath));
         }, 500);
       });
 
       TranslationStore.getInstance().updateEntry(
-        fileWithSameNameSpace,
-        JSON.stringify(
-          updatedContent,
-          null,
-          config.format.numberOfSpacesForIndentation
-        )
+        filePath,
+        JSON.stringify(fileContent)
       );
     }
+  }
 
-    TranslationStore.getInstance().updateEntry(
-      context.inputPath.fsPath,
-      context.jsonContent
-    );
+  private applyDiffsToJSON(target: any, diffs: any[]) {
+    diffs.forEach(change => {
+      if (change.kind === 'D') {
+        const path = change.path.join('.');
+        unset(target, path);
+      } else {
+        applyChange(target, {}, change);
+      }
+    });
   }
 }
