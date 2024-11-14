@@ -4,6 +4,13 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.10.1](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.10.0...v0.10.1) (2024-11-14)
+
+
+### Bug Fixes
+
+* make separators configurable ([#212](https://github.com/qvotaxon/i18nWeave-vscode/issues/212)) ([07af34b](https://github.com/qvotaxon/i18nWeave-vscode/commit/07af34b29557d883eed14675cdaa052eb4acf408))
+
 ## [0.10.0](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.9.0...v0.10.0) (2024-11-03)
 
 
