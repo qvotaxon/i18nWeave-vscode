@@ -105,7 +105,7 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
     );
 
     this._logger.log(
-      LogLevel.INFO,
+      LogLevel.VERBOSE,
       `Json File change handled: ${changeFileLocation}`
     );
 
