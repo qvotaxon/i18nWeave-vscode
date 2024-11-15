@@ -1,7 +1,7 @@
 import assert from 'assert';
 import fs from 'fs';
 import sinon from 'sinon';
-import { ExtensionContext, window } from 'vscode';
+import { ExtensionContext, Uri, window } from 'vscode';
 
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
@@ -29,7 +29,7 @@ suite('CodeTranslationStore', () => {
         globalState: { get: sinon.stub(), update: globalStateUpdateStub },
       } as any;
       codeTranslationStore = CodeTranslationKeyStore.getInstance();
-      readFileAsyncStub = sinon.stub(FileReader, 'readFileAsync');
+      readFileAsyncStub = sinon.stub(FileReader, 'readWorkspaceFileAsync');
       getConfigStub = sinon.stub(
         ConfigurationStoreManager.getInstance(),
         'getConfig'
@@ -196,7 +196,7 @@ suite('CodeTranslationStore', () => {
         globalState: { get: sinon.stub(), update: globalStateUpdateStub },
       } as any;
       codeTranslationStore = CodeTranslationKeyStore.getInstance();
-      readFileAsyncStub = sinon.stub(FileReader, 'readFileAsync');
+      readFileAsyncStub = sinon.stub(FileReader, 'readWorkspaceFileAsync');
       getConfigStub = sinon.stub(
         ConfigurationStoreManager.getInstance(),
         'getConfig'

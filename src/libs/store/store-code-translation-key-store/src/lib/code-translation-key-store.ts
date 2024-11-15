@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { ExtensionContext, ProgressLocation, window } from 'vscode';
+import { ExtensionContext, ProgressLocation, Uri, window } from 'vscode';
 
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
@@ -96,7 +96,9 @@ export class CodeTranslationKeyStore {
     codeFilePath: string,
     dateModified?: Date
   ) {
-    const codeFileContents = await FileReader.readFileAsync(codeFilePath);
+    const codeFileContents = await FileReader.readWorkspaceFileAsync(
+      Uri.file(codeFilePath)
+    );
     const translationFunctionNames =
       this.scanCodeFileForTranslationFunctionNames(codeFileContents);
 
@@ -123,7 +125,9 @@ export class CodeTranslationKeyStore {
   public async fileChangeContainsTranslationFunctionsAsync(
     codeFilePath: string
   ): Promise<boolean> {
-    const codeFileContents = await FileReader.readFileAsync(codeFilePath);
+    const codeFileContents = await FileReader.readWorkspaceFileAsync(
+      Uri.file(codeFilePath)
+    );
     const newTranslationFunctionNames =
       this.scanCodeFileForTranslationFunctionNames(codeFileContents);
     const currentTranslationFunctionNames =

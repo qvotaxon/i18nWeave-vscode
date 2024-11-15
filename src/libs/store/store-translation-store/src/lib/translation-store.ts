@@ -1,3 +1,5 @@
+import { Uri } from 'vscode';
+
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
 import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
@@ -31,7 +33,9 @@ export class TranslationStore {
       FileLocationStore.getInstance().getFileLocationsByType(['json']);
 
     for (const fileLocation of fileLocations) {
-      const rawData = await FileReader.readFileAsync(fileLocation);
+      const rawData = await FileReader.readWorkspaceFileAsync(
+        Uri.file(fileLocation)
+      );
       const jsonObject = JSON.parse(rawData) as JSON;
       this._translationFileContents.set(fileLocation, jsonObject);
 
@@ -74,7 +78,7 @@ export class TranslationStore {
   }
 
   public async addEntryAsync(filePath: string) {
-    const rawData = await FileReader.readFileAsync(filePath);
+    const rawData = await FileReader.readWorkspaceFileAsync(Uri.file(filePath));
     const jsonObject = JSON.parse(rawData) as JSON;
     this._translationFileContents.set(filePath, jsonObject);
 

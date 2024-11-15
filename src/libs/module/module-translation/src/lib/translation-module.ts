@@ -109,7 +109,7 @@ export class TranslationModule extends BaseActionModule {
     for (const targetFile of targetFiles) {
       const targetLanguage = extractLocaleFromFilePath(targetFile);
       const fileContent = JSON.parse(
-        await FileReader.readFileAsync(targetFile)
+        await FileReader.readWorkspaceFileAsync(Uri.file(targetFile))
       );
 
       // Filter changes to only include those that are missing or null in the target file
@@ -160,7 +160,9 @@ export class TranslationModule extends BaseActionModule {
 
       let fileContent;
       try {
-        fileContent = JSON.parse(await FileReader.readFileAsync(filePath));
+        fileContent = JSON.parse(
+          await FileReader.readWorkspaceFileAsync(Uri.file(filePath))
+        );
       } catch (error) {
         this.logger.log(
           LogLevel.ERROR,
@@ -204,4 +206,3 @@ export class TranslationModule extends BaseActionModule {
     });
   }
 }
-

@@ -19,7 +19,7 @@ suite('FileReader Tests', () => {
     const filePath = Uri.file('/path/to/file.txt');
     const expectedData = 'Hello, World!';
 
-    const fileContent = await FileReader.readFileAsync(filePath.fsPath);
+    const fileContent = await FileReader.readWorkspaceFileAsync(filePath);
 
     assert.strictEqual(fileContent, expectedData);
   });
@@ -28,7 +28,7 @@ suite('FileReader Tests', () => {
     const filePath = Uri.file('/path/to/nonexistent/file.txt');
 
     try {
-      await FileReader.readFileAsync(filePath.fsPath);
+      await FileReader.readWorkspaceFileAsync(filePath);
       assert.fail('Expected an error to be thrown');
     } catch (error) {
       assert.strictEqual(error instanceof Error, true);
