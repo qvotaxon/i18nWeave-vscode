@@ -109,11 +109,13 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
       `Json File change handled: ${changeFileLocation}`
     );
 
-    JsonFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
-      extractedFileParts.outputPath.fsPath,
-      () => {
-        FileLockStore.getInstance().deleteAll(extractedFileParts.outputPath);
-      }
-    );
+    const fileWatcherDisposable =
+      JsonFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
+        extractedFileParts.outputPath.fsPath,
+        () => {
+          FileLockStore.getInstance().deleteAll(extractedFileParts.outputPath);
+          fileWatcherDisposable.dispose();
+        }
+      );
   }
 }
