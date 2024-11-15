@@ -172,7 +172,7 @@ export class TranslationModule extends BaseActionModule {
       const diffs = translationsByLanguage[targetLanguage];
       this.applyDiffsToJSON(fileContent, diffs);
 
-      FileLockStore.getInstance().add(Uri.file(filePath));
+      FileLockStore.getInstance().addLock(Uri.file(filePath));
       await FileWriter.writeToFileAsync(
         filePath,
         JSON.stringify(

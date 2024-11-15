@@ -97,7 +97,7 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
       outputPath: extractedFileParts.outputPath,
     };
 
-    FileLockStore.getInstance().add(extractedFileParts.outputPath);
+    FileLockStore.getInstance().addLock(extractedFileParts.outputPath);
 
     await JsonFileChangeHandler.moduleChainManager.executeChainAsync(
       ChainType.Json,

@@ -29,20 +29,25 @@ export class FileLockStore {
    * Adds a file lock for the specified URI.
    * @param uri - The URI of the file.
    */
-  add(uri: Uri | Uri[]): void {
-    if (Array.isArray(uri)) {
-      uri.forEach(u => {
-        this._logger.log(LogLevel.VERBOSE, 'Added file lock for ' + u.fsPath);
+  addLock(uri: Uri): void {
+    this._logger.log(LogLevel.VERBOSE, 'Added file lock for ' + uri.fsPath);
 
-        const lockCount = this.fileLocks.get(u.fsPath) || 0;
-        this.fileLocks.set(u.fsPath, lockCount + 1);
-      });
-    } else {
+    const lockCount = this.fileLocks.get(uri.fsPath) || 0;
+    this.fileLocks.set(uri.fsPath, lockCount + 1);
+  }
+
+  /**
+   * Adds locks for the given URIs.
+   *
+   * @param uris - An array of URIs for which locks should be added.
+   */
+  addLocks(uris: Uri[]): void {
+    uris.forEach(uri => {
       this._logger.log(LogLevel.VERBOSE, 'Added file lock for ' + uri.fsPath);
 
       const lockCount = this.fileLocks.get(uri.fsPath) || 0;
       this.fileLocks.set(uri.fsPath, lockCount + 1);
-    }
+    });
   }
 
   /**
