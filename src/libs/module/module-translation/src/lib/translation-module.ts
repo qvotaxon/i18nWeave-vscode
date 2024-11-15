@@ -95,29 +95,54 @@ export class TranslationModule extends BaseActionModule {
   private async translateChanges(
     sourceLanguage: string,
     changes: any[],
-    targetFiles: any[]
+    targetFiles: string[]
   ) {
     const translationService = TranslationService.getInstance(
       this.extensionContext
     );
-    const targetLanguages = targetFiles.map((file: string) =>
-      extractLocaleFromFilePath(file)
-    );
-    const valuesToTranslate = changes.map((change: { rhs: any }) => change.rhs);
+    // const targetLanguages = targetFiles.map((file: string) =>
+    //   extractLocaleFromFilePath(file)
+    // );
+
     let translationsByLanguage: { [key: string]: any[] } = {};
 
-    for (const targetLanguage of targetLanguages) {
-      const translatedValues = await translationService.translateKeysAsync(
-        valuesToTranslate,
-        sourceLanguage,
-        targetLanguage
+    for (const targetFile of targetFiles) {
+      const targetLanguage = extractLocaleFromFilePath(targetFile);
+      const fileContent = JSON.parse(
+        await FileReader.readFileAsync(targetFile)
       );
-      translationsByLanguage[targetLanguage] = changes.map(
-        (change: any, index: number) => ({
-          ...change,
-          rhs: translatedValues[index],
-        })
-      );
+
+      // Filter changes to only include those that are missing or null in the target file
+      const changesToTranslate = changes.filter(change => {
+        const currentValue = change.path.reduce(
+          (obj: { [x: string]: any }, key: string | number) => obj?.[key],
+          fileContent
+        );
+        return (
+          currentValue === undefined ||
+          currentValue === null ||
+          currentValue === ''
+        );
+      });
+
+      if (changesToTranslate.length > 0) {
+        const valuesToTranslate = changesToTranslate.map(
+          (change: { rhs: any }) => change.rhs
+        );
+
+        const translatedValues = await translationService.translateKeysAsync(
+          valuesToTranslate,
+          sourceLanguage,
+          targetLanguage
+        );
+
+        translationsByLanguage[targetLanguage] = changesToTranslate.map(
+          (change: any, index: number) => ({
+            ...change,
+            rhs: translatedValues[index],
+          })
+        );
+      }
     }
 
     return translationsByLanguage;
@@ -133,7 +158,16 @@ export class TranslationModule extends BaseActionModule {
         continue;
       }
 
-      const fileContent = JSON.parse(await FileReader.readFileAsync(filePath));
+      let fileContent;
+      try {
+        fileContent = JSON.parse(await FileReader.readFileAsync(filePath));
+      } catch (error) {
+        this.logger.log(
+          LogLevel.ERROR,
+          `Failed to parse JSON content from file ${filePath}: ${(error as Error).message}`
+        );
+        continue;
+      }
       const targetLanguage = extractLocaleFromFilePath(filePath);
       const diffs = translationsByLanguage[targetLanguage];
       this.applyDiffsToJSON(fileContent, diffs);
@@ -160,7 +194,7 @@ export class TranslationModule extends BaseActionModule {
   }
 
   private applyDiffsToJSON(target: any, diffs: any[]) {
-    diffs.forEach(change => {
+    diffs?.forEach(change => {
       if (change.kind === 'D') {
         const path = change.path.join('.');
         unset(target, path);
