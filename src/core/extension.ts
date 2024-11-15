@@ -64,8 +64,6 @@ export async function activate(
   ),
   textDocumentChangedHandler: TextDocumentChangedHandler = new TextDocumentChangedHandler()
 ) {
-  console.log('i18nWeave is now active!');
-
   initializeSentry();
 
   try {
@@ -74,7 +72,7 @@ export async function activate(
     statusBarManager.updateState(StatusBarState.Running, 'Initializing...');
 
     configurationManager.initialize();
-    logger.log(LogLevel.INFO, 'i18nWeave is now active!');
+    logger.log(LogLevel.INFO, 'i18nWeave is starting up...');
 
     await fileLocationInitializer.initializeFileLocations();
     await translationStore.initializeAsync();
@@ -120,6 +118,7 @@ export async function activate(
     );
 
     statusBarManager.updateState(StatusBarState.Idle, 'Idle');
+    logger.log(LogLevel.INFO, 'i18nWeave is watching your files... 🌍');
   } catch (error) {
     Sentry.captureException(error);
   }
