@@ -48,7 +48,7 @@ export function extractFilePathParts(filePath: string): ExtractedFileParts {
   const locale = extractLocaleFromFilePath(filePath);
   const outputPath = determineOutputPath(filePath);
 
-  return { locale, outputPath } as ExtractedFileParts;
+  return { locale, outputPath } satisfies ExtractedFileParts;
 }
 
 /**
