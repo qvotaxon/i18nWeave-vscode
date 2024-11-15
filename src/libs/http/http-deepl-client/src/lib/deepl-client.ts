@@ -41,42 +41,46 @@ export class DeeplClient implements ITranslator {
     requestedTargetLanguage: string
   ): Promise<string[]> {
     // Mocking the translation for now
-    return texts.map(
-      text => `Translated (${text}) to ${requestedTargetLanguage}`
-    );
+    // return texts.map(
+    //   text => `Translated (${text}) to ${requestedTargetLanguage}`
+    // );
 
     // Uncomment the following code to enable the actual translation
 
-    // if (!this.translator) {
-    //   throw new Error('Translator not initialized.');
-    // }
+    if (!this.translator) {
+      throw new Error('Translator not initialized.');
+    }
 
-    // let targetLanguage = this.getTargetLanguage(requestedTargetLanguage);
+    if (requestedTargetLanguage === 'en') {
+      requestedTargetLanguage = 'en-GB';
+    }
 
-    // if (!this.isSupportedTargetLanguage(targetLanguage)) {
-    //   this._logger.log(
-    //     LogLevel.WARN,
-    //     `Skipping translation for unsupported target language: ${targetLanguage}`
-    //   );
-    //   return [''];
-    // }
+    let targetLanguage = this.getTargetLanguage(requestedTargetLanguage);
 
-    // const formality = this.getFormality(targetLanguage);
+    if (!this.isSupportedTargetLanguage(targetLanguage)) {
+      this._logger.log(
+        LogLevel.WARN,
+        `Skipping translation for unsupported target language: ${targetLanguage}`
+      );
+      return [''];
+    }
 
-    // const translatedTexts = await this.translateUsingDeepl(
-    //   this.translator,
-    //   texts,
-    //   targetLanguage,
-    //   formality,
-    //   sourceLanguage
-    // );
+    const formality = this.getFormality(targetLanguage);
 
-    // this._logger.log(
-    //   LogLevel.INFO,
-    //   `Translation completed from ${sourceLanguage} to ${targetLanguage}.`
-    // );
+    const translatedTexts = await this.translateUsingDeepl(
+      this.translator,
+      texts,
+      targetLanguage,
+      formality,
+      sourceLanguage
+    );
 
-    // return translatedTexts.map(x => x.text);
+    this._logger.log(
+      LogLevel.INFO,
+      `Translation completed from ${sourceLanguage} to ${targetLanguage}.`
+    );
+
+    return translatedTexts.map(x => x.text);
   }
 
   public static async getInstanceAsync(
