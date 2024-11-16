@@ -185,7 +185,7 @@ export class TranslationModule extends BaseActionModule {
       this.applyDiffsToJSON(fileContent, diffs);
 
       FileLockStore.getInstance().addLock(fileUri);
-      await FileWriter.writeToFileAsync(
+      await FileWriter.writeToWorkspaceFileAsync(
         fileUri,
         JSON.stringify(
           fileContent,

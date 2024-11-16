@@ -32,7 +32,7 @@ suite('FileWriter Tests', () => {
     const data = 'Hello, World!';
 
     try {
-      await FileWriter.writeToFileAsync(filePath, data);
+      await FileWriter.writeToWorkspaceFileAsync(filePath, data);
       assert.fail('Expected an error to be thrown');
     } catch (error) {
       assert.strictEqual(error instanceof Error, true);

@@ -11,7 +11,7 @@ export class FileWriter {
    * @param data - The data to write to the file.
    * @returns A promise that resolves when the data has been written successfully, or rejects with an error if there was a problem.
    */
-  public static async writeToFileAsync(
+  public static async writeToWorkspaceFileAsync(
     filePath: Uri,
     data: string
   ): Promise<void> {
