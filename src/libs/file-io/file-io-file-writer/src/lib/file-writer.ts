@@ -1,6 +1,5 @@
 import Sentry from '@sentry/node';
-import fs from 'fs';
-import { Uri } from 'vscode';
+import { Uri, workspace } from 'vscode';
 
 /**
  * Utility class for writing data to a file asynchronously.
@@ -13,15 +12,12 @@ export class FileWriter {
    * @returns A promise that resolves when the data has been written successfully, or rejects with an error if there was a problem.
    */
   public static async writeToFileAsync(
-    filePath: Uri | string,
-    data: string | NodeJS.ArrayBufferView
+    filePath: Uri,
+    data: string
   ): Promise<void> {
     try {
-      if (typeof filePath === 'string') {
-        filePath = Uri.file(filePath);
-      }
-
-      await fs.promises.writeFile(filePath.fsPath, data, 'utf8');
+      const textEncoder = new TextEncoder();
+      await workspace.fs.writeFile(filePath, textEncoder.encode(data));
     } catch (err) {
       if (Sentry) {
         Sentry.captureException(err);
