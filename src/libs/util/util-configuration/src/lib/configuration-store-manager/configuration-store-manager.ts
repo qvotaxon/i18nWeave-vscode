@@ -124,7 +124,7 @@ export class ConfigurationStoreManager {
     return config as T;
   }
 
-  public async setConfigAsync<T>(
+  public async setConfigAsync(
     key: keyof ExtensionConfiguration,
     value: ExtensionConfiguration[keyof ExtensionConfiguration]
   ): Promise<void> {

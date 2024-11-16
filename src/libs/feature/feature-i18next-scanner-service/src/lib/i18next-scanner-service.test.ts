@@ -7,11 +7,7 @@ import { CacheEntry } from '@i18n-weave/feature/feature-caching-service';
 import { I18nextScannerService } from '@i18n-weave/feature/feature-i18next-scanner-service';
 import { StatusBarManager } from '@i18n-weave/feature/feature-status-bar-manager';
 
-import {
-  ConfigurationStoreManager,
-  GeneralConfiguration,
-  I18nextScannerModuleConfiguration,
-} from '@i18n-weave/util/util-configuration';
+import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 
 suite('I18nextScannerService', () => {
   let scannerService: I18nextScannerService;
@@ -36,35 +32,6 @@ suite('I18nextScannerService', () => {
   suite('scanCodeAsync', () => {
     test('should scan code for translation keys', async () => {
       let extensionContext: vscode.ExtensionContext;
-      const config = {
-        i18nextScannerModule: {
-          defaultLanguage: 'en',
-          enabled: true,
-          fileExtensions: ['ts', 'tsx'],
-          languages: ['en', 'de', 'fr', 'es'],
-          namespaces: ['translation', 'common'],
-          defaultNamespace: 'translation',
-          translationFilesLocation: 'locales',
-          nsSeparator: ':',
-          keySeparator: '.',
-          pluralSeparator: '_',
-          contextSeparator: '_',
-          translationFunctionNames: ['I18nKey'],
-          translationComponentTranslationKey: 'i18nKey',
-          translationComponentName: 'Trans',
-          codeFileLocations: ['src'],
-        } satisfies I18nextScannerModuleConfiguration,
-      };
-
-      const secondConfig = {
-        betaFeaturesConfiguration: {
-          enableJsonFileWebView: false,
-          enableTranslationModule: true,
-        },
-        format: {
-          numberOfSpacesForIndentation: 4,
-        },
-      } satisfies GeneralConfiguration;
 
       extensionContext = {
         globalState: {

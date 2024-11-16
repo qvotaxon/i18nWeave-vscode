@@ -34,9 +34,7 @@ suite('FileWatcherCreator', () => {
       .returns({
         handleFileChangeAsync: handleFileChangeAsyncStub,
         handleFileDeletionAsync: sinon.stub().resolves(),
-        handleFileCreationAsync: function (
-          changeFileLocation: vscode.Uri
-        ): Promise<void> {
+        handleFileCreationAsync: function (_: vscode.Uri): Promise<void> {
           throw new Error('Function not implemented.');
         },
       });

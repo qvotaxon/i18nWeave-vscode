@@ -152,7 +152,7 @@ export async function setConfigurationAsync(
   if (patch) {
     Object.assign(config, patch);
   }
-  await ConfigurationStoreManager.getInstance().setConfigAsync<I18nextScannerModuleConfiguration>(
+  await ConfigurationStoreManager.getInstance().setConfigAsync(
     'i18nextScannerModule',
     config
   );

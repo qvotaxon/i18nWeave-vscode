@@ -8,7 +8,7 @@ export async function scanNextI18nextConfigFileAsync(): Promise<
 }
 
 export async function readNextI18nextConfigFileAsync(
-  configFilePath: string
+  _: string
 ): Promise<Partial<I18nextScannerModuleConfiguration> | undefined> {
   // Replace with actual implementation
   return {

@@ -9,8 +9,6 @@ import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import * as filePathUtilities from './file-path-utilities';
 
 suite('filePathUtilities', () => {
-  let getConfigStub: sinon.SinonStub;
-
   teardown(() => {
     sinon.restore();
   });
@@ -23,7 +21,7 @@ suite('filePathUtilities', () => {
         },
       };
 
-      getConfigStub = sinon //NOSONAR
+      sinon
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
@@ -39,7 +37,7 @@ suite('filePathUtilities', () => {
         },
       };
 
-      getConfigStub = sinon //NOSONAR
+      sinon
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
@@ -55,7 +53,7 @@ suite('filePathUtilities', () => {
         },
       };
 
-      getConfigStub = sinon //NOSONAR
+      sinon
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
@@ -71,7 +69,7 @@ suite('filePathUtilities', () => {
         },
       };
 
-      getConfigStub = sinon //NOSONAR
+      sinon
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
@@ -123,7 +121,7 @@ suite('filePathUtilities', () => {
         },
       };
 
-      getConfigStub = sinon //NOSONAR
+      sinon
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
@@ -143,7 +141,7 @@ suite('filePathUtilities', () => {
         },
       };
 
-      getConfigStub = sinon //NOSONAR
+      sinon
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 

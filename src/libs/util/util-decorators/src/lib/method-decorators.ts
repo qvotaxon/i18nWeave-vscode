@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/node';
 
 export function TraceMethod(
-  target: any,
+  _: any,
   propertyKey: string,
   descriptor: PropertyDescriptor
 ) {

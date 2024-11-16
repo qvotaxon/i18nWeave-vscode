@@ -3,7 +3,10 @@ import vscode from 'vscode';
 
 import { DeeplClient } from '@i18n-weave/http/http-deepl-client';
 
-type NestedObject = { [key: string]: any };
+import {
+  collectLeafValues,
+  reconstructObjectWithUpdatedValues,
+} from '@i18n-weave/util/util-nested-object-utils';
 
 /**
  * Singleton class for managing translation services.
@@ -35,30 +38,20 @@ export class TranslationService {
     sourceLang: string,
     targetLang: string
   ): Promise<(object | string)[]> {
-    const translateTexts = async (texts: string[]) => {
-      const nonEmptyTexts = texts
-        .map((text, index) => ({ text, index }))
-        .filter(({ text }) => text.trim() !== '');
+    const client = await DeeplClient.getInstanceAsync(this.context);
 
-      const client = await DeeplClient.getInstanceAsync(this.context);
+    const translateTexts = async (texts: string[]): Promise<string[]> => {
+      const nonEmptyTexts = texts.filter(text => text.trim() !== '');
       const translatedNonEmptyTexts = await client.translateAsync(
-        nonEmptyTexts.map(({ text }) => text),
+        nonEmptyTexts,
         sourceLang as SourceLanguageCode,
         targetLang as TargetLanguageCode
       );
 
-      const translatedTexts: string[] = [];
       let nonEmptyIndex = 0;
-
-      texts.forEach((text, index) => {
-        if (text.trim() === '') {
-          translatedTexts[index] = text;
-        } else {
-          translatedTexts[index] = translatedNonEmptyTexts[nonEmptyIndex++];
-        }
-      });
-
-      return translatedTexts;
+      return texts.map(text =>
+        text.trim() === '' ? text : translatedNonEmptyTexts[nonEmptyIndex++]
+      );
     };
 
     const stringsToTranslate: string[] = [];
@@ -71,7 +64,7 @@ export class TranslationService {
       if (typeof text === 'string') {
         stringsToTranslate.push(text);
       } else {
-        const leaves = this.collectLeafValues(text);
+        const leaves = collectLeafValues(text);
         objectLeavesToTranslate.push({ objIndex: index, leaves });
       }
     });
@@ -102,62 +95,14 @@ export class TranslationService {
     const translatedObjects = updatedObjectLeaves.map(
       ({ objIndex, leaves }) => {
         const originalObj = texts[objIndex] as object;
-        return this.reconstructObjectWithUpdatedValues(originalObj, leaves);
+        return reconstructObjectWithUpdatedValues(originalObj, leaves);
       }
     );
 
-    const result: (object | string)[] = [];
-    let stringIndex = 0;
-    let objectIndex = 0;
-
-    texts.forEach(text => {
-      if (typeof text === 'string') {
-        result.push(translatedStrings[stringIndex++]);
-      } else {
-        result.push(translatedObjects[objectIndex++]);
-      }
-    });
-
-    return result;
-  }
-
-  private collectLeafValues(
-    obj: NestedObject,
-    path: string[] = []
-  ): { path: string[]; value: any }[] {
-    let leaves: { path: string[]; value: any }[] = [];
-
-    for (const key in obj) {
-      const value = obj[key];
-      const currentPath = [...path, key];
-
-      if (typeof value === 'object' && value !== null) {
-        leaves = leaves.concat(this.collectLeafValues(value, currentPath));
-      } else {
-        leaves.push({ path: currentPath, value });
-      }
-    }
-
-    return leaves;
-  }
-
-  private reconstructObjectWithUpdatedValues(
-    obj: NestedObject,
-    updatedLeaves: { path: string[]; value: any }[]
-  ): NestedObject {
-    let result = { ...obj };
-
-    updatedLeaves.forEach(({ path, value }) => {
-      const lastKey = path.pop()!;
-      let current = result;
-
-      path.forEach(key => {
-        current = current[key];
-      });
-
-      current[lastKey] = value;
-    });
-
-    return result;
+    return texts.map(text =>
+      typeof text === 'string'
+        ? translatedStrings.shift()!
+        : translatedObjects.shift()!
+    );
   }
 }

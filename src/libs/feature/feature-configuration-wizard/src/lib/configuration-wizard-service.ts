@@ -5,7 +5,6 @@ import { Framework, ProjectType } from '@i18n-weave/util/util-enums';
 import {
   selectFrameworkAsync,
   selectProjectTypeAsync,
-  showConfigurationToUserAsync,
 } from '@i18n-weave/util/util-prompt-utilities';
 
 import {
@@ -13,10 +12,6 @@ import {
   configureGeneralSettingsAsync,
   setConfigurationAsync,
 } from './configuration-handlers';
-import {
-  readNextI18nextConfigFileAsync,
-  scanNextI18nextConfigFileAsync,
-} from './next-i18next-config-handlers';
 
 export class ConfigurationWizardService {
   public async startConfigurationWizardAsync(): Promise<
@@ -58,34 +53,34 @@ export class ConfigurationWizardService {
     return config;
   }
 
-  private async handleNextJSConfigAsync(
-    config: I18nextScannerModuleConfiguration
-  ): Promise<I18nextScannerModuleConfiguration | boolean | undefined> {
-    const configFilePath = await scanNextI18nextConfigFileAsync();
-    if (configFilePath) {
-      const nextConfig = await readNextI18nextConfigFileAsync(configFilePath);
-      if (nextConfig) {
-        const userResponse = await showConfigurationToUserAsync(
-          configFilePath,
-          nextConfig.defaultLanguage!
-        );
-        if (userResponse?.title?.includes(', lead the way!')) {
-          setConfigurationAsync(config, nextConfig);
-          return config;
-        } else if (userResponse?.title?.includes('configure it myself.')) {
-          if (!(await configureCustomProjectAsync(config))) {
-            return undefined;
-          }
-          if (!(await configureGeneralSettingsAsync(config))) {
-            return undefined;
-          }
-          await setConfigurationAsync(config);
-          return config;
-        } else {
-          return undefined;
-        }
-      }
-    }
-    return await configureCustomProjectAsync(config);
-  }
+  // private async handleNextJSConfigAsync(
+  //   config: I18nextScannerModuleConfiguration
+  // ): Promise<I18nextScannerModuleConfiguration | boolean | undefined> {
+  //   const configFilePath = await scanNextI18nextConfigFileAsync();
+  //   if (configFilePath) {
+  //     const nextConfig = await readNextI18nextConfigFileAsync(configFilePath);
+  //     if (nextConfig) {
+  //       const userResponse = await showConfigurationToUserAsync(
+  //         configFilePath,
+  //         nextConfig.defaultLanguage!
+  //       );
+  //       if (userResponse?.title?.includes(', lead the way!')) {
+  //         setConfigurationAsync(config, nextConfig);
+  //         return config;
+  //       } else if (userResponse?.title?.includes('configure it myself.')) {
+  //         if (!(await configureCustomProjectAsync(config))) {
+  //           return undefined;
+  //         }
+  //         if (!(await configureGeneralSettingsAsync(config))) {
+  //           return undefined;
+  //         }
+  //         await setConfigurationAsync(config);
+  //         return config;
+  //       } else {
+  //         return undefined;
+  //       }
+  //     }
+  //   }
+  //   return await configureCustomProjectAsync(config);
+  // }
 }

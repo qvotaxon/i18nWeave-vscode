@@ -7,18 +7,13 @@ import vscode from 'vscode';
 
 import { CacheEntry } from '@i18n-weave/feature/feature-caching-service';
 
-import {
-  ConfigurationStoreManager,
-} from '@i18n-weave/util/util-configuration';
+import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 
 import { DeeplClient } from './deepl-client';
 
 suite('DeeplClient', () => {
   let extensionContext: vscode.ExtensionContext;
-  let deeplClient: DeeplClient;
   let getConfigStub: sinon.SinonStub;
-  let translateStub: sinon.SinonStub;
-  let startSpanStub: sinon.SinonStub;
 
   setup(async () => {
     const config = {
@@ -49,10 +44,10 @@ suite('DeeplClient', () => {
     getConfigStub = sinon
       .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
       .returns(config.translationModule);
-    startSpanStub = sinon
+    sinon
       .stub(Sentry, 'startSpan')
       .callsFake((span, callback) => callback(span as unknown as Span));
-    translateStub = sinon
+    sinon
       .stub(deepl.Translator.prototype, 'translateText')
       .resolves({ text: 'Translated text' } as deepl.TextResult);
     getConfigStub.withArgs('debugging').returns({
@@ -61,7 +56,7 @@ suite('DeeplClient', () => {
       },
     });
 
-    deeplClient = await DeeplClient.getInstanceAsync(extensionContext);
+    await DeeplClient.getInstanceAsync(extensionContext);
   });
 
   teardown(() => {

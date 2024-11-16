@@ -13,7 +13,7 @@ export class EmptyJsonValueSymbolProvider
 
   provideDocumentSymbols(
     document: vscode.TextDocument,
-    token: vscode.CancellationToken
+    _: vscode.CancellationToken
   ): vscode.ProviderResult<vscode.DocumentSymbol[]> {
     const symbols: vscode.DocumentSymbol[] = [];
 

@@ -22,7 +22,6 @@ suite('CodeTranslationStore', () => {
     let showErrorMessageStub: sinon.SinonStub;
     let updateStoreRecordAsyncStub: sinon.SinonStub;
     let globalStateUpdateStub: sinon.SinonStub;
-    let updateCacheStub: sinon.SinonStub;
 
     setup(() => {
       globalStateUpdateStub = sinon.stub();
@@ -181,12 +180,8 @@ suite('CodeTranslationStore', () => {
   });
 
   suite('updateStoreRecordAsync', () => {
-    let context: ExtensionContext;
     let codeTranslationStore: CodeTranslationKeyStore;
     let readFileAsyncStub: sinon.SinonStub;
-    let getConfigStub: sinon.SinonStub;
-    let getFilesByTypeStub: sinon.SinonStub;
-    let showErrorMessageStub: sinon.SinonStub;
     let updateStoreRecordAsyncStub: sinon.SinonStub;
     let globalStateUpdateStub: sinon.SinonStub;
     let updateCacheStub: sinon.SinonStub;
@@ -198,15 +193,9 @@ suite('CodeTranslationStore', () => {
       } as any;
       codeTranslationStore = CodeTranslationKeyStore.getInstance();
       readFileAsyncStub = sinon.stub(FileReader, 'readWorkspaceFileAsync');
-      getConfigStub = sinon.stub(
-        ConfigurationStoreManager.getInstance(),
-        'getConfig'
-      );
-      getFilesByTypeStub = sinon.stub(
-        FileLocationStore.getInstance(),
-        'getFileLocationsByType'
-      );
-      showErrorMessageStub = sinon.stub(window, 'showErrorMessage');
+      sinon.stub(ConfigurationStoreManager.getInstance(), 'getConfig');
+      sinon.stub(FileLocationStore.getInstance(), 'getFileLocationsByType');
+      sinon.stub(window, 'showErrorMessage');
       updateStoreRecordAsyncStub = sinon.stub(
         codeTranslationStore,
         'updateStoreRecordAsync'

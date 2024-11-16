@@ -54,7 +54,7 @@ suite('FileLocationStore Tests', function () {
       mockFiles.length * 2, //TODO: find out why this needs a * 2
       'addFile was not called for each file'
     );
-    mockFiles.forEach((file, index) => {
+    mockFiles.forEach(file => {
       assert.ok(
         addFileStub.calledWith(file),
         `addFile was not called with the correct file: ${file.fsPath}`
