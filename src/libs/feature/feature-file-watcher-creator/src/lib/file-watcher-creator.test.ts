@@ -82,7 +82,6 @@ suite('FileWatcherCreator', () => {
       const generalConfiguration = new GeneralConfiguration();
       generalConfiguration.betaFeaturesConfiguration = {
         enableJsonFileWebView: true,
-        enableTranslationModule: true,
       };
 
       const mockConfigStore = new ConfigurationStore({

@@ -61,7 +61,7 @@ suite('TranslationModule', () => {
       'getConfig'
     );
     getConfigStub.withArgs('general').returns({
-      betaFeaturesConfiguration: { enableTranslationModule: false },
+      betaFeaturesConfiguration: {},
     });
 
     // const translateOtherI18nFilesStub = sinon.stub(
