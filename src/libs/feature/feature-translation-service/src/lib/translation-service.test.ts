@@ -8,7 +8,6 @@ import { CacheEntry } from '@i18n-weave/feature/feature-caching-service';
 import { StatusBarManager } from '@i18n-weave/feature/feature-status-bar-manager';
 import { TranslationService } from '@i18n-weave/feature/feature-translation-service';
 
-
 import {
   BetaFeaturesConfiguration,
   ConfigurationStore,
@@ -32,7 +31,6 @@ suite('TranslationService', () => {
     translationModuleConfiguration.deepL.enabled = true;
 
     const betaFeaturesConfiguration = new BetaFeaturesConfiguration();
-    betaFeaturesConfiguration.enableTranslationModule = true;
 
     const generalConfiguration = new GeneralConfiguration();
     generalConfiguration.betaFeaturesConfiguration = betaFeaturesConfiguration;

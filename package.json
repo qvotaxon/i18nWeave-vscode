@@ -222,11 +222,6 @@
             "type": "boolean",
             "default": false,
             "description": "Enable the Json File Web View. This feature is still in beta and may not work as expected."
-          },
-          "i18nWeave.betaFeaturesConfiguration.enableTranslationModule": {
-            "type": "boolean",
-            "default": false,
-            "description": "Enable the Translation Module. This feature is still in beta and may not work as expected."
           }
         }
       },

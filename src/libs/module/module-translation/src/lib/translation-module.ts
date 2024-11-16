@@ -35,9 +35,6 @@ export class TranslationModule extends BaseActionModule {
       ConfigurationStoreManager.getInstance().getConfig<GeneralConfiguration>(
         'general'
       );
-    if (!config.betaFeaturesConfiguration.enableTranslationModule) {
-      return;
-    }
     if (!context.jsonContent) {
       return;
     }
