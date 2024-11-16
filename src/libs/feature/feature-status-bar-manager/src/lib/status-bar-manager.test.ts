@@ -3,7 +3,6 @@ import * as vscode from 'vscode';
 import sinon from 'sinon';
 
 import { StatusBarManager } from './status-bar-manager';
-import { StatusBarState } from './status-bar-manager.types';
 
 suite('StatusBarManager', () => {
   let context: vscode.ExtensionContext;

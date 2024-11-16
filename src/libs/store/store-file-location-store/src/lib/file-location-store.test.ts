@@ -34,10 +34,7 @@ suite('FileLocationStore Tests', function () {
       vscode.Uri.file('/path/to/file2.ts'),
     ];
     sandbox.stub(vscode.workspace, 'findFiles').resolves(mockFiles);
-    const addOrUpdateFileStub = sandbox.stub<any, any>(
-      store,
-      'addOrUpdateFile'
-    );
+    const addFileStub = sandbox.stub<any, any>(store, 'addFile');
 
     const fileSearchLocations = [
       {
@@ -53,14 +50,14 @@ suite('FileLocationStore Tests', function () {
     await store.scanWorkspaceAsync(fileSearchLocations);
 
     assert.strictEqual(
-      addOrUpdateFileStub.callCount,
+      addFileStub.callCount,
       mockFiles.length * 2, //TODO: find out why this needs a * 2
-      'addOrUpdateFile was not called for each file'
+      'addFile was not called for each file'
     );
-    mockFiles.forEach((file, index) => {
+    mockFiles.forEach(file => {
       assert.ok(
-        addOrUpdateFileStub.calledWith(file),
-        `addOrUpdateFile was not called with the correct file: ${file.fsPath}`
+        addFileStub.calledWith(file),
+        `addFile was not called with the correct file: ${file.fsPath}`
       );
     });
   });

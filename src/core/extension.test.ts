@@ -5,8 +5,10 @@ import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-cre
 
 import { CodeTranslationKeyStore } from '@i18n-weave/store/store-code-translation-key-store';
 
-import { I18nextScannerModuleConfiguration } from '@i18n-weave/util/util-configuration';
-import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
+import {
+  ConfigurationStoreManager,
+  I18nextScannerModuleConfiguration,
+} from '@i18n-weave/util/util-configuration';
 import { FileType } from '@i18n-weave/util/util-enums';
 
 import { activate, deactivate } from './extension';

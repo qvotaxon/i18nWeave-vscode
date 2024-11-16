@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 import assert from 'assert';
 import { Uri } from 'vscode';
 
@@ -20,8 +21,8 @@ suite('ModuleChainManager Tests', () => {
   test('registerChain should register a module for a specific chain type', () => {
     const chainType = ChainType.Json;
     const actionModule: ActionModule = {
-      executeAsync: async (context: BaseModuleContext): Promise<void> => {},
-      setNext: function (module: ActionModule | null): void {
+      executeAsync: async (_context: BaseModuleContext): Promise<void> => {},
+      setNext: function (_module: ActionModule | null): void {
         throw new Error('Function not implemented.');
       },
     };
@@ -45,7 +46,7 @@ suite('ModuleChainManager Tests', () => {
         assert.strictEqual(context, baseModuleContext);
         isExecuted = true;
       },
-      setNext: function (module: ActionModule | null): void {
+      setNext: function (_module: ActionModule | null): void {
         throw new Error('Function not implemented.');
       },
     };
@@ -65,10 +66,10 @@ suite('ModuleChainManager Tests', () => {
     };
     let isExecuted = false;
     const actionModule: ActionModule = {
-      executeAsync: async (context: BaseModuleContext): Promise<void> => {
+      executeAsync: async (_context: BaseModuleContext): Promise<void> => {
         isExecuted = true;
       },
-      setNext: function (module: ActionModule | null): void {
+      setNext: function (_module: ActionModule | null): void {
         throw new Error('Function not implemented.');
       },
     };

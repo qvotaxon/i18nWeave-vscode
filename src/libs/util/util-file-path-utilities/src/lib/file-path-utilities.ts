@@ -8,7 +8,7 @@ import {
 } from '@i18n-weave/util/util-configuration';
 import { ExtractedFileParts } from '@i18n-weave/util/util-types';
 
-export function extractLocale(filePath: string): string {
+export function extractLocaleFromFileUri(fileUri: Uri): string {
   const translationFilesLocation =
     ConfigurationStoreManager.getInstance()
       .getConfig<I18nextScannerModuleConfiguration>('i18nextScannerModule')
@@ -19,36 +19,36 @@ export function extractLocale(filePath: string): string {
     `[\\\\/]${translationFilesLocation}[\\\\/]([^\\\\/]+)[\\\\/]`
   );
 
-  const match = localePattern.exec(filePath);
+  const match = localePattern.exec(fileUri.fsPath);
   if (!match || match.length < 2) {
     throw new Error('Unable to extract locale from file path.');
   }
   return match[1];
 }
 
-export function determineOutputPath(filePath: string): Uri {
-  if (!filePath.endsWith('.po') && !filePath.endsWith('.json')) {
+export function determineOutputPath(fileUri: Uri): Uri {
+  if (!fileUri.fsPath.endsWith('.po') && !fileUri.fsPath.endsWith('.json')) {
     throw new Error(
       'Invalid file extension. Only .po and .json files are supported.'
     );
   }
 
-  const commonPath = filePath.replace(/\.po$|\.json$/, '');
-  return filePath.endsWith('.po')
+  const commonPath = fileUri.fsPath.replace(/\.po$|\.json$/, '');
+  return fileUri.fsPath.endsWith('.po')
     ? Uri.file(`${commonPath}.json`)
     : Uri.file(`${commonPath}.po`);
 }
 
 /**
  * Processes the given file path and extracts the locale and output path.
- * @param filePath - The file path to process.
- * @returns A {@link FilePathParts} object containing the extracted locale and output path.
+ * @param fileUri - The file path to process.
+ * @returns A {@link ExtractedFileParts} object containing the extracted locale and output path.
  */
-export function extractFilePathParts(filePath: string): ExtractedFileParts {
-  const locale = extractLocale(filePath);
-  const outputPath = determineOutputPath(filePath);
+export function extractFileUriParts(fileUri: Uri): ExtractedFileParts {
+  const locale = extractLocaleFromFileUri(fileUri);
+  const outputPath = determineOutputPath(fileUri);
 
-  return { locale, outputPath } as ExtractedFileParts;
+  return { locale, outputPath } satisfies ExtractedFileParts;
 }
 
 /**
@@ -56,7 +56,7 @@ export function extractFilePathParts(filePath: string): ExtractedFileParts {
  * @param uri The URI of the file.
  * @returns The file extension.
  */
-export function getFileExtension(uri: vscode.Uri): string {
+export function getFileExtension(uri: Uri): string {
   return path.extname(uri.fsPath).slice(1);
 }
 
@@ -77,31 +77,31 @@ export function getSingleWorkSpaceRoot(): string {
  * @param dir - The starting directory to search from.
  * @returns The path to the project root folder or undefined if not found.
  */
-export function findProjectRoot(dir: string): string | undefined {
-  const queue: string[] = [dir];
+export function findProjectRoot(dir: Uri): Uri | undefined {
+  const queue: Uri[] = [dir];
 
   while (queue.length > 0) {
     const currentDir = queue.shift()!;
 
     // Check for node_modules directory
-    const nodeModulesPath = path.join(currentDir, 'node_modules');
+    const nodeModulesPath = path.join(currentDir.fsPath, 'node_modules');
     if (fs.existsSync(nodeModulesPath)) {
       return currentDir;
     }
 
     // Check for package.json file
-    const packageJsonPath = path.join(currentDir, 'package.json');
+    const packageJsonPath = path.join(currentDir.fsPath, 'package.json');
     if (fs.existsSync(packageJsonPath)) {
       return currentDir;
     }
 
     // Add subdirectories to the queue
     const subDirs = fs
-      .readdirSync(currentDir)
-      .map(name => path.join(currentDir, name))
+      .readdirSync(currentDir.fsPath)
+      .map(name => path.join(currentDir.fsPath, name))
       .filter(subPath => fs.lstatSync(subPath).isDirectory());
 
-    queue.push(...subDirs);
+    queue.push(...subDirs.map(subDir => Uri.file(subDir)));
   }
 
   return undefined;
@@ -111,12 +111,12 @@ export function findProjectRoot(dir: string): string | undefined {
  * Get the actual project root folder by locating the package.json file.
  * @returns The path to the project root folder or undefined if not found.
  */
-export function getProjectRootFolder(): string {
+export function getProjectRootFolder(): Uri {
   const workspaceFolders = vscode.workspace.workspaceFolders;
 
   if (workspaceFolders) {
     for (const folder of workspaceFolders) {
-      const projectRoot = findProjectRoot(folder.uri.fsPath);
+      const projectRoot = findProjectRoot(folder.uri);
       if (projectRoot) {
         return projectRoot;
       }
@@ -136,21 +136,28 @@ export function getPosixPathFromUri(fsPath: string): string {
 }
 
 /**
- * Sanitizes an array of file locations by removing leading and trailing slashes.
+ * Sanitizes an array of file system paths by removing any leading or trailing path separators.
  *
- * @param locations - The array of file locations to sanitize.
- * @returns The sanitized array of file locations.
+ * @param fileFsPaths - An array of file system paths to be sanitized.
+ * @returns An array of sanitized file system paths.
  */
-export function sanitizeLocations(locations: string[]): string[] {
+export function sanitizeLocations(fileFsPaths: string[]): string[] {
   const sanitizedLocations: string[] = [];
 
-  locations.forEach(location => {
-    location = location.endsWith(path.sep)
-      ? location.substring(location.length)
-      : location;
-    location = location.startsWith(path.sep) ? location.substring(1) : location;
+  fileFsPaths.forEach(fileFsPaths => {
+    let fileFsPath = fileFsPaths;
 
-    sanitizedLocations.push(location);
+    if (fileFsPath.endsWith(path.sep)) {
+      fileFsPath = fileFsPath.substring(0, fileFsPath.length - 1);
+    }
+
+    if (fileFsPath.startsWith(path.sep)) {
+      fileFsPath = fileFsPath.substring(1);
+    }
+
+    const sanitizedUri = fileFsPath;
+
+    sanitizedLocations.push(sanitizedUri);
   });
 
   return sanitizedLocations;
@@ -163,8 +170,10 @@ export function sanitizeLocations(locations: string[]): string[] {
  * @throws Error if the project root folder is not found.
  */
 //TODO: find out why this doesn't actually return a relative path
-export function getRelativePath(folderPath: string) {
+export function getRelativePath(folderPath: Uri) {
   const projectRootFolder = getProjectRootFolder();
 
-  return getPosixPathFromUri(folderPath.replace(projectRootFolder, ''));
+  return getPosixPathFromUri(
+    folderPath.fsPath.replace(projectRootFolder.fsPath, '')
+  );
 }

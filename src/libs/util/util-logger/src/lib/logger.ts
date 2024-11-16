@@ -33,7 +33,7 @@ export class Logger {
    * @param level - The log level (INFO, WARN, ERROR)
    * @param message - The message to log
    */
-  public log(level: LogLevel, message: string) {
+  public log(level: LogLevel, message: string, scope?: string) {
     const shouldLogVerbosely =
       this.configuration.getConfig<DebuggingConfiguration>('debugging').logging
         .enableVerboseLogging;
@@ -43,7 +43,9 @@ export class Logger {
     }
 
     const timestamp = new Date().toISOString();
-    const formattedMessage = `[${level}] ${timestamp}: ${message}`;
+    const formattedMessage = scope
+      ? `[${level}] [${scope}] ${timestamp}: ${message}`
+      : `[${level}] ${timestamp}: ${message}`;
     this.outputChannel.appendLine(formattedMessage);
   }
 

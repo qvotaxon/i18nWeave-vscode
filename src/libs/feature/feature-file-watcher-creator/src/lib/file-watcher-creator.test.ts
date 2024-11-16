@@ -8,6 +8,11 @@ import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-cre
 import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 
+import {
+  ConfigurationStore,
+  ConfigurationStoreManager,
+  GeneralConfiguration,
+} from '@i18n-weave/util/util-configuration';
 import { FileType } from '@i18n-weave/util/util-enums';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
@@ -34,9 +39,7 @@ suite('FileWatcherCreator', () => {
       .returns({
         handleFileChangeAsync: handleFileChangeAsyncStub,
         handleFileDeletionAsync: sinon.stub().resolves(),
-        handleFileCreationAsync: function (
-          changeFileLocation: vscode.Uri
-        ): Promise<void> {
+        handleFileCreationAsync: function (_: vscode.Uri): Promise<void> {
           throw new Error('Function not implemented.');
         },
       });
@@ -76,6 +79,18 @@ suite('FileWatcherCreator', () => {
     });
 
     test('should handle file change when not disabled and file lock does not exist', async () => {
+      const generalConfiguration = new GeneralConfiguration();
+      generalConfiguration.betaFeaturesConfiguration = {
+        enableJsonFileWebView: true,
+      };
+
+      const mockConfigStore = new ConfigurationStore({
+        general: generalConfiguration,
+        debugging: { logging: { enableVerboseLogging: true } },
+      });
+      ConfigurationStoreManager.getInstance()['_configurationStore'] =
+        mockConfigStore;
+
       const mockUri = vscode.Uri.parse('file:///path/to/file.ts');
       const mockFileWatcher = {
         onDidCreate: (callback: (uri: vscode.Uri) => Promise<void>) => {
@@ -91,7 +106,7 @@ suite('FileWatcherCreator', () => {
       createFileSystemWatcherStub.returns(mockFileWatcher);
       hasFileLockStub.returns(false);
 
-      FileLocationStore.getInstance().addOrUpdateFile(mockUri);
+      FileLocationStore.getInstance().addFile(mockUri);
 
       await fileWatcherCreator.createFileWatchersForFileTypeAsync(
         FileType.Code,

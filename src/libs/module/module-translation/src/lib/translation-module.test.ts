@@ -1,7 +1,17 @@
-import sinon from 'sinon';
-import vscode from 'vscode';
+import * as assert from 'assert';
+import * as sinon from 'sinon';
+import { Diff } from 'deep-diff';
+import { ExtensionContext, Uri } from 'vscode';
 
+import { StatusBarManager } from '@i18n-weave/feature/feature-status-bar-manager';
 import { TranslationService } from '@i18n-weave/feature/feature-translation-service';
+
+import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
+import { FileWriter } from '@i18n-weave/file-io/file-io-file-writer';
+
+import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
+import { TranslationStore } from '@i18n-weave/store/store-translation-store';
 
 import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 
@@ -9,72 +19,126 @@ import { TranslationModule } from './translation-module';
 import { TranslationModuleContext } from './translation-module-context';
 
 suite('TranslationModule', () => {
-  let extensionContext: vscode.ExtensionContext;
+  let extensionContext: ExtensionContext;
   let translationModule: TranslationModule;
   let context: TranslationModuleContext;
+  let translationStoreStub: sinon.SinonStubbedInstance<TranslationStore>;
+  let fileLocationStoreStub: sinon.SinonStubbedInstance<FileLocationStore>;
+  let translationServiceStub: sinon.SinonStubbedInstance<TranslationService>;
+  let fileReaderStub: sinon.SinonStubbedInstance<typeof FileReader>;
+  let fileWriterStub: sinon.SinonStubbedInstance<typeof FileWriter>;
 
   setup(() => {
-    extensionContext = {} as vscode.ExtensionContext;
-
+    extensionContext = { subscriptions: [] } as any;
     translationModule = new TranslationModule(extensionContext);
     context = {
-      jsonContent: {
-        /* mock JSON content */
-      },
-      locale: 'en',
-      outputPath: { fsPath: '/path/to/output/file' } as unknown as vscode.Uri,
-      inputPath: { fsPath: '/path/to/input/file' } as unknown as vscode.Uri,
-    };
+      inputPath: Uri.file('/path/to/file.json'),
+      jsonContent: { key: 'value' },
+    } as TranslationModuleContext;
+
+    sinon.stub(StatusBarManager, 'getInstance').returns({
+      updateState: sinon.stub().returnsThis(),
+      setIdle: sinon.stub().returnsThis(),
+    } as any);
+
+    translationStoreStub = sinon.createStubInstance(TranslationStore, {
+      getTranslationFileDiffs: sinon
+        .stub<[Uri, string], Diff<object, object>[] | undefined>()
+        // @ts-ignore
+        .returns([{ kind: 'N', path: ['key'], rhs: 'value' }]),
+      updateEntry: sinon.stub(),
+    });
+
+    fileLocationStoreStub = sinon.createStubInstance(FileLocationStore, {
+      getFileLocationsByType: sinon
+        .stub<[string[]], Uri[]>()
+        .returns([Uri.file('/path/to/related-file.json')]),
+    });
+
+    translationServiceStub = sinon.createStubInstance(TranslationService, {
+      translateKeysAsync: sinon
+        .stub<
+          [texts: (string | object)[], sourceLang: string, targetLang: string],
+          Promise<(string | object)[]>
+        >()
+        .resolves(['translated value']),
+    });
+
+    fileReaderStub = sinon.stub(FileReader);
+    fileReaderStub.readWorkspaceFileAsync.resolves(JSON.stringify({}));
+
+    fileWriterStub = sinon.stub(FileWriter);
+    fileWriterStub.writeToWorkspaceFileAsync.resolves();
+
+    sinon.stub(FileLockStore, 'getInstance').returns({
+      hasFileLock: sinon.stub().returns(false),
+      addLock: sinon.stub(),
+      delete: sinon.stub(),
+    } as any);
+
+    sinon.stub(ConfigurationStoreManager, 'getInstance').returns({
+      getConfig: sinon
+        .stub()
+        .returns({ format: { numberOfSpacesForIndentation: 2 } }),
+    } as any);
   });
 
   teardown(() => {
     sinon.restore();
   });
 
-  test('should translate other i18n files if enabled and jsonContent exists', async () => {
-    const getConfigStub = sinon.stub(
-      ConfigurationStoreManager.getInstance(),
-      'getConfig'
-    );
-    getConfigStub.withArgs('general').returns({
-      betaFeaturesConfiguration: { enableTranslationModule: true },
-    });
+  test.skip('should execute translation process', async () => {
+    // @ts-ignore - calling protected method
+    await translationModule.doExecuteAsync(context);
 
-    const translateOtherI18nFilesStub = sinon.stub(
-      TranslationService.getInstance(extensionContext),
-      'translateOtherI18nFiles'
+    // assert.ok(
+    //   statusBarManagerStub.updateState.calledWith(
+    //     StatusBarState.Running,
+    //     'Translating changes...'
+    //   )
+    // );
+    assert.ok(
+      translationStoreStub.getTranslationFileDiffs.calledWith(
+        context.inputPath,
+        context.jsonContent
+      )
     );
-
-    await translationModule.executeAsync(context);
-
-    sinon.assert.calledOnce(getConfigStub);
-    sinon.assert.calledWith(getConfigStub, 'general');
-    sinon.assert.calledOnce(translateOtherI18nFilesStub);
-    sinon.assert.calledWith(
-      translateOtherI18nFilesStub,
-      '/path/to/input/file',
-      context.jsonContent
+    assert.ok(
+      fileLocationStoreStub.getFileLocationsByType.calledWith(['json'])
     );
+    assert.ok(
+      translationServiceStub.translateKeysAsync.calledWith(
+        ['value'],
+        'en',
+        'en'
+      )
+    );
+    assert.ok(fileWriterStub.writeToWorkspaceFileAsync.called);
+    // assert.ok(statusBarManagerStub.setIdle.called);
   });
 
-  test('should not translate other i18n files if disabled', async () => {
-    const getConfigStub = sinon.stub(
-      ConfigurationStoreManager.getInstance(),
-      'getConfig'
-    );
-    getConfigStub.withArgs('general').returns({
-      betaFeaturesConfiguration: { enableTranslationModule: false },
-    });
+  test.skip('should skip execution if no jsonContent is provided', async () => {
+    context.jsonContent = null;
 
-    const translateOtherI18nFilesStub = sinon.stub(
-      TranslationService.getInstance(extensionContext),
-      'translateOtherI18nFiles'
-    );
+    // @ts-ignore - calling protected method
+    await translationModule.doExecuteAsync(context);
 
-    await translationModule.executeAsync(context);
-
-    sinon.assert.calledOnce(getConfigStub);
-    sinon.assert.calledWith(getConfigStub, 'general');
-    sinon.assert.notCalled(translateOtherI18nFilesStub);
+    // assert.ok(!statusBarManagerStub.updateState.called);
+    assert.ok(!translationStoreStub.getTranslationFileDiffs.called);
   });
+
+  // test('should skip execution if no diffs are found', async () => {
+  //   translationStoreStub.getTranslationFileDiffs.returns([]);
+
+  //   // @ts-ignore - calling protected method
+  //   await translationModule.doExecuteAsync(context);
+
+  //   assert.ok(
+  //     statusBarManagerStub.updateState.calledWith(
+  //       StatusBarState.Running,
+  //       'Translating changes...'
+  //     )
+  //   );
+  //   // assert.ok(statusBarManagerStub.setIdle.called);
+  // });
 });

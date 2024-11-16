@@ -55,7 +55,9 @@ export async function configureCodeFileLocationsAsync(
     return false;
   }
 
-  config.codeFileLocations = sanitizeLocations(locations);
+  config.codeFileLocations = sanitizeLocations(locations).map(
+    location => location
+  );
   return true;
 }
 
@@ -150,7 +152,7 @@ export async function setConfigurationAsync(
   if (patch) {
     Object.assign(config, patch);
   }
-  await ConfigurationStoreManager.getInstance().setConfigAsync<I18nextScannerModuleConfiguration>(
+  await ConfigurationStoreManager.getInstance().setConfigAsync(
     'i18nextScannerModule',
     config
   );

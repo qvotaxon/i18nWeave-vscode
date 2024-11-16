@@ -1,7 +1,6 @@
 import * as assert from 'assert';
 import * as mock from 'mock-fs';
-import vscode from 'vscode';
-import { Uri } from 'vscode';
+import vscode, { Uri } from 'vscode';
 
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
@@ -42,10 +41,10 @@ suite('ReadJsonFileModule Tests', () => {
 
   test('doExecute should not assign the context.jsonContent if the file is empty', async () => {
     const inputPath = Uri.file('/path/to/emptyFile.json');
-    const readFileAsyncOriginal = FileReader.readFileAsync;
+    const readFileAsyncOriginal = FileReader.readWorkspaceFileAsync;
 
-    FileReader.readFileAsync = async (filePath: string) => {
-      assert.strictEqual(filePath, inputPath.fsPath);
+    FileReader.readWorkspaceFileAsync = async (filePath: Uri) => {
+      assert.strictEqual(filePath.fsPath, inputPath.fsPath);
       return '';
     };
 
@@ -61,15 +60,15 @@ suite('ReadJsonFileModule Tests', () => {
 
     assert.strictEqual(context.jsonContent, null);
 
-    FileReader.readFileAsync = readFileAsyncOriginal;
+    FileReader.readWorkspaceFileAsync = readFileAsyncOriginal;
   });
 
   test('doExecute should not assign the context.jsonContent if the file is not found', async () => {
     const inputPath = Uri.file('/path/to/nonexistentFile.json');
-    const readFileAsyncOriginal = FileReader.readFileAsync;
+    const readFileAsyncOriginal = FileReader.readWorkspaceFileAsync;
 
-    FileReader.readFileAsync = async (filePath: string) => {
-      assert.strictEqual(filePath, inputPath.fsPath);
+    FileReader.readWorkspaceFileAsync = async (filePath: Uri) => {
+      assert.strictEqual(filePath.fsPath, inputPath.fsPath);
       throw new Error('File not found');
     };
 
@@ -84,6 +83,6 @@ suite('ReadJsonFileModule Tests', () => {
     assert.rejects(module.executeAsync(context), Error, 'File not found');
     assert.strictEqual(context.jsonContent, null);
 
-    FileReader.readFileAsync = readFileAsyncOriginal;
+    FileReader.readWorkspaceFileAsync = readFileAsyncOriginal;
   });
 });

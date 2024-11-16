@@ -13,6 +13,8 @@ import {
 } from '@i18n-weave/feature/feature-status-bar-manager';
 import { TextDocumentChangedHandler } from '@i18n-weave/feature/feature-text-document-changed-handler';
 
+import { TranslationStore } from '@i18n-weave/store/store-translation-store';
+
 import {
   ConfigurationStoreManager,
   I18nextScannerModuleConfiguration,
@@ -53,6 +55,7 @@ export async function activate(
   fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator(),
   configurationManager: ConfigurationStoreManager = ConfigurationStoreManager.getInstance(),
   configurationWizardService: ConfigurationWizardService = new ConfigurationWizardService(),
+  translationStore: TranslationStore = TranslationStore.getInstance(),
   fileLocationInitializer: FileLocationInitializer = new FileLocationInitializer(
     context
   ),
@@ -61,8 +64,6 @@ export async function activate(
   ),
   textDocumentChangedHandler: TextDocumentChangedHandler = new TextDocumentChangedHandler()
 ) {
-  console.log('i18nWeave is now active!');
-
   initializeSentry();
 
   try {
@@ -71,9 +72,10 @@ export async function activate(
     statusBarManager.updateState(StatusBarState.Running, 'Initializing...');
 
     configurationManager.initialize();
-    logger.log(LogLevel.INFO, 'i18nWeave is now active!');
+    logger.log(LogLevel.INFO, 'i18nWeave is starting up...', 'Core');
 
     await fileLocationInitializer.initializeFileLocations();
+    await translationStore.initializeAsync();
 
     const onDidOpenTextDocumentDisposable =
       textDocumentOpenedHandler.initialize();
@@ -90,7 +92,11 @@ export async function activate(
           fileWatcherCreator,
           context
         );
-        logger.log(LogLevel.INFO, 'Configuration changed, re-initializing...');
+        logger.log(
+          LogLevel.INFO,
+          'Configuration changed, re-initializing...',
+          'Core'
+        );
       });
 
     const { codeFileWatchers, jsonFileWatchers } = await createFileWatchers(
@@ -116,6 +122,7 @@ export async function activate(
     );
 
     statusBarManager.updateState(StatusBarState.Idle, 'Idle');
+    logger.log(LogLevel.INFO, 'i18nWeave is watching your files... 🌍', 'Core');
   } catch (error) {
     Sentry.captureException(error);
   }

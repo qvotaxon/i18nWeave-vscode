@@ -18,8 +18,8 @@ suite('WebviewService', () => {
     mockWebviewFactory = sinon.createStubInstance<IWebviewFactory>(
       class implements IWebviewFactory {
         createWebview(
-          fileType: FileType,
-          uri: vscode.Uri
+          _fileType: FileType,
+          _uri: vscode.Uri
         ): vscode.WebviewPanel | undefined {
           return undefined;
         }
@@ -30,7 +30,9 @@ suite('WebviewService', () => {
         getWebview(): vscode.WebviewPanel | undefined {
           return undefined;
         }
-        addWebview() {}
+        addWebview() {
+          /* Test has no requirement for the method 'addWebview' */
+        }
       }
     );
     webviewService = new WebviewService(mockWebviewStore, mockWebviewFactory);

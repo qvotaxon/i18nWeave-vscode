@@ -59,7 +59,7 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
     if (fs.existsSync(changeFileLocation.fsPath)) {
       hasTranslationFunctions =
         await CodeTranslationKeyStore.getInstance().fileChangeContainsTranslationFunctionsAsync(
-          changeFileLocation.fsPath
+          changeFileLocation
         );
     }
 
@@ -80,12 +80,13 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
 
     this._logger.log(
       LogLevel.INFO,
-      `Code File change handled: ${changeFileLocation}`
+      `Code File change handled: ${changeFileLocation}`,
+      CodeFileChangeHandler.name
     );
 
     if (!isFileDeletionChange) {
       await CodeTranslationKeyStore.getInstance().updateStoreRecordAsync(
-        changeFileLocation.fsPath
+        changeFileLocation
       );
     }
   }
@@ -98,9 +99,7 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
     }
     await super.handleFileDeletionAsync(changeFileLocation);
     await this.handleFileChangeAsync(changeFileLocation, true);
-    CodeTranslationKeyStore.getInstance().deleteStoreRecord(
-      changeFileLocation.fsPath
-    );
+    CodeTranslationKeyStore.getInstance().deleteStoreRecord(changeFileLocation);
   }
 
   public async handleFileCreationAsync(changeFileLocation: Uri): Promise<void> {

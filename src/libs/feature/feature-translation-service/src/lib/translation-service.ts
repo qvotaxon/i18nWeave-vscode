@@ -1,26 +1,19 @@
-import fs from 'fs';
-import path from 'path';
-import { FormatConfiguration } from 'src/libs/util/util-configuration/src/lib/general/format-configuration';
+import { SourceLanguageCode, TargetLanguageCode } from 'deepl-node';
 import vscode from 'vscode';
-
-import {
-  StatusBarManager,
-  StatusBarState,
-} from '@i18n-weave/feature/feature-status-bar-manager';
 
 import { DeeplClient } from '@i18n-weave/http/http-deepl-client';
 
 import {
-  ConfigurationStoreManager,
-  GeneralConfiguration,
-} from '@i18n-weave/util/util-configuration';
+  collectLeafValues,
+  reconstructObjectWithUpdatedValues,
+} from '@i18n-weave/util/util-nested-object-utils';
 
 /**
  * Singleton class for managing translation services.
  */
 export class TranslationService {
   private static instance: TranslationService;
-  private context: vscode.ExtensionContext;
+  private readonly context: vscode.ExtensionContext;
 
   private constructor(context: vscode.ExtensionContext) {
     this.context = context;
@@ -40,202 +33,76 @@ export class TranslationService {
     return TranslationService.instance;
   }
 
-  /**
-   * Retrieves paths of other translation files in the same directory structure.
-   * @param fileLocation - The location of the file to find related translation files.
-   * @returns An array of file paths for other translation files.
-   */
-  public getOtherTranslationFilesPaths(fileLocation: string): string[] {
-    const directory = fileLocation.substring(
-      0,
-      fileLocation.lastIndexOf(path.sep)
-    );
-    const parentDirectory = directory.substring(
-      0,
-      directory.lastIndexOf(path.sep)
-    );
-    const fileName = fileLocation.substring(
-      fileLocation.lastIndexOf(path.sep) + 1
-    );
+  public async translateKeysAsync(
+    texts: (object | string)[],
+    sourceLang: string,
+    targetLang: string
+  ): Promise<(object | string)[]> {
+    const client = await DeeplClient.getInstanceAsync(this.context);
 
-    const files: string[] = [];
-    fs.readdirSync(parentDirectory).forEach(file => {
-      const filePath = `${parentDirectory}${path.sep}${file}`;
-      const stat = fs.statSync(filePath);
-      if (stat.isDirectory()) {
-        fs.readdirSync(filePath).forEach(subFile => {
-          if (subFile === fileName) {
-            files.push(`${filePath}${path.sep}${subFile}`);
-          }
-        });
-      }
-    });
-
-    const index = files.indexOf(fileLocation);
-    if (index > -1) {
-      files.splice(index, 1);
-    }
-
-    return files;
-  }
-
-  /**
-   * Translates missing keys in other i18n files based on the changes made in the given file.
-   * @param fileLocation - The location of the file with changes.
-   * @param changedFileContent - The content of the changed file.
-   */
-  public async translateOtherI18nFiles(
-    fileLocation: string,
-    changedFileContent: string
-  ): Promise<void> {
-    const statusBarManager = StatusBarManager.getInstance();
-    statusBarManager.updateState(
-      StatusBarState.Running,
-      'Translating missing keys in other i18n files...'
-    );
-    const deeplClient = await DeeplClient.getInstanceAsync(this.context);
-
-    const configManager = ConfigurationStoreManager.getInstance();
-    const generalConfig =
-      configManager.getConfig<GeneralConfiguration>('general');
-    const otherFilePaths = this.getOtherTranslationFilesPaths(fileLocation);
-    const changedTranslations = JSON.parse(changedFileContent);
-
-    const translationPromises = otherFilePaths.map(async filePath => {
-      const existingTranslations = JSON.parse(
-        fs.readFileSync(filePath, 'utf-8')
-      );
-      const missingTranslations = this.findMissingTranslations(
-        changedTranslations,
-        existingTranslations,
-        '',
-        filePath
+    const translateTexts = async (texts: string[]): Promise<string[]> => {
+      const nonEmptyTexts = texts.filter(text => text.trim() !== '');
+      const translatedNonEmptyTexts = await client.translateAsync(
+        nonEmptyTexts,
+        sourceLang as SourceLanguageCode,
+        targetLang as TargetLanguageCode
       );
 
-      // Group missingTranslation to groups with locale and all values to be translated.
-      const groupedValuesToBeTranslated: { [locale: string]: string[] }[] = [];
-
-      for (const missingTranslation of missingTranslations) {
-        const locale = missingTranslation.locale;
-        const value = missingTranslation.originalValue;
-
-        const group = groupedValuesToBeTranslated.find(group => group[locale]);
-        if (group) {
-          group[locale].push(value);
-        } else {
-          groupedValuesToBeTranslated.push({ [locale]: [value] });
-        }
-      }
-
-      const translationPromises = groupedValuesToBeTranslated.map(
-        async valueToBeTranslated => {
-          const locale = Object.keys(valueToBeTranslated)[0];
-          const values = valueToBeTranslated[locale];
-
-          const translatedValues = await deeplClient.fetchTranslations(
-            values,
-            locale
-          );
-
-          for (let i = 0; i < values.length; i++) {
-            this.updateTranslation(
-              existingTranslations,
-              missingTranslations[i].key.split('.'),
-              translatedValues[i]
-            );
-          }
-        }
+      let nonEmptyIndex = 0;
+      return texts.map(text =>
+        text.trim() === '' ? text : translatedNonEmptyTexts[nonEmptyIndex++]
       );
+    };
 
-      await Promise.all(translationPromises);
-
-      if (
-        groupedValuesToBeTranslated &&
-        groupedValuesToBeTranslated.length > 0
-      ) {
-        fs.writeFileSync(
-          filePath,
-          JSON.stringify(
-            existingTranslations,
-            null,
-            generalConfig.format.numberOfSpacesForIndentation
-          )
-        );
-      }
-    });
-
-    await Promise.all(translationPromises);
-
-    statusBarManager.setIdle();
-  }
-
-  private findMissingTranslations(
-    changedObj: any,
-    existingObj: any,
-    path: string,
-    filePath: string
-  ): {
-    key: string;
-    filePath: string;
-    originalValue: string;
-    locale: string;
-  }[] {
-    const missingTranslations: {
-      key: string;
-      filePath: string;
-      originalValue: string;
-      locale: string;
+    const stringsToTranslate: string[] = [];
+    const objectLeavesToTranslate: {
+      objIndex: number;
+      leaves: { path: string[]; value: string }[];
     }[] = [];
 
-    for (const key in changedObj) {
-      if (changedObj.hasOwnProperty(key)) {
-        const changedValue = changedObj[key];
-        const existingValue = existingObj[key];
-
-        if (
-          typeof changedValue === 'object' &&
-          typeof existingValue === 'object'
-        ) {
-          missingTranslations.push(
-            ...this.findMissingTranslations(
-              changedValue,
-              existingValue,
-              path ? `${path}.${key}` : key,
-              filePath
-            )
-          );
-        } else if (changedValue !== '' && existingValue === '') {
-          missingTranslations.push({
-            filePath: filePath,
-            key: path ? `${path}.${key}` : key,
-            originalValue: changedValue,
-            locale: this.getLocaleFromFilePath(filePath),
-          });
-        }
+    texts.forEach((text, index) => {
+      if (typeof text === 'string') {
+        stringsToTranslate.push(text);
+      } else {
+        const leaves = collectLeafValues(text);
+        objectLeavesToTranslate.push({ objIndex: index, leaves });
       }
-    }
+    });
 
-    return missingTranslations;
-  }
+    const translatedStrings =
+      stringsToTranslate.length > 0
+        ? await translateTexts(stringsToTranslate)
+        : [];
+    const leafValuesToTranslate = objectLeavesToTranslate.flatMap(
+      ({ leaves }) => leaves.map(leaf => leaf.value)
+    );
+    const translatedLeafValues =
+      leafValuesToTranslate.length > 0
+        ? await translateTexts(leafValuesToTranslate)
+        : [];
 
-  private getLocaleFromFilePath(filePath: string): string {
-    const parts = filePath.split(path.sep);
-    return parts[parts.length - 2];
-  }
+    let translationIndex = 0;
+    const updatedObjectLeaves = objectLeavesToTranslate.map(
+      ({ objIndex, leaves }) => ({
+        objIndex,
+        leaves: leaves.map(leaf => ({
+          ...leaf,
+          value: translatedLeafValues[translationIndex++],
+        })),
+      })
+    );
 
-  private updateTranslation(
-    existingObj: any,
-    keys: string[],
-    translatedValue: string
-  ): void {
-    let nestedObj = existingObj;
-    for (let i = 0; i < keys.length - 1; i++) {
-      const key = keys[i];
-      if (!nestedObj[key]) {
-        nestedObj[key] = {};
+    const translatedObjects = updatedObjectLeaves.map(
+      ({ objIndex, leaves }) => {
+        const originalObj = texts[objIndex] as object;
+        return reconstructObjectWithUpdatedValues(originalObj, leaves);
       }
-      nestedObj = nestedObj[key];
-    }
-    nestedObj[keys[keys.length - 1]] = translatedValue;
+    );
+
+    return texts.map(text =>
+      typeof text === 'string'
+        ? translatedStrings.shift()!
+        : translatedObjects.shift()!
+    );
   }
 }

@@ -103,8 +103,8 @@ export async function showOpenDialog(
   }
 
   if (folderUri.length > 1) {
-    return folderUri.map(folderUri => getRelativePath(folderUri.fsPath));
+    return folderUri.map(folderUri => getRelativePath(folderUri));
   }
 
-  return [getRelativePath(folderUri[0].fsPath)];
+  return [getRelativePath(folderUri[0])];
 }

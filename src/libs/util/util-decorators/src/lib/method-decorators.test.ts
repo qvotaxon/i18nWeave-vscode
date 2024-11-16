@@ -7,10 +7,8 @@ import { TraceMethod } from '@i18n-weave/util/util-decorators';
 suite('TraceMethod Decorator', () => {
   let startSpan: sinon.SinonStub;
   let captureException: sinon.SinonStub;
-  let spanFinish: sinon.SinonStub;
 
   setup(() => {
-    spanFinish = sinon.stub();
     startSpan = sinon.stub(Sentry, 'startSpan').callsFake((_, callback) => {
       return callback({} as Sentry.Span); // Call the callback directly to execute the decorated method
     });
@@ -48,7 +46,7 @@ suite('TraceMethod Decorator', () => {
   test('should capture exceptions with Sentry', async () => {
     class TestService {
       @TraceMethod
-      async myMethod(arg: string): Promise<string> {
+      async myMethod(_: string): Promise<string> {
         throw new Error('Test Error');
       }
     }

@@ -16,7 +16,7 @@ import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
 import { ChainType } from '@i18n-weave/util/util-enums';
-import { extractFilePathParts } from '@i18n-weave/util/util-file-path-utilities';
+import { extractFileUriParts } from '@i18n-weave/util/util-file-path-utilities';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 export class JsonFileChangeHandler extends BaseFileChangeHandler {
@@ -89,7 +89,7 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
       return Promise.resolve();
     }
 
-    const extractedFileParts = extractFilePathParts(changeFileLocation.fsPath);
+    const extractedFileParts = extractFileUriParts(changeFileLocation);
 
     const context: BaseModuleContext = {
       inputPath: changeFileLocation,
@@ -97,7 +97,7 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
       outputPath: extractedFileParts.outputPath,
     };
 
-    FileLockStore.getInstance().add(extractedFileParts.outputPath);
+    FileLockStore.getInstance().addLock(extractedFileParts.outputPath);
 
     await JsonFileChangeHandler.moduleChainManager.executeChainAsync(
       ChainType.Json,
@@ -105,15 +105,18 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
     );
 
     this._logger.log(
-      LogLevel.INFO,
-      `Json File change handled: ${changeFileLocation}`
+      LogLevel.VERBOSE,
+      `Json File change handled: ${changeFileLocation}`,
+      JsonFileChangeHandler.name
     );
 
-    JsonFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
-      extractedFileParts.outputPath.fsPath,
-      () => {
-        FileLockStore.getInstance().delete(extractedFileParts.outputPath);
-      }
-    );
+    const fileWatcherDisposable =
+      JsonFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
+        extractedFileParts.outputPath.fsPath,
+        () => {
+          FileLockStore.getInstance().deleteAll(extractedFileParts.outputPath);
+          fileWatcherDisposable.dispose();
+        }
+      );
   }
 }

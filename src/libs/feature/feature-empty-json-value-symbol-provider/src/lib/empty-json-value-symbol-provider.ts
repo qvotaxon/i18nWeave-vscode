@@ -13,7 +13,7 @@ export class EmptyJsonValueSymbolProvider
 
   provideDocumentSymbols(
     document: vscode.TextDocument,
-    token: vscode.CancellationToken
+    _: vscode.CancellationToken
   ): vscode.ProviderResult<vscode.DocumentSymbol[]> {
     const symbols: vscode.DocumentSymbol[] = [];
 
@@ -24,7 +24,11 @@ export class EmptyJsonValueSymbolProvider
       // Recursively search for empty strings
       this.findEmptyStrings(jsonContent, symbols, document);
     } catch (error) {
-      this._logger.log(LogLevel.ERROR, `Error parsing JSON: ${error}`);
+      this._logger.log(
+        LogLevel.VERBOSE,
+        `Error parsing JSON: ${error}`,
+        EmptyJsonValueSymbolProvider.name
+      );
     }
 
     return symbols;

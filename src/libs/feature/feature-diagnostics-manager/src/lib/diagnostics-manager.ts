@@ -24,7 +24,11 @@ export class DiagnosticsManager {
     document: vscode.TextDocument,
     documentSymbols: vscode.DocumentSymbol[] | null | undefined
   ) {
-    this._logger.log(LogLevel.INFO, `Updating diagnostics for ${document.uri}`);
+    this._logger.log(
+      LogLevel.VERBOSE,
+      `Updating diagnostics for ${document.uri}`,
+      DiagnosticsManager.name
+    );
 
     if (documentSymbols) {
       // Create diagnostics for empty values

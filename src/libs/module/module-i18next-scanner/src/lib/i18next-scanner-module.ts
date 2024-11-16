@@ -20,7 +20,7 @@ export class I18nextScannerModule extends BaseActionModule {
    */
   @TraceMethod
   protected async doExecuteAsync(
-    context: I18nextScannerModuleContext
+    _: I18nextScannerModuleContext
   ): Promise<void> {
     if (
       ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(

@@ -1,6 +1,7 @@
 import { Uri } from 'vscode';
 
 import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+import { TranslationStore } from '@i18n-weave/store/store-translation-store';
 
 export abstract class BaseFileChangeHandler {
   public abstract handleFileChangeAsync(
@@ -9,8 +10,10 @@ export abstract class BaseFileChangeHandler {
 
   public async handleFileDeletionAsync(changeFileLocation: Uri): Promise<void> {
     FileLocationStore.getInstance().deleteFile(changeFileLocation);
+    TranslationStore.getInstance().deleteEntry(changeFileLocation);
   }
   public async handleFileCreationAsync(changeFileLocation: Uri): Promise<void> {
-    FileLocationStore.getInstance().addOrUpdateFile(changeFileLocation);
+    FileLocationStore.getInstance().addFile(changeFileLocation);
+    await TranslationStore.getInstance().addEntryAsync(changeFileLocation);
   }
 }
