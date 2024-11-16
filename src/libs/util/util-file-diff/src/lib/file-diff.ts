@@ -7,12 +7,7 @@ export function diffJsonObjects(
   return deepDiff.diff(oldObj, newObj);
 }
 
-export function applyChange(jsonObj: JSON, diffs: Diff<any, any>[]): JSON {
-  diffs.forEach(diff => {
-    deepDiff.applyChange(jsonObj, {}, diff);
-    var test = jsonObj;
-  });
-
-  return jsonObj;
+export function applyChange(target: any, change: any): void {
+  deepDiff.applyChange(target, {}, change);
 }
 
