@@ -40,17 +40,16 @@ See the website [i18nWeave.com](https://i18nweave.com/) for more info. Of course
 
   When you add a translation for one locale, translations for all other locales are automatically generated. The following translators have been (or will be) implemented:
 
-  - [DeepL](https://www.deepl.com/translator) - Is now in beta - (requires an Api key)
+  - [DeepL](https://www.deepl.com/translator) (requires an Api key)
   - [Google Translate](https://translate.google.com) (not implemented yet)
 
 ## Beta Features
 
-- [DeepL](https://www.deepl.com/translator) - (requires an Api key)
+- Table View
 
-  Please be aware that since this is still a beta feature, you should take extra care when enabling this feature.
-  If the feature missbehaves it could possibly cause token to be spend is massive amounts.
+Have i18nWeave represent your json files in a table format. 
 
-  > **If you have a paid account, you probably shouldn't enable this feature yet.**
+  > **This feature is still very buggy and very likely to be replaced.**
 
 ## Configuring Your i18nWeave Extension
 
