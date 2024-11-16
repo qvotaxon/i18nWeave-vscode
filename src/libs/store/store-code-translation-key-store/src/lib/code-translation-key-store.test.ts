@@ -8,7 +8,10 @@ import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
 import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 
-import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
+import {
+  ConfigurationStoreManager,
+  I18nextScannerModuleConfiguration,
+} from '@i18n-weave/util/util-configuration';
 
 import { CodeTranslationKeyStore } from './code-translation-key-store';
 
@@ -108,10 +111,23 @@ suite('CodeTranslationKeyStore', () => {
         //@ts-ignore - stubbing private method
         .returns(newTranslationFunctionNames);
 
-      const result =
-        await codeTranslationStore.fileChangeContainsTranslationFunctionsAsync(
-          fsPath
-        );
+      const result = await codeTranslationStore.hasTranslationChanges(fsPath, {
+        enabled: true,
+        translationFilesLocation: 'src/i18n',
+        codeFileLocations: ['src'],
+        defaultNamespace: 'common',
+        namespaces: ['common'],
+        languages: ['en'],
+        defaultLanguage: 'en',
+        nsSeparator: ':',
+        keySeparator: '.',
+        pluralSeparator: '_',
+        contextSeparator: '_',
+        translationFunctionNames: ['t', 'i18next.t'],
+        translationComponentTranslationKey: 'i18nKey',
+        translationComponentName: 'Trans',
+        fileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+      } satisfies I18nextScannerModuleConfiguration);
 
       sinon.assert.calledOnce(readFileAsyncStub);
       sinon.assert.calledOnce(
@@ -145,10 +161,23 @@ suite('CodeTranslationKeyStore', () => {
         //@ts-ignore - stubbing private property
         .returns({ translationFunctionNames: currentTranslationFunctionNames });
 
-      const result =
-        await codeTranslationStore.fileChangeContainsTranslationFunctionsAsync(
-          fsPath
-        );
+      const result = await codeTranslationStore.hasTranslationChanges(fsPath, {
+        enabled: true,
+        translationFilesLocation: 'src/i18n',
+        codeFileLocations: ['src'],
+        defaultNamespace: 'common',
+        namespaces: ['common'],
+        languages: ['en'],
+        defaultLanguage: 'en',
+        nsSeparator: ':',
+        keySeparator: '.',
+        pluralSeparator: '_',
+        contextSeparator: '_',
+        translationFunctionNames: ['t', 'i18next.t'],
+        translationComponentTranslationKey: 'i18nKey',
+        translationComponentName: 'Trans',
+        fileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+      } satisfies I18nextScannerModuleConfiguration);
 
       sinon.assert.calledOnce(readFileAsyncStub);
       sinon.assert.calledOnce(

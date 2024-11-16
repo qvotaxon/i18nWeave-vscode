@@ -51,10 +51,7 @@ suite('CodeFileChangeHandler', () => {
 
       sinon.stub(fs, 'existsSync').returns(true);
       sinon
-        .stub(
-          CodeTranslationKeyStore.getInstance(),
-          'fileChangeContainsTranslationFunctionsAsync'
-        )
+        .stub(CodeTranslationKeyStore.getInstance(), 'hasTranslationChanges')
         .returns(Promise.resolve(true));
 
       const uri = vscode.Uri.file('path/to/file.ts');
@@ -81,10 +78,7 @@ suite('CodeFileChangeHandler', () => {
           sinon.stub());
 
       sinon
-        .stub(
-          CodeTranslationKeyStore.getInstance(),
-          'fileChangeContainsTranslationFunctionsAsync'
-        )
+        .stub(CodeTranslationKeyStore.getInstance(), 'hasTranslationChanges')
         .returns(Promise.resolve(false));
 
       const uri = vscode.Uri.file('path/to/file.ts');
@@ -101,10 +95,7 @@ suite('CodeFileChangeHandler', () => {
           sinon.stub());
 
       sinon
-        .stub(
-          CodeTranslationKeyStore.getInstance(),
-          'fileChangeContainsTranslationFunctionsAsync'
-        )
+        .stub(CodeTranslationKeyStore.getInstance(), 'hasTranslationChanges')
         .returns(Promise.resolve(false));
 
       const uri = vscode.Uri.file('path/to/file.ts');
@@ -131,10 +122,7 @@ suite('CodeFileChangeHandler', () => {
           sinon.stub());
 
       sinon
-        .stub(
-          CodeTranslationKeyStore.getInstance(),
-          'fileChangeContainsTranslationFunctionsAsync'
-        )
+        .stub(CodeTranslationKeyStore.getInstance(), 'hasTranslationChanges')
         .returns(Promise.resolve(true));
 
       const uri = vscode.Uri.file('path/to/file.ts');
@@ -162,10 +150,7 @@ suite('CodeFileChangeHandler', () => {
           sinon.stub());
 
       sinon
-        .stub(
-          CodeTranslationKeyStore.getInstance(),
-          'fileChangeContainsTranslationFunctionsAsync'
-        )
+        .stub(CodeTranslationKeyStore.getInstance(), 'hasTranslationChanges')
         .returns(Promise.resolve(true));
 
       const uri = vscode.Uri.file('path/to/file.ts');
