@@ -201,7 +201,7 @@ suite('CodeFileChangeHandler', () => {
       await handler.handleFileDeletionAsync(uri);
 
       sinon.assert.calledOnceWithExactly(handleFileChangeAsyncStub, uri, true);
-      sinon.assert.calledOnceWithExactly(deleteStoreRecordStub, uri.fsPath);
+      sinon.assert.calledOnceWithExactly(deleteStoreRecordStub, uri);
     });
 
     test('should not handle file deletion if changeFileLocation is undefined', async () => {

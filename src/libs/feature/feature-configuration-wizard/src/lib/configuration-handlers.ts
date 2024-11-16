@@ -1,4 +1,4 @@
-import vscode from 'vscode';
+import vscode, { Uri } from 'vscode';
 
 import {
   ConfigurationStoreManager,
@@ -55,7 +55,9 @@ export async function configureCodeFileLocationsAsync(
     return false;
   }
 
-  config.codeFileLocations = sanitizeLocations(locations);
+  config.codeFileLocations = sanitizeLocations(locations).map(
+    location => location
+  );
   return true;
 }
 

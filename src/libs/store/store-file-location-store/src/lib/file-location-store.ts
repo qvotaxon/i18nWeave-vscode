@@ -1,4 +1,4 @@
-import vscode from 'vscode';
+import vscode, { Uri } from 'vscode';
 
 import { getFileExtension } from '@i18n-weave/util/util-file-path-utilities';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
@@ -6,7 +6,7 @@ import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
 export class FileLocationStore {
   private static instance: FileLocationStore;
-  private readonly fileLocations: Map<string, Set<string>> = new Map();
+  private readonly fileLocations: Map<string, Map<string, Uri>> = new Map();
   private readonly _logger: Logger;
 
   private constructor() {
@@ -57,9 +57,9 @@ export class FileLocationStore {
   public addFile(uri: vscode.Uri) {
     const extension = getFileExtension(uri);
     if (!this.fileLocations.has(extension)) {
-      this.fileLocations.set(extension, new Set());
+      this.fileLocations.set(extension, new Map());
     }
-    this.fileLocations.get(extension)!.add(uri.fsPath);
+    this.fileLocations.get(extension)!.set(uri.fsPath, uri);
 
     this._logger.log(
       LogLevel.VERBOSE,
@@ -86,12 +86,12 @@ export class FileLocationStore {
    * @param extensions An array of file extensions (e.g., ['json', 'po', 'ts']).
    * @returns An array of strings for files of the specified types.
    */
-  public getFileLocationsByType(extensions: string[]): string[] {
-    const files: string[] = [];
+  public getFileLocationsByType(extensions: string[]): Uri[] {
+    const files: Uri[] = [];
     for (const extension of extensions) {
       const extensionFiles = this.fileLocations.get(extension);
       if (extensionFiles) {
-        files.push(...Array.from(extensionFiles));
+        files.push(...Array.from(extensionFiles).map(([_, value]) => value));
       }
     }
     return files;

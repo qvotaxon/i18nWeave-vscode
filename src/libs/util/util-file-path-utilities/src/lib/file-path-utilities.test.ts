@@ -2,7 +2,7 @@ import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
 import sinon from 'sinon';
-import vscode from 'vscode';
+import vscode, { Uri } from 'vscode';
 
 import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 
@@ -27,8 +27,8 @@ suite('filePathUtilities', () => {
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
-      const filePath = 'C:\\locales\\en\\file.po';
-      const locale = filePathUtilities.extractLocaleFromFilePath(filePath);
+      const filePath = Uri.file('C:\\locales\\en\\file.po');
+      const locale = filePathUtilities.extractLocaleFromFileUri(filePath);
       assert.equal(locale, 'en');
     });
 
@@ -43,8 +43,8 @@ suite('filePathUtilities', () => {
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
-      const filePath = '/Users/someuser/project/locales/en/file.json';
-      const locale = filePathUtilities.extractLocaleFromFilePath(filePath);
+      const filePath = Uri.file('/Users/someuser/project/locales/en/file.json');
+      const locale = filePathUtilities.extractLocaleFromFileUri(filePath);
       assert.equal(locale, 'en');
     });
 
@@ -59,8 +59,8 @@ suite('filePathUtilities', () => {
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
-      const filePath = 'C:\\src\\i18n\\en\\file.po';
-      const locale = filePathUtilities.extractLocaleFromFilePath(filePath);
+      const filePath = Uri.file('C:\\src\\i18n\\en\\file.po');
+      const locale = filePathUtilities.extractLocaleFromFileUri(filePath);
       assert.equal(locale, 'en');
     });
 
@@ -75,9 +75,9 @@ suite('filePathUtilities', () => {
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
-      const filePath = 'C:\\invalid\\file.path';
+      const filePath = Uri.file('C:\\invalid\\file.path');
       assert.throws(
-        () => filePathUtilities.extractLocaleFromFilePath(filePath),
+        () => filePathUtilities.extractLocaleFromFileUri(filePath),
         {
           message: 'Unable to extract locale from file path.',
         }
@@ -87,7 +87,7 @@ suite('filePathUtilities', () => {
 
   suite('determineOutputPath', () => {
     test('should determine the output path for .po file', () => {
-      const filePath = 'C:\\locales\\en\\file.po';
+      const filePath = Uri.file('C:\\locales\\en\\file.po');
       const outputPath = filePathUtilities.determineOutputPath(filePath);
       assert.deepStrictEqual(
         outputPath,
@@ -96,7 +96,7 @@ suite('filePathUtilities', () => {
     });
 
     test('should determine the output path for .json file', () => {
-      const filePath = 'C:\\locales\\en\\file.json';
+      const filePath = Uri.file('C:\\locales\\en\\file.json');
       const outputPath = filePathUtilities.determineOutputPath(filePath);
 
       assert.deepStrictEqual(
@@ -106,7 +106,7 @@ suite('filePathUtilities', () => {
     });
 
     test('should throw an error for invalid file extension', () => {
-      const filePath = 'C:\\locales\\en\\file.txt';
+      const filePath = Uri.file('C:\\locales\\en\\file.txt');
 
       assert.throws(() => filePathUtilities.determineOutputPath(filePath), {
         message:
@@ -127,8 +127,8 @@ suite('filePathUtilities', () => {
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
-      const filePath = 'C:\\locales\\en\\file.po';
-      const filePathParts = filePathUtilities.extractFilePathParts(filePath);
+      const filePath = Uri.file('C:\\locales\\en\\file.po');
+      const filePathParts = filePathUtilities.extractFileUriParts(filePath);
 
       assert.deepStrictEqual(filePathParts, {
         locale: 'en',
@@ -147,8 +147,8 @@ suite('filePathUtilities', () => {
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
-      const filePath = 'C:\\src\\i18n\\en\\file.po';
-      const filePathParts = filePathUtilities.extractFilePathParts(filePath);
+      const filePath = Uri.file('C:\\src\\i18n\\en\\file.po');
+      const filePathParts = filePathUtilities.extractFileUriParts(filePath);
 
       assert.deepStrictEqual(filePathParts, {
         locale: 'en',
@@ -159,7 +159,7 @@ suite('filePathUtilities', () => {
 
   suite('getFileExtension', () => {
     test('should get the file extension from the URI', () => {
-      const uri = vscode.Uri.file('C:\\locales\\en\\file.po');
+      const uri = Uri.file('C:\\locales\\en\\file.po');
       const fileExtension = filePathUtilities.getFileExtension(uri);
 
       assert.strictEqual(fileExtension, 'po');
@@ -168,8 +168,8 @@ suite('filePathUtilities', () => {
 
   suite('findProjectRoot', () => {
     test('should find project root by locating package.json downward', () => {
-      const rootDir = 'C:\\workspace';
-      const projectDir = path.join(rootDir, 'project');
+      const rootDir = Uri.file('C:\\workspace');
+      const projectDir = path.join(rootDir.fsPath, 'project');
       const localesDir = path.join(projectDir, 'public', 'locales');
 
       sinon.stub(fs, 'existsSync').callsFake(p => {
@@ -177,7 +177,7 @@ suite('filePathUtilities', () => {
           p === path.join(projectDir, 'package.json') ||
           p === localesDir ||
           p === projectDir ||
-          p === rootDir
+          p === rootDir.fsPath
         );
       });
 
@@ -188,7 +188,7 @@ suite('filePathUtilities', () => {
       });
 
       sinon.stub(fs, 'readdirSync').callsFake((dir): any => {
-        if (dir === rootDir) {
+        if (dir === rootDir.fsPath) {
           return ['project'];
         }
         if (dir === projectDir) {
@@ -205,12 +205,12 @@ suite('filePathUtilities', () => {
     });
 
     test('should stop searching when node_modules is found', () => {
-      const rootDir = 'C:\\workspace';
-      const projectDir = path.join(rootDir, 'project');
+      const rootDir = Uri.file('C:\\workspace');
+      const projectDir = path.join(rootDir.fsPath, 'project');
       const nodeModulesDir = path.join(projectDir, 'node_modules');
 
       sinon.stub(fs, 'existsSync').callsFake(p => {
-        return p === nodeModulesDir || p === projectDir || p === rootDir;
+        return p === nodeModulesDir || p === projectDir || p === rootDir.fsPath;
       });
 
       sinon.stub(fs, 'lstatSync').callsFake((p): any => {
@@ -220,7 +220,7 @@ suite('filePathUtilities', () => {
       });
 
       sinon.stub(fs, 'readdirSync').callsFake((dir): any => {
-        if (dir === rootDir) {
+        if (dir === rootDir.fsPath) {
           return ['project'];
         }
         if (dir === projectDir) {

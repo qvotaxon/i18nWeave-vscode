@@ -84,8 +84,8 @@ export class I18nextScannerService {
       defaultNs: i18nNextScannerModuleConfiguration.defaultNamespace,
       defaultValue: '',
       resource: {
-        loadPath: `${projectRoot}/${i18nNextScannerModuleConfiguration.translationFilesLocation}/{{lng}}/{{ns}}.json`,
-        savePath: `${projectRoot}/${i18nNextScannerModuleConfiguration.translationFilesLocation}/{{lng}}/{{ns}}.json`,
+        loadPath: `${projectRoot.fsPath}/${i18nNextScannerModuleConfiguration.translationFilesLocation}/{{lng}}/{{ns}}.json`,
+        savePath: `${projectRoot.fsPath}/${i18nNextScannerModuleConfiguration.translationFilesLocation}/{{lng}}/{{ns}}.json`,
         jsonIndent: generalConfig.format.numberOfSpacesForIndentation,
         lineEnding: 'CRLF',
       },
@@ -135,7 +135,7 @@ export class I18nextScannerService {
       '!node_modules/**',
     ];
 
-    this.executeScanner(options, projectRoot, scanSources);
+    this.executeScanner(options, projectRoot.fsPath, scanSources);
 
     this._logger.log(
       LogLevel.INFO,

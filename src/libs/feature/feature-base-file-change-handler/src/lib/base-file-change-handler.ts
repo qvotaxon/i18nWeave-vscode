@@ -10,12 +10,10 @@ export abstract class BaseFileChangeHandler {
 
   public async handleFileDeletionAsync(changeFileLocation: Uri): Promise<void> {
     FileLocationStore.getInstance().deleteFile(changeFileLocation);
-    TranslationStore.getInstance().deleteEntry(changeFileLocation.fsPath);
+    TranslationStore.getInstance().deleteEntry(changeFileLocation);
   }
   public async handleFileCreationAsync(changeFileLocation: Uri): Promise<void> {
     FileLocationStore.getInstance().addFile(changeFileLocation);
-    await TranslationStore.getInstance().addEntryAsync(
-      changeFileLocation.fsPath
-    );
+    await TranslationStore.getInstance().addEntryAsync(changeFileLocation);
   }
 }

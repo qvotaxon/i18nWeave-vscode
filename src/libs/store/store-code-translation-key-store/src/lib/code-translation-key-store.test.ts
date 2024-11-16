@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 import assert from 'assert';
 import fs from 'fs';
 import sinon from 'sinon';
@@ -52,7 +53,7 @@ suite('CodeTranslationStore', () => {
     });
 
     test('should initialize code translations and update cache', async () => {
-      const fsPaths = ['path1', 'path2'];
+      const fsPaths = [Uri.file('path1'), Uri.file('path2')];
       const stats = { mtime: new Date() };
 
       updateStoreRecordAsyncStub.callThrough();
@@ -109,7 +110,7 @@ suite('CodeTranslationStore', () => {
     });
 
     test('should check if file change contains translation functions', async () => {
-      const fsPath = 'path';
+      const fsPath = Uri.file('path');
       const codeFileContents = 'fileContents';
       const newTranslationFunctionNames = ['translate'];
 
@@ -141,7 +142,7 @@ suite('CodeTranslationStore', () => {
     });
 
     test('should return false if file change does not contain translation functions', async () => {
-      const fsPath = 'path';
+      const fsPath = Uri.file('path');
       const codeFileContents = 'fileContents';
       const newTranslationFunctionNames = ['translate'];
       const currentTranslationFunctionNames = ['translate'];
@@ -219,7 +220,7 @@ suite('CodeTranslationStore', () => {
     });
 
     test('should update store record and cache', async () => {
-      const fsPath = 'path';
+      const fileUri = Uri.file('path');
       const dateModified = new Date();
       const codeFileContents = 'fileContents';
       const translationFunctionNames = ['translate'];
@@ -233,12 +234,16 @@ suite('CodeTranslationStore', () => {
         //@ts-ignore - stubbing private method
         .returns(translationFunctionNames);
 
-      await codeTranslationStore.updateStoreRecordAsync(fsPath, dateModified);
+      await codeTranslationStore.updateStoreRecordAsync(fileUri, dateModified);
 
       sinon.assert.calledOnce(readFileAsyncStub);
-      sinon.assert.calledWith(readFileAsyncStub, fsPath);
+      sinon.assert.calledWith(readFileAsyncStub, fileUri);
       sinon.assert.calledOnce(updateStoreRecordAsyncStub);
-      sinon.assert.calledWith(updateStoreRecordAsyncStub, fsPath, dateModified);
+      sinon.assert.calledWith(
+        updateStoreRecordAsyncStub,
+        fileUri,
+        dateModified
+      );
       sinon.assert.calledOnce(updateCacheStub);
 
       updateStoreRecordAsyncStub.reset();

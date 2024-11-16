@@ -32,16 +32,14 @@ export class TranslationStore {
     const fileLocations =
       FileLocationStore.getInstance().getFileLocationsByType(['json']);
 
-    for (const fileLocation of fileLocations) {
-      const rawData = await FileReader.readWorkspaceFileAsync(
-        Uri.file(fileLocation)
-      );
+    for (const fileUri of fileLocations) {
+      const rawData = await FileReader.readWorkspaceFileAsync(fileUri);
       const jsonObject = JSON.parse(rawData) as JSON;
-      this._translationFileContents.set(fileLocation, jsonObject);
+      this._translationFileContents.set(fileUri.fsPath, jsonObject);
 
       this._logger.log(
         LogLevel.VERBOSE,
-        `Added translation file ${fileLocation} to store`
+        `Added translation file ${fileUri.fsPath} to store`
       );
     }
 
@@ -51,40 +49,40 @@ export class TranslationStore {
     );
   }
 
-  public getTranslationFileDiffs(filePath: string, newJsonContent: string) {
+  public getTranslationFileDiffs(fileUri: Uri, newJsonContent: string) {
     const newJsonObject = JSON.parse(newJsonContent) as JSON;
-    const oldJsonObject = this._translationFileContents.get(filePath);
+    const oldJsonObject = this._translationFileContents.get(fileUri.fsPath);
 
     const diffs = diffJsonObjects(oldJsonObject ?? {}, newJsonObject);
     return diffs;
   }
 
-  public updateEntry(filePath: string, updatedJsonContent: string) {
+  public updateEntry(fileUri: Uri, updatedJsonContent: string) {
     const updatedJsonObject = JSON.parse(updatedJsonContent) as JSON;
-    this._translationFileContents.set(filePath, updatedJsonObject);
+    this._translationFileContents.set(fileUri.fsPath, updatedJsonObject);
 
     this._logger.log(
       LogLevel.VERBOSE,
-      `Updated translation file ${filePath} in store`
+      `Updated translation file ${fileUri.fsPath} in store`
     );
   }
 
-  public deleteEntry(filePath: string) {
-    this._translationFileContents.delete(filePath);
+  public deleteEntry(fileUri: Uri) {
+    this._translationFileContents.delete(fileUri.fsPath);
     this._logger.log(
       LogLevel.VERBOSE,
-      `Deleted translation file ${filePath} from store`
+      `Deleted translation file ${fileUri.fsPath} from store`
     );
   }
 
-  public async addEntryAsync(filePath: string) {
-    const rawData = await FileReader.readWorkspaceFileAsync(Uri.file(filePath));
+  public async addEntryAsync(fileUri: Uri) {
+    const rawData = await FileReader.readWorkspaceFileAsync(fileUri);
     const jsonObject = JSON.parse(rawData) as JSON;
-    this._translationFileContents.set(filePath, jsonObject);
+    this._translationFileContents.set(fileUri.fsPath, jsonObject);
 
     this._logger.log(
       LogLevel.VERBOSE,
-      `Added translation file ${filePath} to store`
+      `Added translation file ${fileUri.fsPath} to store`
     );
   }
 }

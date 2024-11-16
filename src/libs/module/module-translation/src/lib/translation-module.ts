@@ -19,7 +19,7 @@ import {
   ConfigurationStoreManager,
   GeneralConfiguration,
 } from '@i18n-weave/util/util-configuration';
-import { extractLocaleFromFilePath } from '@i18n-weave/util/util-file-path-utilities';
+import { extractLocaleFromFileUri } from '@i18n-weave/util/util-file-path-utilities';
 import { LogLevel } from '@i18n-weave/util/util-logger';
 
 import { TranslationModuleContext } from './translation-module-context';
@@ -40,7 +40,7 @@ export class TranslationModule extends BaseActionModule {
     }
 
     const diffs = TranslationStore.getInstance().getTranslationFileDiffs(
-      context.inputPath.fsPath,
+      context.inputPath,
       context.jsonContent
     );
     if (!diffs || diffs.length === 0) {
@@ -60,7 +60,7 @@ export class TranslationModule extends BaseActionModule {
       return;
     }
 
-    const sourceLanguage = extractLocaleFromFilePath(context.inputPath.fsPath);
+    const sourceLanguage = extractLocaleFromFileUri(context.inputPath);
     const otherFiles = this.findRelatedFiles(context.inputPath.fsPath);
     const translationsByLanguage = await this.translateChanges(
       sourceLanguage,
@@ -73,7 +73,7 @@ export class TranslationModule extends BaseActionModule {
       config
     );
     TranslationStore.getInstance().updateEntry(
-      context.inputPath.fsPath,
+      context.inputPath,
       context.jsonContent
     );
   }
@@ -86,16 +86,16 @@ export class TranslationModule extends BaseActionModule {
     return FileLocationStore.getInstance()
       .getFileLocationsByType(['json'])
       .filter(
-        fileLocation =>
-          fileLocation !== currentFilePath &&
-          path.basename(fileLocation) === path.basename(currentFilePath)
+        fileUri =>
+          fileUri.fsPath !== currentFilePath &&
+          path.basename(fileUri.fsPath) === path.basename(currentFilePath)
       );
   }
 
   private async translateChanges(
     sourceLanguage: string,
     changes: any[],
-    targetFiles: string[]
+    targetFiles: Uri[]
   ) {
     const translationService = TranslationService.getInstance(
       this.extensionContext
@@ -107,9 +107,9 @@ export class TranslationModule extends BaseActionModule {
     let translationsByLanguage: { [key: string]: any[] } = {};
 
     for (const targetFile of targetFiles) {
-      const targetLanguage = extractLocaleFromFilePath(targetFile);
+      const targetLanguage = extractLocaleFromFileUri(targetFile);
       const fileContent = JSON.parse(
-        await FileReader.readWorkspaceFileAsync(Uri.file(targetFile))
+        await FileReader.readWorkspaceFileAsync(targetFile)
       );
 
       // Filter changes to only include those that are missing or null in the target file
@@ -149,34 +149,34 @@ export class TranslationModule extends BaseActionModule {
   }
 
   private async applyTranslationsToFile(
-    targetFiles: string[],
+    targetFiles: Uri[],
     translationsByLanguage: { [x: string]: any },
     config: GeneralConfiguration
   ) {
-    for (const filePath of targetFiles) {
-      if (FileLockStore.getInstance().hasFileLock(Uri.file(filePath))) {
+    for (const fileUri of targetFiles) {
+      if (FileLockStore.getInstance().hasFileLock(fileUri)) {
         continue;
       }
 
       let fileContent;
       try {
         fileContent = JSON.parse(
-          await FileReader.readWorkspaceFileAsync(Uri.file(filePath))
+          await FileReader.readWorkspaceFileAsync(fileUri)
         );
       } catch (error) {
         this.logger.log(
           LogLevel.ERROR,
-          `Failed to parse JSON content from file ${filePath}: ${(error as Error).message}`
+          `Failed to parse JSON content from file ${fileUri}: ${(error as Error).message}`
         );
         continue;
       }
-      const targetLanguage = extractLocaleFromFilePath(filePath);
+      const targetLanguage = extractLocaleFromFileUri(fileUri);
       const diffs = translationsByLanguage[targetLanguage];
       this.applyDiffsToJSON(fileContent, diffs);
 
-      FileLockStore.getInstance().addLock(Uri.file(filePath));
+      FileLockStore.getInstance().addLock(fileUri);
       await FileWriter.writeToFileAsync(
-        filePath,
+        fileUri,
         JSON.stringify(
           fileContent,
           null,
@@ -184,12 +184,12 @@ export class TranslationModule extends BaseActionModule {
         )
       ).then(() => {
         setTimeout(() => {
-          FileLockStore.getInstance().delete(Uri.file(filePath));
+          FileLockStore.getInstance().delete(fileUri);
         }, 500);
       });
 
       TranslationStore.getInstance().updateEntry(
-        filePath,
+        fileUri,
         JSON.stringify(fileContent)
       );
     }
