@@ -139,6 +139,9 @@
       ],
       "@i18n-weave/util/util-nested-object-utils": [
         "src/libs/util/util-nested-object-utils/src"
+      ],
+      "@i18n-weave/util/util-i18next-ast": [
+        "src/libs/util/util-i18next-ast/src"
       ]
     },
     "module": "CommonJS",

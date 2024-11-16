@@ -12,6 +12,10 @@ import { ModuleChainManager } from '@i18n-weave/feature/feature-module-chain-man
 
 import { CodeTranslationKeyStore } from '@i18n-weave/store/store-code-translation-key-store';
 
+import {
+  ConfigurationStoreManager,
+  I18nextScannerModuleConfiguration,
+} from '@i18n-weave/util/util-configuration';
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
 import { ChainType } from '@i18n-weave/util/util-enums';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
@@ -56,9 +60,14 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
     let hasTranslationFunctions = false;
 
     if (fs.existsSync(changeFileLocation.fsPath)) {
+      const i18nextScannerModuleConfig =
+        ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+          'i18nextScannerModule'
+        );
       hasTranslationFunctions =
-        await CodeTranslationKeyStore.getInstance().fileChangeContainsTranslationFunctionsAsync(
-          changeFileLocation
+        await CodeTranslationKeyStore.getInstance().hasTranslationChanges(
+          changeFileLocation,
+          i18nextScannerModuleConfig
         );
     }
 
