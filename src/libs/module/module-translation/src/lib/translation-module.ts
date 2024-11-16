@@ -40,12 +40,6 @@ export class TranslationModule extends BaseActionModule {
       return;
     }
 
-    const statusBarManager = StatusBarManager.getInstance();
-    statusBarManager.updateState(
-      StatusBarState.Running,
-      'Translating changes...'
-    );
-
     const diffs = TranslationStore.getInstance().getTranslationFileDiffs(
       context.inputPath,
       context.jsonContent
@@ -69,24 +63,40 @@ export class TranslationModule extends BaseActionModule {
       return;
     }
 
-    const sourceLanguage = extractLocaleFromFileUri(context.inputPath);
-    const otherFiles = this.findRelatedFiles(context.inputPath.fsPath);
-    const translationsByLanguage = await this.translateChanges(
-      sourceLanguage,
-      changesToTranslate,
-      otherFiles
-    );
-    await this.applyTranslationsToFiles(
-      otherFiles,
-      translationsByLanguage,
-      config
-    );
-    TranslationStore.getInstance().updateEntry(
-      context.inputPath,
-      context.jsonContent
-    );
+    const statusBarManager = StatusBarManager.getInstance();
 
-    statusBarManager.setIdle();
+    try {
+      statusBarManager.updateState(
+        StatusBarState.Running,
+        'Translating changes...'
+      );
+
+      const sourceLanguage = extractLocaleFromFileUri(context.inputPath);
+      const otherFiles = this.findRelatedFiles(context.inputPath.fsPath);
+      const translationsByLanguage = await this.translateChanges(
+        sourceLanguage,
+        changesToTranslate,
+        otherFiles
+      );
+      await this.applyTranslationsToFiles(
+        otherFiles,
+        translationsByLanguage,
+        config
+      );
+      TranslationStore.getInstance().updateEntry(
+        context.inputPath,
+        context.jsonContent
+      );
+    } catch (error) {
+      this.logger.log(
+        LogLevel.ERROR,
+        `Error translating changes: ${(error as Error).message}`,
+        TranslationModule.name
+      );
+      return;
+    } finally {
+      statusBarManager.setIdle();
+    }
   }
 
   private extractRelevantChanges(diffs: any[]) {

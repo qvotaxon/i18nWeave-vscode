@@ -3,16 +3,13 @@ import { ExtensionContext, ProgressLocation, Uri, window } from 'vscode';
 
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
-import { arraysEqual } from '@i18n-weave/util/util-array-utilities';
-import {
-  ConfigurationStoreManager,
-  I18nextScannerModuleConfiguration,
-} from '@i18n-weave/util/util-configuration';
+import { I18nextScannerModuleConfiguration } from '@i18n-weave/util/util-configuration';
+import { extractTranslationKeys } from '@i18n-weave/util/util-i18next-ast';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 type CodeTranslation = {
   fileUri: Uri;
-  translationFunctionNames: string[];
+  fileContents: string;
   dateModified: Date;
 };
 
@@ -73,7 +70,6 @@ export class CodeTranslationKeyStore {
       );
     }
 
-    //TODO: Update logic to also remove deleted files from cache
     window.withProgress(
       {
         location: ProgressLocation.Window,
@@ -148,11 +144,9 @@ export class CodeTranslationKeyStore {
     const codeFileContents = await FileReader.readWorkspaceFileAsync(
       Uri.file(codeFileUri.fsPath)
     );
-    const translationFunctionNames =
-      this.scanCodeFileForTranslationFunctionNames(codeFileContents);
 
     const codeTranslation: CodeTranslation = {
-      translationFunctionNames: translationFunctionNames,
+      fileContents: codeFileContents,
       dateModified: dateModified ?? new Date(),
       fileUri: codeFileUri,
     };
@@ -166,75 +160,49 @@ export class CodeTranslationKeyStore {
     this.updateCache();
   }
 
+  public getCodeTranslation(codeFileUri: Uri): CodeTranslation | undefined {
+    return this._codeTranslations.get(codeFileUri.fsPath);
+  }
+
   private readonly updateCache = () => {
     const cacheArray = Array.from(this._codeTranslations.values());
     this._context!.globalState.update(this._newCacheKey, cacheArray);
   };
 
-  public async fileChangeContainsTranslationFunctionsAsync(
-    codeFileUri: Uri
+  /**
+   * Compares translation keys between two versions of code and
+   * determines if translation-related changes are present.
+   *
+   * @param oldCode - The initial code snapshot.
+   * @param newCode - The modified code snapshot.
+   * @param config - User-defined configuration for translation functions and components.
+   * @returns True if translation keys differ, false otherwise.
+   */
+  public async hasTranslationChanges(
+    changeFileUri: Uri,
+    config: I18nextScannerModuleConfiguration
   ): Promise<boolean> {
-    const codeFileContents = await FileReader.readWorkspaceFileAsync(
-      Uri.file(codeFileUri.fsPath)
-    );
-    const newTranslationFunctionNames =
-      this.scanCodeFileForTranslationFunctionNames(codeFileContents);
-    const currentTranslationFunctionNames = this._codeTranslations.get(
-      codeFileUri.fsPath
-    )?.translationFunctionNames;
+    const oldCode = this._codeTranslations.get(
+      changeFileUri.fsPath
+    )?.fileContents;
+    const newCode = await FileReader.readWorkspaceFileAsync(changeFileUri);
 
-    if (newTranslationFunctionNames?.length === 0) {
-      return false;
-    }
+    const oldKeys = extractTranslationKeys(oldCode ?? '', config);
+    const newKeys = extractTranslationKeys(newCode, config);
 
-    if (
-      newTranslationFunctionNames?.length > 0 &&
-      !currentTranslationFunctionNames
-    ) {
+    if (oldKeys.length !== newKeys.length) {
       return true;
     }
 
-    if (
-      !arraysEqual(
-        newTranslationFunctionNames,
-        currentTranslationFunctionNames!
-      )
-    ) {
-      return true;
+    const oldKeySet = new Set(oldKeys);
+    const newKeySet = new Set(newKeys);
+
+    for (const key of newKeySet) {
+      if (!oldKeySet.has(key)) {
+        return true;
+      }
     }
 
     return false;
-  }
-
-  private scanCodeFileForTranslationFunctionNames(
-    codeFileContents: string
-  ): string[] {
-    const lines = codeFileContents.split('\n');
-    const i18nextScannerModuleConfig =
-      ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
-        'i18nextScannerModule'
-      );
-    const translationFunctionNames = [];
-    translationFunctionNames.push(
-      i18nextScannerModuleConfig.translationFunctionNames
-    );
-    const translationComponentName =
-      i18nextScannerModuleConfig.translationComponentName;
-    const keysToSearchFor = translationFunctionNames.flat().join('|');
-
-    const keyRegex = new RegExp(
-      `(?:${keysToSearchFor})\\(\\s*['"\`](.*?)['"\`]\\s*\\)?|<${translationComponentName}\\s+${keysToSearchFor}=['"\`](.*?)['"\`]\\s*>`,
-      'g'
-    );
-
-    const foundTranslationFunctionNames: string[] = [];
-    lines.forEach((line: string) => {
-      let match;
-      while ((match = keyRegex.exec(line)) !== null) {
-        foundTranslationFunctionNames.push(match[1]);
-      }
-    });
-
-    return foundTranslationFunctionNames;
   }
 }
