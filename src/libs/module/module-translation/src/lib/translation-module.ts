@@ -4,6 +4,10 @@ import { Uri } from 'vscode';
 
 import { BaseActionModule } from '@i18n-weave/module/module-base-action';
 
+import {
+  StatusBarManager,
+  StatusBarState,
+} from '@i18n-weave/feature/feature-status-bar-manager';
 import { TranslationService } from '@i18n-weave/feature/feature-translation-service';
 
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
@@ -38,6 +42,12 @@ export class TranslationModule extends BaseActionModule {
       return;
     }
 
+    const statusBarManager = StatusBarManager.getInstance();
+    statusBarManager.updateState(
+      StatusBarState.Running,
+      'Translating changes...'
+    );
+
     const diffs = TranslationStore.getInstance().getTranslationFileDiffs(
       context.inputPath,
       context.jsonContent
@@ -68,7 +78,7 @@ export class TranslationModule extends BaseActionModule {
       changesToTranslate,
       otherFiles
     );
-    await this.applyTranslationsToFile(
+    await this.applyTranslationsToFiles(
       otherFiles,
       translationsByLanguage,
       config
@@ -77,6 +87,8 @@ export class TranslationModule extends BaseActionModule {
       context.inputPath,
       context.jsonContent
     );
+
+    statusBarManager.setIdle();
   }
 
   private extractRelevantChanges(diffs: any[]) {
@@ -101,9 +113,6 @@ export class TranslationModule extends BaseActionModule {
     const translationService = TranslationService.getInstance(
       this.extensionContext
     );
-    // const targetLanguages = targetFiles.map((file: string) =>
-    //   extractLocaleFromFilePath(file)
-    // );
 
     let translationsByLanguage: { [key: string]: any[] } = {};
 
@@ -113,7 +122,6 @@ export class TranslationModule extends BaseActionModule {
         await FileReader.readWorkspaceFileAsync(targetFile)
       );
 
-      // Filter changes to only include those that are missing or null in the target file
       const changesToTranslate = changes.filter(change => {
         const currentValue = change.path.reduce(
           (obj: { [x: string]: any }, key: string | number) => obj?.[key],
@@ -149,7 +157,7 @@ export class TranslationModule extends BaseActionModule {
     return translationsByLanguage;
   }
 
-  private async applyTranslationsToFile(
+  private async applyTranslationsToFiles(
     targetFiles: Uri[],
     translationsByLanguage: { [x: string]: any },
     config: GeneralConfiguration
