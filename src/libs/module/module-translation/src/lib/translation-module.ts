@@ -200,7 +200,11 @@ export class TranslationModule extends BaseActionModule {
 
       TranslationStore.getInstance().updateEntry(
         fileUri,
-        JSON.stringify(fileContent)
+        JSON.stringify(
+          fileContent,
+          null,
+          config.format.numberOfSpacesForIndentation
+        )
       );
     }
   }
