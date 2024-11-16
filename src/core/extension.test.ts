@@ -39,6 +39,9 @@ suite('Extension Activation', () => {
         fileExtensions: ['ts', 'blaat'],
         codeFileLocations: ['src'],
         translationFilesLocation: 'src/locales',
+        translationFunctionNames: ['t', 'i18next.t'],
+        translationComponentName: 'Trans',
+        translationComponentTranslationKey: 'i18nKey',
       } as I18nextScannerModuleConfiguration);
 
     codeTranslationStoreStub = sinon.createStubInstance(
