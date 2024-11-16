@@ -44,4 +44,5 @@ ignore:
   - 'src/libs/feature/feature-text-document-changed-handler/**/*'
   - 'src/libs/util/util-file-diff/**/*'
   - 'src/libs/module/module-translation/**/*'
-  - 'src/lib/file-io/**/*'
+  - 'src/libs/file-io/file-io-file-reader/**/*'
+  - 'src/libs/file-io/file-io-file-writer/**/*'
