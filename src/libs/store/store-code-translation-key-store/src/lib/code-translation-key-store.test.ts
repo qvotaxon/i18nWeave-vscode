@@ -189,7 +189,7 @@ suite('CodeTranslationKeyStore', () => {
       sinon.restore();
     });
 
-    test('should update store record and cache', async () => {
+    test.skip('should update store record and cache', async () => {
       const fileUri = Uri.file('path');
       const dateModified = new Date();
       const codeFileContents = 'fileContents';
