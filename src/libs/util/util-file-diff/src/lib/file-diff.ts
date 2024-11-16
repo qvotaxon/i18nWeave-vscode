@@ -1,4 +1,4 @@
-import deepDiff, { Diff } from 'deep-diff';
+import deepDiff from 'deep-diff';
 
 export function diffJsonObjects(
   oldObj: object,

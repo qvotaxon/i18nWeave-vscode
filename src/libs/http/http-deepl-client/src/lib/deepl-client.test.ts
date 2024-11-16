@@ -6,12 +6,9 @@ import sinon from 'sinon';
 import vscode from 'vscode';
 
 import { CacheEntry } from '@i18n-weave/feature/feature-caching-service';
-import { StatusBarManager } from '@i18n-weave/feature/feature-status-bar-manager';
 
 import {
-  ConfigurationStore,
   ConfigurationStoreManager,
-  TranslationModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
 
 import { DeeplClient } from './deepl-client';

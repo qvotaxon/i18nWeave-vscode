@@ -1,4 +1,3 @@
-import { TextResult } from 'deepl-node';
 
 export interface ITranslator {
   translateAsync(

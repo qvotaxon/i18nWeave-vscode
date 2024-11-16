@@ -1,4 +1,4 @@
-import vscode, { Uri } from 'vscode';
+import vscode from 'vscode';
 
 import {
   ConfigurationStoreManager,

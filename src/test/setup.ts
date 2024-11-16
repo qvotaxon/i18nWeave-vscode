@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as Mocha from 'mocha';
 import * as os from 'os';
 import * as path from 'path';
-import { Uri, commands, workspace } from 'vscode';
+import { Uri, workspace } from 'vscode';
 
 let testWorkspace: string;
 

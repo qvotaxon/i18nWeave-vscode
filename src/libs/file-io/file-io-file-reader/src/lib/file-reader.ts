@@ -1,5 +1,4 @@
 import Sentry from '@sentry/node';
-import fs from 'fs';
 import { Uri, workspace } from 'vscode';
 
 /**

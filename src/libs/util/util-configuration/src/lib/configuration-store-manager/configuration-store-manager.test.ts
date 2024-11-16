@@ -7,7 +7,6 @@ import {
   ConfigurationStoreManager,
   ExtensionConfiguration,
   I18nextScannerModuleConfiguration,
-  TranslationModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
 
 suite('ConfigurationStoreManager', () => {

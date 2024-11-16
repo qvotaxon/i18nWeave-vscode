@@ -1,8 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 import * as deepl from 'deepl-node';
 import assert from 'assert';
-import fs from 'fs';
-import path from 'path';
 import sinon from 'sinon';
 import vscode from 'vscode';
 
@@ -10,7 +8,6 @@ import { CacheEntry } from '@i18n-weave/feature/feature-caching-service';
 import { StatusBarManager } from '@i18n-weave/feature/feature-status-bar-manager';
 import { TranslationService } from '@i18n-weave/feature/feature-translation-service';
 
-import { DeeplClient } from '@i18n-weave/http/http-deepl-client';
 
 import {
   BetaFeaturesConfiguration,

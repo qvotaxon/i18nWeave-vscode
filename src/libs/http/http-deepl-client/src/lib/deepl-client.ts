@@ -1,16 +1,13 @@
 import * as Sentry from '@sentry/node';
 import * as deepl from 'deepl-node';
-import { SourceLanguageCode, TargetLanguageCode, TextResult } from 'deepl-node';
 import vscode from 'vscode';
 
 import {
   CachingService,
   sharedCacheKeys,
 } from '@i18n-weave/feature/feature-caching-service';
-import {
-  StatusBarManager,
-  StatusBarState,
-} from '@i18n-weave/feature/feature-status-bar-manager';
+
+
 import { ITranslator } from '@i18n-weave/feature/feature-translation-service';
 
 import {
