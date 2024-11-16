@@ -35,7 +35,7 @@ function initializeSentry() {
   const installationId = vscode.env.machineId;
 
   Sentry.init({
-    enabled: isProduction() && vscode.env.isTelemetryEnabled,
+    enabled: false || (isProduction() && vscode.env.isTelemetryEnabled),
     dsn: 'https://188de1d08857e4d1a5e59d8a9da5da1a@o4507423909216256.ingest.de.sentry.io/4507431475019856',
     integrations: Sentry.getDefaultIntegrations({}),
     tracesSampleRate: 1.0,
