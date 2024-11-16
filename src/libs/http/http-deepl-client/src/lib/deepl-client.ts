@@ -6,8 +6,6 @@ import {
   CachingService,
   sharedCacheKeys,
 } from '@i18n-weave/feature/feature-caching-service';
-
-
 import { ITranslator } from '@i18n-weave/feature/feature-translation-service';
 
 import {
@@ -229,26 +227,12 @@ export class DeeplClient implements ITranslator {
   }
 
   private getTargetLanguage(requestedTargetLanguage: string): string {
-    const shouldUseSimplifiedTargetLanguage = ![
-      'en-US',
-      'en-GB',
-      'pt-BR',
-      'pt-PT',
-      'zh-Hans',
-    ].includes(requestedTargetLanguage);
-
-    if (shouldUseSimplifiedTargetLanguage) {
-      const languageRegex = new RegExp('([a-z]{2})(?:-[A-Z]{2})?');
-      const simplifiedTargetLanguage =
-        requestedTargetLanguage.match(languageRegex);
-
-      if (!simplifiedTargetLanguage) {
-        throw new Error(
-          `Failed to extract language code from ${requestedTargetLanguage}.`
-        );
-      }
-
-      return simplifiedTargetLanguage[1];
+    if (requestedTargetLanguage === 'en') {
+      return 'en-GB';
+    } else if (requestedTargetLanguage === 'zh') {
+      return 'zh-Hans';
+    } else if (requestedTargetLanguage === 'pt') {
+      return 'pt-PT';
     }
 
     return requestedTargetLanguage;
