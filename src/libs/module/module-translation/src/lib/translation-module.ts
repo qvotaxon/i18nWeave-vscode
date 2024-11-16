@@ -1,5 +1,3 @@
-import deepDiff, { Diff, applyChange } from 'deep-diff';
-import { SourceLanguageCode, TargetLanguageCode } from 'deepl-node';
 import { unset } from 'lodash';
 import path from 'path';
 import { Uri } from 'vscode';
@@ -19,6 +17,7 @@ import {
   ConfigurationStoreManager,
   GeneralConfiguration,
 } from '@i18n-weave/util/util-configuration';
+import { applyChange } from '@i18n-weave/util/util-file-diff';
 import { extractLocaleFromFileUri } from '@i18n-weave/util/util-file-path-utilities';
 import { LogLevel } from '@i18n-weave/util/util-logger';
 
@@ -204,7 +203,7 @@ export class TranslationModule extends BaseActionModule {
         const path = change.path.join('.');
         unset(target, path);
       } else {
-        applyChange(target, {}, change);
+        applyChange(target, change);
       }
     });
   }
