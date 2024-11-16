@@ -41,6 +41,10 @@ export class DeeplClient implements ITranslator {
     sourceLanguage: string,
     requestedTargetLanguage: string
   ): Promise<string[]> {
+    if (texts.length === 0) {
+      return [''];
+    }
+
     if (!this.translator) {
       throw new Error('Translator not initialized.');
     }
