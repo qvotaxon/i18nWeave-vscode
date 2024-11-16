@@ -1,3 +1,4 @@
+import { Diff } from 'deep-diff';
 import { unset } from 'lodash';
 import path from 'path';
 import { Uri } from 'vscode';
@@ -206,12 +207,14 @@ export class TranslationModule extends BaseActionModule {
     }
   }
 
-  private applyDiffsToJSON(target: any, diffs: any[]) {
+  private applyDiffsToJSON(target: any, diffs: Diff<unknown, unknown>[]) {
     diffs?.forEach(change => {
       if (change.kind === 'D') {
-        const path = change.path.join('.');
-        unset(target, path);
-      } else {
+        const path = change.path?.join('.');
+        if (path) {
+          unset(target, path);
+        }
+      } else if (change.kind === 'E' || change.kind === 'A') {
         applyChange(target, change);
       }
     });
