@@ -30,7 +30,9 @@ suite('WebviewService', () => {
         getWebview(): vscode.WebviewPanel | undefined {
           return undefined;
         }
-        addWebview() {}
+        addWebview() {
+          /* Test has no requirement for the method 'addWebview' */
+        }
       }
     );
     webviewService = new WebviewService(mockWebviewStore, mockWebviewFactory);

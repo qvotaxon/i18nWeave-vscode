@@ -8,6 +8,11 @@ import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-cre
 import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 
+import {
+  ConfigurationStore,
+  ConfigurationStoreManager,
+  GeneralConfiguration,
+} from '@i18n-weave/util/util-configuration';
 import { FileType } from '@i18n-weave/util/util-enums';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
@@ -74,6 +79,19 @@ suite('FileWatcherCreator', () => {
     });
 
     test('should handle file change when not disabled and file lock does not exist', async () => {
+      const generalConfiguration = new GeneralConfiguration();
+      generalConfiguration.betaFeaturesConfiguration = {
+        enableJsonFileWebView: true,
+        enableTranslationModule: true,
+      };
+
+      const mockConfigStore = new ConfigurationStore({
+        general: generalConfiguration,
+        debugging: { logging: { enableVerboseLogging: true } },
+      });
+      ConfigurationStoreManager.getInstance()['_configurationStore'] =
+        mockConfigStore;
+
       const mockUri = vscode.Uri.parse('file:///path/to/file.ts');
       const mockFileWatcher = {
         onDidCreate: (callback: (uri: vscode.Uri) => Promise<void>) => {

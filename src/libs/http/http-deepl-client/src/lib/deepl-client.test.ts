@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 import * as Sentry from '@sentry/node';
 import * as deepl from 'deepl-node';
 import { Span } from '@sentry/node';

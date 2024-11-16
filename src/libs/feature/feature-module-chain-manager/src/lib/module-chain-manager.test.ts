@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 import assert from 'assert';
 import { Uri } from 'vscode';
 

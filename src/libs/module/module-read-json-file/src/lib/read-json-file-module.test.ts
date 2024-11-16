@@ -45,7 +45,7 @@ suite('ReadJsonFileModule Tests', () => {
     const readFileAsyncOriginal = FileReader.readWorkspaceFileAsync;
 
     FileReader.readWorkspaceFileAsync = async (filePath: Uri) => {
-      assert.strictEqual(filePath, inputPath.fsPath);
+      assert.strictEqual(filePath.fsPath, inputPath.fsPath);
       return '';
     };
 
@@ -69,7 +69,7 @@ suite('ReadJsonFileModule Tests', () => {
     const readFileAsyncOriginal = FileReader.readWorkspaceFileAsync;
 
     FileReader.readWorkspaceFileAsync = async (filePath: Uri) => {
-      assert.strictEqual(filePath, inputPath.fsPath);
+      assert.strictEqual(filePath.fsPath, inputPath.fsPath);
       throw new Error('File not found');
     };
 

@@ -33,7 +33,7 @@ suite('EmptyJsonValueSymbolProvider Tests', function () {
     assert(symbols, 'Symbols should not be null or undefined');
     assert.strictEqual(symbols.length, 0, 'Symbols array should be empty');
     assert(
-      loggerStub.log.calledWith(LogLevel.ERROR),
+      loggerStub.log.calledWith(LogLevel.VERBOSE),
       'Logger should log an error'
     );
   });

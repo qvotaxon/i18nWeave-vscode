@@ -25,7 +25,7 @@ suite('filePathUtilities', () => {
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
-      const filePath = Uri.file('C:\\locales\\en\\file.po');
+      const filePath = Uri.file('c:\\locales\\en\\file.po');
       const locale = filePathUtilities.extractLocaleFromFileUri(filePath);
       assert.equal(locale, 'en');
     });
@@ -41,7 +41,7 @@ suite('filePathUtilities', () => {
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
-      const filePath = Uri.file('/Users/someuser/project/locales/en/file.json');
+      const filePath = Uri.file('c:/Users/user/project/locales/en/file.json');
       const locale = filePathUtilities.extractLocaleFromFileUri(filePath);
       assert.equal(locale, 'en');
     });
@@ -57,7 +57,7 @@ suite('filePathUtilities', () => {
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
-      const filePath = Uri.file('C:\\src\\i18n\\en\\file.po');
+      const filePath = Uri.file('c:\\src\\i18n\\en\\file.po');
       const locale = filePathUtilities.extractLocaleFromFileUri(filePath);
       assert.equal(locale, 'en');
     });
@@ -73,7 +73,7 @@ suite('filePathUtilities', () => {
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
-      const filePath = Uri.file('C:\\invalid\\file.path');
+      const filePath = Uri.file('c:\\invalid\\file.path');
       assert.throws(
         () => filePathUtilities.extractLocaleFromFileUri(filePath),
         {
@@ -89,7 +89,7 @@ suite('filePathUtilities', () => {
       const outputPath = filePathUtilities.determineOutputPath(filePath);
       assert.deepStrictEqual(
         outputPath,
-        vscode.Uri.file('C:\\locales\\en\\file.json')
+        vscode.Uri.file('c:\\locales\\en\\file.json')
       );
     });
 
@@ -99,7 +99,7 @@ suite('filePathUtilities', () => {
 
       assert.deepStrictEqual(
         outputPath,
-        vscode.Uri.file('C:\\locales\\en\\file.po')
+        vscode.Uri.file('c:\\locales\\en\\file.po')
       );
     });
 
@@ -125,12 +125,12 @@ suite('filePathUtilities', () => {
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
-      const filePath = Uri.file('C:\\locales\\en\\file.po');
+      const filePath = Uri.file('c:\\locales\\en\\file.po');
       const filePathParts = filePathUtilities.extractFileUriParts(filePath);
 
       assert.deepStrictEqual(filePathParts, {
         locale: 'en',
-        outputPath: vscode.Uri.file('C:\\locales\\en\\file.json'),
+        outputPath: vscode.Uri.file('c:\\locales\\en\\file.json'),
       });
     });
 
@@ -145,12 +145,12 @@ suite('filePathUtilities', () => {
         .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
         .returns(config.i18nextScannerModule);
 
-      const filePath = Uri.file('C:\\src\\i18n\\en\\file.po');
+      const filePath = Uri.file('c:\\src\\i18n\\en\\file.po');
       const filePathParts = filePathUtilities.extractFileUriParts(filePath);
 
       assert.deepStrictEqual(filePathParts, {
         locale: 'en',
-        outputPath: vscode.Uri.file('C:\\src\\i18n\\en\\file.json'),
+        outputPath: vscode.Uri.file('c:\\src\\i18n\\en\\file.json'),
       });
     });
   });
@@ -166,7 +166,7 @@ suite('filePathUtilities', () => {
 
   suite('findProjectRoot', () => {
     test('should find project root by locating package.json downward', () => {
-      const rootDir = Uri.file('C:\\workspace');
+      const rootDir = Uri.file('c:\\workspace');
       const projectDir = path.join(rootDir.fsPath, 'project');
       const localesDir = path.join(projectDir, 'public', 'locales');
 
@@ -199,11 +199,11 @@ suite('filePathUtilities', () => {
       });
 
       const projectRoot = filePathUtilities.findProjectRoot(rootDir);
-      assert.strictEqual(projectRoot, projectDir);
+      assert.strictEqual(projectRoot?.fsPath, projectDir);
     });
 
     test('should stop searching when node_modules is found', () => {
-      const rootDir = Uri.file('C:\\workspace');
+      const rootDir = Uri.file('c:\\workspace');
       const projectDir = path.join(rootDir.fsPath, 'project');
       const nodeModulesDir = path.join(projectDir, 'node_modules');
 
@@ -228,14 +228,14 @@ suite('filePathUtilities', () => {
       });
 
       const projectRoot = filePathUtilities.findProjectRoot(rootDir);
-      assert.strictEqual(projectRoot, projectDir);
+      assert.strictEqual(projectRoot?.fsPath, projectDir);
     });
   });
 
   suite('getProjectRootFolder', () => {
     test('should get project root folder from workspace', () => {
       const workspaceFolder = {
-        uri: vscode.Uri.file('C:\\workspace'),
+        uri: vscode.Uri.file('c:\\workspace'),
       } as vscode.WorkspaceFolder;
       const projectDir = path.join(workspaceFolder.uri.fsPath, 'project');
 
@@ -264,7 +264,7 @@ suite('filePathUtilities', () => {
       });
 
       const projectRoot = filePathUtilities.getProjectRootFolder();
-      assert.strictEqual(projectRoot, projectDir);
+      assert.strictEqual(projectRoot.fsPath, projectDir);
     });
 
     test('should throw an error if no project root is found', () => {
