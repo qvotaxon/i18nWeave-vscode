@@ -68,7 +68,7 @@ function addTypedLibrary(libType, libName, singleton) {
     if (!fs.existsSync(libPath)) {
         fs.mkdirSync(libPath, { recursive: true });
         fs.writeFileSync(libFilePath, generateClassTemplate(className, singleton));
-        fs.writeFileSync(testFilePath, `// Tests for ${className}`);
+        fs.writeFileSync(testFilePath, `/* eslint-disable no-restricted-imports */\n// Tests for ${className}`);
         fs.writeFileSync(indexFilePath, `export * from './lib/${libName}';`);
 
         console.log(`Created new library structure at: ${path.join(libsDir, libType, libName)}`);
