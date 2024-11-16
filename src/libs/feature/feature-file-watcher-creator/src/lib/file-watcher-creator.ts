@@ -43,9 +43,7 @@ export class FileWatcherCreator {
 
     fileWatcher.onDidCreate(async uri => {
       if (!disableFlags.some(flag => flag())) {
-        if (FileLocationStore.getInstance().hasFile(uri)) {
-          await fileChangeHandler?.handleFileCreationAsync(uri);
-        }
+        await fileChangeHandler?.handleFileCreationAsync(uri);
       }
     });
 

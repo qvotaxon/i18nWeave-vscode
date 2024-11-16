@@ -39,7 +39,11 @@ export class CodeTranslationKeyStore {
     context: ExtensionContext,
     codeFileUris: Uri[]
   ): Promise<void> {
-    this._logger.log(LogLevel.INFO, 'Initializing code translation key store');
+    this._logger.log(
+      LogLevel.INFO,
+      'Initializing code translation key store',
+      CodeTranslationKeyStore.name
+    );
 
     context.globalState.update(this._oldCacheKey, undefined);
 
@@ -56,12 +60,17 @@ export class CodeTranslationKeyStore {
       } catch (error) {
         this._logger.log(
           LogLevel.ERROR,
-          'Error restoring code translation cache'
+          'Error restoring code translation cache',
+          CodeTranslationKeyStore.name
         );
         window.showErrorMessage('Error restoring code translation cache');
       }
 
-      this._logger.log(LogLevel.INFO, 'Restored code translation cache');
+      this._logger.log(
+        LogLevel.INFO,
+        'Restored code translation cache',
+        CodeTranslationKeyStore.name
+      );
     }
 
     //TODO: Update logic to also remove deleted files from cache
@@ -71,6 +80,8 @@ export class CodeTranslationKeyStore {
         title: 'Initializing file caches',
       },
       async () => {
+        this.cleanupCache();
+
         try {
           codeFileUris.forEach(async codeFileUri => {
             const stats = fs.statSync(codeFileUri.fsPath);
@@ -84,24 +95,52 @@ export class CodeTranslationKeyStore {
             ) {
               this._logger.log(
                 LogLevel.VERBOSE,
-                `File ${codeFileUri} does not exist in cache, updating cache`
+                `File ${codeFileUri} does not exist in cache, updating cache`,
+                CodeTranslationKeyStore.name
               );
               await this.updateStoreRecordAsync(codeFileUri, dateModified);
             } else {
               this._logger.log(
                 LogLevel.VERBOSE,
-                `File ${codeFileUri} already exists in cache`
+                `File ${codeFileUri} already exists in cache`,
+                CodeTranslationKeyStore.name
               );
             }
           });
         } catch (error) {
           this._logger.log(
             LogLevel.ERROR,
-            'Error initializing initial file contents'
+            'Error initializing initial file contents',
+            CodeTranslationKeyStore.name
           );
           window.showErrorMessage('Error initializing initial file contents');
         }
       }
+    );
+  }
+
+  /**
+   * Clean up the cache by removing entries for files that no longer exist.
+   */
+  private cleanupCache(): void {
+    let removedCount = 0;
+    const keysToRemove = [];
+
+    for (const [filePath] of this._codeTranslations) {
+      if (!fs.existsSync(filePath)) {
+        keysToRemove.push(filePath);
+      }
+    }
+
+    keysToRemove.forEach(key => {
+      this._codeTranslations.delete(key);
+    });
+    removedCount = keysToRemove.length;
+
+    this._logger.log(
+      LogLevel.INFO,
+      `Removed ${removedCount} non-existent file(s) from cache`,
+      CodeTranslationKeyStore.name
     );
   }
 

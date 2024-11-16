@@ -106,7 +106,8 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
 
     this._logger.log(
       LogLevel.VERBOSE,
-      `Json File change handled: ${changeFileLocation}`
+      `Json File change handled: ${changeFileLocation}`,
+      JsonFileChangeHandler.name
     );
 
     const fileWatcherDisposable =

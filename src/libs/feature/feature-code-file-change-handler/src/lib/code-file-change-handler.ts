@@ -80,7 +80,8 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
 
     this._logger.log(
       LogLevel.INFO,
-      `Code File change handled: ${changeFileLocation}`
+      `Code File change handled: ${changeFileLocation}`,
+      CodeFileChangeHandler.name
     );
 
     if (!isFileDeletionChange) {

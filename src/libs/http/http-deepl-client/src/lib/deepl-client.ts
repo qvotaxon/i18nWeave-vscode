@@ -50,7 +50,8 @@ export class DeeplClient implements ITranslator {
     if (!this.isSupportedTargetLanguage(targetLanguage)) {
       this._logger.log(
         LogLevel.WARN,
-        `Skipping translation for unsupported target language: ${targetLanguage}`
+        `Skipping translation for unsupported target language: ${targetLanguage}`,
+        DeeplClient.name
       );
       return [''];
     }
@@ -58,7 +59,8 @@ export class DeeplClient implements ITranslator {
     if (!this.isSupportedSourceLanguage(sourceLanguage)) {
       this._logger.log(
         LogLevel.WARN,
-        `Skipping translation for unsupported source language: ${sourceLanguage}`
+        `Skipping translation for unsupported source language: ${sourceLanguage}`,
+        DeeplClient.name
       );
       return [''];
     }
@@ -104,7 +106,8 @@ export class DeeplClient implements ITranslator {
   ) {
     this._logger.log(
       LogLevel.INFO,
-      `Translating ${texts.length} text(s) with DeepL from ${sourceLanguage ?? '[Auto Detect Language]'} to ${targetLanguage}.`
+      `Translating ${texts.length} text(s) with DeepL from ${sourceLanguage ?? '[Auto Detect Language]'} to ${targetLanguage}.`,
+      DeeplClient.name
     );
 
     return await Sentry.startSpan(
@@ -145,7 +148,8 @@ export class DeeplClient implements ITranslator {
     if (!supportedTargetLanguages) {
       this.instance._logger.log(
         LogLevel.ERROR,
-        'Failed to retrieve supported languages from DeepL.'
+        'Failed to retrieve supported languages from DeepL.',
+        DeeplClient.name
       );
       this.instance._logger.show();
       throw new Error('Failed to retrieve supported languages from DeepL.');
@@ -154,7 +158,8 @@ export class DeeplClient implements ITranslator {
     if (!supportedSourceLanguages) {
       this.instance._logger.log(
         LogLevel.ERROR,
-        'Failed to retrieve supported source languages from DeepL.'
+        'Failed to retrieve supported source languages from DeepL.',
+        DeeplClient.name
       );
       this.instance._logger.show();
       throw new Error(
@@ -177,7 +182,8 @@ export class DeeplClient implements ITranslator {
       async () => {
         this.instance._logger.log(
           LogLevel.INFO,
-          'Retrieved supported target languages.'
+          'Retrieved supported target languages.',
+          DeeplClient.name
         );
 
         return this.instance.translator?.getTargetLanguages();
@@ -186,7 +192,8 @@ export class DeeplClient implements ITranslator {
 
     this.instance._logger.log(
       LogLevel.INFO,
-      'Read from cache: Retrieved supported target languages.'
+      'Read from cache: Retrieved supported target languages.',
+      DeeplClient.name
     );
 
     return targetLanguages;
@@ -203,7 +210,8 @@ export class DeeplClient implements ITranslator {
       async () => {
         this.instance._logger.log(
           LogLevel.INFO,
-          'Retrieved supported source languages.'
+          'Retrieved supported source languages.',
+          DeeplClient.name
         );
 
         return this.instance.translator?.getSourceLanguages();
@@ -212,7 +220,8 @@ export class DeeplClient implements ITranslator {
 
     this.instance._logger.log(
       LogLevel.INFO,
-      'Read from cache: Retrieved supported source languages.'
+      'Read from cache: Retrieved supported source languages.',
+      DeeplClient.name
     );
 
     return sourceLanguages;
@@ -285,7 +294,8 @@ export class DeeplClient implements ITranslator {
     if (!apiKey) {
       this.instance._logger.log(
         LogLevel.ERROR,
-        'No DeepL API key found in the configuration.'
+        'No DeepL API key found in the configuration.',
+        DeeplClient.name
       );
       this.instance._logger.show();
       throw new Error('No DeepL API key found in the configuration.');

@@ -50,7 +50,11 @@ export class I18nextScannerService {
       StatusBarState.Running,
       'Scanning code for translation keys...'
     );
-    this._logger.log(LogLevel.INFO, 'Scanning code for translation keys...');
+    this._logger.log(
+      LogLevel.INFO,
+      'Scanning code for translation keys...',
+      I18nextScannerService.name
+    );
 
     const configManager = ConfigurationStoreManager.getInstance();
     const i18nNextScannerModuleConfiguration =
@@ -62,7 +66,11 @@ export class I18nextScannerService {
     let projectRoot = getProjectRootFolder();
 
     if (!projectRoot) {
-      this._logger.log(LogLevel.ERROR, 'No project root found');
+      this._logger.log(
+        LogLevel.ERROR,
+        'No project root found',
+        I18nextScannerService.name
+      );
       this._logger.show();
       throw new Error('No project root found');
     }
@@ -139,7 +147,8 @@ export class I18nextScannerService {
 
     this._logger.log(
       LogLevel.INFO,
-      'Done scanning code for translation keys...'
+      'Done scanning code for translation keys...',
+      I18nextScannerService.name
     );
     statusBarManager.setIdle();
   }

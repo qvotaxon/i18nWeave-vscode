@@ -27,7 +27,11 @@ export class TranslationStore {
   }
 
   public async initializeAsync(): Promise<void> {
-    this._logger.log(LogLevel.INFO, 'Initializing translation store');
+    this._logger.log(
+      LogLevel.INFO,
+      'Initializing translation store',
+      TranslationStore.name
+    );
 
     const fileLocations =
       FileLocationStore.getInstance().getFileLocationsByType(['json']);
@@ -39,13 +43,15 @@ export class TranslationStore {
 
       this._logger.log(
         LogLevel.VERBOSE,
-        `Added translation file ${fileUri.fsPath} to store`
+        `Added translation file ${fileUri.fsPath} to store`,
+        TranslationStore.name
       );
     }
 
     this._logger.log(
       LogLevel.INFO,
-      `Added ${fileLocations.length} translation files to store`
+      `Added ${fileLocations.length} translation files to store`,
+      TranslationStore.name
     );
   }
 
@@ -63,7 +69,8 @@ export class TranslationStore {
 
     this._logger.log(
       LogLevel.VERBOSE,
-      `Updated translation file ${fileUri.fsPath} in store`
+      `Updated translation file ${fileUri.fsPath} in store`,
+      TranslationStore.name
     );
   }
 
@@ -71,18 +78,22 @@ export class TranslationStore {
     this._translationFileContents.delete(fileUri.fsPath);
     this._logger.log(
       LogLevel.VERBOSE,
-      `Deleted translation file ${fileUri.fsPath} from store`
+      `Deleted translation file ${fileUri.fsPath} from store`,
+      TranslationStore.name
     );
   }
 
   public async addEntryAsync(fileUri: Uri) {
-    const rawData = await FileReader.readWorkspaceFileAsync(fileUri);
-    const jsonObject = JSON.parse(rawData) as JSON;
-    this._translationFileContents.set(fileUri.fsPath, jsonObject);
+    if (fileUri.fsPath.endsWith('.json')) {
+      const rawData = await FileReader.readWorkspaceFileAsync(fileUri);
+      const jsonObject = JSON.parse(rawData) as JSON;
+      this._translationFileContents.set(fileUri.fsPath, jsonObject);
 
-    this._logger.log(
-      LogLevel.VERBOSE,
-      `Added translation file ${fileUri.fsPath} to store`
-    );
+      this._logger.log(
+        LogLevel.VERBOSE,
+        `Added translation file ${fileUri.fsPath} to store`,
+        TranslationStore.name
+      );
+    }
   }
 }

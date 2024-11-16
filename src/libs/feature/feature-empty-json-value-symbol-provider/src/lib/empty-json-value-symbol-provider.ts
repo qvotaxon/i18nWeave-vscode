@@ -24,7 +24,11 @@ export class EmptyJsonValueSymbolProvider
       // Recursively search for empty strings
       this.findEmptyStrings(jsonContent, symbols, document);
     } catch (error) {
-      this._logger.log(LogLevel.ERROR, `Error parsing JSON: ${error}`);
+      this._logger.log(
+        LogLevel.VERBOSE,
+        `Error parsing JSON: ${error}`,
+        EmptyJsonValueSymbolProvider.name
+      );
     }
 
     return symbols;

@@ -46,7 +46,8 @@ export class TranslationModule extends BaseActionModule {
     if (!diffs || diffs.length === 0) {
       this.logger.log(
         LogLevel.VERBOSE,
-        `No diffs found for file ${context.inputPath.fsPath}. Skipping.`
+        `No diffs found for file ${context.inputPath.fsPath}. Skipping.`,
+        TranslationModule.name
       );
       return;
     }
@@ -55,7 +56,8 @@ export class TranslationModule extends BaseActionModule {
     if (changesToTranslate.length === 0) {
       this.logger.log(
         LogLevel.VERBOSE,
-        `No diff changes to translate. Skipping.`
+        `No diff changes to translate. Skipping.`,
+        TranslationModule.name
       );
       return;
     }
@@ -166,7 +168,8 @@ export class TranslationModule extends BaseActionModule {
       } catch (error) {
         this.logger.log(
           LogLevel.ERROR,
-          `Failed to parse JSON content from file ${fileUri}: ${(error as Error).message}`
+          `Failed to parse JSON content from file ${fileUri}: ${(error as Error).message}`,
+          TranslationModule.name
         );
         continue;
       }

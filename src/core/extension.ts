@@ -72,7 +72,7 @@ export async function activate(
     statusBarManager.updateState(StatusBarState.Running, 'Initializing...');
 
     configurationManager.initialize();
-    logger.log(LogLevel.INFO, 'i18nWeave is starting up...');
+    logger.log(LogLevel.INFO, 'i18nWeave is starting up...', 'Core');
 
     await fileLocationInitializer.initializeFileLocations();
     await translationStore.initializeAsync();
@@ -92,7 +92,11 @@ export async function activate(
           fileWatcherCreator,
           context
         );
-        logger.log(LogLevel.INFO, 'Configuration changed, re-initializing...');
+        logger.log(
+          LogLevel.INFO,
+          'Configuration changed, re-initializing...',
+          'Core'
+        );
       });
 
     const { codeFileWatchers, jsonFileWatchers } = await createFileWatchers(
@@ -118,7 +122,7 @@ export async function activate(
     );
 
     statusBarManager.updateState(StatusBarState.Idle, 'Idle');
-    logger.log(LogLevel.INFO, 'i18nWeave is watching your files... 🌍');
+    logger.log(LogLevel.INFO, 'i18nWeave is watching your files... 🌍', 'Core');
   } catch (error) {
     Sentry.captureException(error);
   }

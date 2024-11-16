@@ -28,7 +28,11 @@ export class FileLocationStore {
    * Scans the workspace for specific file types and populates the store.
    */
   public async scanWorkspaceAsync(fileSearchLocations: FileSearchLocation[]) {
-    this._logger.log(LogLevel.INFO, 'Scanning workspace for files...');
+    this._logger.log(
+      LogLevel.INFO,
+      'Scanning workspace for files...',
+      FileLocationStore.name
+    );
     for (const fileSearchLocation of fileSearchLocations) {
       const files = await vscode.workspace.findFiles(
         fileSearchLocation.filePattern,
@@ -37,7 +41,8 @@ export class FileLocationStore {
       files.forEach(file => this.addFile(file));
       this._logger.log(
         LogLevel.INFO,
-        `Found ${files.length} number of files for search pattern ${fileSearchLocation.filePattern as string}, ignoring ${fileSearchLocation.ignorePattern as string} and .gitignore patterns.`
+        `Found ${files.length} number of files for search pattern ${fileSearchLocation.filePattern as string}, ignoring ${fileSearchLocation.ignorePattern as string} and .gitignore patterns.`,
+        FileLocationStore.name
       );
     }
   }
@@ -63,7 +68,8 @@ export class FileLocationStore {
 
     this._logger.log(
       LogLevel.VERBOSE,
-      `Added file ${uri.fsPath} to the store.`
+      `Added file ${uri.fsPath} to the store.`,
+      FileLocationStore.name
     );
   }
 
@@ -77,7 +83,8 @@ export class FileLocationStore {
 
     this._logger.log(
       LogLevel.VERBOSE,
-      `Deleted file ${uri.fsPath} from the store.`
+      `Deleted file ${uri.fsPath} from the store.`,
+      FileLocationStore.name
     );
   }
 

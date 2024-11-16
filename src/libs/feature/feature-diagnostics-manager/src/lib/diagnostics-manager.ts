@@ -26,7 +26,8 @@ export class DiagnosticsManager {
   ) {
     this._logger.log(
       LogLevel.VERBOSE,
-      `Updating diagnostics for ${document.uri}`
+      `Updating diagnostics for ${document.uri}`,
+      DiagnosticsManager.name
     );
 
     if (documentSymbols) {
