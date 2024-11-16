@@ -1,6 +1,5 @@
 import fs from 'fs';
-import vscode from 'vscode';
-import { Uri } from 'vscode';
+import vscode, { Uri } from 'vscode';
 
 import {
   ActionModule,
