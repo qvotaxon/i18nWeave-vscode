@@ -66,17 +66,23 @@ export class DeeplClient implements ITranslator {
 
     const formality = this.getFormality(targetLanguage);
 
+    const characterCount = texts.reduce(
+      (count, text) => count + text.length,
+      0
+    );
+
+    this._logger.log(
+      LogLevel.INFO,
+      `Translated ${texts.length} text(s) (${characterCount} number of characters) with DeepL.\nSource language: ${sourceLanguage ?? '[Auto Detect Language]'} to ${targetLanguage}.\n${formality ? `Formality: ${formality}` : ''}`,
+      DeeplClient.name
+    );
+
     const translatedTexts = await this.translateUsingDeepl(
       this.translator,
       texts,
       targetLanguage,
       formality,
       sourceLanguage
-    );
-
-    this._logger.log(
-      LogLevel.INFO,
-      `Translation completed from ${sourceLanguage} to ${targetLanguage}.`
     );
 
     return translatedTexts.map(x => x.text);
@@ -103,12 +109,6 @@ export class DeeplClient implements ITranslator {
     formality: deepl.Formality | undefined,
     sourceLanguage?: string
   ) {
-    this._logger.log(
-      LogLevel.INFO,
-      `Translating ${texts.length} text(s) with DeepL from ${sourceLanguage ?? '[Auto Detect Language]'} to ${targetLanguage}.`,
-      DeeplClient.name
-    );
-
     return await Sentry.startSpan(
       { op: 'http.client', name: `Retrieve DeepL Translations` },
       async span => {
