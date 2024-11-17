@@ -108,7 +108,7 @@ export class FileLocationStore {
       language: language,
       namespace: namespace,
       metaData: {
-        lastModified: lastModified,
+        entryLastModified: lastModified,
         type: FileType.Translation,
         uri: uri,
       },
@@ -125,7 +125,7 @@ export class FileLocationStore {
     const codeFile = {
       content: fileContent,
       metaData: {
-        lastModified: lastModified,
+        entryLastModified: lastModified,
         type: FileType.Code,
         uri: uri,
       },

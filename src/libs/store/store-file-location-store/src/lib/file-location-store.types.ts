@@ -4,7 +4,7 @@ import { FileType } from '@i18n-weave/util/util-enums';
 
 type Metadata = {
   uri: Uri;
-  lastModified: Date;
+  entryLastModified: Date;
   type: FileType;
 };
 
