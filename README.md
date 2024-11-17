@@ -146,7 +146,7 @@ TODO
 
 ### Somewhere in the nearer future
 
-- Support More Automatic Configurations For Other Frameworks. Such as React and Angular.
+- Support more automatic configurations for other frameworks. Such as React and Angular.
 
 ### Somewhere in the farther future
 
