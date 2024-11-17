@@ -105,7 +105,8 @@ export class TranslationModule extends BaseActionModule {
 
   private findRelatedFiles(currentFilePath: string) {
     return FileLocationStore.getInstance()
-      .getFileLocationsByType(['json'])
+      .getTranslationFiles()
+      .map(file => file.metaData.uri)
       .filter(
         fileUri =>
           fileUri.fsPath !== currentFilePath &&

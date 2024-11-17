@@ -1,12 +1,40 @@
+import fs from 'fs';
 import vscode, { Uri } from 'vscode';
 
-import { getFileExtension } from '@i18n-weave/util/util-file-path-utilities';
+import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
+
+import { FileType } from '@i18n-weave/util/util-enums';
+import {
+  extractLocaleFromFileUri,
+  extractNamespaceFromFileUri,
+  getFileExtension,
+} from '@i18n-weave/util/util-file-path-utilities';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
+type Metadata = {
+  uri: Uri;
+  lastModified: Date;
+  type: FileType;
+};
+
+type FileData = {
+  content: string;
+  metaData: Metadata;
+};
+
+type TranslationFile = {
+  language: string;
+  namespace: string;
+  dialect?: string;
+} & FileData;
+
+type CodeFile = FileData;
+
 export class FileLocationStore {
   private static instance: FileLocationStore;
-  private readonly fileLocations: Map<string, Map<string, Uri>> = new Map();
+  private readonly fileLocations: Map<string, TranslationFile | CodeFile> =
+    new Map();
   private readonly _logger: Logger;
 
   private constructor() {
@@ -59,12 +87,20 @@ export class FileLocationStore {
    * Adds a file to the store.
    * @param uri The URI of the file.
    */
-  public addFile(uri: vscode.Uri) {
-    const extension = getFileExtension(uri);
-    if (!this.fileLocations.has(extension)) {
-      this.fileLocations.set(extension, new Map());
+  public async addFile(uri: vscode.Uri) {
+    const fileType = this.determineFileType(uri);
+    let file: TranslationFile | CodeFile;
+
+    switch (fileType) {
+      case FileType.Json:
+        file = await this.createTranslationFileAsync(uri);
+        break;
+      case FileType.Code:
+        file = await this.createCodeFileAsync(uri);
+        break;
     }
-    this.fileLocations.get(extension)!.set(uri.fsPath, uri);
+
+    this.fileLocations.set(uri.fsPath, file);
 
     this._logger.log(
       LogLevel.VERBOSE,
@@ -73,13 +109,46 @@ export class FileLocationStore {
     );
   }
 
-  /**
-   * Removes a file from the store.
-   * @param uri The URI of the file.
-   */
+  async createTranslationFileAsync(uri: vscode.Uri): Promise<TranslationFile> {
+    const fileContent = await FileReader.readWorkspaceFileAsync(uri);
+    const language = extractLocaleFromFileUri(uri);
+    const namespace = extractNamespaceFromFileUri(uri);
+    const stats = fs.statSync(uri.fsPath);
+    const lastModified = stats.mtime;
+
+    const translationFile = {
+      content: fileContent,
+      language: language,
+      namespace: namespace,
+      metaData: {
+        lastModified: lastModified,
+        type: FileType.Json,
+        uri: uri,
+      },
+    } satisfies TranslationFile;
+
+    return translationFile;
+  }
+
+  async createCodeFileAsync(uri: vscode.Uri) {
+    const fileContent = await FileReader.readWorkspaceFileAsync(uri);
+    const stats = fs.statSync(uri.fsPath);
+    const lastModified = stats.mtime;
+
+    const codeFile = {
+      content: fileContent,
+      metaData: {
+        lastModified: lastModified,
+        type: FileType.Code,
+        uri: uri,
+      },
+    } satisfies CodeFile;
+
+    return codeFile;
+  }
+
   public deleteFile(uri: vscode.Uri) {
-    const extension = getFileExtension(uri);
-    this.fileLocations.get(extension)?.delete(uri.fsPath);
+    this.fileLocations.delete(uri.fsPath);
 
     this._logger.log(
       LogLevel.VERBOSE,
@@ -88,25 +157,37 @@ export class FileLocationStore {
     );
   }
 
-  /**
-   * Gets all files of specific types.
-   * @param extensions An array of file extensions (e.g., ['json', 'po', 'ts']).
-   * @returns An array of strings for files of the specified types.
-   */
-  public getFileLocationsByType(extensions: string[]): Uri[] {
-    const files: Uri[] = [];
-    for (const extension of extensions) {
-      const extensionFiles = this.fileLocations.get(extension);
-      if (extensionFiles) {
-        files.push(...Array.from(extensionFiles).map(([_, value]) => value));
-      }
-    }
-    return files;
+  public getCodeFiles(): CodeFile[] {
+    return Array.from(this.fileLocations.values())
+      .filter(file => file.metaData.type === FileType.Code)
+      .map(file => file as CodeFile);
+  }
+
+  public getTranslationFiles(): TranslationFile[] {
+    return Array.from(this.fileLocations.values())
+      .filter(file => file.metaData.type === FileType.Json)
+      .map(file => file as TranslationFile);
   }
 
   public hasFile(uri: vscode.Uri): boolean {
-    const extension = getFileExtension(uri);
+    return this.fileLocations.has(uri.fsPath);
+  }
 
-    return this.fileLocations.get(extension)?.has(uri.fsPath) ?? false;
+  private determineFileType(uri: vscode.Uri) {
+    const extension = getFileExtension(uri);
+    switch (extension) {
+      case FileType.Json:
+        return FileType.Json;
+      case FileType.Code:
+        return FileType.Code;
+      default: {
+        this._logger.log(
+          LogLevel.ERROR,
+          `Unsupported file type: ${extension}`,
+          FileLocationStore.name
+        );
+        throw new Error(`Unsupported file type: ${extension}`);
+      }
+    }
   }
 }

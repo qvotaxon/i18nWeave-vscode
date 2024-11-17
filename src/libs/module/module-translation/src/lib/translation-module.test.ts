@@ -50,7 +50,7 @@ suite('TranslationModule', () => {
     });
 
     fileLocationStoreStub = sinon.createStubInstance(FileLocationStore, {
-      getFileLocationsByType: sinon
+      getFiles: sinon
         .stub<[string[]], Uri[]>()
         .returns([Uri.file('/path/to/related-file.json')]),
     });
@@ -103,9 +103,7 @@ suite('TranslationModule', () => {
         context.jsonContent
       )
     );
-    assert.ok(
-      fileLocationStoreStub.getFileLocationsByType.calledWith(['json'])
-    );
+    assert.ok(fileLocationStoreStub.getFiles.calledWith(['json']));
     assert.ok(
       translationServiceStub.translateKeysAsync.calledWith(
         ['value'],

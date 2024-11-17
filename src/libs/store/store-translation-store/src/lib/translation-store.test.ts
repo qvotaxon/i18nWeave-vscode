@@ -21,7 +21,7 @@ suite('TranslationStore', () => {
     fileReaderStub = sinon.stub(FileReader, 'readWorkspaceFileAsync');
     fileLocationStoreStub = sinon.stub(
       FileLocationStore.getInstance(),
-      'getFileLocationsByType'
+      'getTranslationFiles'
     );
     loggerStub = sinon.stub(Logger.getInstance(), 'log');
   });

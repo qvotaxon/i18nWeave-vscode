@@ -33,8 +33,9 @@ export class TranslationStore {
       TranslationStore.name
     );
 
-    const fileLocations =
-      FileLocationStore.getInstance().getFileLocationsByType(['json']);
+    const fileLocations = FileLocationStore.getInstance()
+      .getTranslationFiles()
+      .map(file => file.metaData.uri);
 
     for (const fileUri of fileLocations) {
       const rawData = await FileReader.readWorkspaceFileAsync(fileUri);

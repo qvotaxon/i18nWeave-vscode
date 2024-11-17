@@ -26,6 +26,24 @@ export function extractLocaleFromFileUri(fileUri: Uri): string {
   return match[1];
 }
 
+export function extractNamespaceFromFileUri(fileUri: Uri): string {
+  const translationFilesLocation =
+    ConfigurationStoreManager.getInstance()
+      .getConfig<I18nextScannerModuleConfiguration>('i18nextScannerModule')
+      .translationFilesLocation.split('/')
+      .pop() ?? '';
+
+  const namespacePattern = new RegExp(
+    `[\\\\/]${translationFilesLocation}[\\\\/][^\\\\]+[\\\\/](.+)[\\\\/]`
+  );
+
+  const match = namespacePattern.exec(fileUri.fsPath);
+  if (!match || match.length < 2) {
+    throw new Error('Unable to extract namespace from file path.');
+  }
+  return match[1];
+}
+
 export function determineOutputPath(fileUri: Uri): Uri {
   if (!fileUri.fsPath.endsWith('.po') && !fileUri.fsPath.endsWith('.json')) {
     throw new Error(
