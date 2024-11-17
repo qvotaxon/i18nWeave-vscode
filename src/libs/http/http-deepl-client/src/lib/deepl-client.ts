@@ -18,6 +18,7 @@ import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
  * Singleton class for managing DeepL translation services.
  */
 export class DeeplClient implements ITranslator {
+  private sessionCharacterCount = 0;
   private readonly _logger: Logger;
   private readonly context: vscode.ExtensionContext;
   private static instance: DeeplClient;
@@ -132,7 +133,8 @@ export class DeeplClient implements ITranslator {
         } catch (error) {
           this._logger.log(
             LogLevel.ERROR,
-            `Failed to translate text with DeepL. Received error: ${error}`
+            `Failed to translate text with DeepL. Received error: ${error}`,
+            DeeplClient.name
           );
           this._logger.show();
           throw error;
@@ -141,6 +143,10 @@ export class DeeplClient implements ITranslator {
         }
       }
     );
+  }
+
+  public getSessionCharacterCount(): number {
+    return this.sessionCharacterCount;
   }
 
   private static async initializeTranslator(apiKey: string): Promise<void> {
