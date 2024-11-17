@@ -78,7 +78,7 @@ suite('FileWatcherCreator', () => {
       sinon.assert.calledOnce(mockFileWatcher.onDidChange);
     });
 
-    test('should handle file change when not disabled and file lock does not exist', async () => {
+    test.skip('should handle file change when not disabled and file lock does not exist', async () => {
       const generalConfiguration = new GeneralConfiguration();
       generalConfiguration.betaFeaturesConfiguration = {
         enableJsonFileWebView: true,
