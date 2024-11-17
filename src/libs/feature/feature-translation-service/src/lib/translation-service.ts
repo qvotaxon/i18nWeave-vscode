@@ -41,6 +41,7 @@ export class TranslationService {
     sourceLang: string,
     targetLang: string
   ): Promise<(object | string)[]> {
+    let nonEmptyIndex = 0;
     const deeplClient = await DeeplClient.getInstanceAsync(this.context);
 
     const translateTexts = async (texts: string[]): Promise<string[]> => {
@@ -51,7 +52,6 @@ export class TranslationService {
         targetLang as TargetLanguageCode
       );
 
-      let nonEmptyIndex = 0;
       return texts.map(text =>
         text.trim() === '' ? text : translatedNonEmptyTexts[nonEmptyIndex++]
       );
@@ -108,11 +108,13 @@ export class TranslationService {
         : translatedObjects.shift()!
     );
 
-    this._logger.log(
-      LogLevel.INFO,
-      `Translated ${deeplClient.getSessionCharacterCount()} characters during this session.`,
-      TranslationService.name
-    );
+    if (nonEmptyIndex > 0) {
+      this._logger.log(
+        LogLevel.INFO,
+        `Translated ${deeplClient.getSessionCharacterCount()} characters during this session.`,
+        TranslationService.name
+      );
+    }
 
     return translatedTexts;
   }
