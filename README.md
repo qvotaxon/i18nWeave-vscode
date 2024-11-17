@@ -28,6 +28,8 @@ See the website [i18nWeave.com](https://i18nweave.com/) for more info. Of course
 
 ## ⭐ Features
 
+### Main Features
+
 - **Installation Wizard**
 
   Get up and running in no time using the build-in configuration wizard. Pick any of the build-in framework configurations and get started in just a few clicks. Or with just a few more clicks setup a custom project using i18next translations.
@@ -43,11 +45,19 @@ See the website [i18nWeave.com](https://i18nweave.com/) for more info. Of course
   - [DeepL](https://www.deepl.com/translator) (requires an Api key)
   - [Google Translate](https://translate.google.com) (not implemented yet)
 
-## Beta Features
+<!--
+### Misc Features
 
-### Table View
+- **Smart code change detection**
 
-Have i18nWeave represent your json files in a table format. 
+  Only execute when needed.
+-->
+
+### Beta Features
+
+- **Table View**
+
+  Have i18nWeave represent your json files in a table format. 
 
   > **This feature is still very buggy and very likely to be replaced.**
 
