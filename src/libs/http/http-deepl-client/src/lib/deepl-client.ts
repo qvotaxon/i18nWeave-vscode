@@ -91,6 +91,8 @@ export class DeeplClient implements ITranslator {
       DeeplClient.name
     );
 
+    this.sessionCharacterCount += inputCharacterCount + outputCharacterCount;
+
     return translatedTexts.map(x => x.text);
   }
 
