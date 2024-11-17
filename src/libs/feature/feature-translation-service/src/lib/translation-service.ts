@@ -3,6 +3,7 @@ import vscode from 'vscode';
 
 import { DeeplClient } from '@i18n-weave/http/http-deepl-client';
 
+import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 import {
   collectLeafValues,
   reconstructObjectWithUpdatedValues,
@@ -12,10 +13,12 @@ import {
  * Singleton class for managing translation services.
  */
 export class TranslationService {
+  private readonly _logger: Logger;
   private static instance: TranslationService;
   private readonly context: vscode.ExtensionContext;
 
   private constructor(context: vscode.ExtensionContext) {
+    this._logger = Logger.getInstance();
     this.context = context;
   }
 
@@ -38,11 +41,11 @@ export class TranslationService {
     sourceLang: string,
     targetLang: string
   ): Promise<(object | string)[]> {
-    const client = await DeeplClient.getInstanceAsync(this.context);
+    const deeplClient = await DeeplClient.getInstanceAsync(this.context);
 
     const translateTexts = async (texts: string[]): Promise<string[]> => {
       const nonEmptyTexts = texts.filter(text => text.trim() !== '');
-      const translatedNonEmptyTexts = await client.translateAsync(
+      const translatedNonEmptyTexts = await deeplClient.translateAsync(
         nonEmptyTexts,
         sourceLang as SourceLanguageCode,
         targetLang as TargetLanguageCode
@@ -99,10 +102,18 @@ export class TranslationService {
       }
     );
 
-    return texts.map(text =>
+    const translatedTexts = texts.map(text =>
       typeof text === 'string'
         ? translatedStrings.shift()!
         : translatedObjects.shift()!
     );
+
+    this._logger.log(
+      LogLevel.INFO,
+      `Translated ${deeplClient.getSessionCharacterCount()} characters during this session.`,
+      TranslationService.name
+    );
+
+    return translatedTexts;
   }
 }

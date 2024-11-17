@@ -18,6 +18,7 @@ import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
  * Singleton class for managing DeepL translation services.
  */
 export class DeeplClient implements ITranslator {
+  private sessionCharacterCount = 0;
   private readonly _logger: Logger;
   private readonly context: vscode.ExtensionContext;
   private static instance: DeeplClient;
@@ -74,10 +75,23 @@ export class DeeplClient implements ITranslator {
       sourceLanguage
     );
 
+    const inputCharacterCount = texts.reduce(
+      (count, text) => count + text.length,
+      0
+    );
+
+    const outputCharacterCount = translatedTexts.reduce(
+      (count, text) => count + text.text.length,
+      0
+    );
+
     this._logger.log(
       LogLevel.INFO,
-      `Translation completed from ${sourceLanguage} to ${targetLanguage}.`
+      `Translated ${texts.length} text(s) with DeepL.\nSource language: ${sourceLanguage ?? '[Auto Detect Language]'} to ${targetLanguage}.\n${formality ? `Formality: ${formality}` : ''}.\nInput character count: ${inputCharacterCount}.\nOutput character count: ${outputCharacterCount}.\nTotal character: ${inputCharacterCount + outputCharacterCount}.`,
+      DeeplClient.name
     );
+
+    this.sessionCharacterCount += inputCharacterCount + outputCharacterCount;
 
     return translatedTexts.map(x => x.text);
   }
@@ -103,12 +117,6 @@ export class DeeplClient implements ITranslator {
     formality: deepl.Formality | undefined,
     sourceLanguage?: string
   ) {
-    this._logger.log(
-      LogLevel.INFO,
-      `Translating ${texts.length} text(s) with DeepL from ${sourceLanguage ?? '[Auto Detect Language]'} to ${targetLanguage}.`,
-      DeeplClient.name
-    );
-
     return await Sentry.startSpan(
       { op: 'http.client', name: `Retrieve DeepL Translations` },
       async span => {
@@ -127,7 +135,8 @@ export class DeeplClient implements ITranslator {
         } catch (error) {
           this._logger.log(
             LogLevel.ERROR,
-            `Failed to translate text with DeepL. Received error: ${error}`
+            `Failed to translate text with DeepL. Received error: ${error}`,
+            DeeplClient.name
           );
           this._logger.show();
           throw error;
@@ -136,6 +145,10 @@ export class DeeplClient implements ITranslator {
         }
       }
     );
+  }
+
+  public getSessionCharacterCount(): number {
+    return this.sessionCharacterCount;
   }
 
   private static async initializeTranslator(apiKey: string): Promise<void> {
