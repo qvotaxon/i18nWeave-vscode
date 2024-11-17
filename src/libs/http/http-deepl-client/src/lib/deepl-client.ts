@@ -66,23 +66,28 @@ export class DeeplClient implements ITranslator {
 
     const formality = this.getFormality(targetLanguage);
 
-    const characterCount = texts.reduce(
-      (count, text) => count + text.length,
-      0
-    );
-
-    this._logger.log(
-      LogLevel.INFO,
-      `Translated ${texts.length} text(s) (${characterCount} number of characters) with DeepL.\nSource language: ${sourceLanguage ?? '[Auto Detect Language]'} to ${targetLanguage}.\n${formality ? `Formality: ${formality}` : ''}`,
-      DeeplClient.name
-    );
-
     const translatedTexts = await this.translateUsingDeepl(
       this.translator,
       texts,
       targetLanguage,
       formality,
       sourceLanguage
+    );
+
+    const inputCharacterCount = texts.reduce(
+      (count, text) => count + text.length,
+      0
+    );
+
+    const outputCharacterCount = translatedTexts.reduce(
+      (count, text) => count + text.text.length,
+      0
+    );
+
+    this._logger.log(
+      LogLevel.INFO,
+      `Translated ${texts.length} text(s) with DeepL.\nSource language: ${sourceLanguage ?? '[Auto Detect Language]'} to ${targetLanguage}.\n${formality ? `Formality: ${formality}` : ''}.\nInput character count: ${inputCharacterCount}.\nOutput character count: ${outputCharacterCount}.\nTotal character: ${inputCharacterCount + outputCharacterCount}.`,
+      DeeplClient.name
     );
 
     return translatedTexts.map(x => x.text);
