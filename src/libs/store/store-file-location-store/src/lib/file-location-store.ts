@@ -1,5 +1,5 @@
 import fs from 'fs';
-import vscode, { Uri } from 'vscode';
+import vscode from 'vscode';
 
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
@@ -12,24 +12,7 @@ import {
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
-type Metadata = {
-  uri: Uri;
-  lastModified: Date;
-  type: FileType;
-};
-
-type FileData = {
-  content: string;
-  metaData: Metadata;
-};
-
-type TranslationFile = {
-  language: string;
-  namespace: string;
-  dialect?: string;
-} & FileData;
-
-type CodeFile = FileData;
+import { CodeFile, TranslationFile } from './file-location-store.types';
 
 export class FileLocationStore {
   private static instance: FileLocationStore;
