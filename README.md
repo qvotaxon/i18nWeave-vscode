@@ -45,7 +45,7 @@ See the website [i18nWeave.com](https://i18nweave.com/) for more info. Of course
 
 ## Beta Features
 
-- Table View
+### Table View
 
 Have i18nWeave represent your json files in a table format. 
 
