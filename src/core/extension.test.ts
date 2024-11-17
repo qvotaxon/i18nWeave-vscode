@@ -74,7 +74,7 @@ suite('Extension Activation', () => {
     );
     sinon.assert.calledWith(
       fileWatcherCreator.createFileWatchersForFileTypeAsync,
-      FileType.Json,
+      FileType.Translation,
       sinon.match.object,
       sinon.match.object,
       sinon.match.func

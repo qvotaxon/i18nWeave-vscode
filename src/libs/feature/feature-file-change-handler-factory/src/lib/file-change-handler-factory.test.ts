@@ -19,7 +19,7 @@ suite('FileChangeHandlerFactory Tests', () => {
     const factory = new FileChangeHandlerFactory();
 
     const handler = factory.createFileChangeHandler(
-      FileType.Json,
+      FileType.Translation,
       extensionContext
     );
 

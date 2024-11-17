@@ -19,7 +19,7 @@ export class WebviewFactory {
    */
   constructor(context: vscode.ExtensionContext) {
     this.creators = new Map();
-    this.creators.set(FileType.Json, new JsonWebviewCreator(context));
+    this.creators.set(FileType.Translation, new JsonWebviewCreator(context));
   }
 
   /**

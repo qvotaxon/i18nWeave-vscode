@@ -14,7 +14,7 @@ export class FileChangeHandlerFactory {
     switch (fileType) {
       case FileType.Code:
         return CodeFileChangeHandler.create(context);
-      case FileType.Json:
+      case FileType.Translation:
         return JsonFileChangeHandler.create(context);
       default:
         throw new Error('Unsupported file extension');
