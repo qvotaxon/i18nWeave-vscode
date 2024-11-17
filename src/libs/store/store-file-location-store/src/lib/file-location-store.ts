@@ -3,6 +3,10 @@ import vscode from 'vscode';
 
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
+import {
+  ConfigurationStoreManager,
+  I18nextScannerModuleConfiguration,
+} from '@i18n-weave/util/util-configuration';
 import { FileType } from '@i18n-weave/util/util-enums';
 import {
   extractLocaleFromFileUri,
@@ -75,7 +79,7 @@ export class FileLocationStore {
     let file: TranslationFile | CodeFile;
 
     switch (fileType) {
-      case FileType.Json:
+      case FileType.Translation:
         file = await this.createTranslationFileAsync(uri);
         break;
       case FileType.Code:
@@ -105,7 +109,7 @@ export class FileLocationStore {
       namespace: namespace,
       metaData: {
         lastModified: lastModified,
-        type: FileType.Json,
+        type: FileType.Translation,
         uri: uri,
       },
     } satisfies TranslationFile;
@@ -148,7 +152,7 @@ export class FileLocationStore {
 
   public getTranslationFiles(): TranslationFile[] {
     return Array.from(this.fileLocations.values())
-      .filter(file => file.metaData.type === FileType.Json)
+      .filter(file => file.metaData.type === FileType.Translation)
       .map(file => file as TranslationFile);
   }
 
@@ -158,19 +162,22 @@ export class FileLocationStore {
 
   private determineFileType(uri: vscode.Uri) {
     const extension = getFileExtension(uri);
-    switch (extension) {
-      case FileType.Json:
-        return FileType.Json;
-      case FileType.Code:
-        return FileType.Code;
-      default: {
-        this._logger.log(
-          LogLevel.ERROR,
-          `Unsupported file type: ${extension}`,
-          FileLocationStore.name
-        );
-        throw new Error(`Unsupported file type: ${extension}`);
-      }
+    const config =
+      ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+        'i18nextScannerModule'
+      );
+
+    if (extension === 'json') {
+      return FileType.Translation;
+    } else if (config.fileExtensions.includes(extension)) {
+      return FileType.Code;
     }
+
+    this._logger.log(
+      LogLevel.ERROR,
+      `Unsupported file type: ${extension}`,
+      FileLocationStore.name
+    );
+    throw new Error(`Unsupported file type: ${extension}`);
   }
 }

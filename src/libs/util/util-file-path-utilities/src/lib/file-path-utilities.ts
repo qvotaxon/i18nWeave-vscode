@@ -8,6 +8,16 @@ import {
 } from '@i18n-weave/util/util-configuration';
 import { ExtractedFileParts } from '@i18n-weave/util/util-types';
 
+/**
+ * Extracts the locale from a given file URI.
+ *
+ * This function uses a regular expression to match the locale part of the file path
+ * based on the translation files location specified in the configuration.
+ *
+ * @param fileUri - The URI of the file from which to extract the locale.
+ * @returns The extracted locale as a string.
+ * @throws Will throw an error if the locale cannot be extracted from the file path.
+ */
 export function extractLocaleFromFileUri(fileUri: Uri): string {
   const translationFilesLocation =
     ConfigurationStoreManager.getInstance()
@@ -26,22 +36,16 @@ export function extractLocaleFromFileUri(fileUri: Uri): string {
   return match[1];
 }
 
+/**
+ * Extracts the namespace from a given file URI.
+ *
+ * This function takes a file URI and returns the name of the file without its extension.
+ *
+ * @param fileUri - The URI of the file from which to extract the namespace.
+ * @returns The name of the file without its extension.
+ */
 export function extractNamespaceFromFileUri(fileUri: Uri): string {
-  const translationFilesLocation =
-    ConfigurationStoreManager.getInstance()
-      .getConfig<I18nextScannerModuleConfiguration>('i18nextScannerModule')
-      .translationFilesLocation.split('/')
-      .pop() ?? '';
-
-  const namespacePattern = new RegExp(
-    `[\\\\/]${translationFilesLocation}[\\\\/][^\\\\]+[\\\\/](.+)[\\\\/]`
-  );
-
-  const match = namespacePattern.exec(fileUri.fsPath);
-  if (!match || match.length < 2) {
-    throw new Error('Unable to extract namespace from file path.');
-  }
-  return match[1];
+  return path.parse(fileUri.fsPath).name;
 }
 
 export function determineOutputPath(fileUri: Uri): Uri {
@@ -94,6 +98,12 @@ export function getSingleWorkSpaceRoot(): string {
  * Stops at node_modules directory as it likely indicates the project root.
  * @param dir - The starting directory to search from.
  * @returns The path to the project root folder or undefined if not found.
+ */
+/**
+ * Finds the root directory of a project by searching for a `node_modules` directory or a `package.json` file.
+ *
+ * @param dir - The starting directory as a `Uri` object.
+ * @returns The `Uri` of the project root directory if found, otherwise `undefined`.
  */
 export function findProjectRoot(dir: Uri): Uri | undefined {
   const queue: Uri[] = [dir];
