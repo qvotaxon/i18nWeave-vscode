@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import vscode, { Uri } from 'vscode';
 
 import {
@@ -19,6 +20,7 @@ import { extractFileUriParts } from '@i18n-weave/util/util-file-path-utilities';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 export class JsonFileChangeHandler extends BaseFileChangeHandler {
+  private readonly _className = 'JsonFileChangeHandler';
   private readonly _logger: Logger;
   private static fileWatcherCreator: FileWatcherCreator;
   private static readJsonFileModule: ReadJsonFileModule;
@@ -81,41 +83,45 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
   async handleFileChangeAsync(
     changeFileLocation?: Uri | undefined
   ): Promise<void> {
-    if (
-      !changeFileLocation ||
-      FileLockStore.getInstance().hasFileLock(changeFileLocation)
-    ) {
-      return Promise.resolve();
-    }
+    _.debounce(async () => {
+      if (
+        !changeFileLocation ||
+        FileLockStore.getInstance().hasFileLock(changeFileLocation)
+      ) {
+        return Promise.resolve();
+      }
 
-    const extractedFileParts = extractFileUriParts(changeFileLocation);
+      const extractedFileParts = extractFileUriParts(changeFileLocation);
 
-    const context: BaseModuleContext = {
-      inputPath: changeFileLocation,
-      locale: extractedFileParts.locale,
-      outputPath: extractedFileParts.outputPath,
-    };
+      const context: BaseModuleContext = {
+        inputPath: changeFileLocation,
+        locale: extractedFileParts.locale,
+        outputPath: extractedFileParts.outputPath,
+      };
 
-    FileLockStore.getInstance().addLock(extractedFileParts.outputPath);
+      FileLockStore.getInstance().addLock(extractedFileParts.outputPath);
 
-    await JsonFileChangeHandler.moduleChainManager.executeChainAsync(
-      ChainType.Json,
-      context
-    );
-
-    this._logger.log(
-      LogLevel.VERBOSE,
-      `Json File change handled: ${changeFileLocation}`,
-      JsonFileChangeHandler.name
-    );
-
-    const fileWatcherDisposable =
-      JsonFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
-        extractedFileParts.outputPath.fsPath,
-        () => {
-          FileLockStore.getInstance().deleteAll(extractedFileParts.outputPath);
-          fileWatcherDisposable.dispose();
-        }
+      await JsonFileChangeHandler.moduleChainManager.executeChainAsync(
+        ChainType.Json,
+        context
       );
+
+      this._logger.log(
+        LogLevel.VERBOSE,
+        `Json File change handled: ${changeFileLocation}`,
+        this._className
+      );
+
+      const fileWatcherDisposable =
+        JsonFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
+          extractedFileParts.outputPath.fsPath,
+          () => {
+            FileLockStore.getInstance().deleteAll(
+              extractedFileParts.outputPath
+            );
+            fileWatcherDisposable.dispose();
+          }
+        );
+    }, 100);
   }
 }

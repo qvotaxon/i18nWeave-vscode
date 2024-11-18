@@ -14,6 +14,7 @@ type CodeTranslation = {
 };
 
 export class CodeTranslationKeyStore {
+  private readonly _className = 'CodeTranslationKeyStore';
   private _context: ExtensionContext | undefined;
   private readonly _oldCacheKey = 'i18nWeave.translationFunctionCache';
   private readonly _newCacheKey = 'i18nWeave.translationFunctionCacheNew';
@@ -39,7 +40,7 @@ export class CodeTranslationKeyStore {
     this._logger.log(
       LogLevel.INFO,
       'Initializing code translation key store',
-      CodeTranslationKeyStore.name
+      this._className
     );
 
     context.globalState.update(this._oldCacheKey, undefined);
@@ -58,7 +59,7 @@ export class CodeTranslationKeyStore {
         this._logger.log(
           LogLevel.ERROR,
           'Error restoring code translation cache',
-          CodeTranslationKeyStore.name
+          this._className
         );
         window.showErrorMessage('Error restoring code translation cache');
       }
@@ -66,7 +67,7 @@ export class CodeTranslationKeyStore {
       this._logger.log(
         LogLevel.INFO,
         'Restored code translation cache',
-        CodeTranslationKeyStore.name
+        this._className
       );
     }
 
@@ -92,14 +93,14 @@ export class CodeTranslationKeyStore {
               this._logger.log(
                 LogLevel.VERBOSE,
                 `File ${codeFileUri} does not exist in cache, updating cache`,
-                CodeTranslationKeyStore.name
+                this._className
               );
               await this.updateStoreRecordAsync(codeFileUri, dateModified);
             } else {
               this._logger.log(
                 LogLevel.VERBOSE,
                 `File ${codeFileUri} already exists in cache`,
-                CodeTranslationKeyStore.name
+                this._className
               );
             }
           });
@@ -107,7 +108,7 @@ export class CodeTranslationKeyStore {
           this._logger.log(
             LogLevel.ERROR,
             'Error initializing initial file contents',
-            CodeTranslationKeyStore.name
+            this._className
           );
           window.showErrorMessage('Error initializing initial file contents');
         }
@@ -136,7 +137,7 @@ export class CodeTranslationKeyStore {
     this._logger.log(
       LogLevel.INFO,
       `Removed ${removedCount} non-existent file(s) from cache`,
-      CodeTranslationKeyStore.name
+      this._className
     );
   }
 

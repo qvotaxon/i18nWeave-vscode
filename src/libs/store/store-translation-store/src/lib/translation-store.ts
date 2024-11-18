@@ -8,6 +8,7 @@ import { diffJsonObjects } from '@i18n-weave/util/util-file-diff';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 export class TranslationStore {
+  private readonly _className = 'TranslationStore';
   private static _instance: TranslationStore;
   private readonly _translationFileContents: Map<string, JSON> = new Map();
   private readonly _logger: Logger;
@@ -30,7 +31,7 @@ export class TranslationStore {
     this._logger.log(
       LogLevel.INFO,
       'Initializing translation store',
-      TranslationStore.name
+      this._className
     );
 
     const fileLocations = FileLocationStore.getInstance()
@@ -45,14 +46,14 @@ export class TranslationStore {
       this._logger.log(
         LogLevel.VERBOSE,
         `Added translation file ${fileUri.fsPath} to store`,
-        TranslationStore.name
+        this._className
       );
     }
 
     this._logger.log(
       LogLevel.INFO,
       `Added ${fileLocations.length} translation files to store`,
-      TranslationStore.name
+      this._className
     );
   }
 
@@ -71,7 +72,7 @@ export class TranslationStore {
     this._logger.log(
       LogLevel.VERBOSE,
       `Updated translation file ${fileUri.fsPath} in store`,
-      TranslationStore.name
+      this._className
     );
   }
 
@@ -80,7 +81,7 @@ export class TranslationStore {
     this._logger.log(
       LogLevel.VERBOSE,
       `Deleted translation file ${fileUri.fsPath} from store`,
-      TranslationStore.name
+      this._className
     );
   }
 
@@ -93,7 +94,7 @@ export class TranslationStore {
       this._logger.log(
         LogLevel.VERBOSE,
         `Added translation file ${fileUri.fsPath} to store`,
-        TranslationStore.name
+        this._className
       );
     }
   }

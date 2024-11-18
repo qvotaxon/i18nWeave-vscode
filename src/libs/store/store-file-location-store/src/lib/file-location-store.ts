@@ -19,6 +19,7 @@ import { FileSearchLocation } from '@i18n-weave/util/util-types';
 import { CodeFile, TranslationFile } from './file-location-store.types';
 
 export class FileLocationStore {
+  private readonly _className = 'FileLocationStore';
   private static instance: FileLocationStore;
   private readonly fileLocations: Map<string, TranslationFile | CodeFile> =
     new Map();
@@ -46,7 +47,7 @@ export class FileLocationStore {
     this._logger.log(
       LogLevel.INFO,
       'Scanning workspace for files...',
-      FileLocationStore.name
+      this._className
     );
     for (const fileSearchLocation of fileSearchLocations) {
       const files = await vscode.workspace.findFiles(
@@ -57,7 +58,7 @@ export class FileLocationStore {
       this._logger.log(
         LogLevel.INFO,
         `Found ${files.length} number of files for search pattern ${fileSearchLocation.filePattern as string}, ignoring ${fileSearchLocation.ignorePattern as string} and .gitignore patterns.`,
-        FileLocationStore.name
+        this._className
       );
     }
   }
@@ -92,7 +93,7 @@ export class FileLocationStore {
     this._logger.log(
       LogLevel.VERBOSE,
       `Added file ${uri.fsPath} to the store.`,
-      FileLocationStore.name
+      this._className
     );
   }
 
@@ -140,7 +141,7 @@ export class FileLocationStore {
     this._logger.log(
       LogLevel.VERBOSE,
       `Deleted file ${uri.fsPath} from the store.`,
-      FileLocationStore.name
+      this._className
     );
   }
 
@@ -176,7 +177,7 @@ export class FileLocationStore {
     this._logger.log(
       LogLevel.ERROR,
       `Unsupported file type: ${extension}`,
-      FileLocationStore.name
+      this._className
     );
     throw new Error(`Unsupported file type: ${extension}`);
   }
