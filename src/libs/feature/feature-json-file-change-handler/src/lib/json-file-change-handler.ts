@@ -83,45 +83,43 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
   async handleFileChangeAsync(
     changeFileLocation?: Uri | undefined
   ): Promise<void> {
-    _.debounce(async () => {
-      if (
-        !changeFileLocation ||
-        FileLockStore.getInstance().hasFileLock(changeFileLocation)
-      ) {
-        return Promise.resolve();
-      }
+    // _.debounce(async () => {
+    if (
+      !changeFileLocation ||
+      FileLockStore.getInstance().hasFileLock(changeFileLocation)
+    ) {
+      return Promise.resolve();
+    }
 
-      const extractedFileParts = extractFileUriParts(changeFileLocation);
+    const extractedFileParts = extractFileUriParts(changeFileLocation);
 
-      const context: BaseModuleContext = {
-        inputPath: changeFileLocation,
-        locale: extractedFileParts.locale,
-        outputPath: extractedFileParts.outputPath,
-      };
+    const context: BaseModuleContext = {
+      inputPath: changeFileLocation,
+      locale: extractedFileParts.locale,
+      outputPath: extractedFileParts.outputPath,
+    };
 
-      FileLockStore.getInstance().addLock(extractedFileParts.outputPath);
+    FileLockStore.getInstance().addLock(extractedFileParts.outputPath);
 
-      await JsonFileChangeHandler.moduleChainManager.executeChainAsync(
-        ChainType.Json,
-        context
+    await JsonFileChangeHandler.moduleChainManager.executeChainAsync(
+      ChainType.Json,
+      context
+    );
+
+    this._logger.log(
+      LogLevel.VERBOSE,
+      `Json File change handled: ${changeFileLocation}`,
+      this._className
+    );
+
+    const fileWatcherDisposable =
+      JsonFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
+        extractedFileParts.outputPath.fsPath,
+        () => {
+          FileLockStore.getInstance().deleteAll(extractedFileParts.outputPath);
+          fileWatcherDisposable.dispose();
+        }
       );
-
-      this._logger.log(
-        LogLevel.VERBOSE,
-        `Json File change handled: ${changeFileLocation}`,
-        this._className
-      );
-
-      const fileWatcherDisposable =
-        JsonFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
-          extractedFileParts.outputPath.fsPath,
-          () => {
-            FileLockStore.getInstance().deleteAll(
-              extractedFileParts.outputPath
-            );
-            fileWatcherDisposable.dispose();
-          }
-        );
-    }, 100);
+    // }, 100);
   }
 }
