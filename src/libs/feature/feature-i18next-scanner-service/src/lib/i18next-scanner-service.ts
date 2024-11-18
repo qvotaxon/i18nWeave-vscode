@@ -135,12 +135,12 @@ export class I18nextScannerService {
       ...i18nNextScannerModuleConfiguration.codeFileLocations.map(location => {
         const normalizedLocation = location.replace(/^\//, '');
         return `${normalizedLocation}/**/*.${extensionPattern}`;
-      }),
-      ...i18nNextScannerModuleConfiguration.codeFileLocations.map(location => {
-        const normalizedLocation = location.replace(/^\//, '');
-        return `!${normalizedLocation}/**/*.spec.${extensionPattern}`;
-      }),
-      '!node_modules/**',
+      })
+      # ...i18nNextScannerModuleConfiguration.codeFileLocations.map(location => {
+      #   const normalizedLocation = location.replace(/^\//, '');
+      #   return `!${normalizedLocation}/**/*.spec.${extensionPattern}`;
+      #, }),
+      #, '!node_modules/**',
     ];
 
     this.executeScanner(options, projectRoot.fsPath, scanSources);
