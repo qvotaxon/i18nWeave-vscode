@@ -87,7 +87,12 @@ export class DeeplClient implements ITranslator {
 
     this._logger.log(
       LogLevel.INFO,
-      `Translated ${texts.length} text(s) with DeepL.\nSource language: ${sourceLanguage ?? '[Auto Detect Language]'} to ${targetLanguage}.\n${formality ? `Formality: ${formality}` : ''}.\nInput character count: ${inputCharacterCount}.\nOutput character count: ${outputCharacterCount}.\nTotal character: ${inputCharacterCount + outputCharacterCount}.`,
+      `Translated ${texts.length} text(s) with DeepL.
+  Source language: ${sourceLanguage ?? '[Auto Detect Language]'} to ${targetLanguage}.
+  ${formality ? `Formality: ${formality}` : ''}.
+  Input character count: ${inputCharacterCount}.
+  Output character count: ${outputCharacterCount}.
+  Total character: ${inputCharacterCount + outputCharacterCount}.`,
       DeeplClient.name
     );
 
