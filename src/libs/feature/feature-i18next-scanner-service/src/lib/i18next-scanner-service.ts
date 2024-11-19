@@ -22,6 +22,7 @@ import { I18nextScannerOptions } from './i18nextScannerOptions';
  * Service for scanning code using i18next-scanner.
  */
 export class I18nextScannerService {
+  private readonly _className = 'I18nextScannerService';
   private static instance: I18nextScannerService;
   private readonly _logger: Logger;
 
@@ -53,7 +54,7 @@ export class I18nextScannerService {
     this._logger.log(
       LogLevel.INFO,
       'Scanning code for translation keys...',
-      I18nextScannerService.name
+      this._className
     );
 
     const configManager = ConfigurationStoreManager.getInstance();
@@ -69,7 +70,7 @@ export class I18nextScannerService {
       this._logger.log(
         LogLevel.ERROR,
         'No project root found',
-        I18nextScannerService.name
+        this._className
       );
       this._logger.show();
       throw new Error('No project root found');
@@ -148,7 +149,7 @@ export class I18nextScannerService {
     this._logger.log(
       LogLevel.INFO,
       'Done scanning code for translation keys...',
-      I18nextScannerService.name
+      this._className
     );
     statusBarManager.setIdle();
   }

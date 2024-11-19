@@ -13,6 +13,7 @@ import {
  * Singleton class for managing translation services.
  */
 export class TranslationService {
+  private readonly _className = 'TranslationService';
   private readonly _logger: Logger;
   private static instance: TranslationService;
   private readonly context: vscode.ExtensionContext;
@@ -112,7 +113,7 @@ export class TranslationService {
       this._logger.log(
         LogLevel.INFO,
         `Translated ${deeplClient.getSessionCharacterCount()} characters during this session.`,
-        TranslationService.name
+        this._className
       );
     }
 

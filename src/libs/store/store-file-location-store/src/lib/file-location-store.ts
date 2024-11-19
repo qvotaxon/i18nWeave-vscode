@@ -1,12 +1,28 @@
-import vscode, { Uri } from 'vscode';
+import fs from 'fs';
+import vscode from 'vscode';
 
-import { getFileExtension } from '@i18n-weave/util/util-file-path-utilities';
+import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
+
+import {
+  ConfigurationStoreManager,
+  I18nextScannerModuleConfiguration,
+} from '@i18n-weave/util/util-configuration';
+import { FileType } from '@i18n-weave/util/util-enums';
+import {
+  extractLocaleFromFileUri,
+  extractNamespaceFromFileUri,
+  getFileExtension,
+} from '@i18n-weave/util/util-file-path-utilities';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
+import { CodeFile, TranslationFile } from './file-location-store.types';
+
 export class FileLocationStore {
+  private readonly _className = 'FileLocationStore';
   private static instance: FileLocationStore;
-  private readonly fileLocations: Map<string, Map<string, Uri>> = new Map();
+  private readonly fileLocations: Map<string, TranslationFile | CodeFile> =
+    new Map();
   private readonly _logger: Logger;
 
   private constructor() {
@@ -31,7 +47,7 @@ export class FileLocationStore {
     this._logger.log(
       LogLevel.INFO,
       'Scanning workspace for files...',
-      FileLocationStore.name
+      this._className
     );
     for (const fileSearchLocation of fileSearchLocations) {
       const files = await vscode.workspace.findFiles(
@@ -42,7 +58,7 @@ export class FileLocationStore {
       this._logger.log(
         LogLevel.INFO,
         `Found ${files.length} number of files for search pattern ${fileSearchLocation.filePattern as string}, ignoring ${fileSearchLocation.ignorePattern as string} and .gitignore patterns.`,
-        FileLocationStore.name
+        this._className
       );
     }
   }
@@ -59,54 +75,110 @@ export class FileLocationStore {
    * Adds a file to the store.
    * @param uri The URI of the file.
    */
-  public addFile(uri: vscode.Uri) {
-    const extension = getFileExtension(uri);
-    if (!this.fileLocations.has(extension)) {
-      this.fileLocations.set(extension, new Map());
+  public async addFile(uri: vscode.Uri) {
+    const fileType = this.determineFileType(uri);
+    let file: TranslationFile | CodeFile;
+
+    switch (fileType) {
+      case FileType.Translation:
+        file = await this.createTranslationFileAsync(uri);
+        break;
+      case FileType.Code:
+        file = await this.createCodeFileAsync(uri);
+        break;
     }
-    this.fileLocations.get(extension)!.set(uri.fsPath, uri);
+
+    this.fileLocations.set(uri.fsPath, file);
 
     this._logger.log(
       LogLevel.VERBOSE,
       `Added file ${uri.fsPath} to the store.`,
-      FileLocationStore.name
+      this._className
     );
   }
 
-  /**
-   * Removes a file from the store.
-   * @param uri The URI of the file.
-   */
+  async createTranslationFileAsync(uri: vscode.Uri): Promise<TranslationFile> {
+    const fileContent = await FileReader.readWorkspaceFileAsync(uri);
+    const language = extractLocaleFromFileUri(uri);
+    const namespace = extractNamespaceFromFileUri(uri);
+    const stats = fs.statSync(uri.fsPath);
+    const lastModified = stats.mtime;
+
+    const translationFile = {
+      content: fileContent,
+      language: language,
+      namespace: namespace,
+      metaData: {
+        entryLastModified: lastModified,
+        type: FileType.Translation,
+        uri: uri,
+      },
+    } satisfies TranslationFile;
+
+    return translationFile;
+  }
+
+  async createCodeFileAsync(uri: vscode.Uri) {
+    const fileContent = await FileReader.readWorkspaceFileAsync(uri);
+    const stats = fs.statSync(uri.fsPath);
+    const lastModified = stats.mtime;
+
+    const codeFile = {
+      content: fileContent,
+      metaData: {
+        entryLastModified: lastModified,
+        type: FileType.Code,
+        uri: uri,
+      },
+    } satisfies CodeFile;
+
+    return codeFile;
+  }
+
   public deleteFile(uri: vscode.Uri) {
-    const extension = getFileExtension(uri);
-    this.fileLocations.get(extension)?.delete(uri.fsPath);
+    this.fileLocations.delete(uri.fsPath);
 
     this._logger.log(
       LogLevel.VERBOSE,
       `Deleted file ${uri.fsPath} from the store.`,
-      FileLocationStore.name
+      this._className
     );
   }
 
-  /**
-   * Gets all files of specific types.
-   * @param extensions An array of file extensions (e.g., ['json', 'po', 'ts']).
-   * @returns An array of strings for files of the specified types.
-   */
-  public getFileLocationsByType(extensions: string[]): Uri[] {
-    const files: Uri[] = [];
-    for (const extension of extensions) {
-      const extensionFiles = this.fileLocations.get(extension);
-      if (extensionFiles) {
-        files.push(...Array.from(extensionFiles).map(([_, value]) => value));
-      }
-    }
-    return files;
+  public getCodeFiles(): CodeFile[] {
+    return Array.from(this.fileLocations.values())
+      .filter(file => file.metaData.type === FileType.Code)
+      .map(file => file as CodeFile);
+  }
+
+  public getTranslationFiles(): TranslationFile[] {
+    return Array.from(this.fileLocations.values())
+      .filter(file => file.metaData.type === FileType.Translation)
+      .map(file => file as TranslationFile);
   }
 
   public hasFile(uri: vscode.Uri): boolean {
-    const extension = getFileExtension(uri);
+    return this.fileLocations.has(uri.fsPath);
+  }
 
-    return this.fileLocations.get(extension)?.has(uri.fsPath) ?? false;
+  private determineFileType(uri: vscode.Uri) {
+    const extension = getFileExtension(uri);
+    const config =
+      ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+        'i18nextScannerModule'
+      );
+
+    if (extension === 'json') {
+      return FileType.Translation;
+    } else if (config.fileExtensions.includes(extension)) {
+      return FileType.Code;
+    }
+
+    this._logger.log(
+      LogLevel.ERROR,
+      `Unsupported file type: ${extension}`,
+      this._className
+    );
+    throw new Error(`Unsupported file type: ${extension}`);
   }
 }

@@ -21,6 +21,7 @@ import { ChainType } from '@i18n-weave/util/util-enums';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 export class CodeFileChangeHandler extends BaseFileChangeHandler {
+  private readonly _className = 'CodeFileChangeHandler';
   private readonly _logger: Logger;
   private static i18nextScannerModule: I18nextScannerModule;
   private static moduleChainManager: ModuleChainManager =
@@ -89,7 +90,7 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
     this._logger.log(
       LogLevel.INFO,
       `Code File change handled: ${changeFileLocation}`,
-      CodeFileChangeHandler.name
+      this._className
     );
 
     if (!isFileDeletionChange) {

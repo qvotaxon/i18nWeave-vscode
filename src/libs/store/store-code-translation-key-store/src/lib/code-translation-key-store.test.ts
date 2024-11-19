@@ -39,7 +39,7 @@ suite('CodeTranslationKeyStore', () => {
       );
       getFilesByTypeStub = sinon.stub(
         FileLocationStore.getInstance(),
-        'getFileLocationsByType'
+        'getCodeFiles'
       );
       showErrorMessageStub = sinon.stub(window, 'showErrorMessage');
       updateStoreRecordAsyncStub = sinon.stub(
@@ -220,7 +220,7 @@ suite('CodeTranslationKeyStore', () => {
       codeTranslationStore = CodeTranslationKeyStore.getInstance();
       readFileAsyncStub = sinon.stub(FileReader, 'readWorkspaceFileAsync');
       sinon.stub(ConfigurationStoreManager.getInstance(), 'getConfig');
-      sinon.stub(FileLocationStore.getInstance(), 'getFileLocationsByType');
+      sinon.stub(FileLocationStore.getInstance(), 'getTranslationFiles');
       sinon.stub(window, 'showErrorMessage');
       updateStoreRecordAsyncStub = sinon.stub(
         codeTranslationStore,

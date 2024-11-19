@@ -3,6 +3,7 @@ import vscode from 'vscode';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 export class DiagnosticsManager {
+  private readonly _className = 'DiagnosticsManager';
   private static _instance: DiagnosticsManager;
   private readonly _logger: Logger;
   private readonly _diagnosticCollection: vscode.DiagnosticCollection;
@@ -27,7 +28,7 @@ export class DiagnosticsManager {
     this._logger.log(
       LogLevel.VERBOSE,
       `Updating diagnostics for ${document.uri}`,
-      DiagnosticsManager.name
+      this._className
     );
 
     if (documentSymbols) {

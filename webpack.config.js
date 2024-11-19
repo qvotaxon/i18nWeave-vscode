@@ -1,6 +1,7 @@
 const path = require('path');
 const Dotenv = require('dotenv');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const { codecovWebpackPlugin } = require("@codecov/webpack-plugin");
 
 // Load the environment variables from the specified .env file
 Dotenv.config({ path: process.env.DOTENV_CONFIG_PATH || '.env.production' });
@@ -37,6 +38,15 @@ module.exports = (env, argv) => {
         },
         externals: {
             vscode: 'commonjs vscode'
-        }
+        },
+        plugins: [
+            // Put the Codecov Webpack plugin after all other plugins
+            codecovWebpackPlugin({
+                enableBundleAnalysis: process.env.CODECOV_UPLOAD_TOKEN !== undefined,
+                bundleName: "@qvotaxon/i18nWeave-vscode",
+                uploadToken: process.env.CODECOV_UPLOAD_TOKEN,
+                debug: true,
+            }),
+        ],
     };
 };

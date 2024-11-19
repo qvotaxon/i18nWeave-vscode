@@ -19,6 +19,7 @@ import { extractFileUriParts } from '@i18n-weave/util/util-file-path-utilities';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 export class JsonFileChangeHandler extends BaseFileChangeHandler {
+  private readonly _className = 'JsonFileChangeHandler';
   private readonly _logger: Logger;
   private static fileWatcherCreator: FileWatcherCreator;
   private static readJsonFileModule: ReadJsonFileModule;
@@ -106,7 +107,7 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
     this._logger.log(
       LogLevel.VERBOSE,
       `Json File change handled: ${changeFileLocation}`,
-      JsonFileChangeHandler.name
+      this._className
     );
 
     const fileWatcherDisposable =

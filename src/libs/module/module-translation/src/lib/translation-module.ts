@@ -29,6 +29,8 @@ import { LogLevel } from '@i18n-weave/util/util-logger';
 import { TranslationModuleContext } from './translation-module-context';
 
 export class TranslationModule extends BaseActionModule {
+  private readonly _className = 'TranslationModule';
+
   protected async doExecuteAsync(
     context: TranslationModuleContext
   ): Promise<void> {
@@ -48,7 +50,7 @@ export class TranslationModule extends BaseActionModule {
       this.logger.log(
         LogLevel.VERBOSE,
         `No diffs found for file ${context.inputPath.fsPath}. Skipping.`,
-        TranslationModule.name
+        this._className
       );
       return;
     }
@@ -58,7 +60,7 @@ export class TranslationModule extends BaseActionModule {
       this.logger.log(
         LogLevel.VERBOSE,
         `No diff changes to translate. Skipping.`,
-        TranslationModule.name
+        this._className
       );
       return;
     }
@@ -91,7 +93,7 @@ export class TranslationModule extends BaseActionModule {
       this.logger.log(
         LogLevel.ERROR,
         `Error translating changes: ${(error as Error).message}`,
-        TranslationModule.name
+        this._className
       );
       return;
     } finally {
@@ -105,7 +107,8 @@ export class TranslationModule extends BaseActionModule {
 
   private findRelatedFiles(currentFilePath: string) {
     return FileLocationStore.getInstance()
-      .getFileLocationsByType(['json'])
+      .getTranslationFiles()
+      .map(file => file.metaData.uri)
       .filter(
         fileUri =>
           fileUri.fsPath !== currentFilePath &&
@@ -184,7 +187,7 @@ export class TranslationModule extends BaseActionModule {
         this.logger.log(
           LogLevel.ERROR,
           `Failed to parse JSON content from file ${fileUri}: ${(error as Error).message}`,
-          TranslationModule.name
+          this._className
         );
         continue;
       }

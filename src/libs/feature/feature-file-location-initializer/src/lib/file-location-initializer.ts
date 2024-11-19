@@ -47,14 +47,13 @@ export class FileLocationInitializer {
       fileSearchLocations
     );
 
-    const codeFilePaths =
-      FileLocationStore.getInstance().getFileLocationsByType(
-        codeFileExtensions
-      );
+    const codeFileUris = FileLocationStore.getInstance()
+      .getCodeFiles()
+      .map(file => file.metaData.uri);
 
     await CodeTranslationKeyStore.getInstance().initializeAsync(
       this.context,
-      codeFilePaths
+      codeFileUris
     );
   }
 }

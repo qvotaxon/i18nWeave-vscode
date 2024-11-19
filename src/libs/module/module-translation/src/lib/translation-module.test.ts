@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 import * as sinon from 'sinon';
 import { Diff } from 'deep-diff';
+import { TranslationFile } from 'src/libs/store/store-file-location-store/src/lib/file-location-store.types';
 import { ExtensionContext, Uri } from 'vscode';
 
 import { StatusBarManager } from '@i18n-weave/feature/feature-status-bar-manager';
@@ -50,9 +51,11 @@ suite('TranslationModule', () => {
     });
 
     fileLocationStoreStub = sinon.createStubInstance(FileLocationStore, {
-      getFileLocationsByType: sinon
-        .stub<[string[]], Uri[]>()
-        .returns([Uri.file('/path/to/related-file.json')]),
+      getTranslationFiles: sinon.stub<[], TranslationFile[]>().returns([
+        {
+          metaData: { uri: Uri.file('/path/to/file.json') },
+        } as TranslationFile,
+      ]),
     });
 
     translationServiceStub = sinon.createStubInstance(TranslationService, {
@@ -103,9 +106,7 @@ suite('TranslationModule', () => {
         context.jsonContent
       )
     );
-    assert.ok(
-      fileLocationStoreStub.getFileLocationsByType.calledWith(['json'])
-    );
+    assert.ok(fileLocationStoreStub.getTranslationFiles.calledOnce);
     assert.ok(
       translationServiceStub.translateKeysAsync.calledWith(
         ['value'],

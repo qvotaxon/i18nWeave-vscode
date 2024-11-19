@@ -1,4 +1,4 @@
 export enum FileType {
-  Json = 'json',
+  Translation = 'json',
   Code = 'code',
 }

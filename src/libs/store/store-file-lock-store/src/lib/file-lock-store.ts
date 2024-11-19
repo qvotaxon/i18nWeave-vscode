@@ -6,6 +6,7 @@ import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
  * Represents a store for managing file locks.
  */
 export class FileLockStore {
+  private readonly _className = 'FileLockStore';
   private static instance: FileLockStore;
   private fileLocks: Map<string, number> = new Map<string, number>();
   private readonly _logger: Logger;
@@ -33,7 +34,7 @@ export class FileLockStore {
     this._logger.log(
       LogLevel.VERBOSE,
       'Added file lock for ' + uri.fsPath,
-      FileLockStore.name
+      this._className
     );
 
     const lockCount = this.fileLocks.get(uri.fsPath) || 0;
@@ -50,7 +51,7 @@ export class FileLockStore {
       this._logger.log(
         LogLevel.VERBOSE,
         'Added file lock for ' + uri.fsPath,
-        FileLockStore.name
+        this._className
       );
 
       const lockCount = this.fileLocks.get(uri.fsPath) || 0;
@@ -66,7 +67,7 @@ export class FileLockStore {
     this._logger.log(
       LogLevel.VERBOSE,
       'Deleted file lock for ' + uri.fsPath,
-      FileLockStore.name
+      this._className
     );
 
     const lockCount = this.fileLocks.get(uri.fsPath) || 0;
@@ -81,7 +82,7 @@ export class FileLockStore {
     this._logger.log(
       LogLevel.VERBOSE,
       'Deleted file lock for ' + uri.fsPath,
-      FileLockStore.name
+      this._className
     );
 
     this.fileLocks.delete(uri.fsPath);
@@ -96,7 +97,7 @@ export class FileLockStore {
     this._logger.log(
       LogLevel.VERBOSE,
       'Checking file lock for ' + uri.fsPath,
-      FileLockStore.name
+      this._className
     );
     return this.fileLocks.has(uri.fsPath);
   }

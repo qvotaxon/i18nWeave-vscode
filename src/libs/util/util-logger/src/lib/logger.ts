@@ -42,6 +42,22 @@ export class Logger {
       return;
     }
 
+    let levelIcon = '';
+    switch (level) {
+      case LogLevel.INFO:
+        levelIcon = 'ℹ️';
+        break;
+      case LogLevel.WARN:
+        levelIcon = '⚠️';
+        break;
+      case LogLevel.ERROR:
+        levelIcon = '❌';
+        break;
+      case LogLevel.VERBOSE:
+        levelIcon = '🔍';
+        break;
+    }
+
     const timestamp = new Date()
       .toLocaleString('en-GB', {
         day: '2-digit',
@@ -54,8 +70,8 @@ export class Logger {
       })
       .replace(',', '');
     const formattedMessage = scope
-      ? `[${level}] [${scope}] ${timestamp}: ${message}`
-      : `[${level}] ${timestamp}: ${message}`;
+      ? `[${levelIcon}] [${scope}] ${timestamp}: ${message}`
+      : `[${levelIcon}] ${timestamp}: ${message}`;
     this.outputChannel.appendLine(formattedMessage);
   }
 

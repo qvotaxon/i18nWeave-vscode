@@ -158,7 +158,7 @@ async function createFileWatchers(
   );
 
   const jsonFileWatchers = await createWatchersForFileType(
-    FileType.Json,
+    FileType.Translation,
     {
       filePattern: `**${translationFilesLocation}/**/*.json`,
     } as FileSearchLocation,

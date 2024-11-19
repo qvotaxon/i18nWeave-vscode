@@ -11,6 +11,8 @@ import { FileSearchLocation } from '@i18n-weave/util/util-types';
  * Class responsible for creating file watchers for files matching a given glob pattern.
  */
 export class FileWatcherCreator {
+  private readonly debounceMap: Map<string, NodeJS.Timeout> = new Map();
+
   public createFileWatcherForFile(
     pattern: string,
     onDidChange: (e: vscode.Uri) => any
@@ -57,9 +59,20 @@ export class FileWatcherCreator {
 
     fileWatcher.onDidChange(async uri => {
       if (!disableFlags.some(flag => flag())) {
-        if (FileLocationStore.getInstance().hasFile(uri)) {
-          await fileChangeHandler?.handleFileChangeAsync(uri);
+        const uriString = uri.toString();
+        if (this.debounceMap.has(uriString)) {
+          clearTimeout(this.debounceMap.get(uriString));
         }
+
+        this.debounceMap.set(
+          uriString,
+          setTimeout(async () => {
+            if (FileLocationStore.getInstance().hasFile(uri)) {
+              await fileChangeHandler?.handleFileChangeAsync(uri);
+            }
+            this.debounceMap.delete(uriString);
+          }, 150)
+        );
       }
     });
 

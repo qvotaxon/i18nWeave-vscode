@@ -73,7 +73,10 @@ export class ActiveTextEditorChangedHandler {
           'general'
         ).betaFeaturesConfiguration.enableJsonFileWebView
       ) {
-        this._webviewService.showWebview(FileType.Json, editor.document.uri);
+        this._webviewService.showWebview(
+          FileType.Translation,
+          editor.document.uri
+        );
       }
     });
   };

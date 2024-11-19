@@ -5,6 +5,7 @@ import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 export class EmptyJsonValueSymbolProvider
   implements vscode.DocumentSymbolProvider
 {
+  private readonly _className = 'EmptyJsonValueSymbolProvider';
   private readonly _logger: Logger;
 
   constructor() {
@@ -27,7 +28,7 @@ export class EmptyJsonValueSymbolProvider
       this._logger.log(
         LogLevel.VERBOSE,
         `Error parsing JSON: ${error}`,
-        EmptyJsonValueSymbolProvider.name
+        this._className
       );
     }
 
