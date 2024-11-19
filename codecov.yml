@@ -50,4 +50,4 @@ ignore:
   - 'src/libs/store/store-file-location-store/**/*'
   - 'src/libs/feature/feature-empty-json-value-symbol-provider/**/*'
   - 'src/libs/feature/feature-file-change-handler-factory/**/*'
-  - 'SRC/libs/feature/feature-diagnostics-manager/**/*'
+  - 'src/libs/feature/feature-diagnostics-manager/**/*'
