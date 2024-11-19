@@ -42,9 +42,9 @@ module.exports = (env, argv) => {
         plugins: [
             // Put the Codecov Webpack plugin after all other plugins
             codecovWebpackPlugin({
-                enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
+                enableBundleAnalysis: process.env.CODECOV_UPLOAD_TOKEN !== undefined,
                 bundleName: "@qvotaxon/i18nWeave-vscode",
-                uploadToken: process.env.CODECOV_TOKEN,
+                uploadToken: process.env.CODECOV_UPLOAD_TOKEN,
                 debug: true,
             }),
         ],
