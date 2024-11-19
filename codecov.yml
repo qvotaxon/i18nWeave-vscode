@@ -40,7 +40,7 @@ ignore:
   - 'src/libs/http/http-deepl-client/**/*'
   - 'src/libs/feature/feature-translation-service/**/*'
   - 'src/libs/util/util-highlight-missing-values/**/*'
-  - 'src/libs/feature/feature-active-text-editor-changed-handler/**/*\'
+  - 'src/libs/feature/feature-active-text-editor-changed-handler/**/*'
   - 'src/libs/feature/feature-text-document-changed-handler/**/*'
   - 'src/libs/util/util-file-diff/**/*'
   - 'src/libs/module/module-translation/**/*'
