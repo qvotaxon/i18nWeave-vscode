@@ -47,3 +47,5 @@ ignore:
   - 'src/libs/file-io/file-io-file-reader/**/*'
   - 'src/libs/file-io/file-io-file-writer/**/*'
   - 'src/libs/feature/feature-file-watcher-creator/**/*'
+  - 'src/libs/store/store-file-location-store/**/*'
+  - 'src/libs/feature/feature-empty-json-value-symbol-provider/**/*'
