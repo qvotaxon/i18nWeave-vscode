@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import vscode, { Uri } from 'vscode';
 
 import {
@@ -83,7 +82,6 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
   async handleFileChangeAsync(
     changeFileLocation?: Uri | undefined
   ): Promise<void> {
-    // _.debounce(async () => {
     if (
       !changeFileLocation ||
       FileLockStore.getInstance().hasFileLock(changeFileLocation)
@@ -120,6 +118,5 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
           fileWatcherDisposable.dispose();
         }
       );
-    // }, 100);
   }
 }

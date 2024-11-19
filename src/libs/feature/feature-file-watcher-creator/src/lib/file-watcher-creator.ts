@@ -55,11 +55,24 @@ export class FileWatcherCreator {
       }
     });
 
+    const debounceMap: Map<string, NodeJS.Timeout> = new Map();
+
     fileWatcher.onDidChange(async uri => {
       if (!disableFlags.some(flag => flag())) {
-        if (FileLocationStore.getInstance().hasFile(uri)) {
-          await fileChangeHandler?.handleFileChangeAsync(uri);
+        const uriString = uri.toString();
+        if (debounceMap.has(uriString)) {
+          clearTimeout(debounceMap.get(uriString));
         }
+
+        debounceMap.set(
+          uriString,
+          setTimeout(async () => {
+            if (FileLocationStore.getInstance().hasFile(uri)) {
+              await fileChangeHandler?.handleFileChangeAsync(uri);
+            }
+            debounceMap.delete(uriString);
+          }, 150)
+        );
       }
     });
 
