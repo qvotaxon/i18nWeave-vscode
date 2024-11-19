@@ -46,3 +46,4 @@ ignore:
   - 'src/libs/module/module-translation/**/*'
   - 'src/libs/file-io/file-io-file-reader/**/*'
   - 'src/libs/file-io/file-io-file-writer/**/*'
+  - 'src/libs/feature/feature-file-watcher-creator/**/*'
