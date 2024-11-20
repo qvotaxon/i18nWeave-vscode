@@ -228,7 +228,16 @@ export class TranslationModule extends BaseActionModule {
           unset(target, path);
         }
       } else if (change.kind === 'E' || change.kind === 'A') {
-        applyChange(target, change);
+        if (change.path) {
+          const targetValue = change.path.reduce(
+            (obj, key) => obj?.[key],
+            target
+          );
+
+          if (targetValue !== undefined) {
+            applyChange(target, change);
+          }
+        }
       }
     });
   }
