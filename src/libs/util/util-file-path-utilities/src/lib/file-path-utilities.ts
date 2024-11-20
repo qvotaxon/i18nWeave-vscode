@@ -142,8 +142,12 @@ export function findProjectRoot(dir: Uri): Uri | undefined {
 export function getWorkspaceRoot(): Uri {
   const workspaceFolders = vscode.workspace.workspaceFolders;
 
-  if (workspaceFolders) {
+  if (workspaceFolders?.length === 1) {
     return workspaceFolders[0].uri;
+  }
+
+  if (workspaceFolders && workspaceFolders.length > 1) {
+    throw new Error('Multiple workspace folders are not supported');
   }
 
   throw new Error('Project root folder not found');

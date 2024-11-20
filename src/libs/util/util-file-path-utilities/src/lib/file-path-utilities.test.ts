@@ -237,7 +237,7 @@ suite('filePathUtilities', () => {
       const workspaceFolder = {
         uri: vscode.Uri.file('c:\\workspace'),
       } as vscode.WorkspaceFolder;
-      const projectDir = path.join(workspaceFolder.uri.fsPath, 'project');
+      const projectDir = path.join(workspaceFolder.uri.fsPath);
 
       sinon.stub(vscode.workspace, 'workspaceFolders').value([workspaceFolder]);
       sinon.stub(fs, 'existsSync').callsFake(p => {
@@ -268,24 +268,7 @@ suite('filePathUtilities', () => {
     });
 
     test('should throw an error if no project root is found', () => {
-      const rootDir = 'c:\\workspace';
-      const workspaceFolder = {
-        uri: vscode.Uri.file(rootDir),
-      } as vscode.WorkspaceFolder;
-
-      sinon.stub(vscode.workspace, 'workspaceFolders').value([workspaceFolder]);
-      sinon.stub(fs, 'existsSync').returns(false);
-      sinon.stub(fs, 'lstatSync').callsFake((p): any => {
-        return {
-          isDirectory: () => p === rootDir, //NOSONAR
-        };
-      });
-      sinon.stub(fs, 'readdirSync').callsFake((dir): any => {
-        if (dir === rootDir) {
-          return ['project'];
-        }
-      });
-
+      sinon.stub(vscode.workspace, 'workspaceFolders').value([]);
       assert.throws(
         () => {
           filePathUtilities.getWorkspaceRoot();
@@ -295,19 +278,17 @@ suite('filePathUtilities', () => {
         }
       );
     });
+
+    test('should throw an error if multiple workspace folders are found', () => {
+      sinon.stub(vscode.workspace, 'workspaceFolders').value(['', '']);
+      assert.throws(
+        () => {
+          filePathUtilities.getWorkspaceRoot();
+        },
+        {
+          message: 'Multiple workspace folders are not supported',
+        }
+      );
+    });
   });
-
-  // suite('getRelativePath', () => {
-  //   test('should get the relative path of a folder from the project root folder', () => {
-  //     const projectRootFolder = 'C:\\workspace\\project';
-  //     const folderPath = 'C:\\workspace\\project\\src\\components';
-
-  //     sinon
-  //       .stub(filePathUtilities, 'getProjectRootFolder')
-  //       .returns(projectRootFolder);
-
-  //     const relativePath = filePathUtilities.getRelativePath(folderPath);
-  //     assert.strictEqual(relativePath, 'src/components');
-  //   });
-  // });
 });
