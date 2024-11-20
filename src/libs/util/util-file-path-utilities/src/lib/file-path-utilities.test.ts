@@ -263,7 +263,7 @@ suite('filePathUtilities', () => {
         return [];
       });
 
-      const projectRoot = filePathUtilities.getProjectRootFolder();
+      const projectRoot = filePathUtilities.getWorkspaceRoot();
       assert.strictEqual(projectRoot.fsPath, projectDir);
     });
 
@@ -288,7 +288,7 @@ suite('filePathUtilities', () => {
 
       assert.throws(
         () => {
-          filePathUtilities.getProjectRootFolder();
+          filePathUtilities.getWorkspaceRoot();
         },
         {
           message: 'Project root folder not found',

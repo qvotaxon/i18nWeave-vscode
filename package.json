@@ -222,6 +222,11 @@
             "type": "boolean",
             "default": false,
             "description": "Enable the Json File Web View. This feature is still in beta and may not work as expected."
+          },
+          "i18nWeave.relativePathToProjectRoot": {
+            "type": "string",
+            "default": "",
+            "markdownDescription": "Relative path to the project root. Example: `my-project\\frontend`\n\nThis path will be used to resolve relative paths in the i18next-scanner module.\nYou can use 'Copy Relative Path' from the context menu in the file explorer to copy the relative path to the clipboard."
           }
         }
       },

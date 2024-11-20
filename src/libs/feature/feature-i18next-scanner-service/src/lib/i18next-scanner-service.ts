@@ -1,5 +1,6 @@
 import sort from 'gulp-sort';
 import I18nextScanner from 'i18next-scanner';
+import path from 'path';
 import vfs from 'vinyl-fs';
 
 import {
@@ -13,7 +14,7 @@ import {
   I18nextScannerModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
-import { getProjectRootFolder } from '@i18n-weave/util/util-file-path-utilities';
+import { getWorkspaceRoot } from '@i18n-weave/util/util-file-path-utilities';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 import { I18nextScannerOptions } from './i18nextScannerOptions';
@@ -64,9 +65,14 @@ export class I18nextScannerService {
       );
     const generalConfig =
       configManager.getConfig<GeneralConfiguration>('general');
-    let projectRoot = getProjectRootFolder();
+    let workspaceRoot = getWorkspaceRoot();
+    let relativePathToProjectRoot = generalConfig.relativePathToProjectRoot;
+    let absolutePathToProjectRoot = path.join(
+      workspaceRoot.fsPath,
+      relativePathToProjectRoot
+    );
 
-    if (!projectRoot) {
+    if (!workspaceRoot) {
       this._logger.log(
         LogLevel.ERROR,
         'No project root found',
@@ -93,8 +99,8 @@ export class I18nextScannerService {
       defaultNs: i18nNextScannerModuleConfiguration.defaultNamespace,
       defaultValue: '',
       resource: {
-        loadPath: `${projectRoot.fsPath}/${i18nNextScannerModuleConfiguration.translationFilesLocation}/{{lng}}/{{ns}}.json`,
-        savePath: `${projectRoot.fsPath}/${i18nNextScannerModuleConfiguration.translationFilesLocation}/{{lng}}/{{ns}}.json`,
+        loadPath: `${absolutePathToProjectRoot}${i18nNextScannerModuleConfiguration.translationFilesLocation}/{{lng}}/{{ns}}.json`,
+        savePath: `${absolutePathToProjectRoot}${i18nNextScannerModuleConfiguration.translationFilesLocation}/{{lng}}/{{ns}}.json`,
         jsonIndent: generalConfig.format.numberOfSpacesForIndentation,
         lineEnding: 'CRLF',
       },
@@ -144,7 +150,7 @@ export class I18nextScannerService {
       '!node_modules/**',
     ];
 
-    this.executeScanner(options, projectRoot.fsPath, scanSources);
+    this.executeScanner(options, absolutePathToProjectRoot, scanSources);
 
     this._logger.log(
       LogLevel.INFO,

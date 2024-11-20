@@ -8,4 +8,5 @@ export class GeneralConfiguration {
   betaFeaturesConfiguration: BetaFeaturesConfiguration =
     new BetaFeaturesConfiguration();
   format: FormatConfiguration = new FormatConfiguration();
+  relativePathToProjectRoot: string = '';
 }
