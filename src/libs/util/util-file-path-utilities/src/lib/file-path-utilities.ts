@@ -139,16 +139,15 @@ export function findProjectRoot(dir: Uri): Uri | undefined {
  * Get the actual project root folder by locating the package.json file.
  * @returns The path to the project root folder or undefined if not found.
  */
-export function getProjectRootFolder(): Uri {
+export function getWorkspaceRoot(): Uri {
   const workspaceFolders = vscode.workspace.workspaceFolders;
 
-  if (workspaceFolders) {
-    for (const folder of workspaceFolders) {
-      const projectRoot = findProjectRoot(folder.uri);
-      if (projectRoot) {
-        return projectRoot;
-      }
-    }
+  if (workspaceFolders?.length === 1) {
+    return workspaceFolders[0].uri;
+  }
+
+  if (workspaceFolders && workspaceFolders.length > 1) {
+    throw new Error('Multiple workspace folders are not supported');
   }
 
   throw new Error('Project root folder not found');
@@ -199,7 +198,7 @@ export function sanitizeLocations(fileFsPaths: string[]): string[] {
  */
 //TODO: find out why this doesn't actually return a relative path
 export function getRelativePath(folderPath: Uri) {
-  const projectRootFolder = getProjectRootFolder();
+  const projectRootFolder = getWorkspaceRoot();
 
   return getPosixPathFromUri(
     folderPath.fsPath.replace(projectRootFolder.fsPath, '')
