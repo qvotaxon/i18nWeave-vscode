@@ -36,11 +36,14 @@ jobs:
           token: ${{ secrets.RELEASE_PLEASE_KEY }}
           release-type: node
 
+      - name: Create npm dependencies directory
+        run: mkdir -p .npm
+
       - name: Cache npm dependencies
         if: ${{ steps.release.outputs.release_created }}
         uses: actions/cache@v4
         with:
-          path: ~/.npm
+          path: .npm/
           key: node-modules-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             node-modules-
@@ -83,17 +86,17 @@ jobs:
         with:
           subject-path: i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix
 
-   #   - name: Generate SBOM
-   #     if: ${{ steps.release.outputs.release_created }}
-   #     uses: anchore/sbom-action@v0
-   #     with:
-   #       path: 'out'
-   #       format: 'spdx-json'
-   #       output-file: 'sbom.spdx.json'
+    #   - name: Generate SBOM
+    #     if: ${{ steps.release.outputs.release_created }}
+    #     uses: anchore/sbom-action@v0
+    #     with:
+    #       path: 'out'
+    #       format: 'spdx-json'
+    #       output-file: 'sbom.spdx.json'
 
-   #   - name: Attest SBOM
-   #     if: ${{ steps.release.outputs.release_created }}
-   #     uses: actions/attest-sbom@v1
-   #     with:
-   #       subject-path: '${{ github.workspace }}/out'
-   #       sbom-path: 'sbom.spdx.json'
+    #   - name: Attest SBOM
+    #     if: ${{ steps.release.outputs.release_created }}
+    #     uses: actions/attest-sbom@v1
+    #     with:
+    #       subject-path: '${{ github.workspace }}/out'
+    #       sbom-path: 'sbom.spdx.json'
