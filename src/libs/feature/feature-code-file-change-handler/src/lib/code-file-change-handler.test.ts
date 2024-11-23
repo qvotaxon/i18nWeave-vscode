@@ -52,7 +52,13 @@ suite('CodeFileChangeHandler', () => {
       sinon.stub(fs, 'existsSync').returns(true);
       sinon
         .stub(CodeTranslationKeyStore.getInstance(), 'hasTranslationChanges')
-        .returns(Promise.resolve(true));
+        .returns(
+          Promise.resolve({
+            hasChanges: true,
+            hasDeletions: false,
+            hasRenames: false,
+          })
+        );
 
       const uri = vscode.Uri.file('path/to/file.ts');
 
@@ -81,7 +87,13 @@ suite('CodeFileChangeHandler', () => {
 
       sinon
         .stub(CodeTranslationKeyStore.getInstance(), 'hasTranslationChanges')
-        .returns(Promise.resolve(false));
+        .returns(
+          Promise.resolve({
+            hasChanges: false,
+            hasDeletions: false,
+            hasRenames: false,
+          })
+        );
 
       const uri = vscode.Uri.file('path/to/file.ts');
 
@@ -98,7 +110,13 @@ suite('CodeFileChangeHandler', () => {
 
       sinon
         .stub(CodeTranslationKeyStore.getInstance(), 'hasTranslationChanges')
-        .returns(Promise.resolve(false));
+        .returns(
+          Promise.resolve({
+            hasChanges: false,
+            hasDeletions: false,
+            hasRenames: false,
+          })
+        );
 
       const uri = vscode.Uri.file('path/to/file.ts');
 
@@ -108,6 +126,9 @@ suite('CodeFileChangeHandler', () => {
         inputPath: uri,
         locale: '',
         outputPath: uri,
+        hasChanges: false,
+        hasDeletions: false,
+        hasRenames: false,
       };
 
       sinon.assert.calledOnceWithExactly(
@@ -125,7 +146,13 @@ suite('CodeFileChangeHandler', () => {
 
       sinon
         .stub(CodeTranslationKeyStore.getInstance(), 'hasTranslationChanges')
-        .returns(Promise.resolve(true));
+        .returns(
+          Promise.resolve({
+            hasChanges: true,
+            hasDeletions: false,
+            hasRenames: false,
+          })
+        );
 
       const uri = vscode.Uri.file('c:/path/to/file.ts');
       sinon.stub(fs, 'existsSync').returns(true);
@@ -154,7 +181,13 @@ suite('CodeFileChangeHandler', () => {
 
       sinon
         .stub(CodeTranslationKeyStore.getInstance(), 'hasTranslationChanges')
-        .returns(Promise.resolve(true));
+        .returns(
+          Promise.resolve({
+            hasChanges: true,
+            hasDeletions: true,
+            hasRenames: false,
+          })
+        );
 
       const uri = vscode.Uri.file('path/to/file.ts');
 
@@ -164,6 +197,9 @@ suite('CodeFileChangeHandler', () => {
         inputPath: uri,
         locale: '',
         outputPath: uri,
+        hasChanges: true,
+        hasDeletions: true,
+        hasRenames: false,
       };
 
       sinon.assert.calledOnceWithExactly(

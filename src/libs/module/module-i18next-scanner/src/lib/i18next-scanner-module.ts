@@ -20,14 +20,23 @@ export class I18nextScannerModule extends BaseActionModule {
    */
   @TraceMethod
   protected async doExecuteAsync(
-    _: I18nextScannerModuleContext
+    i18nextScannerModuleContext: I18nextScannerModuleContext
   ): Promise<void> {
     if (
       ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
         'i18nextScannerModule'
       ).enabled
     ) {
-      I18nextScannerService.getInstance().scanCode();
+      if (
+        i18nextScannerModuleContext.hasDeletions ||
+        i18nextScannerModuleContext.hasRenames
+      ) {
+        I18nextScannerService.getInstance().scanCode();
+      } else {
+        I18nextScannerService.getInstance().scanFile(
+          i18nextScannerModuleContext.inputPath
+        );
+      }
     }
   }
 }

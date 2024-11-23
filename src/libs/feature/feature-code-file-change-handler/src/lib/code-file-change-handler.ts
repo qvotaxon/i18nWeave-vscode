@@ -58,7 +58,11 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
       return;
     }
 
-    let hasTranslationFunctions = false;
+    let hasTranslationFunctions = {
+      hasChanges: false,
+      hasDeletions: true,
+      hasRenames: false,
+    };
 
     if (fs.existsSync(changeFileLocation.fsPath)) {
       const i18nextScannerModuleConfig =
@@ -72,7 +76,7 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
         );
     }
 
-    if (!isFileDeletionChange && !hasTranslationFunctions) {
+    if (!isFileDeletionChange && !hasTranslationFunctions.hasChanges) {
       return;
     }
 
@@ -80,6 +84,9 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
       inputPath: changeFileLocation,
       locale: '',
       outputPath: changeFileLocation,
+      hasChanges: hasTranslationFunctions.hasChanges,
+      hasDeletions: hasTranslationFunctions.hasDeletions,
+      hasRenames: hasTranslationFunctions.hasRenames,
     };
 
     await CodeFileChangeHandler.moduleChainManager.executeChainAsync(

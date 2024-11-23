@@ -95,6 +95,9 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
       inputPath: changeFileLocation,
       locale: extractedFileParts.locale,
       outputPath: extractedFileParts.outputPath,
+      hasChanges: undefined,
+      hasDeletions: undefined,
+      hasRenames: undefined,
     };
 
     FileLockStore.getInstance().addLock(extractedFileParts.outputPath);

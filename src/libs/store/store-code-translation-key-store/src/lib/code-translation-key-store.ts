@@ -177,12 +177,16 @@ export class CodeTranslationKeyStore {
    * @param oldCode - The initial code snapshot.
    * @param newCode - The modified code snapshot.
    * @param config - User-defined configuration for translation functions and components.
-   * @returns True if translation keys differ, false otherwise.
+   * @returns An object containing a boolean indicating if changes occurred and another boolean indicating if deletions occurred.
    */
   public async hasTranslationChanges(
     changeFileUri: Uri,
     config: I18nextScannerModuleConfiguration
-  ): Promise<boolean> {
+  ): Promise<{
+    hasChanges: boolean;
+    hasDeletions: boolean;
+    hasRenames: boolean;
+  }> {
     const oldCode = this._codeTranslations.get(
       changeFileUri.fsPath
     )?.fileContents;
@@ -191,19 +195,60 @@ export class CodeTranslationKeyStore {
     const oldKeys = extractTranslationKeys(oldCode ?? '', config);
     const newKeys = extractTranslationKeys(newCode, config);
 
-    if (oldKeys.length !== newKeys.length) {
-      return true;
-    }
-
     const oldKeySet = new Set(oldKeys);
     const newKeySet = new Set(newKeys);
 
+    let hasChanges = false;
+    let hasDeletions = false;
+    let hasRenames = false;
+
     for (const key of newKeySet) {
       if (!oldKeySet.has(key)) {
-        return true;
+        hasChanges = true;
+        break;
       }
     }
 
-    return false;
+    if (!hasChanges) {
+      for (const key of oldKeySet) {
+        if (!newKeySet.has(key)) {
+          hasChanges = true;
+          hasDeletions = true;
+          break;
+        }
+      }
+    }
+
+    // Detect renamed keys
+    if (hasChanges && !hasDeletions) {
+      const oldKeyArray = Array.from(oldKeySet);
+      const newKeyArray = Array.from(newKeySet);
+
+      for (const oldKey of oldKeyArray) {
+        for (const newKey of newKeyArray) {
+          if (
+            oldKey !== newKey &&
+            oldKey
+              .split(config.keySeparator)
+              .slice(0, -1)
+              .join(config.keySeparator) ===
+              newKey
+                .split(config.keySeparator)
+                .slice(0, -1)
+                .join(config.keySeparator)
+          ) {
+            if (!newKeySet.has(oldKey)) {
+              hasRenames = true;
+              break;
+            }
+          }
+        }
+        if (hasRenames) {
+          break;
+        }
+      }
+    }
+
+    return { hasChanges, hasDeletions, hasRenames };
   }
 }
