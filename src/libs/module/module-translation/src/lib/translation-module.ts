@@ -102,7 +102,27 @@ export class TranslationModule extends BaseActionModule {
   }
 
   private extractRelevantChanges(diffs: any[]) {
-    return diffs.filter(({ kind }) => kind === 'N' || kind === 'E');
+    return diffs.filter(
+      ({ kind, rhs }) =>
+        (kind === 'N' || kind === 'E') &&
+        rhs !== '' &&
+        this.getAllStringValues(rhs).filter(value => value !== '').length > 0
+    );
+  }
+
+  private getAllStringValues(obj: Record<string, any>): string[] {
+    let values: string[] = [];
+
+    for (const key in obj) {
+      const value = obj[key];
+      if (typeof value === 'string') {
+        values.push(value);
+      } else if (typeof value === 'object' && value !== null) {
+        values = values.concat(this.getAllStringValues(value));
+      }
+    }
+
+    return values;
   }
 
   private findRelatedFiles(currentFilePath: string) {
@@ -173,6 +193,8 @@ export class TranslationModule extends BaseActionModule {
     translationsByLanguage: { [x: string]: any },
     config: GeneralConfiguration
   ) {
+    let fileShouldEndWithNewLine: boolean = false;
+
     for (const fileUri of targetFiles) {
       if (FileLockStore.getInstance().hasFileLock(fileUri)) {
         continue;
@@ -183,6 +205,7 @@ export class TranslationModule extends BaseActionModule {
         fileContent = JSON.parse(
           await FileReader.readWorkspaceFileAsync(fileUri)
         );
+        fileShouldEndWithNewLine = fileContent.endsWith('\n');
       } catch (error) {
         this.logger.log(
           LogLevel.ERROR,
@@ -194,6 +217,10 @@ export class TranslationModule extends BaseActionModule {
       const targetLanguage = extractLocaleFromFileUri(fileUri);
       const diffs = translationsByLanguage[targetLanguage];
       this.applyDiffsToJSON(fileContent, diffs);
+
+      if (fileShouldEndWithNewLine && !fileContent.endsWith('\n')) {
+        fileContent += '\n';
+      }
 
       FileLockStore.getInstance().addLock(fileUri);
       await FileWriter.writeToWorkspaceFileAsync(
