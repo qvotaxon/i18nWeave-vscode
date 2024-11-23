@@ -4,6 +4,14 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.13.0](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.12.2...v0.13.0) (2024-11-23)
+
+
+### Features
+
+* **i18next-scanner:** enhance file scanning logic ([#230](https://github.com/qvotaxon/i18nWeave-vscode/issues/230)) ([e1ccb88](https://github.com/qvotaxon/i18nWeave-vscode/commit/e1ccb88d1ae62ba219e7efeef5c9e6a83970a443))
+* **translation-module:** enhance diff extraction ([#234](https://github.com/qvotaxon/i18nWeave-vscode/issues/234)) ([2c69dc3](https://github.com/qvotaxon/i18nWeave-vscode/commit/2c69dc356088c9a87483fd7f690962aee5d25c08))
+
 ## [0.12.2](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.12.1...v0.12.2) (2024-11-20)
 
 
