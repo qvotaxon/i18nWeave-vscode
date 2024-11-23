@@ -52,3 +52,4 @@ ignore:
   - 'src/libs/feature/feature-file-change-handler-factory/**/*'
   - 'src/libs/module/module-base-action/**/*'
   - 'src/libs/feature/feature-i18next-scanner-service/**/*'
+  - 'src/libs/store/store-code-translation-key-store/**/*'
