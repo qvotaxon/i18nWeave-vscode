@@ -13,6 +13,7 @@ suite('I18nextScannerModule', () => {
   let scannerModule: I18nextScannerModule;
   let scannerServiceStub: sinon.SinonStubbedInstance<I18nextScannerService>;
   let scannerServiceScanCodeStub: sinon.SinonStub;
+  let scannerServiceScanFileStub: sinon.SinonStub;
 
   setup(() => {
     const getConfigStub = sinon.stub(
@@ -26,6 +27,7 @@ suite('I18nextScannerModule', () => {
     scannerModule = new I18nextScannerModule(extensionContext);
     scannerServiceStub = sinon.createStubInstance(I18nextScannerService);
     scannerServiceScanCodeStub = scannerServiceStub.scanCode = sinon.stub();
+    scannerServiceScanFileStub = scannerServiceStub.scanFile = sinon.stub();
     sinon
       .stub(I18nextScannerService, 'getInstance')
       .returns(scannerServiceStub);
@@ -36,10 +38,25 @@ suite('I18nextScannerModule', () => {
   });
 
   test('should call scanCode on I18nextScannerService', async () => {
-    const context = {} as I18nextScannerModuleContext;
+    const context = {
+      hasChanges: true,
+      hasDeletions: true,
+    } as I18nextScannerModuleContext;
 
     await scannerModule.executeAsync(context);
 
     sinon.assert.calledOnce(scannerServiceScanCodeStub);
+  });
+
+  test('should call scanFile on I18nextScannerService when changes are only additions', async () => {
+    const context = {
+      hasChanges: true,
+      hasDeletions: false,
+      hasRenames: false,
+    } as I18nextScannerModuleContext;
+
+    await scannerModule.executeAsync(context);
+
+    sinon.assert.calledOnce(scannerServiceScanFileStub);
   });
 });
