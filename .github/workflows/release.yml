@@ -27,7 +27,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: 'pnpm'
+
+      - name: Setup pnpm
+        run: npm install -g pnpm
 
       - name: Release Please
         id: release
@@ -36,18 +39,18 @@ jobs:
           token: ${{ secrets.RELEASE_PLEASE_KEY }}
           release-type: node
 
-      - name: Cache npm dependencies
+      - name: Cache pnpm store
         if: ${{ steps.release.outputs.release_created }}
         uses: actions/cache@v4
         with:
-          path: ~/.npm
-          key: node-modules-${{ hashFiles('package-lock.json') }}
+          path: ~/.pnpm-store
+          key: pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
-            node-modules-
+            pnpm-store-
 
       - name: Install dependencies
         if: ${{ steps.release.outputs.release_created }}
-        run: npm install
+        run: pnpm install
 
       - name: Create Pre-release extension
         if: ${{ steps.release.outputs.release_created }}
@@ -83,17 +86,17 @@ jobs:
         with:
           subject-path: i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix
 
-   #   - name: Generate SBOM
-   #     if: ${{ steps.release.outputs.release_created }}
-   #     uses: anchore/sbom-action@v0
-   #     with:
-   #       path: 'out'
-   #       format: 'spdx-json'
-   #       output-file: 'sbom.spdx.json'
+    #   - name: Generate SBOM
+    #     if: ${{ steps.release.outputs.release_created }}
+    #     uses: anchore/sbom-action@v0
+    #     with:
+    #       path: 'out'
+    #       format: 'spdx-json'
+    #       output-file: 'sbom.spdx.json'
 
-   #   - name: Attest SBOM
-   #     if: ${{ steps.release.outputs.release_created }}
-   #     uses: actions/attest-sbom@v1
-   #     with:
-   #       subject-path: '${{ github.workspace }}/out'
-   #       sbom-path: 'sbom.spdx.json'
+    #   - name: Attest SBOM
+    #     if: ${{ steps.release.outputs.release_created }}
+    #     uses: actions/attest-sbom@v1
+    #     with:
+    #       subject-path: '${{ github.workspace }}/out'
+    #       sbom-path: 'sbom.spdx.json'
