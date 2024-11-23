@@ -102,7 +102,27 @@ export class TranslationModule extends BaseActionModule {
   }
 
   private extractRelevantChanges(diffs: any[]) {
-    return diffs.filter(({ kind }) => kind === 'N' || kind === 'E');
+    return diffs.filter(
+      ({ kind, rhs }) =>
+        (kind === 'N' || kind === 'E') &&
+        rhs !== '' &&
+        this.getAllStringValues(rhs).filter(value => value !== '').length > 0
+    );
+  }
+
+  private getAllStringValues(obj: Record<string, any>): string[] {
+    let values: string[] = [];
+
+    for (const key in obj) {
+      const value = obj[key];
+      if (typeof value === 'string') {
+        values.push(value);
+      } else if (typeof value === 'object' && value !== null) {
+        values = values.concat(this.getAllStringValues(value));
+      }
+    }
+
+    return values;
   }
 
   private findRelatedFiles(currentFilePath: string) {
@@ -173,6 +193,8 @@ export class TranslationModule extends BaseActionModule {
     translationsByLanguage: { [x: string]: any },
     config: GeneralConfiguration
   ) {
+    let fileShouldEndWithNewLine: boolean = false;
+
     for (const fileUri of targetFiles) {
       if (FileLockStore.getInstance().hasFileLock(fileUri)) {
         continue;
@@ -180,9 +202,11 @@ export class TranslationModule extends BaseActionModule {
 
       let fileContent;
       try {
-        fileContent = JSON.parse(
-          await FileReader.readWorkspaceFileAsync(fileUri)
-        );
+        const fileContentAsString =
+          await FileReader.readWorkspaceFileAsync(fileUri);
+        fileShouldEndWithNewLine = fileContentAsString.endsWith('\n');
+
+        fileContent = JSON.parse(fileContentAsString);
       } catch (error) {
         this.logger.log(
           LogLevel.ERROR,
@@ -195,28 +219,27 @@ export class TranslationModule extends BaseActionModule {
       const diffs = translationsByLanguage[targetLanguage];
       this.applyDiffsToJSON(fileContent, diffs);
 
+      let stringifiedContent = JSON.stringify(
+        fileContent,
+        null,
+        config.format.numberOfSpacesForIndentation
+      );
+
+      if (fileShouldEndWithNewLine && !stringifiedContent.endsWith('\n')) {
+        stringifiedContent += '\n';
+      }
+
       FileLockStore.getInstance().addLock(fileUri);
       await FileWriter.writeToWorkspaceFileAsync(
         fileUri,
-        JSON.stringify(
-          fileContent,
-          null,
-          config.format.numberOfSpacesForIndentation
-        )
+        stringifiedContent
       ).then(() => {
         setTimeout(() => {
           FileLockStore.getInstance().delete(fileUri);
         }, 500);
       });
 
-      TranslationStore.getInstance().updateEntry(
-        fileUri,
-        JSON.stringify(
-          fileContent,
-          null,
-          config.format.numberOfSpacesForIndentation
-        )
-      );
+      TranslationStore.getInstance().updateEntry(fileUri, stringifiedContent);
     }
   }
 

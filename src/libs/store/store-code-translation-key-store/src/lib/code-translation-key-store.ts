@@ -209,13 +209,11 @@ export class CodeTranslationKeyStore {
       }
     }
 
-    if (!hasChanges) {
-      for (const key of oldKeySet) {
-        if (!newKeySet.has(key)) {
-          hasChanges = true;
-          hasDeletions = true;
-          break;
-        }
+    for (const key of oldKeySet) {
+      if (!newKeySet.has(key)) {
+        hasChanges = true;
+        hasDeletions = true;
+        break;
       }
     }
 
