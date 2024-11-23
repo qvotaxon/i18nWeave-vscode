@@ -24,3 +24,5 @@ node_modules/**
 package.json
 .prettierrc
 .eslintrc.json
+cspell.config.yaml
+scripts/**
