@@ -30,6 +30,15 @@ jobs:
           node-version: 20
           cache: 'npm'
 
+      - name: Create .vscode-test directory
+        run: mkdir -p .vscode-test
+
+      - name: Create npm dependencies directory
+        run: mkdir -p .npm
+
+      - name: Get VS Code Versions
+        run: curl --output vscode-stable-versions.json https://update.code.visualstudio.com/api/releases/stable
+
       - name: Cache VS Code Versions
         id: cache-vscode
         uses: actions/cache@v4
@@ -39,14 +48,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-vscode-test-
 
-      - name: Get VS Code Versions
-        if: steps.cache-vscode.outputs.cache-hit != 'true'
-        run: curl --output vscode-stable-versions.json https://update.code.visualstudio.com/api/releases/stable
-
       - name: Cache npm dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.npm
+          path: .npm/
           key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-modules-
