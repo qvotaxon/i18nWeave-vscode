@@ -24,24 +24,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: latest
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
-
-      - name: Create .vscode-test directory
-        run: mkdir -p .vscode-test
-
-      - name: Get VS Code Versions
-        run: curl --output vscode-stable-versions.json https://update.code.visualstudio.com/api/releases/stable
+          cache: 'npm'
 
       - name: Cache VS Code Versions
+        id: cache-vscode
         uses: actions/cache@v4
         with:
           path: .vscode-test/
@@ -49,12 +39,24 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-vscode-test-
 
+      - name: Get VS Code Versions
+        if: steps.cache-vscode.outputs.cache-hit != 'true'
+        run: curl --output vscode-stable-versions.json https://update.code.visualstudio.com/api/releases/stable
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
       - name: Install dependencies
-        run: pnpm install
+        run: npm install
 
       - name: Lint & Test
         if: matrix.os == 'macos-latest' || matrix.os == 'windows-latest'
-        run: pnpm run test:coverage
+        run: npm run test:coverage
 
       - name: Upload coverage reports to Codecov
         if: matrix.os == 'macos-latest' || matrix.os == 'windows-latest'
@@ -64,4 +66,4 @@ jobs:
           fail_ci_if_error: true
 
       - name: Build
-        run: pnpm run compile:sourcemaps
+        run: npm run compile:sourcemaps
