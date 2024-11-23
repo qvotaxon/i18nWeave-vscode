@@ -202,10 +202,11 @@ export class TranslationModule extends BaseActionModule {
 
       let fileContent;
       try {
-        fileContent = JSON.parse(
-          await FileReader.readWorkspaceFileAsync(fileUri)
-        );
-        fileShouldEndWithNewLine = fileContent.endsWith('\n');
+        const fileContentAsString =
+          await FileReader.readWorkspaceFileAsync(fileUri);
+        fileShouldEndWithNewLine = fileContentAsString.endsWith('\n');
+
+        fileContent = JSON.parse(fileContentAsString);
       } catch (error) {
         this.logger.log(
           LogLevel.ERROR,
@@ -218,32 +219,27 @@ export class TranslationModule extends BaseActionModule {
       const diffs = translationsByLanguage[targetLanguage];
       this.applyDiffsToJSON(fileContent, diffs);
 
-      if (fileShouldEndWithNewLine && !fileContent.endsWith('\n')) {
-        fileContent += '\n';
+      let stringifiedContent = JSON.stringify(
+        fileContent,
+        null,
+        config.format.numberOfSpacesForIndentation
+      );
+
+      if (fileShouldEndWithNewLine && !stringifiedContent.endsWith('\n')) {
+        stringifiedContent += '\n';
       }
 
       FileLockStore.getInstance().addLock(fileUri);
       await FileWriter.writeToWorkspaceFileAsync(
         fileUri,
-        JSON.stringify(
-          fileContent,
-          null,
-          config.format.numberOfSpacesForIndentation
-        )
+        stringifiedContent
       ).then(() => {
         setTimeout(() => {
           FileLockStore.getInstance().delete(fileUri);
         }, 500);
       });
 
-      TranslationStore.getInstance().updateEntry(
-        fileUri,
-        JSON.stringify(
-          fileContent,
-          null,
-          config.format.numberOfSpacesForIndentation
-        )
-      );
+      TranslationStore.getInstance().updateEntry(fileUri, stringifiedContent);
     }
   }
 
