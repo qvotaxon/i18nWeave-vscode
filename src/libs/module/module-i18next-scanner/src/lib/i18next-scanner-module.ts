@@ -27,15 +27,17 @@ export class I18nextScannerModule extends BaseActionModule {
         'i18nextScannerModule'
       ).enabled
     ) {
-      if (
-        i18nextScannerModuleContext.hasDeletions ||
-        i18nextScannerModuleContext.hasRenames
-      ) {
-        I18nextScannerService.getInstance().scanCode();
-      } else {
-        I18nextScannerService.getInstance().scanFile(
-          i18nextScannerModuleContext.inputPath
-        );
+      if (i18nextScannerModuleContext.hasChanges) {
+        if (
+          i18nextScannerModuleContext.hasDeletions ||
+          i18nextScannerModuleContext.hasRenames
+        ) {
+          I18nextScannerService.getInstance().scanCode();
+        } else {
+          I18nextScannerService.getInstance().scanFile(
+            i18nextScannerModuleContext.inputPath
+          );
+        }
       }
     }
   }
