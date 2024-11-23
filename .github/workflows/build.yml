@@ -25,7 +25,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install pnpm
-        run: npm install -g pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -33,26 +35,16 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
+      - name: Get VS Code Versions
+        run: curl --output vscode-stable-versions.json https://update.code.visualstudio.com/api/releases/stable
+
       - name: Cache VS Code Versions
-        id: cache-vscode
         uses: actions/cache@v4
         with:
           path: .vscode-test/
           key: ${{ runner.os }}-vscode-test-${{ hashFiles('**/src/*.ts', 'vscode-stable-versions.json') }}
           restore-keys: |
             ${{ runner.os }}-vscode-test-
-
-      - name: Get VS Code Versions
-        if: steps.cache-vscode.outputs.cache-hit != 'true'
-        run: curl --output vscode-stable-versions.json https://update.code.visualstudio.com/api/releases/stable
-
-      - name: Cache pnpm dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ runner.tool_cache }}/pnpm-store
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
         run: pnpm install
