@@ -35,6 +35,9 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
+      - name: Create .vscode-test directory
+        run: mkdir -p .vscode-test
+
       - name: Get VS Code Versions
         run: curl --output vscode-stable-versions.json https://update.code.visualstudio.com/api/releases/stable
 
