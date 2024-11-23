@@ -39,6 +39,9 @@ suite('ModuleChainManager Tests', () => {
       inputPath: Uri.file(''),
       outputPath: Uri.file(''),
       locale: '',
+      hasChanges: false,
+      hasDeletions: false,
+      hasRenames: false,
     };
     let isExecuted = false;
     const actionModule: ActionModule = {
@@ -63,6 +66,9 @@ suite('ModuleChainManager Tests', () => {
       inputPath: Uri.file(''),
       outputPath: Uri.file(''),
       locale: '',
+      hasChanges: false,
+      hasDeletions: false,
+      hasRenames: false,
     };
     let isExecuted = false;
     const actionModule: ActionModule = {

@@ -1,7 +1,8 @@
+import * as path from 'path';
+import * as vfs from 'vinyl-fs';
 import sort from 'gulp-sort';
 import I18nextScanner from 'i18next-scanner';
-import path from 'path';
-import vfs from 'vinyl-fs';
+import { Uri } from 'vscode';
 
 import {
   StatusBarManager,
@@ -19,22 +20,14 @@ import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 import { I18nextScannerOptions } from './i18nextScannerOptions';
 
-/**
- * Service for scanning code using i18next-scanner.
- */
 export class I18nextScannerService {
-  private readonly _className = 'I18nextScannerService';
   private static instance: I18nextScannerService;
-  private readonly _logger: Logger;
+  private readonly logger: Logger;
 
   private constructor() {
-    this._logger = Logger.getInstance();
+    this.logger = Logger.getInstance();
   }
 
-  /**
-   * Get the singleton instance of I18nextScannerService.
-   * @returns The singleton instance.
-   */
   public static getInstance(): I18nextScannerService {
     if (!I18nextScannerService.instance) {
       I18nextScannerService.instance = new I18nextScannerService();
@@ -42,9 +35,30 @@ export class I18nextScannerService {
     return I18nextScannerService.instance;
   }
 
-  /**
-   * Scan code for translation keys in the code file for which the path is provided.
-   */
+  public scanFile(fileUri: Uri): void {
+    const statusBarManager = StatusBarManager.getInstance();
+    statusBarManager.updateState(
+      StatusBarState.Running,
+      `Scanning specific code file for translation keys... (${fileUri.fsPath})`
+    );
+    this.logger.log(
+      LogLevel.INFO,
+      `Scanning specific code file for translation keys... (${fileUri.fsPath})`,
+      'I18nextScannerService'
+    );
+
+    const options = this.getI18nextScannerOptions(false);
+    const absolutePathToProjectRoot = this.getProjectRootPath();
+    this.executeScanner(options, absolutePathToProjectRoot, [fileUri.fsPath]);
+
+    this.logger.log(
+      LogLevel.INFO,
+      `Done specific code file for translation keys... (${fileUri.fsPath})`,
+      'I18nextScannerService'
+    );
+    statusBarManager.setIdle();
+  }
+
   @TraceMethod
   public scanCode(): void {
     const statusBarManager = StatusBarManager.getInstance();
@@ -52,12 +66,29 @@ export class I18nextScannerService {
       StatusBarState.Running,
       'Scanning code for translation keys...'
     );
-    this._logger.log(
+    this.logger.log(
       LogLevel.INFO,
       'Scanning code for translation keys...',
-      this._className
+      'I18nextScannerService'
     );
 
+    const options = this.getI18nextScannerOptions(true);
+    const absolutePathToProjectRoot = this.getProjectRootPath();
+    const scanSources = this.getScanSources();
+
+    this.executeScanner(options, absolutePathToProjectRoot, scanSources);
+
+    this.logger.log(
+      LogLevel.INFO,
+      'Done scanning code for translation keys...',
+      'I18nextScannerService'
+    );
+    statusBarManager.setIdle();
+  }
+
+  private getI18nextScannerOptions(
+    removeUnusedKeys: boolean
+  ): I18nextScannerOptions {
     const configManager = ConfigurationStoreManager.getInstance();
     const i18nNextScannerModuleConfiguration =
       configManager.getConfig<I18nextScannerModuleConfiguration>(
@@ -65,32 +96,17 @@ export class I18nextScannerService {
       );
     const generalConfig =
       configManager.getConfig<GeneralConfiguration>('general');
-    let workspaceRoot = getWorkspaceRoot();
-    let relativePathToProjectRoot = generalConfig.relativePathToProjectRoot;
-    let absolutePathToProjectRoot = path.join(
-      workspaceRoot.fsPath,
-      relativePathToProjectRoot
-    );
+    const absolutePathToProjectRoot = this.getProjectRootPath();
 
-    if (!workspaceRoot) {
-      this._logger.log(
-        LogLevel.ERROR,
-        'No project root found',
-        this._className
-      );
-      this._logger.show();
-      throw new Error('No project root found');
-    }
-
-    const options: I18nextScannerOptions = {
+    return {
       compatibilityJSON: 'v3',
       debug: false,
-      removeUnusedKeys: true,
+      removeUnusedKeys: removeUnusedKeys,
       sort: true,
       func: {
         list: i18nNextScannerModuleConfiguration.translationFunctionNames,
         extensions: i18nNextScannerModuleConfiguration.fileExtensions.map(
-          fileExtension => `.${fileExtension}`
+          ext => `.${ext}`
         ),
       },
       lngs: i18nNextScannerModuleConfiguration.languages,
@@ -109,10 +125,7 @@ export class I18nextScannerService {
       pluralSeparator: i18nNextScannerModuleConfiguration.pluralSeparator,
       contextSeparator: i18nNextScannerModuleConfiguration.contextSeparator,
       contextDefaultValues: [],
-      interpolation: {
-        prefix: '{{',
-        suffix: '}}',
-      },
+      interpolation: { prefix: '{{', suffix: '}}' },
       metadata: {},
       allowDynamicKeys: true,
       trans: {
@@ -124,21 +137,46 @@ export class I18nextScannerService {
         fallbackKey: false,
         supportBasicHtmlNodes: true,
         keepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p'],
-        acorn: {
-          ecmaVersion: 2020,
-          sourceType: 'module',
-        },
+        acorn: { ecmaVersion: 2020, sourceType: 'module' },
       },
     };
+  }
 
+  private getProjectRootPath(): string {
+    const configManager = ConfigurationStoreManager.getInstance();
+    const generalConfig =
+      configManager.getConfig<GeneralConfiguration>('general');
+    const workspaceRoot = getWorkspaceRoot();
+
+    if (!workspaceRoot) {
+      this.logger.log(
+        LogLevel.ERROR,
+        'No project root found',
+        'I18nextScannerService'
+      );
+      this.logger.show();
+      throw new Error('No project root found');
+    }
+
+    return path.join(
+      workspaceRoot.fsPath,
+      generalConfig.relativePathToProjectRoot
+    );
+  }
+
+  private getScanSources(): string[] {
+    const configManager = ConfigurationStoreManager.getInstance();
+    const i18nNextScannerModuleConfiguration =
+      configManager.getConfig<I18nextScannerModuleConfiguration>(
+        'i18nextScannerModule'
+      );
     const fileExtensions = i18nNextScannerModuleConfiguration.fileExtensions;
-    const hasMultipleExtensions = fileExtensions.length > 1;
+    const extensionPattern =
+      fileExtensions.length > 1
+        ? `{${fileExtensions.join(',')}}`
+        : fileExtensions[0];
 
-    const extensionPattern = hasMultipleExtensions
-      ? `{${fileExtensions.join(',')}}`
-      : fileExtensions[0];
-
-    const scanSources = [
+    return [
       ...i18nNextScannerModuleConfiguration.codeFileLocations.map(location => {
         const normalizedLocation = location.replace(/^\//, '');
         return `${normalizedLocation}/**/*.${extensionPattern}`;
@@ -149,15 +187,6 @@ export class I18nextScannerService {
       }),
       '!node_modules/**',
     ];
-
-    this.executeScanner(options, absolutePathToProjectRoot, scanSources);
-
-    this._logger.log(
-      LogLevel.INFO,
-      'Done scanning code for translation keys...',
-      this._className
-    );
-    statusBarManager.setIdle();
   }
 
   private executeScanner(
@@ -172,7 +201,11 @@ export class I18nextScannerService {
         .pipe(I18nextScanner(options))
         .pipe(vfs.dest('./'));
     } catch (error) {
-      console.error(error);
+      this.logger.log(
+        LogLevel.ERROR,
+        `Error executing scanner: ${error}`,
+        'I18nextScannerService'
+      );
     }
   }
 }

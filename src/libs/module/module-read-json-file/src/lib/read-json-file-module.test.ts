@@ -31,6 +31,9 @@ suite('ReadJsonFileModule Tests', () => {
       outputPath: Uri.file('/path/to/output.json'),
       inputPath,
       jsonContent: null,
+      hasChanges: false,
+      hasDeletions: false,
+      hasRenames: false,
     };
 
     const module = new ReadJsonFileModule(extensionContext);
@@ -53,6 +56,9 @@ suite('ReadJsonFileModule Tests', () => {
       outputPath: Uri.file('/path/to/output.json'),
       inputPath,
       jsonContent: null,
+      hasChanges: false,
+      hasDeletions: false,
+      hasRenames: false,
     };
 
     const module = new ReadJsonFileModule(extensionContext);
@@ -77,6 +83,9 @@ suite('ReadJsonFileModule Tests', () => {
       outputPath: Uri.file('/path/to/output.json'),
       inputPath,
       jsonContent: null,
+      hasChanges: false,
+      hasDeletions: false,
+      hasRenames: false,
     };
 
     const module = new ReadJsonFileModule(extensionContext);
