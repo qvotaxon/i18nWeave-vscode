@@ -195,58 +195,65 @@ export class CodeTranslationKeyStore {
     const oldKeys = extractTranslationKeys(oldCode ?? '', config);
     const newKeys = extractTranslationKeys(newCode, config);
 
-    const oldKeySet = new Set(oldKeys);
-    const newKeySet = new Set(newKeys);
-
-    let hasChanges = false;
-    let hasDeletions = false;
-    let hasRenames = false;
-
-    for (const key of newKeySet) {
-      if (!oldKeySet.has(key)) {
-        hasChanges = true;
-        break;
-      }
-    }
-
-    for (const key of oldKeySet) {
-      if (!newKeySet.has(key)) {
-        hasChanges = true;
-        hasDeletions = true;
-        break;
-      }
-    }
-
-    // Detect renamed keys
-    if (hasChanges && !hasDeletions) {
-      const oldKeyArray = Array.from(oldKeySet);
-      const newKeyArray = Array.from(newKeySet);
-
-      for (const oldKey of oldKeyArray) {
-        for (const newKey of newKeyArray) {
-          if (
-            oldKey !== newKey &&
-            oldKey
-              .split(config.keySeparator)
-              .slice(0, -1)
-              .join(config.keySeparator) ===
-              newKey
-                .split(config.keySeparator)
-                .slice(0, -1)
-                .join(config.keySeparator)
-          ) {
-            if (!newKeySet.has(oldKey)) {
-              hasRenames = true;
-              break;
-            }
-          }
+    const oldKeyObject = oldKeys.reduce((acc, key) => {
+      const keyParts = key.split(config.keySeparator);
+      let current = acc;
+      keyParts.forEach((part, index) => {
+        if (!current[part]) {
+          current[part] = index === keyParts.length - 1 ? true : {};
         }
-        if (hasRenames) {
-          break;
+        current = current[part];
+      });
+      return acc;
+    }, {} as any);
+
+    const newKeyObject = newKeys.reduce((acc, key) => {
+      const keyParts = key.split(config.keySeparator);
+      let current = acc;
+      keyParts.forEach((part, index) => {
+        if (!current[part]) {
+          current[part] = index === keyParts.length - 1 ? true : {};
+        }
+        current = current[part];
+      });
+      return acc;
+    }, {} as any);
+
+    const compareObjects = (
+      obj1: any,
+      obj2: any
+    ): { hasChanges: boolean; hasDeletions: boolean; hasRenames: boolean } => {
+      let hasChanges = false;
+      let hasDeletions = false;
+      let hasRenames = false;
+
+      const keys1 = Object.keys(obj1);
+      const keys2 = Object.keys(obj2);
+
+      for (const key of keys2) {
+        if (!keys1.includes(key)) {
+          hasChanges = true;
+        } else if (
+          typeof obj1[key] === 'object' &&
+          typeof obj2[key] === 'object'
+        ) {
+          const result = compareObjects(obj1[key], obj2[key]);
+          hasChanges = hasChanges || result.hasChanges;
+          hasDeletions = hasDeletions || result.hasDeletions;
+          hasRenames = hasRenames || result.hasRenames;
         }
       }
-    }
 
-    return { hasChanges, hasDeletions, hasRenames };
+      for (const key of keys1) {
+        if (!keys2.includes(key)) {
+          hasChanges = true;
+          hasDeletions = true;
+        }
+      }
+
+      return { hasChanges, hasDeletions, hasRenames };
+    };
+
+    return compareObjects(oldKeyObject, newKeyObject);
   }
 }
