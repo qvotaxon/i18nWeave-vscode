@@ -23,14 +23,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup pnpm
+        run: npm install -g pnpm
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
-
-      - name: Setup pnpm
-        run: npm install -g pnpm
 
       - name: Release Please
         id: release
