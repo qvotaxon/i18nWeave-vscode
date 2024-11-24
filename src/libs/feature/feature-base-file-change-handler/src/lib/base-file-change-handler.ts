@@ -13,7 +13,7 @@ export abstract class BaseFileChangeHandler {
     TranslationStore.getInstance().deleteEntry(changeFileLocation);
   }
   public async handleFileCreationAsync(changeFileLocation: Uri): Promise<void> {
-    FileLocationStore.getInstance().addFile(changeFileLocation);
+    FileLocationStore.getInstance().addOrUpdateFile(changeFileLocation);
     await TranslationStore.getInstance().addEntryAsync(changeFileLocation);
   }
 }
