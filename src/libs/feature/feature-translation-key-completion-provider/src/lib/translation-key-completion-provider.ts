@@ -9,7 +9,6 @@ import {
 
 export class TranslationKeyCompletionProvider {
   private static _instance: TranslationKeyCompletionProvider;
-  // private _translationKeys: string[] = [];
 
   private constructor() {
     // Private constructor to prevent instantiation
@@ -18,15 +17,11 @@ export class TranslationKeyCompletionProvider {
   /**
    * Returns the singleton instance of TranslationKeyCompletionProvider.
    */
-  public static getInstance() // translationKeys: string[]
-  : TranslationKeyCompletionProvider {
+  public static getInstance(): TranslationKeyCompletionProvider {
     if (!TranslationKeyCompletionProvider._instance) {
       TranslationKeyCompletionProvider._instance =
         new TranslationKeyCompletionProvider();
     }
-
-    // TranslationKeyCompletionProvider._instance._translationKeys =
-    //   translationKeys;
     return TranslationKeyCompletionProvider._instance;
   }
 
@@ -39,39 +34,50 @@ export class TranslationKeyCompletionProvider {
       ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
         'i18nextScannerModule'
       );
-    const translationKeys = fileLocationStore
-      .getTranslationFiles()
-      .filter(x => x.language === configuration.defaultLanguage)
-      .reduce((acc, file) => {
-        return acc.concat(Object.keys(file.keys));
-      }, [] as string[]);
 
     const linePrefix = document
       .lineAt(position)
       .text.substring(0, position.character);
 
-    // Check if the current context looks like a translation function call
     const translationFunctionNames =
       configuration.translationFunctionNames.join('|');
     const translationCallRegex = new RegExp(
-      `(${translationFunctionNames})\\(['"][^'"]*$`
+      `(${translationFunctionNames})\\(['"]([^'"]*)$`
     );
-    const endsWithTranslationCall = translationCallRegex.test(linePrefix);
+    const match = translationCallRegex.exec(linePrefix);
 
-    if (!endsWithTranslationCall) {
-      return []; // Return no completions if context is not relevant
+    if (!match) {
+      return [];
     }
 
-    // Generate completion items for the translation keys
-    return translationKeys.map(key => {
-      const item = new vscode.CompletionItem(
-        key,
-        vscode.CompletionItemKind.Text
-      );
-      item.insertText = key;
-      item.detail = `Translation key ${key} - i18nWeave`; // Optional: Add a description
-      item.documentation = `This is a translation key ${key}`; // Optional: Add a description
-      return item;
-    });
+    const keyPrefix = match[2];
+
+    const [namespace, key] = keyPrefix.includes(configuration.nsSeparator)
+      ? keyPrefix.split(configuration.nsSeparator)
+      : [configuration.defaultNamespace, keyPrefix];
+
+    return fileLocationStore
+      .getTranslationFiles()
+      .filter(x => x.language === configuration.defaultLanguage)
+      .filter(x => x.namespace === namespace)
+      .reduce((acc, file) => {
+        return acc.concat(Object.keys(file.keys));
+      }, [] as string[])
+      .filter(
+        k =>
+          k.startsWith(key) &&
+          !k.includes(configuration.contextSeparator) &&
+          !k.includes(configuration.pluralSeparator)
+      )
+      .map(k => {
+        const item = new vscode.CompletionItem(
+          k,
+          vscode.CompletionItemKind.Text
+        );
+        item.insertText = k.substring(key.length);
+        item.detail = `Translation key ${k} - i18nWeave`;
+        item.documentation = `This is a translation key ${k}`;
+        return item;
+      });
   }
 }

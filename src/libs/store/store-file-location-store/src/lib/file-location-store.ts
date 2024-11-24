@@ -252,13 +252,27 @@ export class FileLocationStore {
    */
   private async getLocationForKey(
     fileUri: Uri,
-    _: string //key: string
+    _: string
+    // key: string
   ): Promise<vscode.Location> {
     // For the sake of this example, assume the location is at the first line, and the key is at the start of the line
     const position = new vscode.Position(0, 0); // Adjust this logic based on how you locate the key in the file
+    // const document = await vscode.workspace.openTextDocument(fileUri.fsPath);
+    // const text = document.getText();
+    // const regex = new RegExp(`"${key}"\\s*:\\s*`, 'g');
+    // let match;
+    // let position = new vscode.Position(14, 20);
+
+    // while ((match = regex.exec(text)) !== null) {
+    //   const startIndex = match.index;
+    //   position = document.positionAt(startIndex);
+    //   // Return the first match found
+    //   return new vscode.Location(document.uri, position);
+    // }
 
     // Simulate the location based on the key and file
     const document = await vscode.workspace.openTextDocument(fileUri.fsPath); // Load document for location details
+    // If no match is found, return the default position
     return new vscode.Location(document.uri, position);
   }
 }

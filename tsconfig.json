@@ -145,7 +145,10 @@
       ],
       "@i18n-weave/feature/feature-translation-key-completion-provider": [
         "src/libs/feature/feature-translation-key-completion-provider/src"
-      ]
+      ]//,
+      // "@i18n-weave/feature/feature-translation-definition-provider": [
+      //   "src/libs/feature/feature-translation-definition-provider/src"
+      // ]
     },
     "module": "CommonJS",
     "target": "ES2022",
