@@ -12,6 +12,8 @@ import {
   StatusBarState,
 } from '@i18n-weave/feature/feature-status-bar-manager';
 import { TextDocumentChangedHandler } from '@i18n-weave/feature/feature-text-document-changed-handler';
+// import { TranslationDefinitionProvider } from '@i18n-weave/feature/feature-translation-definition-provider';
+import { TranslationKeyCompletionProvider } from '@i18n-weave/feature/feature-translation-key-completion-provider';
 
 import { TranslationStore } from '@i18n-weave/store/store-translation-store';
 
@@ -112,13 +114,47 @@ export async function activate(
         context
       );
 
+    // -------------------------------------
+
+    //both should be filtered on only the files we need to scan and manage
+
+    const provider = TranslationKeyCompletionProvider.getInstance();
+    const completionItemProviderDisposable =
+      vscode.languages.registerCompletionItemProvider(
+        [
+          { language: 'javascript', scheme: 'file' },
+          { language: 'typescript', scheme: 'file' },
+          { language: 'javascriptreact', scheme: 'file' }, // For .jsx files
+          { language: 'typescriptreact', scheme: 'file' }, // For .tsx files
+        ], // Adjust languages as needed
+        provider,
+        "'", // Trigger on single-quote
+        '"' // Trigger on double-quote
+      );
+
+    // const definitionProvider = TranslationDefinitionProvider.getInstance();
+    // const translationDefinitionProviderDisposable =
+    //   vscode.languages.registerDefinitionProvider(
+    //     [
+    //       { language: 'javascript', scheme: 'file' },
+    //       { language: 'typescript', scheme: 'file' },
+    //       { language: 'javascriptreact', scheme: 'file' }, // For .jsx files
+    //       { language: 'typescriptreact', scheme: 'file' }, // For .tsx files
+    //     ],
+    //     definitionProvider
+    //   );
+
+    // -------------------------------------
+
     context.subscriptions.push(
       ...codeFileWatchers,
       ...jsonFileWatchers,
       onDidOpenTextDocumentDisposable,
       onDidChangeTextDocumentDisposable,
       configurationWizardCommandDisposable,
-      configurationWatcherDisposable
+      configurationWatcherDisposable,
+      completionItemProviderDisposable
+      // translationDefinitionProviderDisposable
     );
 
     statusBarManager.updateState(StatusBarState.Idle, 'Idle');

@@ -142,7 +142,13 @@
       ],
       "@i18n-weave/util/util-i18next-ast": [
         "src/libs/util/util-i18next-ast/src"
-      ]
+      ],
+      "@i18n-weave/feature/feature-translation-key-completion-provider": [
+        "src/libs/feature/feature-translation-key-completion-provider/src"
+      ]//,
+      // "@i18n-weave/feature/feature-translation-definition-provider": [
+      //   "src/libs/feature/feature-translation-definition-provider/src"
+      // ]
     },
     "module": "CommonJS",
     "target": "ES2022",

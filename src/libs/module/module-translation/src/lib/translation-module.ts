@@ -55,6 +55,8 @@ export class TranslationModule extends BaseActionModule {
       return;
     }
 
+    await FileLocationStore.getInstance().addOrUpdateFile(context.inputPath);
+
     const changesToTranslate = this.extractRelevantChanges(diffs);
     if (changesToTranslate.length === 0) {
       this.logger.log(
