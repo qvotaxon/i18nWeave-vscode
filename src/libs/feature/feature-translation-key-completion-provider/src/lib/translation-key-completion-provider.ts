@@ -43,15 +43,13 @@ export class TranslationKeyCompletionProvider
       );
 
       if (translationValue) {
-        item.documentation = new MarkdownString(`
-          (Namespace: ${namespace})
-          
-          Value:
-          ${translationValue}`);
+        item.documentation = new MarkdownString(
+          `\`namespace: ${namespace}\`\n\n${translationValue}`
+        );
       } else {
-        item.documentation = new MarkdownString(`
-          
-          *No translation value found*`);
+        item.documentation = new MarkdownString(
+          `\`namespace: ${namespace}\`\n\n*No translation value found*`
+        );
       }
       item.detail = translationKey;
     }
