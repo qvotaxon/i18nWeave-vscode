@@ -45,6 +45,10 @@ See the website [i18nWeave.com](https://i18nweave.com/) for more info. Of course
   - [DeepL](https://www.deepl.com/translator) (requires an Api key)
   - [Google Translate](https://translate.google.com) (not implemented yet)
 
+- **Intellisense Autocomplete for Translation Keys**
+
+  Save time and reduce errors with powerful autocomplete functionality. As you type in your code, i18nWeave provides typeahead suggestions for existing translation keys. This feature ensures consistency and accuracy by allowing developers to quickly find and insert the correct keys, avoiding duplication or incorrect usage. Autocomplete is context-aware and works seamlessly with your project's configured translation files.
+
 <!--
 ### Misc Features
 
