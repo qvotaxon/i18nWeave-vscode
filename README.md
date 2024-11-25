@@ -47,7 +47,7 @@ See the website [i18nWeave.com](https://i18nweave.com/) for more info. Of course
 
 - **Intellisense Autocomplete for Translation Keys**
 
-  Save time and reduce errors with powerful autocomplete functionality. As you type in your code, i18nWeave provides typeahead suggestions for existing translation keys. This feature ensures consistency and accuracy by allowing developers to quickly find and insert the correct keys, avoiding duplication or incorrect usage. Autocomplete is context-aware and works seamlessly with your project's configured translation files.
+  Provides in-editor suggestions for existing translation keys as you type. This feature helps maintain consistency by ensuring you use the correct keys defined in your translation files.
 
 <!--
 ### Misc Features
