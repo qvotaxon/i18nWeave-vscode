@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { MarkdownString } from 'vscode';
 
 import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 
@@ -7,25 +8,22 @@ import {
   I18nextScannerModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
 
-export class TranslationKeyCompletionProvider {
-  private static _instance: TranslationKeyCompletionProvider;
+export class TranslationKeyCompletionProvider
+  implements vscode.CompletionItemProvider<vscode.CompletionItem>
+{
+  private static instance: TranslationKeyCompletionProvider;
 
-  private constructor() {
-    // Private constructor to prevent instantiation
-  }
+  private constructor() {}
 
-  /**
-   * Returns the singleton instance of TranslationKeyCompletionProvider.
-   */
   public static getInstance(): TranslationKeyCompletionProvider {
-    if (!TranslationKeyCompletionProvider._instance) {
-      TranslationKeyCompletionProvider._instance =
+    if (!TranslationKeyCompletionProvider.instance) {
+      TranslationKeyCompletionProvider.instance =
         new TranslationKeyCompletionProvider();
     }
-    return TranslationKeyCompletionProvider._instance;
+    return TranslationKeyCompletionProvider.instance;
   }
 
-  public resolveCompletionItem?(
+  public resolveCompletionItem(
     item: vscode.CompletionItem,
     _: vscode.CancellationToken
   ): vscode.ProviderResult<vscode.CompletionItem> {
@@ -36,26 +34,26 @@ export class TranslationKeyCompletionProvider {
       );
 
     if (item.detail) {
-      const itemData = JSON.parse(item.detail.toString()) as {
-        namespace: string;
-        translationKey: string;
-      };
-      const namespace = itemData.namespace;
-      const translationKey = itemData.translationKey;
+      const { namespace, translationKey } = JSON.parse(item.detail.toString());
+      const translationValue = this.getTranslationValue(
+        fileLocationStore,
+        configuration.defaultLanguage,
+        namespace,
+        translationKey
+      );
 
-      const translationValue = fileLocationStore
-        .getTranslationFiles()
-        .filter(
-          x =>
-            x.language === configuration.defaultLanguage &&
-            x.namespace === namespace
-        )
-        .filter(x => x.keys[translationKey.toString()].value)
-        .map(x => x.keys[translationKey].value)[0];
-
-      item.documentation = `${translationValue}`;
-      item.detail = `Key: ${translationKey} (Namespace: ${namespace})}`;
-      // item.label = `${translationKey} - ${translationValue}`;
+      if (translationValue) {
+        item.documentation = new MarkdownString(`
+          (Namespace: ${namespace})
+          
+          Value:
+          ${translationValue}`);
+      } else {
+        item.documentation = new MarkdownString(`
+          
+          *No translation value found*`);
+      }
+      item.detail = translationKey;
     }
 
     return item;
@@ -64,7 +62,7 @@ export class TranslationKeyCompletionProvider {
   public provideCompletionItems(
     document: vscode.TextDocument,
     position: vscode.Position
-  ): vscode.CompletionItem[] | Thenable<vscode.CompletionItem[]> {
+  ): vscode.ProviderResult<vscode.CompletionItem[]> {
     const fileLocationStore = FileLocationStore.getInstance();
     const configuration =
       ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
@@ -74,63 +72,137 @@ export class TranslationKeyCompletionProvider {
     const linePrefix = document
       .lineAt(position)
       .text.substring(0, position.character);
-
-    const translationFunctionNames =
-      configuration.translationFunctionNames.join('|');
-    const translationCallRegex = new RegExp(
-      `(${translationFunctionNames})\\(['"]([^'"]*)$`
-    );
-    const match = translationCallRegex.exec(linePrefix);
+    const match = this.matchTranslationFunction(linePrefix, configuration);
 
     if (!match) {
       return [];
     }
 
     const keyPrefix = match[2];
+    const [namespace, keyWithoutNamespace] = this.extractNamespace(
+      keyPrefix,
+      configuration
+    );
 
-    const [namespace, _] = keyPrefix.includes(configuration.nsSeparator)
-      ? keyPrefix.split(configuration.nsSeparator)
-      : [configuration.defaultNamespace, keyPrefix];
-
-    const translationFiles = fileLocationStore
-      .getTranslationFiles()
-      .filter(
-        x =>
-          x.language === configuration.defaultLanguage &&
-          x.namespace === namespace
-      );
-
-    const keys = translationFiles.flatMap(file => Object.keys(file.keys));
+    const keys = this.getTranslationKeys(
+      fileLocationStore,
+      configuration.defaultLanguage,
+      namespace
+    );
 
     return keys
-      .filter(
-        translationKey =>
-          translationKey.startsWith(translationKey) &&
-          !translationKey.includes(configuration.contextSeparator) &&
-          !translationKey.includes(configuration.pluralSeparator)
-      )
-      .map(translationKey => {
-        const item = new vscode.CompletionItem(
+      .filter(translationKey =>
+        this.isValidTranslationKey(
           translationKey,
-          vscode.CompletionItemKind.Text
-        );
+          keyWithoutNamespace,
+          configuration
+        )
+      )
+      .map(translationKey =>
+        this.createCompletionItem(
+          document,
+          position,
+          namespace,
+          translationKey,
+          configuration
+        )
+      );
+  }
 
-        item.detail = `{"namespace":"${namespace}", "translationKey":"${translationKey}"}`;
+  private getTranslationValue(
+    fileLocationStore: FileLocationStore,
+    language: string,
+    namespace: string,
+    translationKey: string
+  ): string | undefined | null {
+    return fileLocationStore
+      .getTranslationFiles()
+      .filter(
+        file => file.language === language && file.namespace === namespace
+      )
+      .map(file => file.keys[translationKey]?.value)
+      .find(value => value !== undefined);
+  }
 
-        const wordRange = document.getWordRangeAtPosition(position, /[\w\.]+/); // Match alphanumeric or dots
-        if (wordRange) {
-          // Step 2: Set the range for replacement to the detected word range
-          item.range = wordRange;
+  private matchTranslationFunction(
+    linePrefix: string,
+    configuration: I18nextScannerModuleConfiguration
+  ): RegExpExecArray | null {
+    const translationFunctionNames =
+      configuration.translationFunctionNames.join('|');
+    const translationCallRegex = new RegExp(
+      `(${translationFunctionNames})\\(['"]([^'"]*)$`
+    );
+    return translationCallRegex.exec(linePrefix);
+  }
 
-          // Step 3: Specify the text to insert
-          item.insertText = translationKey;
-        } else {
-          // Step 4: If no word range is detected, handle insertion at the cursor position
-          item.range = new vscode.Range(position, position); // Insert at cursor only
-          item.insertText = translationKey;
-        }
+  private extractNamespace(
+    keyPrefix: string,
+    configuration: I18nextScannerModuleConfiguration
+  ): [string, string] {
+    if (keyPrefix.includes(configuration.nsSeparator)) {
+      const [namespace, keyWithoutNamespace] = keyPrefix.split(
+        configuration.nsSeparator
+      );
+      return [namespace, keyWithoutNamespace];
+    } else {
+      return [configuration.defaultNamespace, keyPrefix];
+    }
+  }
 
-        return item;
-      });
+  private getTranslationKeys(
+    fileLocationStore: FileLocationStore,
+    language: string,
+    namespace: string
+  ): string[] {
+    return fileLocationStore
+      .getTranslationFiles()
+      .filter(
+        file => file.language === language && file.namespace === namespace
+      )
+      .flatMap(file => Object.keys(file.keys));
+  }
+
+  private isValidTranslationKey(
+    translationKey: string,
+    keyWithoutNamespace: string,
+    configuration: I18nextScannerModuleConfiguration
+  ): boolean {
+    return (
+      translationKey.startsWith(keyWithoutNamespace) &&
+      !translationKey.includes(configuration.contextSeparator) &&
+      !translationKey.includes(configuration.pluralSeparator)
+    );
+  }
+
+  private createCompletionItem(
+    document: vscode.TextDocument,
+    position: vscode.Position,
+    namespace: string,
+    translationKey: string,
+    configuration: I18nextScannerModuleConfiguration
+  ): vscode.CompletionItem {
+    const fullKey =
+      namespace === configuration.defaultNamespace
+        ? translationKey
+        : `${namespace}${configuration.nsSeparator}${translationKey}`;
+    const item = new vscode.CompletionItem(
+      fullKey,
+      vscode.CompletionItemKind.Text
+    );
+
+    item.detail = JSON.stringify({ namespace, translationKey });
+
+    const wordRange = document.getWordRangeAtPosition(position, /[\w\.:]+/);
+
+    if (wordRange) {
+      item.range = wordRange;
+      item.insertText = fullKey;
+    } else {
+      item.range = new vscode.Range(position, position);
+      item.insertText = fullKey;
+    }
+
+    return item;
   }
 }
