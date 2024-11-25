@@ -118,6 +118,10 @@ export async function activate(
 
     //both should be filtered on only the files we need to scan and manage
 
+    const i18nextScannerModuleConfiguration =
+      ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+        'i18nextScannerModule'
+      );
     const provider = TranslationKeyCompletionProvider.getInstance();
     const completionItemProviderDisposable =
       vscode.languages.registerCompletionItemProvider(
@@ -128,8 +132,10 @@ export async function activate(
           { language: 'typescriptreact', scheme: 'file' }, // For .tsx files
         ], // Adjust languages as needed
         provider,
-        "'", // Trigger on single-quote
-        '"' // Trigger on double-quote
+        "'",
+        '"',
+        i18nextScannerModuleConfiguration.nsSeparator,
+        i18nextScannerModuleConfiguration.keySeparator
       );
 
     // const definitionProvider = TranslationDefinitionProvider.getInstance();
