@@ -49,7 +49,7 @@ See the website [i18nWeave.com](https://i18nweave.com/) for more info. Of course
 
 - **Contextual Translation Statistics**
 
-  Hover over translation keys to see your translation progress, with indicators for languages with missing values. Get instant insight in the value your translation key represents in the default language. And get warned when big differences in text sizes between languages exist (taking into consideration different characters sets), which could point at translation mistakes. 
+  Hover over translation keys to see your translation progress for that key, in total and per language. Get instant insight in the value your translation key represents in the default language. And get warned when big differences in text sizes between languages exist (taking into consideration different characters sets), which could indicate translation mistakes. 
 
 <!--
 ### Misc Features
