@@ -124,6 +124,42 @@ export class FileLocationStore {
     return translationFile;
   }
 
+  public getTranslationValue(
+    language: string,
+    namespace: string,
+    translationKey: string
+  ): string | undefined | null {
+    return this.getTranslationFiles()
+      .filter(
+        file => file.language === language && file.namespace === namespace
+      )
+      .map(file => file.keys[translationKey]?.value)
+      .find(value => value !== undefined);
+  }
+
+  public getTranslationValuesByNamespaceAndKey(
+    namespace: string,
+    translationKey: string
+  ): Record<string, string | undefined | null> {
+    const translationValues: Record<string, string | undefined | null> = {};
+
+    this.getTranslationFiles()
+      .filter(file => file.namespace === namespace)
+      .forEach(file => {
+        translationValues[file.language] = file.keys[translationKey]?.value;
+      });
+
+    return translationValues;
+  }
+
+  public getTranslationKeys(language: string, namespace: string): string[] {
+    return this.getTranslationFiles()
+      .filter(
+        file => file.language === language && file.namespace === namespace
+      )
+      .flatMap(file => Object.keys(file.keys));
+  }
+
   async createCodeFileAsync(uri: vscode.Uri) {
     const fileContent = await FileReader.readWorkspaceFileAsync(uri);
     const stats = fs.statSync(uri.fsPath);

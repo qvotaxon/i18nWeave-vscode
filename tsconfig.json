@@ -145,10 +145,16 @@
       ],
       "@i18n-weave/feature/feature-translation-key-completion-provider": [
         "src/libs/feature/feature-translation-key-completion-provider/src"
-      ]//,
-      // "@i18n-weave/feature/feature-translation-definition-provider": [
-      //   "src/libs/feature/feature-translation-definition-provider/src"
-      // ]
+      ],
+      "@i18n-weave/feature/feature-translation-key-hover-provider": [
+        "src/libs/feature/feature-translation-key-hover-provider/src"
+      ],
+      "@i18n-weave/util/util-translation-key-utils": [
+        "src/libs/util/util-translation-key-utils/src"
+      ],
+      "@i18n-weave/util/util-markdown-string-utils": [
+        "src/libs/util/util-markdown-string-utils/src"
+      ]
     },
     "module": "CommonJS",
     "target": "ES2022",

@@ -7,6 +7,10 @@ import {
   ConfigurationStoreManager,
   I18nextScannerModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
+import {
+  extractNamespaceFromTranslationKey,
+  extractTranslationKeys,
+} from '@i18n-weave/util/util-translation-key-utils';
 
 export class TranslationKeyCompletionProvider
   implements vscode.CompletionItemProvider<vscode.CompletionItem>
@@ -35,8 +39,7 @@ export class TranslationKeyCompletionProvider
 
     if (item.detail) {
       const { namespace, translationKey } = JSON.parse(item.detail.toString());
-      const translationValue = this.getTranslationValue(
-        fileLocationStore,
+      const translationValue = fileLocationStore.getTranslationValue(
         configuration.defaultLanguage,
         namespace,
         translationKey
@@ -78,20 +81,21 @@ export class TranslationKeyCompletionProvider
       previousLine.length + 1 + position.character
     );
 
-    const match = this.matchTranslationFunction(textToCheck, configuration);
+    const translationFunctionNames = configuration.translationFunctionNames;
+    const match = extractTranslationKeys(textToCheck, translationFunctionNames);
 
     if (!match) {
       return [];
     }
 
     const keyPrefix = match[2];
-    const [namespace, keyWithoutNamespace] = this.extractNamespace(
+    const [namespace, keyWithoutNamespace] = extractNamespaceFromTranslationKey(
       keyPrefix,
-      configuration
+      configuration.nsSeparator,
+      configuration.defaultNamespace
     );
 
-    const keys = this.getTranslationKeys(
-      fileLocationStore,
+    const keys = fileLocationStore.getTranslationKeys(
       configuration.defaultLanguage,
       namespace
     );
@@ -113,64 +117,6 @@ export class TranslationKeyCompletionProvider
           configuration
         )
       );
-  }
-
-  private getTranslationValue(
-    fileLocationStore: FileLocationStore,
-    language: string,
-    namespace: string,
-    translationKey: string
-  ): string | undefined | null {
-    return fileLocationStore
-      .getTranslationFiles()
-      .filter(
-        file => file.language === language && file.namespace === namespace
-      )
-      .map(file => file.keys[translationKey]?.value)
-      .find(value => value !== undefined);
-  }
-
-  private matchTranslationFunction(
-    text: string,
-    configuration: I18nextScannerModuleConfiguration
-  ): RegExpExecArray | null {
-    const translationFunctionNames =
-      configuration.translationFunctionNames.join('|');
-
-    // Adjusted regex to handle potential newlines and whitespace
-    const translationCallRegex = new RegExp(
-      `(${translationFunctionNames})\\s*\\(\\s*['"]([^'"]*)$`,
-      's'
-    );
-
-    return translationCallRegex.exec(text);
-  }
-
-  private extractNamespace(
-    keyPrefix: string,
-    configuration: I18nextScannerModuleConfiguration
-  ): [string, string] {
-    if (keyPrefix.includes(configuration.nsSeparator)) {
-      const [namespace, keyWithoutNamespace] = keyPrefix.split(
-        configuration.nsSeparator
-      );
-      return [namespace, keyWithoutNamespace];
-    } else {
-      return [configuration.defaultNamespace, keyPrefix];
-    }
-  }
-
-  private getTranslationKeys(
-    fileLocationStore: FileLocationStore,
-    language: string,
-    namespace: string
-  ): string[] {
-    return fileLocationStore
-      .getTranslationFiles()
-      .filter(
-        file => file.language === language && file.namespace === namespace
-      )
-      .flatMap(file => Object.keys(file.keys));
   }
 
   private isValidTranslationKey(
