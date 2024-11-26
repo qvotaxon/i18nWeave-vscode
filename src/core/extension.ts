@@ -14,6 +14,7 @@ import {
 import { TextDocumentChangedHandler } from '@i18n-weave/feature/feature-text-document-changed-handler';
 // import { TranslationDefinitionProvider } from '@i18n-weave/feature/feature-translation-definition-provider';
 import { TranslationKeyCompletionProvider } from '@i18n-weave/feature/feature-translation-key-completion-provider';
+import { TranslationKeyHoverProvider } from '@i18n-weave/feature/feature-translation-key-hover-provider';
 
 import { TranslationStore } from '@i18n-weave/store/store-translation-store';
 
@@ -122,7 +123,8 @@ export async function activate(
       ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
         'i18nextScannerModule'
       );
-    const provider = TranslationKeyCompletionProvider.getInstance();
+    const translationKeyCompletionProvider =
+      TranslationKeyCompletionProvider.getInstance();
     const completionItemProviderDisposable =
       vscode.languages.registerCompletionItemProvider(
         [
@@ -131,12 +133,24 @@ export async function activate(
           { language: 'javascriptreact', scheme: 'file' }, // For .jsx files
           { language: 'typescriptreact', scheme: 'file' }, // For .tsx files
         ], // Adjust languages as needed
-        provider,
+        translationKeyCompletionProvider,
         "'",
         '"',
         i18nextScannerModuleConfiguration.nsSeparator,
         i18nextScannerModuleConfiguration.keySeparator
       );
+
+    const translationKeyHoverProvider =
+      TranslationKeyHoverProvider.getInstance();
+    const hoverProviderDisposable = vscode.languages.registerHoverProvider(
+      [
+        { language: 'javascript', scheme: 'file' },
+        { language: 'typescript', scheme: 'file' },
+        { language: 'javascriptreact', scheme: 'file' }, // For .jsx files
+        { language: 'typescriptreact', scheme: 'file' }, // For .tsx files
+      ],
+      translationKeyHoverProvider
+    );
 
     // const definitionProvider = TranslationDefinitionProvider.getInstance();
     // const translationDefinitionProviderDisposable =
@@ -159,7 +173,8 @@ export async function activate(
       onDidChangeTextDocumentDisposable,
       configurationWizardCommandDisposable,
       configurationWatcherDisposable,
-      completionItemProviderDisposable
+      completionItemProviderDisposable,
+      hoverProviderDisposable
       // translationDefinitionProviderDisposable
     );
 
