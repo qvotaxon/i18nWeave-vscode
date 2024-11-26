@@ -67,10 +67,18 @@ export class TranslationKeyCompletionProvider
         'i18nextScannerModule'
       );
 
-    const linePrefix = document
-      .lineAt(position)
-      .text.substring(0, position.character);
-    const match = this.matchTranslationFunction(linePrefix, configuration);
+    // Get the current line and the line before it
+    const currentLine = document.lineAt(position.line).text;
+    const previousLine =
+      position.line > 0 ? document.lineAt(position.line - 1).text : '';
+
+    // Combine the previous line (if it exists) with the current line up to the cursor position
+    const textToCheck = (previousLine + '\n' + currentLine).substring(
+      0,
+      previousLine.length + 1 + position.character
+    );
+
+    const match = this.matchTranslationFunction(textToCheck, configuration);
 
     if (!match) {
       return [];
@@ -123,15 +131,19 @@ export class TranslationKeyCompletionProvider
   }
 
   private matchTranslationFunction(
-    linePrefix: string,
+    text: string,
     configuration: I18nextScannerModuleConfiguration
   ): RegExpExecArray | null {
     const translationFunctionNames =
       configuration.translationFunctionNames.join('|');
+
+    // Adjusted regex to handle potential newlines and whitespace
     const translationCallRegex = new RegExp(
-      `(${translationFunctionNames})\\(['"]([^'"]*)$`
+      `(${translationFunctionNames})\\s*\\(\\s*['"]([^'"]*)$`,
+      's'
     );
-    return translationCallRegex.exec(linePrefix);
+
+    return translationCallRegex.exec(text);
   }
 
   private extractNamespace(
