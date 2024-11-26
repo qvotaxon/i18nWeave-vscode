@@ -4,6 +4,13 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.14.2](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.14.1...v0.14.2) (2024-11-26)
+
+
+### Bug Fixes
+
+* enhance multiline translation detection ([#240](https://github.com/qvotaxon/i18nWeave-vscode/issues/240)) ([e9dbcfa](https://github.com/qvotaxon/i18nWeave-vscode/commit/e9dbcfa4da574b98aedeb59a35dff901ce305d82))
+
 ## [0.14.1](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.14.0...v0.14.1) (2024-11-25)
 
 
