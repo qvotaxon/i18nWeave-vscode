@@ -13,6 +13,8 @@ import { FileType } from '@i18n-weave/util/util-enums';
 
 import { activate, deactivate } from './extension';
 
+const extensionName = 'qvotaxon.i18nWeave';
+
 suite('Extension Activation', () => {
   let context: ExtensionContext;
   let fileWatcherCreator: sinon.SinonStubbedInstance<FileWatcherCreator>;
@@ -21,7 +23,7 @@ suite('Extension Activation', () => {
   let codeTranslationStoreStub: sinon.SinonStubbedInstance<CodeTranslationKeyStore>;
 
   setup(() => {
-    ConfigurationStoreManager.getInstance().initialize();
+    ConfigurationStoreManager.getInstance().initialize(extensionName);
 
     context = { subscriptions: [] } as any;
     fileWatcherCreator = sinon.createStubInstance(FileWatcherCreator);

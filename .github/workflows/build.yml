@@ -20,9 +20,12 @@ jobs:
     env:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       CODECOV_UPLOAD_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -72,3 +75,18 @@ jobs:
 
       - name: Build
         run: npm run compile:sourcemaps
+
+      - name: SonarCloud Scan
+        if: matrix.os == 'ubuntu-latest'
+        uses: sonarsource/sonarcloud-github-action@v3.1.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=qvotaxon-github
+            -Dsonar.projectKey=qvotaxon_i18nWeave-vscode
+            -Dsonar.sources=src/
+            -Dsonar.inclusions=src/**
+            -Dsonar.exclusions=**/*.test.ts
+            -Dsonar.verbose=false
+            -Dsonar.coverage.disabled=true

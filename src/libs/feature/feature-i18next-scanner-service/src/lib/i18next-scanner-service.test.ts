@@ -9,12 +9,14 @@ import { StatusBarManager } from '@i18n-weave/feature/feature-status-bar-manager
 
 import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 
+const extensionName = 'qvotaxon.i18nWeave';
+
 suite('I18nextScannerService', () => {
   let scannerService: I18nextScannerService;
 
   setup(() => {
     scannerService = I18nextScannerService.getInstance();
-    ConfigurationStoreManager.getInstance().initialize();
+    ConfigurationStoreManager.getInstance().initialize(extensionName);
   });
 
   teardown(() => {

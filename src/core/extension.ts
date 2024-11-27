@@ -27,14 +27,14 @@ import { isProduction } from '@i18n-weave/util/util-environment-utilities';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
+const extensionName = 'qvotaxon.i18nWeave';
 const envFilePath =
   process.env.DOTENV_CONFIG_PATH ??
   path.join(__dirname, '..', '.env.production');
 dotenv.config({ path: envFilePath });
 
 function initializeSentry() {
-  const i18nWeaveExtension =
-    vscode.extensions.getExtension('qvotaxon.i18nWeave')!;
+  const i18nWeaveExtension = vscode.extensions.getExtension(extensionName)!;
   const installationId = vscode.env.machineId;
 
   Sentry.init({
@@ -56,9 +56,7 @@ function initializeSentry() {
 export async function activate(
   context: ExtensionContext,
   fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator(),
-  configurationManager: ConfigurationStoreManager = ConfigurationStoreManager.getInstance(),
   configurationWizardService: ConfigurationWizardService = new ConfigurationWizardService(),
-  translationStore: TranslationStore = TranslationStore.getInstance(),
   fileLocationInitializer: FileLocationInitializer = new FileLocationInitializer(
     context
   ),
@@ -67,6 +65,10 @@ export async function activate(
   ),
   textDocumentChangedHandler: TextDocumentChangedHandler = new TextDocumentChangedHandler()
 ) {
+  const translationStore: TranslationStore = TranslationStore.getInstance();
+  const configurationManager: ConfigurationStoreManager =
+    ConfigurationStoreManager.getInstance();
+
   initializeSentry();
 
   try {
@@ -74,7 +76,7 @@ export async function activate(
     const statusBarManager = StatusBarManager.getInstance(context);
     statusBarManager.updateState(StatusBarState.Running, 'Initializing...');
 
-    configurationManager.initialize();
+    configurationManager.initialize(extensionName);
     logger.log(LogLevel.INFO, 'i18nWeave is starting up...', 'Core');
 
     await fileLocationInitializer.initializeFileLocations();
@@ -88,7 +90,7 @@ export async function activate(
 
     const configurationWatcherDisposable =
       vscode.workspace.onDidChangeConfiguration(async () => {
-        configurationManager.syncConfigurationStore();
+        configurationManager.syncConfigurationStore(extensionName);
 
         await reinitialize(
           fileLocationInitializer,
