@@ -5,13 +5,15 @@ import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 
 import { FileLockStore } from './file-lock-store';
 
+const extensionName = 'qvotaxon.i18nWeave';
+
 suite('FileLockStore', () => {
   let fileLockStore: FileLockStore;
 
   setup(() => {
     fileLockStore = FileLockStore.getInstance();
 
-    ConfigurationStoreManager.getInstance().initialize();
+    ConfigurationStoreManager.getInstance().initialize(extensionName);
   });
 
   test('should add file lock', () => {

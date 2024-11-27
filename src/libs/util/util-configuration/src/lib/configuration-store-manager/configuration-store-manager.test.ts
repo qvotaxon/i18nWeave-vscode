@@ -9,6 +9,8 @@ import {
   I18nextScannerModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
 
+const extensionName = 'qvotaxon.i18nWeave';
+
 suite('ConfigurationStoreManager', () => {
   let getConfigurationStub: sinon.SinonStub;
   let getExtensionStub: sinon.SinonStub;
@@ -29,7 +31,7 @@ suite('ConfigurationStoreManager', () => {
         'syncConfigurationStore'
       );
 
-      ConfigurationStoreManager.getInstance().initialize();
+      ConfigurationStoreManager.getInstance().initialize(extensionName);
 
       sinon.assert.calledOnce(syncConfigurationStoreStub);
     });
@@ -55,7 +57,9 @@ suite('ConfigurationStoreManager', () => {
       getExtensionStub.returns(undefined);
 
       assert.throws(() => {
-        ConfigurationStoreManager.getInstance()['syncConfigurationStore']();
+        ConfigurationStoreManager.getInstance()['syncConfigurationStore'](
+          extensionName
+        );
       }, /Configuration not found./);
     });
 
@@ -77,7 +81,9 @@ suite('ConfigurationStoreManager', () => {
       getExtensionStub.returns({ packageJSON: mockContributes });
 
       assert.throws(() => {
-        ConfigurationStoreManager.getInstance()['syncConfigurationStore']();
+        ConfigurationStoreManager.getInstance()['syncConfigurationStore'](
+          extensionName
+        );
       }, /Configuration value not found for key: i18nWeave.translationModule.enabled/);
     });
 
@@ -85,7 +91,9 @@ suite('ConfigurationStoreManager', () => {
       const getMockConfig = { get: sinon.stub().returns('configValue') };
       getConfigurationStub.returns(getMockConfig);
 
-      ConfigurationStoreManager.getInstance()['syncConfigurationStore']();
+      ConfigurationStoreManager.getInstance()['syncConfigurationStore'](
+        extensionName
+      );
 
       const options = { translationModule: { enabled: 'configValue' } };
       const expectedConfigStore = new ConfigurationStore(options as any);

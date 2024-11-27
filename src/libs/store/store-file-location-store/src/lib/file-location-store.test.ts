@@ -7,6 +7,8 @@ import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
 import { FileLocationStore } from './file-location-store';
 
+const extensionName = 'qvotaxon.i18nWeave';
+
 suite('FileLocationStore Tests', function () {
   let store: FileLocationStore;
   let sandbox: sinon.SinonSandbox;
@@ -15,7 +17,7 @@ suite('FileLocationStore Tests', function () {
     sandbox = sinon.createSandbox();
     store = FileLocationStore.getInstance();
 
-    ConfigurationStoreManager.getInstance().initialize();
+    ConfigurationStoreManager.getInstance().initialize(extensionName);
   });
 
   teardown(function () {
