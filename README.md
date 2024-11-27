@@ -1,5 +1,6 @@
 [![Downloads](https://img.shields.io/visual-studio-marketplace/d/qvotaxon.i18nweave?logo=github&branch=main)](https://marketplace.visualstudio.com/items?itemName=qvotaxon.i18nweave)
-![Latest version](https://img.shields.io/github/package-json/v/qvotaxon/i18nweave-vscode)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/qvotaxon.i18nweave?logo=github&branch=main)](https://marketplace.visualstudio.com/items?itemName=qvotaxon.i18nweave)
+[![Latest version](https://img.shields.io/github/package-json/v/qvotaxon/i18nweave-vscode)](https://marketplace.visualstudio.com/items?itemName=qvotaxon.i18nweave)
 
 [![Build](https://github.com/qvotaxon/i18nWeave-vscode/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/qvotaxon/i18nWeave-vscode/actions/workflows/build.yml)
 [![CodeQL](https://github.com/qvotaxon/i18nWeave-vscode/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/qvotaxon/i18nWeave-vscode/actions/workflows/github-code-scanning/codeql)
