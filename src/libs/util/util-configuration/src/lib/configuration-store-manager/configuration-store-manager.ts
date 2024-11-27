@@ -29,8 +29,8 @@ export class ConfigurationStoreManager {
   /**
    * Initializes the configuration store by updating the options and subscribing to configuration changes.
    */
-  public initialize(): void {
-    this.syncConfigurationStore();
+  public initialize(extensionName: string): void {
+    this.syncConfigurationStore(extensionName);
   }
 
   /**

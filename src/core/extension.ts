@@ -74,7 +74,7 @@ export async function activate(
     const statusBarManager = StatusBarManager.getInstance(context);
     statusBarManager.updateState(StatusBarState.Running, 'Initializing...');
 
-    configurationManager.initialize();
+    configurationManager.initialize(extensionName);
     logger.log(LogLevel.INFO, 'i18nWeave is starting up...', 'Core');
 
     await fileLocationInitializer.initializeFileLocations();
