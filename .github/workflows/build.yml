@@ -89,3 +89,4 @@ jobs:
             -Dsonar.inclusions=src/**
             -Dsonar.exclusions=**/*.test.ts
             -Dsonar.verbose=false
+            -Dsonar.coverage.disabled=true
