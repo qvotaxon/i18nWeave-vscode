@@ -75,6 +75,7 @@ jobs:
         run: npm run compile:sourcemaps
 
       - name: SonarCloud Scan
+        if: matrix.os == 'ubuntu-latest'
         uses: sonarsource/sonarcloud-github-action@v3.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -84,4 +85,4 @@ jobs:
             -Dsonar.projectKey=qvotaxon_i18nWeave-vscode
             -Dsonar.python.coverage.reportPaths=coverage.xml
             -Dsonar.sources=src/
-            -Dsonar.verbose=true
+            -Dsonar.verbose=false
