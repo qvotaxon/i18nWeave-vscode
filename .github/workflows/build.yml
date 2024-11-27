@@ -85,4 +85,6 @@ jobs:
             -Dsonar.projectKey=qvotaxon_i18nWeave-vscode
             -Dsonar.python.coverage.reportPaths=coverage.xml
             -Dsonar.sources=src/
+            -Dsonar.inclusions=src/**
+            -Dsonar.exclusions=**/*.test.ts
             -Dsonar.verbose=false
