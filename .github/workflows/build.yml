@@ -20,6 +20,7 @@ jobs:
     env:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       CODECOV_UPLOAD_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -72,3 +73,10 @@ jobs:
 
       - name: Build
         run: npm run compile:sourcemaps
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v1.10
+        with:
+          projectKey: qvotaxon_i18nWeave-vscode
+          organization: qvotaxon-github
+          token: ${{ secrets.SONAR_TOKEN }}
