@@ -56,9 +56,7 @@ function initializeSentry() {
 export async function activate(
   context: ExtensionContext,
   fileWatcherCreator: FileWatcherCreator = new FileWatcherCreator(),
-  configurationManager: ConfigurationStoreManager = ConfigurationStoreManager.getInstance(),
   configurationWizardService: ConfigurationWizardService = new ConfigurationWizardService(),
-  translationStore: TranslationStore = TranslationStore.getInstance(),
   fileLocationInitializer: FileLocationInitializer = new FileLocationInitializer(
     context
   ),
@@ -67,6 +65,10 @@ export async function activate(
   ),
   textDocumentChangedHandler: TextDocumentChangedHandler = new TextDocumentChangedHandler()
 ) {
+  const translationStore: TranslationStore = TranslationStore.getInstance();
+  const configurationManager: ConfigurationStoreManager =
+    ConfigurationStoreManager.getInstance();
+
   initializeSentry();
 
   try {
