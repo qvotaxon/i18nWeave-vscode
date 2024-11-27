@@ -76,7 +76,7 @@ jobs:
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@v3.1.0
-        with:
-          projectKey: qvotaxon_i18nWeave-vscode
-          organization: qvotaxon-github
-          token: ${{ secrets.SONAR_TOKEN }}
+        with: args: >
+          -Dsonar.organization=qvotaxon-github
+          -Dsonar.projectKey=qvotaxon_i18nWeave-vscode
+          -Dsonar.token: ${{ secrets.SONAR_TOKEN }}
