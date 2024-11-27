@@ -37,8 +37,8 @@ export class ConfigurationStoreManager {
    * Updates the options based on the current workspace configuration.
    * @throws Error if the configuration is not found or a configuration value is missing.
    */
-  public syncConfigurationStore(): void {
-    const extension = vscode.extensions.getExtension('qvotaxon.i18nWeave');
+  public syncConfigurationStore(extensionName: string): void {
+    const extension = vscode.extensions.getExtension(extensionName);
     if (!extension?.packageJSON.contributes?.configuration) {
       throw new Error('Configuration not found.');
     }
