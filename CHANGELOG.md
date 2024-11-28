@@ -4,6 +4,14 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.14.3](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.14.2...v0.14.3) (2024-11-28)
+
+
+### Bug Fixes
+
+* ensure correct application of translation diffs ([#245](https://github.com/qvotaxon/i18nWeave-vscode/issues/245)) ([6c6f407](https://github.com/qvotaxon/i18nWeave-vscode/commit/6c6f40768c9970fe48489f1897fb3b352f4a8b08))
+* handle crlf and lf line endings separately ([#246](https://github.com/qvotaxon/i18nWeave-vscode/issues/246)) ([b759ab2](https://github.com/qvotaxon/i18nWeave-vscode/commit/b759ab25a2c7a8c36ce2117765ffe3d6d50dfe09))
+
 ## [0.14.2](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.14.1...v0.14.2) (2024-11-26)
 
 
