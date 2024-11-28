@@ -218,30 +218,34 @@ export class TranslationModule extends BaseActionModule {
         continue;
       }
       const targetLanguage = extractLocaleFromFileUri(fileUri);
-      const diffs = translationsByLanguage[targetLanguage];
-      this.applyDiffsToJSON(fileContent, diffs);
+      const translations = translationsByLanguage[targetLanguage];
 
-      let stringifiedContent = JSON.stringify(
-        fileContent,
-        null,
-        config.format.numberOfSpacesForIndentation
-      );
+      if (translations) {
+        this.applyDiffsToJSON(fileContent, translations);
 
-      if (fileShouldEndWithNewLine && !stringifiedContent.endsWith('\n')) {
-        stringifiedContent += '\n';
+        let stringifiedContent = JSON.stringify(
+          fileContent,
+          null,
+          config.format.numberOfSpacesForIndentation
+        );
+
+        if (fileShouldEndWithNewLine && !stringifiedContent.endsWith('\n')) {
+          stringifiedContent += '\n';
+        }
+
+        FileLockStore.getInstance().addLock(fileUri);
+        await FileWriter.writeToWorkspaceFileAsync(
+          fileUri,
+          stringifiedContent
+        ).then(() => {
+          setTimeout(() => {
+            FileLockStore.getInstance().delete(fileUri);
+          }, 500);
+        });
+
+        TranslationStore.getInstance().updateEntry(fileUri, stringifiedContent);
+        FileLocationStore.getInstance().addOrUpdateFile(fileUri);
       }
-
-      FileLockStore.getInstance().addLock(fileUri);
-      await FileWriter.writeToWorkspaceFileAsync(
-        fileUri,
-        stringifiedContent
-      ).then(() => {
-        setTimeout(() => {
-          FileLockStore.getInstance().delete(fileUri);
-        }, 500);
-      });
-
-      TranslationStore.getInstance().updateEntry(fileUri, stringifiedContent);
     }
   }
 
@@ -252,7 +256,11 @@ export class TranslationModule extends BaseActionModule {
         if (path) {
           unset(target, path);
         }
-      } else if (change.kind === 'E' || change.kind === 'A') {
+      } else if (
+        change.kind === 'E' ||
+        change.kind === 'A' ||
+        change.kind === 'N'
+      ) {
         if (change.path) {
           const targetValue = change.path.reduce(
             (obj, key) => obj?.[key],
