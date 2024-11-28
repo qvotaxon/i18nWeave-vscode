@@ -195,7 +195,8 @@ export class TranslationModule extends BaseActionModule {
     translationsByLanguage: { [x: string]: any },
     config: GeneralConfiguration
   ) {
-    let fileShouldEndWithNewLine: boolean = false;
+    let fileShouldEndWithCrlf: boolean = false;
+    let fileShouldEndWithLf: boolean = false;
 
     for (const fileUri of targetFiles) {
       if (FileLockStore.getInstance().hasFileLock(fileUri)) {
@@ -206,7 +207,9 @@ export class TranslationModule extends BaseActionModule {
       try {
         const fileContentAsString =
           await FileReader.readWorkspaceFileAsync(fileUri);
-        fileShouldEndWithNewLine = fileContentAsString.endsWith('\n');
+        fileShouldEndWithCrlf = fileContentAsString.endsWith('\r\n');
+        fileShouldEndWithLf =
+          fileContentAsString.endsWith('\n') && !fileShouldEndWithCrlf;
 
         fileContent = JSON.parse(fileContentAsString);
       } catch (error) {
@@ -229,7 +232,10 @@ export class TranslationModule extends BaseActionModule {
           config.format.numberOfSpacesForIndentation
         );
 
-        if (fileShouldEndWithNewLine && !stringifiedContent.endsWith('\n')) {
+        if (fileShouldEndWithCrlf && !stringifiedContent.endsWith('\r\n')) {
+          stringifiedContent += '\r\n';
+        }
+        if (fileShouldEndWithLf && !stringifiedContent.endsWith('\n')) {
           stringifiedContent += '\n';
         }
 
