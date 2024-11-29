@@ -13,11 +13,16 @@ type CodeTranslation = {
   dateModified: Date;
 };
 
+// TODO: This logic contains a bug where if a change is made to a value in such a way that it changes from a string into an object or the other way around,
+// it seems like the wrong logic is ran. So removed/updated keys are not removed, resulting in the new keys not being added / being able to be added.
 export class CodeTranslationKeyStore {
   private readonly _className = 'CodeTranslationKeyStore';
   private _context: ExtensionContext | undefined;
-  private readonly _oldCacheKey = 'i18nWeave.translationFunctionCache';
-  private readonly _newCacheKey = 'i18nWeave.translationFunctionCacheNew';
+  private readonly _oldCacheKeys = [
+    'i18nWeave.translationFunctionCache',
+    'i18nWeave.translationFunctionCacheNew',
+  ];
+  private readonly _newCacheKey = 'i18nWeave.translationFunctionCache_v0.14.4';
   private static _instance: CodeTranslationKeyStore;
   private readonly _codeTranslations: Map<string, CodeTranslation> = new Map();
   private readonly _logger: Logger;
@@ -43,7 +48,7 @@ export class CodeTranslationKeyStore {
       this._className
     );
 
-    context.globalState.update(this._oldCacheKey, undefined);
+    this.clearOldCaches(context);
 
     this._context = context;
     const storedCache = context.globalState.get<Map<string, CodeTranslation>>(
@@ -114,6 +119,16 @@ export class CodeTranslationKeyStore {
         }
       }
     );
+  }
+
+  private clearOldCaches(context: ExtensionContext) {
+    this._oldCacheKeys.forEach(oldCacheKey => {
+      const oldCache =
+        context.globalState.get<Map<string, CodeTranslation>>(oldCacheKey);
+      if (oldCache) {
+        context.globalState.update(oldCacheKey, undefined);
+      }
+    });
   }
 
   /**
@@ -195,7 +210,11 @@ export class CodeTranslationKeyStore {
     const oldKeys = extractTranslationKeys(oldCode ?? '', config);
     const newKeys = extractTranslationKeys(newCode, config);
 
-    const oldKeyObject = oldKeys.reduce((acc, key) => {
+    if (!newKeys) {
+      return { hasChanges: false, hasDeletions: false, hasRenames: false };
+    }
+
+    const oldKeyObject = oldKeys?.reduce((acc, key) => {
       const keyParts = key.split(config.keySeparator);
       let current = acc;
       keyParts.forEach((part, index) => {

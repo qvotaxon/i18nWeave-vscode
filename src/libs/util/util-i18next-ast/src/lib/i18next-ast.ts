@@ -3,6 +3,7 @@ import * as t from '@babel/types';
 import traverse, { NodePath } from '@babel/traverse';
 
 import { I18nextScannerModuleConfiguration } from '@i18n-weave/util/util-configuration';
+import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 /**
  * Parses code and returns an array of translation keys based on the user configuration.
@@ -14,12 +15,23 @@ import { I18nextScannerModuleConfiguration } from '@i18n-weave/util/util-configu
 export function extractTranslationKeys(
   code: string,
   config: I18nextScannerModuleConfiguration
-): string[] {
+): string[] | null {
   const keys: string[] = [];
-  const ast = parser.parse(code, {
-    sourceType: 'module',
-    plugins: ['jsx', 'typescript'],
-  });
+  let ast;
+  try {
+    ast = parser.parse(code, {
+      sourceType: 'module',
+      plugins: ['jsx', 'typescript'],
+    });
+  } catch (error) {
+    Logger.getInstance().log(
+      LogLevel.VERBOSE,
+      `Error parsing code: ${(error as Error).message}. There is probably a syntax error in the code.`,
+      'AST Parser'
+    );
+
+    return null;
+  }
 
   traverse(ast, {
     // Find translation functions like `t('key')` based on config.functionNames

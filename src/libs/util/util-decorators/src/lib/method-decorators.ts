@@ -16,7 +16,8 @@ export function TraceMethod(
           return result;
         } catch (error) {
           Sentry.captureException(error);
-          throw error;
+
+          return Promise.reject(error as Error);
         }
       }
     );
