@@ -5,6 +5,8 @@ import traverse, { NodePath } from '@babel/traverse';
 import { I18nextScannerModuleConfiguration } from '@i18n-weave/util/util-configuration';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
+const logScope = 'AST Parser';
+
 /**
  * Parses code and returns an array of translation keys based on the user configuration.
  *
@@ -27,7 +29,7 @@ export function extractTranslationKeys(
     Logger.getInstance().log(
       LogLevel.VERBOSE,
       `Error parsing code: ${(error as Error).message}. There is probably a syntax error in the code.`,
-      'AST Parser'
+      logScope
     );
 
     return null;

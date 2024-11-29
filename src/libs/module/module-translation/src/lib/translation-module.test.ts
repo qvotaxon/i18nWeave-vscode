@@ -68,7 +68,9 @@ suite('TranslationModule', () => {
     });
 
     fileReaderStub = sinon.stub(FileReader);
-    fileReaderStub.readWorkspaceFileAsync.resolves(JSON.stringify({}));
+    fileReaderStub.prototype.readWorkspaceFileAsync.prototype.resolves(
+      JSON.stringify({})
+    );
 
     fileWriterStub = sinon.stub(FileWriter);
     fileWriterStub.writeToWorkspaceFileAsync.resolves();

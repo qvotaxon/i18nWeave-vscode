@@ -19,7 +19,7 @@ export class ReadJsonFileModule extends BaseActionModule {
   ): Promise<void> {
     console.log(`Reading Json file contents: ${context.inputPath.fsPath}`);
 
-    const jsonContent = await FileReader.readWorkspaceFileAsync(
+    const jsonContent = await new FileReader().readWorkspaceFileAsync(
       context.inputPath
     );
 

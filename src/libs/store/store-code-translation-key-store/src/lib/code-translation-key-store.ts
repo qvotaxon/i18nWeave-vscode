@@ -157,7 +157,7 @@ export class CodeTranslationKeyStore {
   }
 
   public async updateStoreRecordAsync(codeFileUri: Uri, dateModified?: Date) {
-    const codeFileContents = await FileReader.readWorkspaceFileAsync(
+    const codeFileContents = await new FileReader().readWorkspaceFileAsync(
       Uri.file(codeFileUri.fsPath)
     );
 
@@ -205,7 +205,9 @@ export class CodeTranslationKeyStore {
     const oldCode = this._codeTranslations.get(
       changeFileUri.fsPath
     )?.fileContents;
-    const newCode = await FileReader.readWorkspaceFileAsync(changeFileUri);
+    const newCode = await new FileReader().readWorkspaceFileAsync(
+      changeFileUri
+    );
 
     const oldKeys = extractTranslationKeys(oldCode ?? '', config);
     const newKeys = extractTranslationKeys(newCode, config);

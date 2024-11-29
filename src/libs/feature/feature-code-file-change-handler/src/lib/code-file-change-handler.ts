@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { debounce } from 'lodash';
 import vscode, { Uri } from 'vscode';
 
 import {
@@ -21,11 +22,15 @@ import { ChainType } from '@i18n-weave/util/util-enums';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 export class CodeFileChangeHandler extends BaseFileChangeHandler {
+  private readonly _debounceTime = 300;
   private readonly _className = 'CodeFileChangeHandler';
   private readonly _logger: Logger;
   private static i18nextScannerModule: I18nextScannerModule;
   private static moduleChainManager: ModuleChainManager =
     new ModuleChainManager();
+
+  private readonly _changedFiles: Set<string> = new Set();
+  private readonly _debouncedHandleChanges: () => Promise<void> | undefined;
 
   private constructor(i18nextScannerModule: I18nextScannerModule) {
     super();
@@ -35,6 +40,11 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
     CodeFileChangeHandler.moduleChainManager.registerChain(
       ChainType.Code,
       this.createCodeFileChain()
+    );
+
+    this._debouncedHandleChanges = debounce(
+      this.processChanges.bind(this),
+      this._debounceTime
     );
   }
 
@@ -50,43 +60,76 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
   }
 
   @TraceMethod
-  public async handleFileChangeAsync(
-    changeFileLocation?: Uri,
-    isFileDeletionChange: boolean = false
-  ): Promise<void> {
+  public async handleFileChangeAsync(changeFileLocation?: Uri): Promise<void> {
     if (!changeFileLocation) {
       return;
     }
 
-    let hasTranslationFunctions = {
-      hasChanges: false,
-      hasDeletions: true,
-      hasRenames: false,
-    };
+    this._changedFiles.add(changeFileLocation.fsPath);
+    this._debouncedHandleChanges();
+  }
+  private async processChanges(): Promise<void> {
+    let shouldFullScan = false;
+    let filesToScan: Uri[] = [];
 
-    if (fs.existsSync(changeFileLocation.fsPath)) {
+    for (const filePath of this._changedFiles) {
+      const uri = Uri.file(filePath);
+
+      if (!fs.existsSync(filePath)) {
+        shouldFullScan = true;
+        break;
+      }
+
       const i18nextScannerModuleConfig =
         ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
           'i18nextScannerModule'
         );
-      hasTranslationFunctions =
+      const hasTranslationFunctions =
         await CodeTranslationKeyStore.getInstance().hasTranslationChanges(
-          changeFileLocation,
+          uri,
           i18nextScannerModuleConfig
         );
+
+      if (
+        hasTranslationFunctions.hasDeletions ||
+        hasTranslationFunctions.hasRenames
+      ) {
+        shouldFullScan = true;
+        break;
+      }
+
+      if (hasTranslationFunctions.hasChanges) {
+        filesToScan.push(uri);
+      }
     }
 
-    if (!isFileDeletionChange && !hasTranslationFunctions.hasChanges) {
+    if (shouldFullScan) {
+      await this.performFullScan();
+    } else if (filesToScan.length > 0) {
+      await this.scanSpecificFiles(filesToScan);
+    }
+
+    // Clear the set of changed files
+    this._changedFiles.clear();
+  }
+
+  private async performFullScan(): Promise<void> {
+    if (!vscode.workspace.workspaceFolders?.[0].uri) {
+      this._logger.log(
+        LogLevel.ERROR,
+        'No workspace folder found',
+        this._className
+      );
       return;
     }
 
     const context: BaseModuleContext = {
-      inputPath: changeFileLocation,
+      inputPath: vscode.workspace.workspaceFolders?.[0].uri,
       locale: '',
-      outputPath: changeFileLocation,
-      hasChanges: hasTranslationFunctions.hasChanges,
-      hasDeletions: hasTranslationFunctions.hasDeletions,
-      hasRenames: hasTranslationFunctions.hasRenames,
+      outputPath: vscode.workspace.workspaceFolders?.[0].uri,
+      hasChanges: true,
+      hasDeletions: true,
+      hasRenames: true,
     };
 
     await CodeFileChangeHandler.moduleChainManager.executeChainAsync(
@@ -94,16 +137,32 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
       context
     );
 
-    this._logger.log(
-      LogLevel.INFO,
-      `Code File change handled: ${changeFileLocation}`,
-      this._className
-    );
+    this._logger.log(LogLevel.INFO, `Full scan performed`, this._className);
+  }
 
-    if (!isFileDeletionChange) {
-      await CodeTranslationKeyStore.getInstance().updateStoreRecordAsync(
-        changeFileLocation
+  private async scanSpecificFiles(files: Uri[]): Promise<void> {
+    for (const file of files) {
+      const context: BaseModuleContext = {
+        inputPath: file,
+        locale: '',
+        outputPath: file,
+        hasChanges: true,
+        hasDeletions: false,
+        hasRenames: false,
+      };
+
+      await CodeFileChangeHandler.moduleChainManager.executeChainAsync(
+        ChainType.Code,
+        context
       );
+
+      this._logger.log(
+        LogLevel.INFO,
+        `Specific file scanned: ${file.fsPath}`,
+        this._className
+      );
+
+      await CodeTranslationKeyStore.getInstance().updateStoreRecordAsync(file);
     }
   }
 
@@ -114,7 +173,8 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
       return;
     }
     await super.handleFileDeletionAsync(changeFileLocation);
-    await this.handleFileChangeAsync(changeFileLocation, true);
+    this._changedFiles.add(changeFileLocation.fsPath);
+    this._debouncedHandleChanges();
     CodeTranslationKeyStore.getInstance().deleteStoreRecord(changeFileLocation);
   }
 
@@ -123,6 +183,7 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
       return;
     }
     await super.handleFileCreationAsync(changeFileLocation);
-    await this.handleFileChangeAsync(changeFileLocation);
+    this._changedFiles.add(changeFileLocation.fsPath);
+    this._debouncedHandleChanges();
   }
 }

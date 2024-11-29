@@ -32,7 +32,10 @@ suite('CodeTranslationKeyStore', () => {
         globalState: { get: sinon.stub(), update: globalStateUpdateStub },
       } as any;
       codeTranslationStore = CodeTranslationKeyStore.getInstance();
-      readFileAsyncStub = sinon.stub(FileReader, 'readWorkspaceFileAsync');
+      readFileAsyncStub = sinon.stub(
+        FileReader.prototype,
+        'readWorkspaceFileAsync'
+      );
       getConfigStub = sinon.stub(
         ConfigurationStoreManager.getInstance(),
         'getConfig'
@@ -218,7 +221,10 @@ suite('CodeTranslationKeyStore', () => {
         globalState: { get: sinon.stub(), update: globalStateUpdateStub },
       } as any;
       codeTranslationStore = CodeTranslationKeyStore.getInstance();
-      readFileAsyncStub = sinon.stub(FileReader, 'readWorkspaceFileAsync');
+      readFileAsyncStub = sinon.stub(
+        FileReader.prototype,
+        'readWorkspaceFileAsync'
+      );
       sinon.stub(ConfigurationStoreManager.getInstance(), 'getConfig');
       sinon.stub(FileLocationStore.getInstance(), 'getTranslationFiles');
       sinon.stub(window, 'showErrorMessage');

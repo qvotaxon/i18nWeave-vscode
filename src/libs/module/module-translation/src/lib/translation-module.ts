@@ -152,7 +152,7 @@ export class TranslationModule extends BaseActionModule {
     for (const targetFile of targetFiles) {
       const targetLanguage = extractLocaleFromFileUri(targetFile);
       const fileContent = JSON.parse(
-        await FileReader.readWorkspaceFileAsync(targetFile)
+        await new FileReader().readWorkspaceFileAsync(targetFile)
       );
 
       const changesToTranslate = changes.filter(change => {
@@ -206,7 +206,7 @@ export class TranslationModule extends BaseActionModule {
       let fileContent;
       try {
         const fileContentAsString =
-          await FileReader.readWorkspaceFileAsync(fileUri);
+          await new FileReader().readWorkspaceFileAsync(fileUri);
         fileShouldEndWithCrlf = fileContentAsString.endsWith('\r\n');
         fileShouldEndWithLf =
           fileContentAsString.endsWith('\n') && !fileShouldEndWithCrlf;
