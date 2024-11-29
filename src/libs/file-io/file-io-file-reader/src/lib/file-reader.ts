@@ -5,7 +5,7 @@ import { Uri, workspace } from 'vscode';
  * Utility class for reading files asynchronously.
  */
 export class FileReader {
-  constructor(private fs = workspace.fs) {}
+  constructor(private readonly _fs = workspace.fs) {}
 
   /**
    * Reads the contents of a file asynchronously.
@@ -14,7 +14,7 @@ export class FileReader {
    */
   public async readWorkspaceFileAsync(filePath: Uri): Promise<string> {
     try {
-      const fileData = await this.fs.readFile(filePath);
+      const fileData = await this._fs.readFile(filePath);
       return new TextDecoder().decode(fileData);
     } catch (error) {
       Sentry?.captureException(error);
