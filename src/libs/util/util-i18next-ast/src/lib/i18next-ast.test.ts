@@ -2,12 +2,19 @@
 import * as assert from 'assert';
 import * as sinon from 'sinon';
 
-import { I18nextScannerModuleConfiguration } from '@i18n-weave/util/util-configuration';
+import {
+  ConfigurationStoreManager,
+  I18nextScannerModuleConfiguration,
+} from '@i18n-weave/util/util-configuration';
+import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 import { extractTranslationKeys } from './i18next-ast';
 
 suite('I18nextAst', () => {
+  const extensionName = 'qvotaxon.i18nWeave';
   let config: I18nextScannerModuleConfiguration;
+
+  ConfigurationStoreManager.getInstance().initialize(extensionName);
 
   setup(() => {
     config = {
@@ -74,5 +81,26 @@ suite('I18nextAst', () => {
         `;
     const keys = extractTranslationKeys(code, config);
     assert.deepStrictEqual(keys, []);
+  });
+
+  test('should return null for code with syntax errors', () => {
+    const code = `
+          const key1 = t('key1';
+      `;
+    const keys = extractTranslationKeys(code, config);
+    assert.strictEqual(keys, null);
+  });
+
+  test('should log an error message for code with syntax errors', () => {
+    const code = `
+          const key1 = t('key1';
+      `;
+    const logSpy = sinon.spy(Logger.getInstance(), 'log');
+    extractTranslationKeys(code, config);
+    assert.ok(logSpy.calledOnce);
+    assert.ok(
+      logSpy.calledWith(LogLevel.VERBOSE, sinon.match.string, 'AST Parser')
+    );
+    logSpy.restore();
   });
 });
