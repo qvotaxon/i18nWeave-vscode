@@ -213,10 +213,10 @@ suite('CodeFileChangeHandler', () => {
   suite('handleFileDeletionAsync', () => {
     test('should handle file deletion and update store record', async () => {
       const uri = Uri.file('path/to/file.ts');
-      const handleFileChangeAsyncStub = sinon.stub(
-        handler,
-        'handleFileChangeAsync'
-      );
+      // const handleFileChangeAsyncStub = sinon.stub(
+      //   handler,
+      //   'handleFileChangeAsync'
+      // );
       const deleteStoreRecordStub = sinon.stub(
         CodeTranslationKeyStore.getInstance(),
         'deleteStoreRecord'

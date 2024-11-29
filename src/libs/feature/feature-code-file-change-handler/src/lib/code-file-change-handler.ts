@@ -22,14 +22,15 @@ import { ChainType } from '@i18n-weave/util/util-enums';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 export class CodeFileChangeHandler extends BaseFileChangeHandler {
+  private readonly _debounceTime = 300;
   private readonly _className = 'CodeFileChangeHandler';
   private readonly _logger: Logger;
   private static i18nextScannerModule: I18nextScannerModule;
   private static moduleChainManager: ModuleChainManager =
     new ModuleChainManager();
 
-  private changedFiles: Set<string> = new Set();
-  private debouncedHandleChanges: () => void;
+  private readonly _changedFiles: Set<string> = new Set();
+  private readonly _debouncedHandleChanges: () => Promise<void> | undefined;
 
   private constructor(i18nextScannerModule: I18nextScannerModule) {
     super();
@@ -41,8 +42,10 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
       this.createCodeFileChain()
     );
 
-    // Initialize debounced function
-    this.debouncedHandleChanges = debounce(this.processChanges.bind(this), 300); // 300ms debounce time
+    this._debouncedHandleChanges = debounce(
+      this.processChanges.bind(this),
+      this._debounceTime
+    );
   }
 
   public static create(
@@ -62,14 +65,14 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
       return;
     }
 
-    this.changedFiles.add(changeFileLocation.fsPath);
-    this.debouncedHandleChanges();
+    this._changedFiles.add(changeFileLocation.fsPath);
+    this._debouncedHandleChanges();
   }
   private async processChanges(): Promise<void> {
     let shouldFullScan = false;
     let filesToScan: Uri[] = [];
 
-    for (const filePath of this.changedFiles) {
+    for (const filePath of this._changedFiles) {
       const uri = Uri.file(filePath);
 
       if (!fs.existsSync(filePath)) {
@@ -107,7 +110,7 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
     }
 
     // Clear the set of changed files
-    this.changedFiles.clear();
+    this._changedFiles.clear();
   }
 
   private async performFullScan(): Promise<void> {
@@ -170,8 +173,8 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
       return;
     }
     await super.handleFileDeletionAsync(changeFileLocation);
-    this.changedFiles.add(changeFileLocation.fsPath);
-    this.debouncedHandleChanges();
+    this._changedFiles.add(changeFileLocation.fsPath);
+    this._debouncedHandleChanges();
     CodeTranslationKeyStore.getInstance().deleteStoreRecord(changeFileLocation);
   }
 
@@ -180,7 +183,7 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
       return;
     }
     await super.handleFileCreationAsync(changeFileLocation);
-    this.changedFiles.add(changeFileLocation.fsPath);
-    this.debouncedHandleChanges();
+    this._changedFiles.add(changeFileLocation.fsPath);
+    this._debouncedHandleChanges();
   }
 }
