@@ -4,6 +4,15 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.14.4](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.14.3...v0.14.4) (2024-11-29)
+
+
+### Bug Fixes
+
+* **change-handling:** add-debounce-to-change-handler ([#251](https://github.com/qvotaxon/i18nWeave-vscode/issues/251)) ([12a0102](https://github.com/qvotaxon/i18nWeave-vscode/commit/12a010289357e7f5eda36f2e083deea1044dcaf6))
+* **config:** handle specific config section changes ([#249](https://github.com/qvotaxon/i18nWeave-vscode/issues/249)) ([21768bb](https://github.com/qvotaxon/i18nWeave-vscode/commit/21768bbb693cc35355b15033ab547269147a76c7))
+* enhance cache handling and error resilience ([#248](https://github.com/qvotaxon/i18nWeave-vscode/issues/248)) ([e2e1cd5](https://github.com/qvotaxon/i18nWeave-vscode/commit/e2e1cd5d2ccbd477115bca5df7b9b52e3bf73cab))
+
 ## [0.14.3](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.14.2...v0.14.3) (2024-11-28)
 
 
