@@ -102,7 +102,7 @@ export class FileLocationStore {
   }
 
   async createTranslationFileAsync(uri: vscode.Uri): Promise<TranslationFile> {
-    const fileContent = await FileReader.prototype.readWorkspaceFileAsync(uri);
+    const fileContent = await new FileReader().readWorkspaceFileAsync(uri);
     const language = extractLocaleFromFileUri(uri);
     const namespace = extractNamespaceFromFileUri(uri);
     const stats = fs.statSync(uri.fsPath);
@@ -161,7 +161,7 @@ export class FileLocationStore {
   }
 
   async createCodeFileAsync(uri: vscode.Uri) {
-    const fileContent = await FileReader.prototype.readWorkspaceFileAsync(uri);
+    const fileContent = await new FileReader().readWorkspaceFileAsync(uri);
     const stats = fs.statSync(uri.fsPath);
     const lastModified = stats.mtime;
 
@@ -234,7 +234,7 @@ export class FileLocationStore {
   private async extractTranslationKeys(
     fileUri: Uri
   ): Promise<Record<string, TranslationKeyData>> {
-    const content = await FileReader.prototype.readWorkspaceFileAsync(fileUri);
+    const content = await new FileReader().readWorkspaceFileAsync(fileUri);
     const json = JSON.parse(content);
 
     const keysData: Record<string, TranslationKeyData> = {};
