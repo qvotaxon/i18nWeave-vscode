@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/node';
 import * as dotenv from 'dotenv';
 import path from 'path';
-import vscode, { ExtensionContext } from 'vscode';
+import vscode, { ConfigurationChangeEvent, ExtensionContext } from 'vscode';
 
 import { ActiveTextEditorChangedHandler } from '@i18n-weave/feature/feature-active-text-editor-changed-handler';
 import { ConfigurationWizardService } from '@i18n-weave/feature/feature-configuration-wizard';
@@ -28,6 +28,7 @@ import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
 const extensionName = 'qvotaxon.i18nWeave';
+const configurationSectionName = 'i18nWeave';
 const envFilePath =
   process.env.DOTENV_CONFIG_PATH ??
   path.join(__dirname, '..', '.env.production');
@@ -89,20 +90,26 @@ export async function activate(
       textDocumentChangedHandler.initialize();
 
     const configurationWatcherDisposable =
-      vscode.workspace.onDidChangeConfiguration(async () => {
-        configurationManager.syncConfigurationStore(extensionName);
+      vscode.workspace.onDidChangeConfiguration(
+        async (event: ConfigurationChangeEvent) => {
+          if (!event.affectsConfiguration(configurationSectionName)) {
+            return;
+          }
 
-        await reinitialize(
-          fileLocationInitializer,
-          fileWatcherCreator,
-          context
-        );
-        logger.log(
-          LogLevel.INFO,
-          'Configuration changed, re-initializing...',
-          'Core'
-        );
-      });
+          configurationManager.syncConfigurationStore(extensionName);
+
+          await reinitialize(
+            fileLocationInitializer,
+            fileWatcherCreator,
+            context
+          );
+          logger.log(
+            LogLevel.INFO,
+            'Configuration changed, re-initializing...',
+            'Core'
+          );
+        }
+      );
 
     const { codeFileWatchers, jsonFileWatchers } = await createFileWatchers(
       fileWatcherCreator,
