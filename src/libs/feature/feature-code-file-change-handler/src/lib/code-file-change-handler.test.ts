@@ -1,7 +1,7 @@
 import assert from 'assert';
 import fs from 'fs';
 import sinon from 'sinon';
-import vscode, { Uri } from 'vscode';
+import vscode, { Uri, workspace } from 'vscode';
 
 import { CodeFileChangeHandler } from '@i18n-weave/feature/feature-code-file-change-handler';
 
@@ -11,16 +11,50 @@ import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import { ChainType } from '@i18n-weave/util/util-enums';
 
 suite('CodeFileChangeHandler', () => {
+  let mockFs: { readFile: sinon.SinonStub };
   let extensionContext: vscode.ExtensionContext;
   let handler: CodeFileChangeHandler;
+  let sandbox: sinon.SinonSandbox;
 
   setup(() => {
+    sandbox = sinon.createSandbox();
     extensionContext = {} as vscode.ExtensionContext;
+
+    // Stub getConfig before creating the handler
+    sandbox
+      .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
+      .callsFake(key => {
+        if (key === 'debugging') {
+          return {
+            logging: {
+              enableVerboseLogging: true,
+            },
+          };
+        }
+        return {};
+      });
+
     handler = CodeFileChangeHandler.create(extensionContext);
+
+    sandbox.stub(
+      CodeFileChangeHandler['moduleChainManager'],
+      'executeChainAsync'
+    );
+    sandbox.stub(fs, 'existsSync');
+    sandbox.stub(
+      CodeTranslationKeyStore.getInstance(),
+      'hasTranslationChanges'
+    );
+
+    mockFs = {
+      readFile: sandbox.stub().resolves(Buffer.from('Mock file content')),
+    };
+
+    sandbox.replaceGetter(workspace, 'fs', () => mockFs as any);
   });
 
   teardown(() => {
-    sinon.restore();
+    sandbox.restore();
   });
 
   suite('create', () => {
@@ -32,14 +66,14 @@ suite('CodeFileChangeHandler', () => {
 
   suite('handleFileChangeAsync', () => {
     test('should not add to _changedFiles if changeFileLocation is undefined', async () => {
-      const addSpy = sinon.spy(Set.prototype, 'add');
+      const addSpy = sandbox.spy(Set.prototype, 'add');
       await handler.handleFileChangeAsync();
       sinon.assert.notCalled(addSpy);
     });
 
     test('should add to _changedFiles if changeFileLocation is provided', async () => {
       const uri = Uri.file('path/to/file.ts');
-      const addSpy = sinon.spy(Set.prototype, 'add');
+      const addSpy = sandbox.spy(Set.prototype, 'add');
       await handler.handleFileChangeAsync(uri);
       sinon.assert.calledOnceWithExactly(addSpy, uri.fsPath);
     });
@@ -51,16 +85,12 @@ suite('CodeFileChangeHandler', () => {
     let hasTranslationChangesStub: sinon.SinonStub;
 
     setup(() => {
-      executeChainAsyncStub = sinon.stub(
-        CodeFileChangeHandler['moduleChainManager'],
-        'executeChainAsync'
-      );
-      existsSyncStub = sinon.stub(fs, 'existsSync');
-      hasTranslationChangesStub = sinon.stub(
-        CodeTranslationKeyStore.getInstance(),
-        'hasTranslationChanges'
-      );
-      sinon.stub(ConfigurationStoreManager.getInstance(), 'getConfig');
+      executeChainAsyncStub = CodeFileChangeHandler['moduleChainManager']
+        .executeChainAsync as sinon.SinonStub;
+      existsSyncStub = fs.existsSync as sinon.SinonStub;
+      hasTranslationChangesStub = CodeTranslationKeyStore.getInstance()
+        .hasTranslationChanges as sinon.SinonStub;
+      // Removed the getConfig stub from here
     });
 
     test('should perform full scan if file does not exist', async () => {
@@ -99,7 +129,7 @@ suite('CodeFileChangeHandler', () => {
     });
 
     test('should scan specific files if translations have changes but no deletions or renames', async () => {
-      const uri = Uri.file('path/to/file.ts');
+      const uri = Uri.file('path/to/file.json');
       handler['_changedFiles'].add(uri.fsPath);
       existsSyncStub.returns(true);
       hasTranslationChangesStub.resolves({
@@ -115,12 +145,14 @@ suite('CodeFileChangeHandler', () => {
         executeChainAsyncStub,
         ChainType.Code,
         sinon.match({
-          inputPath: uri,
+          inputPath: uri.fsPath,
           hasChanges: true,
           hasDeletions: false,
           hasRenames: false,
         })
       );
+
+      sinon.assert.calledWith(mockFs.readFile, uri);
     });
 
     test('should not scan if no changes detected', async () => {
@@ -142,11 +174,11 @@ suite('CodeFileChangeHandler', () => {
   suite('handleFileDeletionAsync', () => {
     test('should handle file deletion and update store record', async () => {
       const uri = Uri.file('path/to/file.ts');
-      const deleteStoreRecordStub = sinon.stub(
+      const deleteStoreRecordStub = sandbox.stub(
         CodeTranslationKeyStore.getInstance(),
         'deleteStoreRecord'
       );
-      const addSpy = sinon.spy(Set.prototype, 'add');
+      const addSpy = sandbox.spy(Set.prototype, 'add');
 
       await handler.handleFileDeletionAsync(uri);
 
@@ -155,11 +187,11 @@ suite('CodeFileChangeHandler', () => {
     });
 
     test('should not handle file deletion if changeFileLocation is undefined', async () => {
-      const deleteStoreRecordStub = sinon.stub(
+      const deleteStoreRecordStub = sandbox.stub(
         CodeTranslationKeyStore.getInstance(),
         'deleteStoreRecord'
       );
-      const addSpy = sinon.spy(Set.prototype, 'add');
+      const addSpy = sandbox.spy(Set.prototype, 'add');
 
       await handler.handleFileDeletionAsync();
 
@@ -171,7 +203,7 @@ suite('CodeFileChangeHandler', () => {
   suite('handleFileCreationAsync', () => {
     test('should handle file creation', async () => {
       const uri = Uri.file('path/to/file.ts');
-      const addSpy = sinon.spy(Set.prototype, 'add');
+      const addSpy = sandbox.spy(Set.prototype, 'add');
 
       await handler.handleFileCreationAsync(uri);
 

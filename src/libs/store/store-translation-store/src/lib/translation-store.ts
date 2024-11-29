@@ -39,7 +39,8 @@ export class TranslationStore {
       .map(file => file.metaData.uri);
 
     for (const fileUri of fileLocations) {
-      const rawData = await FileReader.readWorkspaceFileAsync(fileUri);
+      const rawData =
+        await FileReader.prototype.readWorkspaceFileAsync(fileUri);
       const jsonObject = JSON.parse(rawData) as JSON;
       this._translationFileContents.set(fileUri.fsPath, jsonObject);
 
@@ -87,7 +88,8 @@ export class TranslationStore {
 
   public async addEntryAsync(fileUri: Uri) {
     if (fileUri.fsPath.endsWith('.json')) {
-      const rawData = await FileReader.readWorkspaceFileAsync(fileUri);
+      const rawData =
+        await FileReader.prototype.readWorkspaceFileAsync(fileUri);
       const jsonObject = JSON.parse(rawData) as JSON;
       this._translationFileContents.set(fileUri.fsPath, jsonObject);
 

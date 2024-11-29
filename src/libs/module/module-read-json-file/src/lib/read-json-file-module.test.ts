@@ -26,6 +26,11 @@ suite('ReadJsonFileModule Tests', () => {
     const inputPath = Uri.file('/path/to/file.json');
     const jsonContent = "{ name: 'John Doe', age: 30 }";
 
+    FileReader.prototype.readWorkspaceFileAsync = async (filePath: Uri) => {
+      assert.strictEqual(filePath.fsPath, inputPath.fsPath);
+      return "{ name: 'John Doe', age: 30 }";
+    };
+
     const context: ReadJsonFileModuleContext = {
       locale: 'en',
       outputPath: Uri.file('/path/to/output.json'),
@@ -44,9 +49,9 @@ suite('ReadJsonFileModule Tests', () => {
 
   test('doExecute should not assign the context.jsonContent if the file is empty', async () => {
     const inputPath = Uri.file('/path/to/emptyFile.json');
-    const readFileAsyncOriginal = FileReader.readWorkspaceFileAsync;
+    const readFileAsyncOriginal = FileReader.prototype.readWorkspaceFileAsync;
 
-    FileReader.readWorkspaceFileAsync = async (filePath: Uri) => {
+    FileReader.prototype.readWorkspaceFileAsync = async (filePath: Uri) => {
       assert.strictEqual(filePath.fsPath, inputPath.fsPath);
       return '';
     };
@@ -66,14 +71,14 @@ suite('ReadJsonFileModule Tests', () => {
 
     assert.strictEqual(context.jsonContent, null);
 
-    FileReader.readWorkspaceFileAsync = readFileAsyncOriginal;
+    FileReader.prototype.readWorkspaceFileAsync = readFileAsyncOriginal;
   });
 
   test('doExecute should not assign the context.jsonContent if the file is not found', async () => {
     const inputPath = Uri.file('/path/to/nonexistentFile.json');
-    const readFileAsyncOriginal = FileReader.readWorkspaceFileAsync;
+    const readFileAsyncOriginal = FileReader.prototype.readWorkspaceFileAsync;
 
-    FileReader.readWorkspaceFileAsync = async (filePath: Uri) => {
+    FileReader.prototype.readWorkspaceFileAsync = async (filePath: Uri) => {
       assert.strictEqual(filePath.fsPath, inputPath.fsPath);
       throw new Error('File not found');
     };
@@ -92,6 +97,6 @@ suite('ReadJsonFileModule Tests', () => {
     assert.rejects(module.executeAsync(context), Error, 'File not found');
     assert.strictEqual(context.jsonContent, null);
 
-    FileReader.readWorkspaceFileAsync = readFileAsyncOriginal;
+    FileReader.prototype.readWorkspaceFileAsync = readFileAsyncOriginal;
   });
 });

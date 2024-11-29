@@ -19,7 +19,7 @@ suite('TranslationStore', () => {
 
   setup(() => {
     translationStore = TranslationStore.getInstance();
-    fileReaderStub = sinon.stub(FileReader, 'readWorkspaceFileAsync');
+    fileReaderStub = sinon.stub(FileReader.prototype, 'readWorkspaceFileAsync');
     fileLocationStoreStub = sinon.createStubInstance(FileLocationStore, {
       getTranslationFiles: sinon.stub<[], TranslationFile[]>().returns([
         {
