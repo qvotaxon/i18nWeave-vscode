@@ -116,7 +116,7 @@ suite('CodeFileChangeHandler', () => {
 
       const uri = vscode.Uri.file('path/to/file.ts');
 
-      await handler.handleFileChangeAsync(uri, true);
+      await handler.handleFileChangeAsync(uri);
 
       // const expectedContext: BaseModuleContext = {
       //   inputPath: uri,
@@ -187,7 +187,7 @@ suite('CodeFileChangeHandler', () => {
 
       const uri = vscode.Uri.file('path/to/file.ts');
 
-      await handler.handleFileChangeAsync(uri, true);
+      await handler.handleFileChangeAsync(uri);
 
       // const expectedContext: BaseModuleContext = {
       //   inputPath: uri,
@@ -220,7 +220,7 @@ suite('CodeFileChangeHandler', () => {
 
       await handler.handleFileDeletionAsync(uri);
 
-      sinon.assert.calledOnceWithExactly(handleFileChangeAsyncStub, uri, true);
+      sinon.assert.calledOnceWithExactly(handleFileChangeAsyncStub, uri);
       sinon.assert.calledOnceWithExactly(deleteStoreRecordStub, uri);
     });
 
