@@ -159,7 +159,7 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
 
       this._logger.log(
         LogLevel.INFO,
-        `Specific file scanned: ${file.fsPath}`,
+        `Specific file scan requested for file: ${file.fsPath}`,
         this._className
       );
 

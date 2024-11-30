@@ -210,7 +210,7 @@ export class I18nextScannerService {
               `Error executing scanner: ${error}`,
               'I18nextScannerService'
             );
-            reject(error);
+            reject(new Error(`Error executing scanner: ${error}`));
           });
       } catch (error) {
         this.logger.log(
@@ -218,7 +218,7 @@ export class I18nextScannerService {
           `Error executing scanner: ${error}`,
           'I18nextScannerService'
         );
-        reject(error);
+        reject(new Error(`Error executing scanner: ${error}`));
       }
     });
   }
