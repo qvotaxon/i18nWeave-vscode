@@ -1,12 +1,17 @@
+import { FileLocationStore } from 'src/libs/store/store-file-location-store/src';
+
 import { BaseActionModule } from '@i18n-weave/module/module-base-action';
 
 import { I18nextScannerService } from '@i18n-weave/feature/feature-i18next-scanner-service';
+
+import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 
 import {
   ConfigurationStoreManager,
   I18nextScannerModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
 import { TraceMethod } from '@i18n-weave/util/util-decorators';
+import { LogLevel } from '@i18n-weave/util/util-logger';
 
 import I18nextScannerModuleContext from './i18next-scanner-module-context';
 
@@ -28,13 +33,45 @@ export class I18nextScannerModule extends BaseActionModule {
       ).enabled
     ) {
       if (
+        !i18nextScannerModuleContext.hasDeletions &&
+        !i18nextScannerModuleContext.hasRenames &&
+        !i18nextScannerModuleContext.hasChanges
+      ) {
+        return;
+      }
+
+      const translationFileUris = FileLocationStore.getInstance()
+        .getTranslationFiles()
+        .map(file => file.metaData.uri);
+
+      const onScanCodeComplete = async () => {
+        this.logger.log(
+          LogLevel.INFO,
+          'Done scanning code files.',
+          'I18nextScannerModule'
+        );
+
+        setTimeout(() => {
+          FileLockStore.getInstance().deleteLocks(translationFileUris);
+          this.logger.log(
+            LogLevel.VERBOSE,
+            'Deleted file locks.',
+            'I18nextScannerModule'
+          );
+        }, 1000);
+      };
+
+      if (
         i18nextScannerModuleContext.hasDeletions ||
         i18nextScannerModuleContext.hasRenames
       ) {
-        I18nextScannerService.getInstance().scanCode();
+        FileLockStore.getInstance().addLocks(translationFileUris);
+
+        I18nextScannerService.getInstance().scanCode(onScanCodeComplete);
       } else if (i18nextScannerModuleContext.hasChanges) {
         I18nextScannerService.getInstance().scanFile(
-          i18nextScannerModuleContext.inputPath
+          i18nextScannerModuleContext.inputPath,
+          onScanCodeComplete
         );
       }
     }
