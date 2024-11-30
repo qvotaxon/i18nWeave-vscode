@@ -51,6 +51,10 @@ See the website [i18nWeave.com](https://i18nweave.com/) for more info. Of course
 
   Hover over translation keys to see your translation progress for that key, in total and per language. Get instant insight in the value your translation key represents in the default language. And get warned when big differences in text sizes between languages exist (taking into consideration different characters sets), which could indicate translation mistakes. 
 
+- **Translation Key Navigation**
+
+  Click on a translation key to quickly edit the key's value. The editor will open the related translation key of your default language in the correct namespace, enabling easy navigation to your keys and facilitating quick translations after adding new keys.
+
 <!--
 ### Misc Features
 
