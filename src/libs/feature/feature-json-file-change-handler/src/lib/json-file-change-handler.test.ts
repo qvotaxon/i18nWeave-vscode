@@ -17,6 +17,7 @@ suite('JsonFileChangeHandler', () => {
   });
 
   test('should initialize moduleChainManager and register chain', () => {
+    // @ts-ignore - private property
     const moduleChainManager = JsonFileChangeHandler.moduleChainManager;
     const registerChainSpy = sinon.spy(moduleChainManager, 'registerChain');
     const jsonFileChangeHandler =
@@ -65,6 +66,7 @@ suite('JsonFileChangeHandler', () => {
 
     assert.ok(jsonFileChangeHandler instanceof JsonFileChangeHandler);
     assert.ok(
+      // @ts-ignore - private property
       JsonFileChangeHandler.moduleChainManager instanceof ModuleChainManager
     );
     assert.ok(readJsonFileModuleSpy.calledOnce);

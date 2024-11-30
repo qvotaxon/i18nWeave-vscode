@@ -35,7 +35,7 @@ export class I18nextScannerService {
     return I18nextScannerService.instance;
   }
 
-  public scanFile(fileUri: Uri): void {
+  public scanFile(fileUri: Uri, onScanCodeComplete?: () => any): void {
     const statusBarManager = StatusBarManager.getInstance();
     statusBarManager.updateState(
       StatusBarState.Running,
@@ -49,18 +49,19 @@ export class I18nextScannerService {
 
     const options = this.getI18nextScannerOptions(false);
     const absolutePathToProjectRoot = this.getProjectRootPath();
-    this.executeScanner(options, absolutePathToProjectRoot, [fileUri.fsPath]);
+    this.executeScanner(options, absolutePathToProjectRoot, [
+      fileUri.fsPath,
+    ]).then(() => {
+      this.onScanCodeComplete(statusBarManager);
 
-    this.logger.log(
-      LogLevel.INFO,
-      `Done specific code file for translation keys... (${fileUri.fsPath})`,
-      'I18nextScannerService'
-    );
-    statusBarManager.setIdle();
+      if (onScanCodeComplete) {
+        onScanCodeComplete();
+      }
+    });
   }
 
   @TraceMethod
-  public scanCode(): void {
+  public scanCode(onScanCodeComplete?: () => any): void {
     const statusBarManager = StatusBarManager.getInstance();
     statusBarManager.updateState(
       StatusBarState.Running,
@@ -76,14 +77,15 @@ export class I18nextScannerService {
     const absolutePathToProjectRoot = this.getProjectRootPath();
     const scanSources = this.getScanSources();
 
-    this.executeScanner(options, absolutePathToProjectRoot, scanSources);
+    this.executeScanner(options, absolutePathToProjectRoot, scanSources).then(
+      () => {
+        this.onScanCodeComplete(statusBarManager);
 
-    this.logger.log(
-      LogLevel.INFO,
-      'Done scanning code for translation keys...',
-      'I18nextScannerService'
+        if (onScanCodeComplete) {
+          onScanCodeComplete();
+        }
+      }
     );
-    statusBarManager.setIdle();
   }
 
   private getI18nextScannerOptions(
@@ -189,23 +191,44 @@ export class I18nextScannerService {
     ];
   }
 
-  private executeScanner(
+  private async executeScanner(
     options: I18nextScannerOptions,
     workspaceRoot: string,
     scanSources: string[]
-  ): void {
-    try {
-      vfs
-        .src(scanSources, { cwd: workspaceRoot })
-        .pipe(sort())
-        .pipe(I18nextScanner(options))
-        .pipe(vfs.dest('./'));
-    } catch (error) {
-      this.logger.log(
-        LogLevel.ERROR,
-        `Error executing scanner: ${error}`,
-        'I18nextScannerService'
-      );
-    }
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        vfs
+          .src(scanSources, { cwd: workspaceRoot })
+          .pipe(sort())
+          .pipe(I18nextScanner(options))
+          .pipe(vfs.dest('./'))
+          .on('end', resolve)
+          .on('error', (error: any) => {
+            this.logger.log(
+              LogLevel.ERROR,
+              `Error executing scanner: ${error}`,
+              'I18nextScannerService'
+            );
+            reject(error);
+          });
+      } catch (error) {
+        this.logger.log(
+          LogLevel.ERROR,
+          `Error executing scanner: ${error}`,
+          'I18nextScannerService'
+        );
+        reject(error);
+      }
+    });
+  }
+
+  private onScanCodeComplete(statusBarManager: StatusBarManager) {
+    this.logger.log(
+      LogLevel.INFO,
+      'Done scanning code for translation keys...',
+      'I18nextScannerService'
+    );
+    statusBarManager.setIdle();
   }
 }

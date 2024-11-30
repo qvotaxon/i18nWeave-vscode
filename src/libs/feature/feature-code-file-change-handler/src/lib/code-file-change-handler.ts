@@ -68,6 +68,7 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
     this._changedFiles.add(changeFileLocation.fsPath);
     this._debouncedHandleChanges();
   }
+
   private async processChanges(): Promise<void> {
     let shouldFullScan = false;
     let filesToScan: Uri[] = [];
