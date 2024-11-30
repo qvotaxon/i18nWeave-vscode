@@ -46,6 +46,13 @@ function initializeSentry() {
     tracesSampleRate: 1.0,
     profilesSampleRate: 1.0,
     release: i18nWeaveExtension.packageJSON.version,
+    beforeSend(event) {
+        // Ignore events that are not from your extension
+        if (event.exception?.values?.some(value => !value.stacktrace?.frames?.some(frame => frame.filename?.includes('qvotaxon.i18nweave')))) {
+            return null; // Drop the event
+        }
+        return event;
+    },
   });
 
   Sentry.setUser({
