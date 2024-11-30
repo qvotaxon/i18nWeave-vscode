@@ -138,7 +138,7 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
       context
     );
 
-    this._logger.log(LogLevel.INFO, `Full scan performed`, this._className);
+    this._logger.log(LogLevel.INFO, `Full scan requested`, this._className);
   }
 
   private async scanSpecificFiles(files: Uri[]): Promise<void> {

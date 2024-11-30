@@ -1,7 +1,6 @@
 import * as assert from 'assert';
 import * as sinon from 'sinon';
 import { Diff } from 'deep-diff';
-import { TranslationFile } from 'src/libs/store/store-file-location-store/src/lib/file-location-store.types';
 import { ExtensionContext, Uri } from 'vscode';
 
 import { StatusBarManager } from '@i18n-weave/feature/feature-status-bar-manager';
@@ -10,7 +9,10 @@ import { TranslationService } from '@i18n-weave/feature/feature-translation-serv
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 import { FileWriter } from '@i18n-weave/file-io/file-io-file-writer';
 
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+import {
+  FileLocationStore,
+  type TranslationFile,
+} from '@i18n-weave/store/store-file-location-store';
 import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 import { TranslationStore } from '@i18n-weave/store/store-translation-store';
 

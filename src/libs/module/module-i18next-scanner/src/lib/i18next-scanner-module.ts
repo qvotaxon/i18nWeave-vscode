@@ -1,9 +1,8 @@
-import { FileLocationStore } from 'src/libs/store/store-file-location-store/src';
-
 import { BaseActionModule } from '@i18n-weave/module/module-base-action';
 
 import { I18nextScannerService } from '@i18n-weave/feature/feature-i18next-scanner-service';
 
+import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 
 import {
