@@ -3,8 +3,8 @@ import { ExtensionContext, ProgressLocation, Uri, window } from 'vscode';
 
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
+import { extractTranslationKeys } from '@i18n-weave/util/util-code-file-utils';
 import { I18nextScannerModuleConfiguration } from '@i18n-weave/util/util-configuration';
-import { extractTranslationKeys } from '@i18n-weave/util/util-i18next-ast';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
 type CodeTranslation = {

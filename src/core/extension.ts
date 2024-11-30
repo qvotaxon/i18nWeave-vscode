@@ -7,6 +7,7 @@ import { ActiveTextEditorChangedHandler } from '@i18n-weave/feature/feature-acti
 import { ConfigurationWizardService } from '@i18n-weave/feature/feature-configuration-wizard';
 import { FileLocationInitializer } from '@i18n-weave/feature/feature-file-location-initializer';
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
+import { I18nextDefinitionProvider } from '@i18n-weave/feature/feature-i18next-definition-provider';
 import {
   StatusBarManager,
   StatusBarState,
@@ -134,7 +135,7 @@ export async function activate(
       );
     const translationKeyCompletionProvider =
       TranslationKeyCompletionProvider.getInstance();
-    const completionItemProviderDisposable =
+    const translationKeyCompletionProviderDisposable =
       vscode.languages.registerCompletionItemProvider(
         [
           { language: 'javascript', scheme: 'file' },
@@ -151,27 +152,28 @@ export async function activate(
 
     const translationKeyHoverProvider =
       TranslationKeyHoverProvider.getInstance();
-    const hoverProviderDisposable = vscode.languages.registerHoverProvider(
-      [
-        { language: 'javascript', scheme: 'file' },
-        { language: 'typescript', scheme: 'file' },
-        { language: 'javascriptreact', scheme: 'file' }, // For .jsx files
-        { language: 'typescriptreact', scheme: 'file' }, // For .tsx files
-      ],
-      translationKeyHoverProvider
-    );
+    const translationKeyHoverProviderDisposable =
+      vscode.languages.registerHoverProvider(
+        [
+          { language: 'javascript', scheme: 'file' },
+          { language: 'typescript', scheme: 'file' },
+          { language: 'javascriptreact', scheme: 'file' }, // For .jsx files
+          { language: 'typescriptreact', scheme: 'file' }, // For .tsx files
+        ],
+        translationKeyHoverProvider
+      );
 
-    // const definitionProvider = TranslationDefinitionProvider.getInstance();
-    // const translationDefinitionProviderDisposable =
-    //   vscode.languages.registerDefinitionProvider(
-    //     [
-    //       { language: 'javascript', scheme: 'file' },
-    //       { language: 'typescript', scheme: 'file' },
-    //       { language: 'javascriptreact', scheme: 'file' }, // For .jsx files
-    //       { language: 'typescriptreact', scheme: 'file' }, // For .tsx files
-    //     ],
-    //     definitionProvider
-    //   );
+    const i18nextDefinitionProvider = I18nextDefinitionProvider.getInstance();
+    const i18nextDefinitionProviderDisposable =
+      vscode.languages.registerDefinitionProvider(
+        [
+          { language: 'javascript', scheme: 'file' },
+          { language: 'typescript', scheme: 'file' },
+          { language: 'javascriptreact', scheme: 'file' }, // For .jsx files
+          { language: 'typescriptreact', scheme: 'file' }, // For .tsx files
+        ],
+        i18nextDefinitionProvider
+      );
 
     // -------------------------------------
 
@@ -182,9 +184,9 @@ export async function activate(
       onDidChangeTextDocumentDisposable,
       configurationWizardCommandDisposable,
       configurationWatcherDisposable,
-      completionItemProviderDisposable,
-      hoverProviderDisposable
-      // translationDefinitionProviderDisposable
+      translationKeyCompletionProviderDisposable,
+      translationKeyHoverProviderDisposable,
+      i18nextDefinitionProviderDisposable
     );
 
     statusBarManager.updateState(StatusBarState.Idle, 'Idle');
