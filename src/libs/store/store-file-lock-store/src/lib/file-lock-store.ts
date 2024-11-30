@@ -37,7 +37,7 @@ export class FileLockStore {
       this._className
     );
 
-    const lockCount = this.fileLocks.get(uri.fsPath) || 0;
+    const lockCount = this.fileLocks.get(uri.fsPath) ?? 0;
     this.fileLocks.set(uri.fsPath, lockCount + 1);
   }
 
@@ -54,8 +54,34 @@ export class FileLockStore {
         this._className
       );
 
-      const lockCount = this.fileLocks.get(uri.fsPath) || 0;
+      const lockCount = this.fileLocks.get(uri.fsPath) ?? 0;
       this.fileLocks.set(uri.fsPath, lockCount + 1);
+    });
+  }
+
+  /**
+   * Deletes the file locks for the given URIs.
+   *
+   * @param uris - An array of URIs for which the file locks should be deleted.
+   *
+   * This method logs the deletion of each file lock at the verbose log level.
+   * If a file lock count is greater than 1, it decrements the count.
+   * Otherwise, it removes the file lock entry from the map.
+   */
+  deleteLocks(uris: Uri[]): void {
+    uris.forEach(uri => {
+      this._logger.log(
+        LogLevel.VERBOSE,
+        'Deleted file lock for ' + uri.fsPath,
+        this._className
+      );
+
+      const lockCount = this.fileLocks.get(uri.fsPath) ?? 0;
+      if (lockCount > 1) {
+        this.fileLocks.set(uri.fsPath, lockCount - 1);
+      } else {
+        this.fileLocks.delete(uri.fsPath);
+      }
     });
   }
 
@@ -70,7 +96,7 @@ export class FileLockStore {
       this._className
     );
 
-    const lockCount = this.fileLocks.get(uri.fsPath) || 0;
+    const lockCount = this.fileLocks.get(uri.fsPath) ?? 0;
     if (lockCount > 1) {
       this.fileLocks.set(uri.fsPath, lockCount - 1);
     } else {
@@ -78,7 +104,7 @@ export class FileLockStore {
     }
   }
 
-  deleteAll(uri: Uri): void {
+  purgeForFile(uri: Uri): void {
     this._logger.log(
       LogLevel.VERBOSE,
       'Deleted file lock for ' + uri.fsPath,

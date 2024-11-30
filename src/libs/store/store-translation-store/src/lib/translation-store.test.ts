@@ -1,11 +1,13 @@
 import * as sinon from 'sinon';
 import { strict as assert } from 'assert';
-import { TranslationFile } from 'src/libs/store/store-file-location-store/src/lib/file-location-store.types';
 import { Uri } from 'vscode';
 
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+import {
+  FileLocationStore,
+  TranslationFile,
+} from '@i18n-weave/store/store-file-location-store';
 
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 

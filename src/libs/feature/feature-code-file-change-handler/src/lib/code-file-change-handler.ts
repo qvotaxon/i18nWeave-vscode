@@ -68,6 +68,7 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
     this._changedFiles.add(changeFileLocation.fsPath);
     this._debouncedHandleChanges();
   }
+
   private async processChanges(): Promise<void> {
     let shouldFullScan = false;
     let filesToScan: Uri[] = [];
@@ -137,7 +138,7 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
       context
     );
 
-    this._logger.log(LogLevel.INFO, `Full scan performed`, this._className);
+    this._logger.log(LogLevel.INFO, `Full scan requested`, this._className);
   }
 
   private async scanSpecificFiles(files: Uri[]): Promise<void> {
@@ -158,7 +159,7 @@ export class CodeFileChangeHandler extends BaseFileChangeHandler {
 
       this._logger.log(
         LogLevel.INFO,
-        `Specific file scanned: ${file.fsPath}`,
+        `Specific file scan requested for file: ${file.fsPath}`,
         this._className
       );
 

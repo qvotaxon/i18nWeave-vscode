@@ -82,6 +82,8 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
   async handleFileChangeAsync(
     changeFileLocation?: Uri | undefined
   ): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     if (
       !changeFileLocation ||
       FileLockStore.getInstance().hasFileLock(changeFileLocation)
@@ -117,7 +119,9 @@ export class JsonFileChangeHandler extends BaseFileChangeHandler {
       JsonFileChangeHandler.fileWatcherCreator.createFileWatcherForFile(
         extractedFileParts.outputPath.fsPath,
         () => {
-          FileLockStore.getInstance().deleteAll(extractedFileParts.outputPath);
+          FileLockStore.getInstance().purgeForFile(
+            extractedFileParts.outputPath
+          );
           fileWatcherDisposable.dispose();
         }
       );
