@@ -37,7 +37,7 @@ export class FileLockStore {
       this._className
     );
 
-    const lockCount = this.fileLocks.get(uri.fsPath) || 0;
+    const lockCount = this.fileLocks.get(uri.fsPath) ?? 0;
     this.fileLocks.set(uri.fsPath, lockCount + 1);
   }
 
@@ -54,7 +54,7 @@ export class FileLockStore {
         this._className
       );
 
-      const lockCount = this.fileLocks.get(uri.fsPath) || 0;
+      const lockCount = this.fileLocks.get(uri.fsPath) ?? 0;
       this.fileLocks.set(uri.fsPath, lockCount + 1);
     });
   }
@@ -76,7 +76,7 @@ export class FileLockStore {
         this._className
       );
 
-      const lockCount = this.fileLocks.get(uri.fsPath) || 0;
+      const lockCount = this.fileLocks.get(uri.fsPath) ?? 0;
       if (lockCount > 1) {
         this.fileLocks.set(uri.fsPath, lockCount - 1);
       } else {
@@ -96,7 +96,7 @@ export class FileLockStore {
       this._className
     );
 
-    const lockCount = this.fileLocks.get(uri.fsPath) || 0;
+    const lockCount = this.fileLocks.get(uri.fsPath) ?? 0;
     if (lockCount > 1) {
       this.fileLocks.set(uri.fsPath, lockCount - 1);
     } else {
