@@ -8,7 +8,7 @@ import {
 } from '@i18n-weave/util/util-configuration';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
-import { extractTranslationKeys } from './i18next-ast';
+import { extractTranslationKeys } from './code-file-utils';
 
 suite('I18nextAst', () => {
   const extensionName = 'qvotaxon.i18nWeave';
@@ -104,3 +104,4 @@ suite('I18nextAst', () => {
     logSpy.restore();
   });
 });
+

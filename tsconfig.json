@@ -2,9 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@i18n-weave/core/*": [
-        "src/core/*"
-      ],
+      "@i18n-weave/core/*": ["src/core/*"],
       "@i18n-weave/feature/feature-active-text-editor-changed-handler": [
         "src/libs/feature/feature-active-text-editor-changed-handler/src"
       ],
@@ -65,9 +63,7 @@
       "@i18n-weave/file-io/file-io-file-writer": [
         "src/libs/file-io/file-io-file-writer/src"
       ],
-      "@i18n-weave/http/*": [
-        "src/libs/http/http-*/src/"
-      ],
+      "@i18n-weave/http/*": ["src/libs/http/http-*/src/"],
       "@i18n-weave/http/http-deepl-client": [
         "src/libs/http/http-deepl-client/src/"
       ],
@@ -101,15 +97,11 @@
       "@i18n-weave/util/util-configuration": [
         "src/libs/util/util-configuration/src"
       ],
-      "@i18n-weave/util/util-decorators": [
-        "src/libs/util/util-decorators/src"
-      ],
+      "@i18n-weave/util/util-decorators": ["src/libs/util/util-decorators/src"],
       "@i18n-weave/util/util-environment-utilities": [
         "src/libs/util/util-environment-utilities/src"
       ],
-      "@i18n-weave/util/util-enums": [
-        "src/libs/util/util-enums/src"
-      ],
+      "@i18n-weave/util/util-enums": ["src/libs/util/util-enums/src"],
       "@i18n-weave/util/util-file-path-utilities": [
         "src/libs/util/util-file-path-utilities/src/"
       ],
@@ -119,29 +111,20 @@
       "@i18n-weave/util/util-localization-utilities": [
         "src/libs/util/util-localization-utilities/src"
       ],
-      "@i18n-weave/util/util-logger": [
-        "src/libs/util/util-logger/src"
-      ],
+      "@i18n-weave/util/util-logger": ["src/libs/util/util-logger/src"],
       "@i18n-weave/util/util-prompt-utilities": [
         "src/libs/util/util-prompt-utilities/src"
       ],
-      "@i18n-weave/util/util-types": [
-        "src/libs/util/util-types/src"
-      ],
+      "@i18n-weave/util/util-types": ["src/libs/util/util-types/src"],
       "@i18n-weave/feature/feature-file-location-initializer": [
         "src/libs/feature/feature-file-location-initializer/src"
       ],
       "@i18n-weave/store/store-translation-store": [
         "src/libs/store/store-translation-store/src"
       ],
-      "@i18n-weave/util/util-file-diff": [
-        "src/libs/util/util-file-diff/src"
-      ],
+      "@i18n-weave/util/util-file-diff": ["src/libs/util/util-file-diff/src"],
       "@i18n-weave/util/util-nested-object-utils": [
         "src/libs/util/util-nested-object-utils/src"
-      ],
-      "@i18n-weave/util/util-i18next-ast": [
-        "src/libs/util/util-i18next-ast/src"
       ],
       "@i18n-weave/feature/feature-translation-key-completion-provider": [
         "src/libs/feature/feature-translation-key-completion-provider/src"
@@ -154,14 +137,21 @@
       ],
       "@i18n-weave/util/util-markdown-string-utils": [
         "src/libs/util/util-markdown-string-utils/src"
+      ],
+      "@i18n-weave/feature/feature-i18next-definition-provider": [
+        "src/libs/feature/feature-i18next-definition-provider/src"
+      ],
+      "@i18n-weave/util/util-code-file-utils": [
+        "src/libs/util/util-code-file-utils/src"
+      ],
+      "@i18n-weave/util/util-i18next-file-utils": [
+        "src/libs/util/util-i18next-file-utils/src"
       ]
     },
     "module": "CommonJS",
     "target": "ES2022",
     "outDir": "out",
-    "lib": [
-      "ES2022"
-    ],
+    "lib": ["ES2022"],
     "sourceMap": true,
     "rootDir": "src",
     "strict": true,
@@ -175,3 +165,4 @@
     "noUnusedParameters": true
   }
 }
+
