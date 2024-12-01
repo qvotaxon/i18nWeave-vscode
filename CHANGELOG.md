@@ -4,6 +4,13 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.15.2](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.15.1...v0.15.2) (2024-12-01)
+
+
+### Bug Fixes
+
+* enhance-logger-and-remove-dotenv ([#257](https://github.com/qvotaxon/i18nWeave-vscode/issues/257)) ([9e77316](https://github.com/qvotaxon/i18nWeave-vscode/commit/9e77316c51d04f042ab6e7516e95117acdc1ed4c))
+
 ## [0.15.1](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.15.0...v0.15.1) (2024-11-30)
 
 
