@@ -12,6 +12,7 @@ permissions:
 jobs:
   build:
     name: Build & Test
+    if: ${{ !contains(github.event.pull_request.title, 'ci') && !contains(github.event.pull_request.title, 'docs') && !contains(github.event.pull_request.title, 'doc') }}
     strategy:
       fail-fast: false
       matrix:
