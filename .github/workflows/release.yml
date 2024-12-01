@@ -35,7 +35,6 @@ jobs:
         with:
           token: ${{ secrets.RELEASE_PLEASE_KEY }}
           release-type: node
-          prerelease: ${{ startsWith(github.event.workflow_run.head_branch, 'release/') }}
 
       - name: Create npm dependencies directory
         run: mkdir -p .npm
@@ -55,13 +54,13 @@ jobs:
 
       - name: Create extension package
         if: ${{ steps.release.outputs.release_created }}
-        run: npx vsce package -o i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix ${{ startsWith(github.event.workflow_run.head_branch, 'release/') && '--pre-release' || '' }}
+        run: npx vsce package -o i18nWeave-vscode-${{ steps.release.outputs.tag_name }}${{ startsWith(github.event.workflow_run.head_branch, 'release/') && '--pre-release' || '' }}.vsix
 
       - name: Upload Release Artifact to GitHub
         if: ${{ steps.release.outputs.release_created }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload ${{ steps.release.outputs.tag_name }} i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix
+        run: gh release upload i18nWeave-vscode-${{ steps.release.outputs.tag_name }}${{ startsWith(github.event.workflow_run.head_branch, 'release/') && '--pre-release' || '' }} i18nWeave-vscode-${{ steps.release.outputs.tag_name }}${{ startsWith(github.event.workflow_run.head_branch, 'release/') && '--pre-release' || '' }}.vsix
 
       - name: Publish VS Code Extension
         if: ${{ steps.release.outputs.release_created }}
@@ -79,13 +78,13 @@ jobs:
           SENTRY_ORG: i18nweave
           SENTRY_PROJECT: i18nweave-vscode-r3
         with:
-          version: ${{ steps.release.outputs.tag_name }}
+          version: ${{ steps.release.outputs.tag_name }}${{ startsWith(github.event.workflow_run.head_branch, 'release/') && '--pre-release' || '' }}
 
       - name: Attest Build Provenance
         if: ${{ steps.release.outputs.release_created }}
         uses: actions/attest-build-provenance@v1.3.1
         with:
-          subject-path: i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix
+          subject-path: i18nWeave-vscode-${{ steps.release.outputs.tag_name }}${{ startsWith(github.event.workflow_run.head_branch, 'release/') && '--pre-release' || '' }}.vsix
 
     #   - name: Generate SBOM
     #     if: ${{ steps.release.outputs.release_created }}
