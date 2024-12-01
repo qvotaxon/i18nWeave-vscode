@@ -2,6 +2,8 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import sinon from 'sinon';
 
+import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
+
 import { StatusBarManager } from './status-bar-manager';
 
 suite('StatusBarManager', () => {
@@ -16,6 +18,14 @@ suite('StatusBarManager', () => {
 
     statusBarManager = StatusBarManager.getInstance(context);
     disposeStub = sinon.stub(statusBarManager['statusBarItem'], 'dispose');
+    sinon
+      .stub(ConfigurationStoreManager.getInstance(), 'getConfig')
+      .withArgs('debugging')
+      .returns({
+        logging: {
+          enableVerboseLogging: false,
+        },
+      });
 
     sinon.stub(vscode.window, 'createStatusBarItem').returns({
       show: sinon.stub(),
@@ -24,8 +34,8 @@ suite('StatusBarManager', () => {
   });
 
   teardown(() => {
-    sinon.restore();
     StatusBarManager.disposeInstance();
+    sinon.restore();
   });
 
   suite('getInstance', () => {
