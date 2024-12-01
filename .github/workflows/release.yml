@@ -3,7 +3,7 @@ name: Release
 on:
   workflow_run:
     workflows: ['Build & Test']
-    branches: [main]
+    branches: [main, 'release/**']
     types:
       - completed
 
@@ -35,6 +35,7 @@ jobs:
         with:
           token: ${{ secrets.RELEASE_PLEASE_KEY }}
           release-type: node
+          prerelease: ${{ startsWith(github.event.workflow_run.head_branch, 'release/') }}
 
       - name: Create npm dependencies directory
         run: mkdir -p .npm
@@ -52,9 +53,9 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         run: npm install
 
-      - name: Create Pre-release extension
+      - name: Create extension package
         if: ${{ steps.release.outputs.release_created }}
-        run: npx vsce package -o i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix --pre-release
+        run: npx vsce package -o i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix ${{ startsWith(github.event.workflow_run.head_branch, 'release/') && '--pre-release' || '' }}
 
       - name: Upload Release Artifact to GitHub
         if: ${{ steps.release.outputs.release_created }}
@@ -68,7 +69,7 @@ jobs:
         with:
           pat: ${{ secrets.VSCE_PAT }}
           registryUrl: https://marketplace.visualstudio.com
-          preRelease: true
+          preRelease: ${{ startsWith(github.event.workflow_run.head_branch, 'release/') }}
 
       - name: Create Sentry release
         if: ${{ steps.release.outputs.release_created }}
