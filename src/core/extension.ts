@@ -1,6 +1,4 @@
 import * as Sentry from '@sentry/node';
-import * as dotenv from 'dotenv';
-import path from 'path';
 import vscode, { ConfigurationChangeEvent, ExtensionContext } from 'vscode';
 
 import { ActiveTextEditorChangedHandler } from '@i18n-weave/feature/feature-active-text-editor-changed-handler';
@@ -13,7 +11,6 @@ import {
   StatusBarState,
 } from '@i18n-weave/feature/feature-status-bar-manager';
 import { TextDocumentChangedHandler } from '@i18n-weave/feature/feature-text-document-changed-handler';
-// import { TranslationDefinitionProvider } from '@i18n-weave/feature/feature-translation-definition-provider';
 import { TranslationKeyCompletionProvider } from '@i18n-weave/feature/feature-translation-key-completion-provider';
 import { TranslationKeyHoverProvider } from '@i18n-weave/feature/feature-translation-key-hover-provider';
 
@@ -104,7 +101,7 @@ export async function activate(
     const statusBarManager = StatusBarManager.getInstance(context);
     statusBarManager.updateState(StatusBarState.Running, 'Initializing...');
 
-    configurationManager.initialize(extensionName);
+    configurationManager.initialize(publisherExtensionName);
     logger.log(LogLevel.INFO, 'i18nWeave is starting up...', 'Core');
 
     await fileLocationInitializer.initializeFileLocations();
@@ -119,11 +116,11 @@ export async function activate(
     const configurationWatcherDisposable =
       vscode.workspace.onDidChangeConfiguration(
         async (event: ConfigurationChangeEvent) => {
-          if (!event.affectsConfiguration(configurationSectionName)) {
+          if (!event.affectsConfiguration(extensionName)) {
             return;
           }
 
-          configurationManager.syncConfigurationStore(extensionName);
+          configurationManager.syncConfigurationStore(publisherExtensionName);
 
           await reinitialize(
             fileLocationInitializer,
@@ -218,6 +215,11 @@ export async function activate(
     statusBarManager.updateState(StatusBarState.Idle, 'Idle');
     logger.log(LogLevel.INFO, 'i18nWeave is watching your files... 🌍', 'Core');
   } catch (error) {
+    Logger.getInstance().log(
+      LogLevel.ERROR,
+      `Something went wrong: ${(error as Error).message}`,
+      'Core'
+    );
     Sentry.captureException(error);
   }
 }
@@ -331,6 +333,21 @@ async function reinitialize(
   context.subscriptions.push(...codeFileWatchers, ...jsonFileWatchers);
 }
 
-export function deactivate() {
+export async function deactivate() {
+  Logger.getInstance().log(
+    LogLevel.INFO,
+    'i18nWeave is shutting down...',
+    'Core'
+  );
+
   Sentry.endSession();
+  await Sentry.flush();
+  Logger.getInstance().log(
+    LogLevel.INFO,
+    'Sentry session ended and flushed.',
+    'Core'
+  );
+
+  StatusBarManager.disposeInstance();
+  Logger.disposeInstance();
 }
