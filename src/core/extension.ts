@@ -28,30 +28,49 @@ import { isProduction } from '@i18n-weave/util/util-environment-utilities';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
-const extensionName = 'qvotaxon.i18nWeave';
-const configurationSectionName = 'i18nWeave';
-const envFilePath =
-  process.env.DOTENV_CONFIG_PATH ??
-  path.join(__dirname, '..', '.env.production');
-dotenv.config({ path: envFilePath });
+const publisherExtensionName = 'qvotaxon.i18nWeave';
+const extensionName = 'i18nWeave';
+const extensionStacktraceFrameFilters = [
+  extensionName,
+  extensionName.toLowerCase(),
+  publisherExtensionName,
+  publisherExtensionName.toLowerCase(),
+  `${extensionName}-vscode`,
+  `${extensionName}-vscode`.toLowerCase(),
+];
 
 function initializeSentry() {
-  const i18nWeaveExtension = vscode.extensions.getExtension(extensionName)!;
+  const i18nWeaveExtension = vscode.extensions.getExtension(
+    publisherExtensionName
+  )!;
   const installationId = vscode.env.machineId;
 
   Sentry.init({
-    enabled: isProduction() && vscode.env.isTelemetryEnabled,
+    enabled:
+      isProduction() &&
+      process.env.SENTRY_ENABLED === 'true' &&
+      vscode.env.isTelemetryEnabled,
     dsn: 'https://188de1d08857e4d1a5e59d8a9da5da1a@o4507423909216256.ingest.de.sentry.io/4507431475019856',
     integrations: Sentry.getDefaultIntegrations({}),
     tracesSampleRate: 1.0,
     profilesSampleRate: 1.0,
     release: i18nWeaveExtension.packageJSON.version,
     beforeSend(event) {
-        // Ignore events that are not from your extension
-        if (event.exception?.values?.some(value => !value.stacktrace?.frames?.some(frame => frame.filename?.includes('qvotaxon.i18nweave')))) {
-            return null; // Drop the event
-        }
+      if (
+        event.exception?.values?.some(value =>
+          value.stacktrace?.frames?.some(
+            frame =>
+              frame.filename &&
+              extensionStacktraceFrameFilters.some(
+                filter => frame.filename && frame.filename.includes(filter)
+              )
+          )
+        )
+      ) {
         return event;
+      }
+
+      return null;
     },
   });
 

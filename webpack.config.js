@@ -1,13 +1,11 @@
 const path = require('path');
-const Dotenv = require('dotenv');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const { codecovWebpackPlugin } = require("@codecov/webpack-plugin");
 
-// Load the environment variables from the specified .env file
-Dotenv.config({ path: process.env.DOTENV_CONFIG_PATH || '.env.production' });
-
 module.exports = (env, argv) => {
     const isProduction = argv.mode === 'production';
+
+    console.log(`Running webpack in ${isProduction ? '!!! Production Mode !!!' : 'Development Mode'}`);
 
     return {
         entry: './src/core/extension.ts',
