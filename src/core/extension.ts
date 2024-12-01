@@ -48,7 +48,7 @@ function initializeSentry() {
     integrations: Sentry.getDefaultIntegrations({}),
     tracesSampleRate: 1.0,
     profilesSampleRate: 1.0,
-    release: i18nWeaveExtension.packageJSON.version,
+    release: `v${i18nWeaveExtension.packageJSON.version}`,
     beforeSend(event) {
       if (
         event.exception?.values?.some(value =>
