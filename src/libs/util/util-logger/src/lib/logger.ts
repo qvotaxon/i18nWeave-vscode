@@ -79,7 +79,12 @@ export class Logger {
     this.outputChannel.show();
   }
 
-  public dispose() {
-    this.outputChannel.dispose();
+  public static disposeInstance() {
+    Logger.getInstance().log(LogLevel.INFO, 'Disposing of logger instance');
+
+    if (Logger.instance) {
+      Logger.instance.outputChannel.dispose();
+      Logger.instance = null;
+    }
   }
 }

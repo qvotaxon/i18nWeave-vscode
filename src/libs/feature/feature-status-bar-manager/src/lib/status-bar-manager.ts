@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 
+import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
+
 import { StatusBarState } from './status-bar-manager.types';
 
 /**
@@ -72,5 +74,7 @@ export class StatusBarManager {
       StatusBarManager.instance.statusBarItem.dispose();
       StatusBarManager.instance = null;
     }
+
+    Logger.getInstance().log(LogLevel.INFO, 'Disposed status bar instance');
   }
 }

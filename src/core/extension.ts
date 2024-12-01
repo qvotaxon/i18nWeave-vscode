@@ -1,6 +1,4 @@
 import * as Sentry from '@sentry/node';
-import * as dotenv from 'dotenv';
-import path from 'path';
 import vscode, { ConfigurationChangeEvent, ExtensionContext } from 'vscode';
 
 import { ActiveTextEditorChangedHandler } from '@i18n-weave/feature/feature-active-text-editor-changed-handler';
@@ -13,7 +11,6 @@ import {
   StatusBarState,
 } from '@i18n-weave/feature/feature-status-bar-manager';
 import { TextDocumentChangedHandler } from '@i18n-weave/feature/feature-text-document-changed-handler';
-// import { TranslationDefinitionProvider } from '@i18n-weave/feature/feature-translation-definition-provider';
 import { TranslationKeyCompletionProvider } from '@i18n-weave/feature/feature-translation-key-completion-provider';
 import { TranslationKeyHoverProvider } from '@i18n-weave/feature/feature-translation-key-hover-provider';
 
@@ -28,30 +25,49 @@ import { isProduction } from '@i18n-weave/util/util-environment-utilities';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
-const extensionName = 'qvotaxon.i18nWeave';
-const configurationSectionName = 'i18nWeave';
-const envFilePath =
-  process.env.DOTENV_CONFIG_PATH ??
-  path.join(__dirname, '..', '.env.production');
-dotenv.config({ path: envFilePath });
+const publisherExtensionName = 'qvotaxon.i18nWeave';
+const extensionName = 'i18nWeave';
+const extensionStacktraceFrameFilters = [
+  extensionName,
+  extensionName.toLowerCase(),
+  publisherExtensionName,
+  publisherExtensionName.toLowerCase(),
+  `${extensionName}-vscode`,
+  `${extensionName}-vscode`.toLowerCase(),
+];
 
 function initializeSentry() {
-  const i18nWeaveExtension = vscode.extensions.getExtension(extensionName)!;
+  const i18nWeaveExtension = vscode.extensions.getExtension(
+    publisherExtensionName
+  )!;
   const installationId = vscode.env.machineId;
 
   Sentry.init({
-    enabled: isProduction() && vscode.env.isTelemetryEnabled,
+    enabled:
+      isProduction() &&
+      process.env.SENTRY_ENABLED === 'true' &&
+      vscode.env.isTelemetryEnabled,
     dsn: 'https://188de1d08857e4d1a5e59d8a9da5da1a@o4507423909216256.ingest.de.sentry.io/4507431475019856',
     integrations: Sentry.getDefaultIntegrations({}),
     tracesSampleRate: 1.0,
     profilesSampleRate: 1.0,
     release: i18nWeaveExtension.packageJSON.version,
     beforeSend(event) {
-        // Ignore events that are not from your extension
-        if (event.exception?.values?.some(value => !value.stacktrace?.frames?.some(frame => frame.filename?.includes('qvotaxon.i18nweave')))) {
-            return null; // Drop the event
-        }
+      if (
+        event.exception?.values?.some(value =>
+          value.stacktrace?.frames?.some(
+            frame =>
+              frame.filename &&
+              extensionStacktraceFrameFilters.some(
+                filter => frame.filename && frame.filename.includes(filter)
+              )
+          )
+        )
+      ) {
         return event;
+      }
+
+      return null;
     },
   });
 
@@ -85,7 +101,7 @@ export async function activate(
     const statusBarManager = StatusBarManager.getInstance(context);
     statusBarManager.updateState(StatusBarState.Running, 'Initializing...');
 
-    configurationManager.initialize(extensionName);
+    configurationManager.initialize(publisherExtensionName);
     logger.log(LogLevel.INFO, 'i18nWeave is starting up...', 'Core');
 
     await fileLocationInitializer.initializeFileLocations();
@@ -100,11 +116,11 @@ export async function activate(
     const configurationWatcherDisposable =
       vscode.workspace.onDidChangeConfiguration(
         async (event: ConfigurationChangeEvent) => {
-          if (!event.affectsConfiguration(configurationSectionName)) {
+          if (!event.affectsConfiguration(extensionName)) {
             return;
           }
 
-          configurationManager.syncConfigurationStore(extensionName);
+          configurationManager.syncConfigurationStore(publisherExtensionName);
 
           await reinitialize(
             fileLocationInitializer,
@@ -199,6 +215,11 @@ export async function activate(
     statusBarManager.updateState(StatusBarState.Idle, 'Idle');
     logger.log(LogLevel.INFO, 'i18nWeave is watching your files... 🌍', 'Core');
   } catch (error) {
+    Logger.getInstance().log(
+      LogLevel.ERROR,
+      `Something went wrong: ${(error as Error).message}`,
+      'Core'
+    );
     Sentry.captureException(error);
   }
 }
@@ -312,6 +333,21 @@ async function reinitialize(
   context.subscriptions.push(...codeFileWatchers, ...jsonFileWatchers);
 }
 
-export function deactivate() {
+export async function deactivate() {
+  Logger.getInstance().log(
+    LogLevel.INFO,
+    'i18nWeave is shutting down...',
+    'Core'
+  );
+
   Sentry.endSession();
+  await Sentry.flush();
+  Logger.getInstance().log(
+    LogLevel.INFO,
+    'Sentry session ended and flushed.',
+    'Core'
+  );
+
+  StatusBarManager.disposeInstance();
+  Logger.disposeInstance();
 }
