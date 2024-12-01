@@ -4,6 +4,13 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.15.8](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.15.7...v0.15.8) (2024-12-01)
+
+
+### Bug Fixes
+
+* **core:** use correct release format in Sentry init ([#286](https://github.com/qvotaxon/i18nWeave-vscode/issues/286)) ([1e67829](https://github.com/qvotaxon/i18nWeave-vscode/commit/1e67829f623848baf94d3ada95ebeec947144a88))
+
 ## [0.15.7](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.15.6...v0.15.7) (2024-12-01)
 
 
