@@ -41,6 +41,7 @@ function initializeSentry() {
     publisherExtensionName
   )!;
   const installationId = vscode.env.machineId;
+  console.log('installationId', installationId);
 
   Sentry.init({
     enabled:
