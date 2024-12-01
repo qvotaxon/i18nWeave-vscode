@@ -42,6 +42,8 @@ function initializeSentry() {
   )!;
   const installationId = vscode.env.machineId;
 
+  console.log(`Installation id: ${installationId}`);
+
   Sentry.init({
     enabled:
       isProduction() &&
