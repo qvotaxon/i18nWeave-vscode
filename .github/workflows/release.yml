@@ -3,7 +3,7 @@ name: Release
 on:
   workflow_run:
     workflows: ['Build & Test']
-    branches: [main, 'release/**']
+    branches: [main]
     types:
       - completed
 
@@ -11,7 +11,6 @@ permissions:
   contents: write
   id-token: write
   attestations: write
-  pull-requests: write
 
 jobs:
   release:
@@ -37,25 +36,11 @@ jobs:
           token: ${{ secrets.RELEASE_PLEASE_KEY }}
           release-type: node
 
-      - name: Set prerelease flag
-        id: prerelease
-        run: |
-          echo "IS_PRERELEASE=${{ steps.release.outputs.pr != '' }}" >> $GITHUB_OUTPUT
-
-      - name: Set version
-        id: version
-        run: |
-          VERSION=${{ steps.release.outputs.tag_name }}
-          if [ "${{ steps.prerelease.outputs.IS_PRERELEASE }}" == "true" ]; then
-            VERSION="${VERSION}-pre"
-          fi
-          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
-
       - name: Create npm dependencies directory
         run: mkdir -p .npm
 
       - name: Cache npm dependencies
-        if: ${{ steps.release.outputs.release_created || steps.prerelease.outputs.IS_PRERELEASE == 'true' }}
+        if: ${{ steps.release.outputs.release_created }}
         uses: actions/cache@v4
         with:
           path: .npm/
@@ -64,52 +49,45 @@ jobs:
             node-modules-
 
       - name: Install dependencies
-        if: ${{ steps.release.outputs.release_created || steps.prerelease.outputs.IS_PRERELEASE == 'true' }}
+        if: ${{ steps.release.outputs.release_created }}
         run: npm install
 
-      - name: Update package.json version
-        if: ${{ steps.release.outputs.release_created || steps.prerelease.outputs.IS_PRERELEASE == 'true' }}
-        run: |
-          npm version ${{ steps.version.outputs.VERSION }} --no-git-tag-version
-
-      - name: Create extension package
-        if: ${{ steps.release.outputs.release_created || steps.prerelease.outputs.IS_PRERELEASE == 'true' }}
-        run: npx vsce package -o i18nWeave-vscode-${{ steps.version.outputs.VERSION }}.vsix
+      - name: Create Pre-release extension
+        if: ${{ steps.release.outputs.release_created }}
+        run: npx vsce package -o i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix --pre-release
 
       - name: Upload Release Artifact to GitHub
-        if: ${{ steps.release.outputs.release_created || steps.prerelease.outputs.IS_PRERELEASE == 'true' }}
+        if: ${{ steps.release.outputs.release_created }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release upload ${{ steps.release.outputs.tag_name }} i18nWeave-vscode-${{ steps.version.outputs.VERSION }}.vsix
-          gh release edit ${{ steps.release.outputs.tag_name }} --prerelease=${{ steps.prerelease.outputs.IS_PRERELEASE }}
+        run: gh release upload ${{ steps.release.outputs.tag_name }} i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix
 
       - name: Publish VS Code Extension
-        if: ${{ steps.release.outputs.release_created || steps.prerelease.outputs.IS_PRERELEASE == 'true' }}
+        if: ${{ steps.release.outputs.release_created }}
         uses: HaaLeo/publish-vscode-extension@v1.6.2
         with:
           pat: ${{ secrets.VSCE_PAT }}
           registryUrl: https://marketplace.visualstudio.com
-          preRelease: ${{ steps.prerelease.outputs.IS_PRERELEASE }}
+          preRelease: true
 
       - name: Create Sentry release
-        if: ${{ steps.release.outputs.release_created || steps.prerelease.outputs.IS_PRERELEASE == 'true' }}
+        if: ${{ steps.release.outputs.release_created }}
         uses: getsentry/action-release@v1
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: i18nweave
           SENTRY_PROJECT: i18nweave-vscode-r3
         with:
-          version: ${{ steps.version.outputs.VERSION }}
+          version: ${{ steps.release.outputs.tag_name }}
 
       - name: Attest Build Provenance
-        if: ${{ steps.release.outputs.release_created || steps.prerelease.outputs.IS_PRERELEASE == 'true' }}
+        if: ${{ steps.release.outputs.release_created }}
         uses: actions/attest-build-provenance@v1.3.1
         with:
-          subject-path: i18nWeave-vscode-${{ steps.version.outputs.VERSION }}.vsix
+          subject-path: i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix
 
     #   - name: Generate SBOM
-    #     if: ${{ steps.release.outputs.release_created || steps.prerelease.outputs.IS_PRERELEASE == 'true' }}
+    #     if: ${{ steps.release.outputs.release_created }}
     #     uses: anchore/sbom-action@v0
     #     with:
     #       path: 'out'
@@ -117,7 +95,7 @@ jobs:
     #       output-file: 'sbom.spdx.json'
 
     #   - name: Attest SBOM
-    #     if: ${{ steps.release.outputs.release_created || steps.prerelease.outputs.IS_PRERELEASE == 'true' }}
+    #     if: ${{ steps.release.outputs.release_created }}
     #     uses: actions/attest-sbom@v1
     #     with:
     #       subject-path: '${{ github.workspace }}/out'
