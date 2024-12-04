@@ -52,9 +52,9 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         run: npm install
 
-      - name: Create Pre-release extension
+      - name: Create Release extension
         if: ${{ steps.release.outputs.release_created }}
-        run: npx vsce package -o i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix --pre-release
+        run: npx vsce package -o i18nWeave-vscode-${{ steps.release.outputs.tag_name }}.vsix # --pre-release
 
       - name: Upload Release Artifact to GitHub
         if: ${{ steps.release.outputs.release_created }}
@@ -68,7 +68,7 @@ jobs:
         with:
           pat: ${{ secrets.VSCE_PAT }}
           registryUrl: https://marketplace.visualstudio.com
-          preRelease: true
+          preRelease: false
 
       - name: Create Sentry release
         if: ${{ steps.release.outputs.release_created }}
