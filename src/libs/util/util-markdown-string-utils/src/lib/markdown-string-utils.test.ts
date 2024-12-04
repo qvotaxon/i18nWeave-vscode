@@ -30,7 +30,11 @@ suite('createI18nHoverMarkdown', () => {
       'common'
     );
 
-    assert(markdown.value.includes('### Translation Progress: **75%** (3/4)'));
+    assert(
+      markdown.value.includes(
+        '### ![75%](https://progress-bar.xyz/75?title=Translation%20Progress:)'
+      )
+    );
   });
 
   test('should show a warning if default translation is missing', () => {
@@ -47,7 +51,11 @@ suite('createI18nHoverMarkdown', () => {
       'common'
     );
 
-    assert(markdown.value.includes('**Default translation (en) missing!**'));
+    assert(
+      markdown.value.includes(
+        `##### **⚠ Default translation (${defaultLanguage}) missing!**`
+      )
+    );
   });
 
   test('should show language status correctly', () => {
