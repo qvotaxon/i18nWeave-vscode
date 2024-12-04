@@ -24,7 +24,11 @@ suite('createI18nHoverMarkdown', () => {
       de: null,
     };
     const defaultLanguage = 'en';
-    const markdown = createI18nHoverMarkdown(translations, defaultLanguage);
+    const markdown = createI18nHoverMarkdown(
+      translations,
+      defaultLanguage,
+      'common'
+    );
 
     assert(markdown.value.includes('### Translation Progress: **75%** (3/4)'));
   });
@@ -37,7 +41,11 @@ suite('createI18nHoverMarkdown', () => {
       de: 'Hallo',
     };
     const defaultLanguage = 'en';
-    const markdown = createI18nHoverMarkdown(translations, defaultLanguage);
+    const markdown = createI18nHoverMarkdown(
+      translations,
+      defaultLanguage,
+      'common'
+    );
 
     assert(markdown.value.includes('**Default translation (en) missing!**'));
   });
@@ -50,7 +58,11 @@ suite('createI18nHoverMarkdown', () => {
       de: null,
     };
     const defaultLanguage = 'en';
-    const markdown = createI18nHoverMarkdown(translations, defaultLanguage);
+    const markdown = createI18nHoverMarkdown(
+      translations,
+      defaultLanguage,
+      'common'
+    );
 
     assert(markdown.value.includes('- **en:** ✔'));
     assert(markdown.value.includes('- **de:** ✖'));
@@ -68,6 +80,7 @@ suite('createI18nHoverMarkdown', () => {
     const markdown = createI18nHoverMarkdown(
       translations,
       defaultLanguage,
+      'common',
       lengthDifferenceThreshold
     );
 
@@ -86,6 +99,7 @@ suite('createI18nHoverMarkdown', () => {
     const markdown = createI18nHoverMarkdown(
       translations,
       defaultLanguage,
+      'common',
       lengthDifferenceThreshold
     );
 

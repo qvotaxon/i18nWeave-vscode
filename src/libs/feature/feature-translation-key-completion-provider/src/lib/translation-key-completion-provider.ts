@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { MarkdownString } from 'vscode';
 
 import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 
@@ -7,6 +6,7 @@ import {
   ConfigurationStoreManager,
   I18nextScannerModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
+import { createI18nCompletionMarkdown } from '@i18n-weave/util/util-markdown-string-utils';
 import {
   extractNamespaceFromTranslationKey,
   extractTranslationKeys,
@@ -45,15 +45,21 @@ export class TranslationKeyCompletionProvider
         translationKey
       );
 
-      if (translationValue) {
-        item.documentation = new MarkdownString(
-          `\`namespace: ${namespace}\`\n\n${translationValue}`
-        );
-      } else {
-        item.documentation = new MarkdownString(
-          `\`namespace: ${namespace}\`\n\n*No translation value found*`
-        );
-      }
+      item.documentation = createI18nCompletionMarkdown(
+        configuration.defaultLanguage,
+        namespace,
+        translationValue
+      );
+
+      // if (translationValue) {
+      //   new MarkdownString(
+      //     `\`namespace: ${namespace}\`\n\n${translationValue}`
+      //   );
+      // } else {
+      //   item.documentation = new MarkdownString(
+      //     `\`namespace: ${namespace}\`\n\n*No translation value found*`
+      //   );
+      // }
       item.detail = translationKey;
     }
 
