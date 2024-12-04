@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/qvotaxon/i18nWeave-vscode"
   },
-  "version": "0.15.8",
+  "version": "0.15.9",
   "engines": {
     "vscode": "^1.89.0"
   },
