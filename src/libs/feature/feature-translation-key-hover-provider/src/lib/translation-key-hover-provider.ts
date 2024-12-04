@@ -75,7 +75,8 @@ export class TranslationKeyHoverProvider implements HoverProvider {
 
     const hoverContent = createI18nHoverMarkdown(
       translationValues,
-      configuration.defaultLanguage
+      configuration.defaultLanguage,
+      namespace
     );
 
     return new Hover(hoverContent);

@@ -79,7 +79,7 @@ suite('TranslationKeyCompletionProvider Tests', () => {
 
     assert.strictEqual(
       (resolvedItem!.documentation as vscode.MarkdownString).value,
-      '`namespace: namespace`\n\nTranslation Value'
+      '##### Default translation (en):\n ##### "Translation Value"\n###### Namespace: **namespace**'
     );
   });
 
@@ -103,7 +103,7 @@ suite('TranslationKeyCompletionProvider Tests', () => {
 
     assert.strictEqual(
       (resolvedItem!.documentation as vscode.MarkdownString).value,
-      '`namespace: namespace`\n\n*No translation value found*'
+      '##### **⚠ Default translation (en) missing!**\n###### Namespace: **namespace**'
     );
   });
 });

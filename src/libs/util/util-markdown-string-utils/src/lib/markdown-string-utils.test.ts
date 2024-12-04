@@ -24,9 +24,17 @@ suite('createI18nHoverMarkdown', () => {
       de: null,
     };
     const defaultLanguage = 'en';
-    const markdown = createI18nHoverMarkdown(translations, defaultLanguage);
+    const markdown = createI18nHoverMarkdown(
+      translations,
+      defaultLanguage,
+      'common'
+    );
 
-    assert(markdown.value.includes('### Translation Progress: **75%** (3/4)'));
+    assert(
+      markdown.value.includes(
+        '### ![75%](https://progress-bar.xyz/75?title=Translation%20Progress:)'
+      )
+    );
   });
 
   test('should show a warning if default translation is missing', () => {
@@ -37,9 +45,17 @@ suite('createI18nHoverMarkdown', () => {
       de: 'Hallo',
     };
     const defaultLanguage = 'en';
-    const markdown = createI18nHoverMarkdown(translations, defaultLanguage);
+    const markdown = createI18nHoverMarkdown(
+      translations,
+      defaultLanguage,
+      'common'
+    );
 
-    assert(markdown.value.includes('**Default translation (en) missing!**'));
+    assert(
+      markdown.value.includes(
+        `##### **⚠ Default translation (${defaultLanguage}) missing!**`
+      )
+    );
   });
 
   test('should show language status correctly', () => {
@@ -50,7 +66,11 @@ suite('createI18nHoverMarkdown', () => {
       de: null,
     };
     const defaultLanguage = 'en';
-    const markdown = createI18nHoverMarkdown(translations, defaultLanguage);
+    const markdown = createI18nHoverMarkdown(
+      translations,
+      defaultLanguage,
+      'common'
+    );
 
     assert(markdown.value.includes('- **en:** ✔'));
     assert(markdown.value.includes('- **de:** ✖'));
@@ -68,6 +88,7 @@ suite('createI18nHoverMarkdown', () => {
     const markdown = createI18nHoverMarkdown(
       translations,
       defaultLanguage,
+      'common',
       lengthDifferenceThreshold
     );
 
@@ -86,6 +107,7 @@ suite('createI18nHoverMarkdown', () => {
     const markdown = createI18nHoverMarkdown(
       translations,
       defaultLanguage,
+      'common',
       lengthDifferenceThreshold
     );
 

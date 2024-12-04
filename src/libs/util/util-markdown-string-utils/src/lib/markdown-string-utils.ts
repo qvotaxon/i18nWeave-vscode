@@ -3,6 +3,7 @@ import vscode from 'vscode';
 export function createI18nHoverMarkdown(
   translations: Record<string, string | undefined | null>,
   defaultLanguage: string,
+  namespace: string,
   lengthDifferenceThreshold: number = 30
 ): vscode.MarkdownString {
   const markdown = new vscode.MarkdownString();
@@ -14,13 +15,14 @@ export function createI18nHoverMarkdown(
 
   markdown.appendMarkdown(
     [
-      `### Translation Progress: **${Math.round((translatedCount / languages.length) * 100)}%** (${translatedCount}/${languages.length})`,
-      '---',
+      `### ![${Math.round((translatedCount / languages.length) * 100)}%](https://progress-bar.xyz/${Math.round((translatedCount / languages.length) * 100)}?title=Translation%20Progress:)`,
       defaultTranslation
-        ? ''
-        : `**Default translation (${defaultLanguage}) missing!**`,
+        ? `##### Default translation (${defaultLanguage}):\n ##### "${defaultTranslation}"`
+        : `##### **⚠ Default translation (${defaultLanguage}) missing!**`,
       '---',
-      '#### Language Status:',
+      `###### Namespace: **${namespace}**`,
+      '---',
+      '##### Language Status:',
       ...languages.map(lang =>
         getLanguageStatus(
           lang,
@@ -29,13 +31,31 @@ export function createI18nHoverMarkdown(
           lengthDifferenceThreshold
         )
       ),
-      '---',
-      defaultTranslation
-        ? `#### Default translation (${defaultLanguage}):\n"${defaultTranslation}"`
-        : '',
     ].join('\n')
   );
 
+  markdown.supportHtml = true;
+  markdown.isTrusted = true;
+  return markdown;
+}
+
+export function createI18nCompletionMarkdown(
+  defaultLanguage: string,
+  namespace: string,
+  translationValue?: string | undefined | null
+): vscode.MarkdownString {
+  const markdown = new vscode.MarkdownString();
+
+  markdown.appendMarkdown(
+    [
+      translationValue
+        ? `##### Default translation (${defaultLanguage}):\n ##### "${translationValue}"`
+        : `##### **⚠ Default translation (${defaultLanguage}) missing!**`,
+      `###### Namespace: **${namespace}**`,
+    ].join('\n')
+  );
+
+  markdown.supportHtml = true;
   markdown.isTrusted = true;
   return markdown;
 }
@@ -71,4 +91,3 @@ function getCharSet(text: string | undefined | null): string {
   if (/[А-яЁё]/u.test(text)) return 'Cyrillic';
   return 'other';
 }
-
