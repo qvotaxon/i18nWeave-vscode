@@ -132,3 +132,5 @@ dist
 *.vsix
 # Sentry Config File
 .sentryclirc
+
+!docs/uml/out

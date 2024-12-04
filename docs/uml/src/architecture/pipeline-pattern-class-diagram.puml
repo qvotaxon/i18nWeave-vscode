@@ -1,0 +1,41 @@
+@startuml pipeline-pattern-class-diagram
+interface PipelineStep<T> {
+  +execute(context: T): Promise<void>
+}
+
+class TopLevelPipeline {
+  -steps: PipelineStep<TopLevelContext>[]
+  +addStep(step: PipelineStep<TopLevelContext>): TopLevelPipeline
+  +execute(context: TopLevelContext): Promise<void>
+}
+
+class TranslationPipeline {
+  -steps: PipelineStep<TranslationContext>[]
+  +addStep(step: PipelineStep<TranslationContext>): TranslationPipeline
+  +execute(context: TranslationContext): Promise<void>
+}
+
+class DiffStep {
+  +execute(context: TopLevelContext): Promise<void>
+}
+
+class ScanStep {
+  -translationPipeline: TranslationPipeline
+  +execute(context: TopLevelContext): Promise<void>
+}
+
+class FileWritingStep {
+  +execute(context: TranslationContext): Promise<void>
+}
+
+' <TopLevelContext>
+TopLevelPipeline "1" *-- "0..*" PipelineStep  
+' <TranslationContext>
+TranslationPipeline "1" *-- "0..*" PipelineStep 
+
+PipelineStep <|.. DiffStep
+PipelineStep <|.. ScanStep
+PipelineStep <|.. FileWritingStep
+
+ScanStep --> TranslationPipeline : depends on
+@enduml
