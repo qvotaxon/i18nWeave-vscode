@@ -51,15 +51,6 @@ export class TranslationKeyCompletionProvider
         translationValue
       );
 
-      // if (translationValue) {
-      //   new MarkdownString(
-      //     `\`namespace: ${namespace}\`\n\n${translationValue}`
-      //   );
-      // } else {
-      //   item.documentation = new MarkdownString(
-      //     `\`namespace: ${namespace}\`\n\n*No translation value found*`
-      //   );
-      // }
       item.detail = translationKey;
     }
 
