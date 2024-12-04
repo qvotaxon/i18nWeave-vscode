@@ -18,7 +18,7 @@ export function createI18nHoverMarkdown(
       `### ![${Math.round((translatedCount / languages.length) * 100)}%](https://progress-bar.xyz/${Math.round((translatedCount / languages.length) * 100)}?title=Translation%20Progress:)`,
       defaultTranslation
         ? `##### Default translation (${defaultLanguage}):\n ##### "${defaultTranslation}"`
-        : '##### **⚠ Default translation (${defaultLanguage}) missing!**',
+        : `##### **⚠ Default translation (${defaultLanguage}) missing!**`,
       '---',
       `###### Namespace: **${namespace}**`,
       '---',
@@ -91,4 +91,3 @@ function getCharSet(text: string | undefined | null): string {
   if (/[А-яЁё]/u.test(text)) return 'Cyrillic';
   return 'other';
 }
-
