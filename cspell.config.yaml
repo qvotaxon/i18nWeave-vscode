@@ -6,7 +6,9 @@ dictionaryDefinitions: []
 dictionaries: []
 words:
   - Dsonar
+  - enduml
   - lngs
   - qvotaxon
+  - startuml
 ignoreWords: []
 import: []

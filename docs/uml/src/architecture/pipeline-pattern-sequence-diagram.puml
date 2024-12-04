@@ -1,0 +1,24 @@
+@startuml pipeline-pattern-sequence-diagram
+actor User
+
+participant "TopLevelPipeline" as TLP
+participant "DiffStep" as DS
+participant "ScanStep" as SS
+participant "TranslationPipeline" as TP
+participant "FileWritingStep" as FWS
+
+User -> TLP: execute(topLevelContext)
+TLP -> DS: execute(topLevelContext)
+DS -> TLP: Decision: "scan_all"
+TLP -> SS: execute(topLevelContext)
+SS -> TP: execute(translationContext)
+
+group Asynchronous Child Pipeline
+    TP -> FWS: execute(translationContext)
+    FWS -> TP: File writing complete
+end
+
+TP -> SS: Translation pipeline complete
+SS -> TLP: Scan step complete
+TLP -> User: Top-level pipeline complete
+@enduml
