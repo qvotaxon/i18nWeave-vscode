@@ -4,6 +4,14 @@ All notable changes to the "i18nweave" extension will be documented in this file
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.15.10](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.15.9...v0.15.10) (2025-01-06)
+
+
+### Bug Fixes
+
+* enhance i18n markdown rendering ([#290](https://github.com/qvotaxon/i18nWeave-vscode/issues/290)) ([a6831b3](https://github.com/qvotaxon/i18nWeave-vscode/commit/a6831b31c30dc35f9bfd70ba1179d3cd8e8d6eb0))
+* enhance quote handling for providers ([#293](https://github.com/qvotaxon/i18nWeave-vscode/issues/293)) ([39bda12](https://github.com/qvotaxon/i18nWeave-vscode/commit/39bda12b75de1f538be60273a3e3d168ac9ff5fd))
+
 ## [0.15.9](https://github.com/qvotaxon/i18nWeave-vscode/compare/v0.15.8...v0.15.9) (2024-12-04)
 
 
