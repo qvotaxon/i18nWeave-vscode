@@ -90,8 +90,13 @@ export class TranslationKeyHoverProvider implements HoverProvider {
     const beforeCursor = line.substring(0, position.character);
     const afterCursor = line.substring(position.character);
 
-    const startQuote = beforeCursor.lastIndexOf("'") + 1;
-    const endQuote = afterCursor.indexOf("'");
+    const startSingleQuote = beforeCursor.lastIndexOf("'") + 1;
+    const endSingleQuote = afterCursor.indexOf("'");
+    const startDoubleQuote = beforeCursor.lastIndexOf('"') + 1;
+    const endDoubleQuote = afterCursor.indexOf('"');
+
+    const startQuote = Math.max(startSingleQuote, startDoubleQuote);
+    const endQuote = Math.max(endSingleQuote, endDoubleQuote);
 
     if (startQuote > 0 && endQuote >= 0) {
       return line.substring(startQuote, position.character + endQuote);
@@ -100,4 +105,3 @@ export class TranslationKeyHoverProvider implements HoverProvider {
     return null;
   }
 }
-
