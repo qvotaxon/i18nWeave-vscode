@@ -47,7 +47,7 @@ ignore:
   - 'src/libs/file-io/file-io-file-reader/**/*'
   - 'src/libs/file-io/file-io-file-writer/**/*'
   - 'src/libs/feature/feature-file-watcher-creator/**/*'
-  - 'src/libs/store/store-file-location-store/**/*'
+  - 'src/libs/store/store-file-store/**/*'
   - 'src/libs/feature/feature-empty-json-value-symbol-provider/**/*'
   - 'src/libs/feature/feature-file-change-handler-factory/**/*'
   - 'src/libs/module/module-base-action/**/*'

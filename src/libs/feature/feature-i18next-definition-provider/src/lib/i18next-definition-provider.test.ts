@@ -2,7 +2,7 @@ import assert from 'assert';
 import sinon from 'sinon';
 import { Location, Position, TextDocument, Uri } from 'vscode';
 
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+import { FileStore } from '@i18n-weave/store/store-file-store';
 
 import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 
@@ -12,7 +12,7 @@ suite('I18nextDefinitionProvider', () => {
   let definitionProvider: I18nextDefinitionProvider;
   let documentStub: sinon.SinonStubbedInstance<TextDocument>;
   let positionStub: sinon.SinonStubbedInstance<Position>;
-  let fileLocationStoreStub: sinon.SinonStubbedInstance<FileLocationStore>;
+  let fileLocationStoreStub: sinon.SinonStubbedInstance<FileStore>;
   let configurationStoreManagerStub: sinon.SinonStubbedInstance<ConfigurationStoreManager>;
 
   setup(() => {
@@ -36,12 +36,12 @@ suite('I18nextDefinitionProvider', () => {
       validatePosition: sinon.stub(),
     } as unknown as sinon.SinonStubbedInstance<TextDocument>;
     positionStub = sinon.createStubInstance(Position);
-    fileLocationStoreStub = sinon.createStubInstance(FileLocationStore);
+    fileLocationStoreStub = sinon.createStubInstance(FileStore);
     configurationStoreManagerStub = sinon.createStubInstance(
       ConfigurationStoreManager
     );
 
-    sinon.stub(FileLocationStore, 'getInstance').returns(fileLocationStoreStub);
+    sinon.stub(FileStore, 'getInstance').returns(fileLocationStoreStub);
     sinon
       .stub(ConfigurationStoreManager, 'getInstance')
       .returns(configurationStoreManagerStub);
@@ -118,4 +118,3 @@ suite('I18nextDefinitionProvider', () => {
     assert.equal(result, mockLocation);
   });
 });
-

@@ -6,7 +6,7 @@ import { ExtensionContext, Uri, window } from 'vscode';
 
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+import { FileStore } from '@i18n-weave/store/store-file-store';
 
 import {
   ConfigurationStoreManager,
@@ -40,10 +40,7 @@ suite('CodeTranslationKeyStore', () => {
         ConfigurationStoreManager.getInstance(),
         'getConfig'
       );
-      getFilesByTypeStub = sinon.stub(
-        FileLocationStore.getInstance(),
-        'getCodeFiles'
-      );
+      getFilesByTypeStub = sinon.stub(FileStore.getInstance(), 'getCodeFiles');
       showErrorMessageStub = sinon.stub(window, 'showErrorMessage');
       updateStoreRecordAsyncStub = sinon.stub(
         codeTranslationStore,
@@ -226,7 +223,7 @@ suite('CodeTranslationKeyStore', () => {
         'readWorkspaceFileAsync'
       );
       sinon.stub(ConfigurationStoreManager.getInstance(), 'getConfig');
-      sinon.stub(FileLocationStore.getInstance(), 'getTranslationFiles');
+      sinon.stub(FileStore.getInstance(), 'getTranslationFiles');
       sinon.stub(window, 'showErrorMessage');
       updateStoreRecordAsyncStub = sinon.stub(
         codeTranslationStore,

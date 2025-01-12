@@ -7,7 +7,7 @@ import {
   TextDocument,
 } from 'vscode';
 
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+import { FileStore } from '@i18n-weave/store/store-file-store';
 
 import {
   ConfigurationStoreManager,
@@ -38,7 +38,7 @@ export class TranslationKeyHoverProvider implements HoverProvider {
     position: Position,
     _: CancellationToken
   ): ProviderResult<Hover> {
-    const fileLocationStore = FileLocationStore.getInstance();
+    const fileLocationStore = FileStore.getInstance();
     const configuration =
       ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
         'i18nextScannerModule'

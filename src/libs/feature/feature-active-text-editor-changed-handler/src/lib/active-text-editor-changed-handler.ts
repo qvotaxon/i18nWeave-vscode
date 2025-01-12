@@ -5,7 +5,7 @@ import { EmptyJsonValueSymbolProvider } from '@i18n-weave/feature/feature-empty-
 import { WebviewFactory } from '@i18n-weave/feature/feature-webview-factory';
 import { WebviewService } from '@i18n-weave/feature/feature-webview-service';
 
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+import { FileStore } from '@i18n-weave/store/store-file-store';
 import { WebviewStore } from '@i18n-weave/store/store-webview-store';
 
 import {
@@ -51,7 +51,7 @@ export class ActiveTextEditorChangedHandler {
         editor &&
         editor.document.uri.scheme === 'file' &&
         editor.document.uri.path.endsWith('.json') &&
-        FileLocationStore.getInstance().hasFile(editor.document.uri)
+        FileStore.getInstance().hasFile(editor.document.uri)
       ) {
         let documentSymbols = await this._provider.provideDocumentSymbols(
           editor.document,
@@ -68,7 +68,7 @@ export class ActiveTextEditorChangedHandler {
         editor &&
         editor.document.uri.scheme === 'file' &&
         editor.document.uri.path.endsWith('.json') &&
-        FileLocationStore.getInstance().hasFile(editor.document.uri) &&
+        FileStore.getInstance().hasFile(editor.document.uri) &&
         ConfigurationStoreManager.getInstance().getConfig<GeneralConfiguration>(
           'general'
         ).betaFeaturesConfiguration.enableJsonFileWebView

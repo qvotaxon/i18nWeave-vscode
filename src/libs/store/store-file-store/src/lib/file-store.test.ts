@@ -5,17 +5,17 @@ import vscode from 'vscode';
 import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
-import { FileLocationStore } from './file-location-store';
+import { FileStore } from './file-store';
 
 const extensionName = 'qvotaxon.i18nWeave';
 
 suite('FileLocationStore Tests', function () {
-  let store: FileLocationStore;
+  let store: FileStore;
   let sandbox: sinon.SinonSandbox;
 
   setup(function () {
     sandbox = sinon.createSandbox();
-    store = FileLocationStore.getInstance();
+    store = FileStore.getInstance();
 
     ConfigurationStoreManager.getInstance().initialize(extensionName);
   });
@@ -25,8 +25,8 @@ suite('FileLocationStore Tests', function () {
   });
 
   test('getInstance should return a singleton instance', function () {
-    const instance1 = FileLocationStore.getInstance();
-    const instance2 = FileLocationStore.getInstance();
+    const instance1 = FileStore.getInstance();
+    const instance2 = FileStore.getInstance();
     assert.strictEqual(instance1, instance2, 'Instances are not the same');
   });
 

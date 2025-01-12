@@ -3,7 +3,7 @@ import vscode from 'vscode';
 import { DiagnosticsManager } from '@i18n-weave/feature/feature-diagnostics-manager';
 import { EmptyJsonValueSymbolProvider } from '@i18n-weave/feature/feature-empty-json-value-symbol-provider';
 
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+import { FileStore } from '@i18n-weave/store/store-file-store';
 
 export class TextDocumentChangedHandler {
   private readonly _provider: EmptyJsonValueSymbolProvider;
@@ -19,7 +19,7 @@ export class TextDocumentChangedHandler {
       if (
         event.document.uri.scheme === 'file' &&
         event.document.languageId === 'json' &&
-        FileLocationStore.getInstance().hasFile(event.document.uri)
+        FileStore.getInstance().hasFile(event.document.uri)
       ) {
         let documentSymbols = await this._provider.provideDocumentSymbols(
           event.document,

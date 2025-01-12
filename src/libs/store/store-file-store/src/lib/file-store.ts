@@ -17,11 +17,11 @@ import { extractTranslationKeys } from '@i18n-weave/util/util-i18next-file-utils
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
-import { CodeFile, TranslationFile } from './file-location-store.types';
+import { CodeFile, TranslationFile } from './file-store.types';
 
-export class FileLocationStore {
+export class FileStore {
   private readonly _className = 'FileLocationStore';
-  private static instance: FileLocationStore;
+  private static instance: FileStore;
   private readonly fileLocations: Map<string, TranslationFile | CodeFile> =
     new Map();
   private readonly _logger: Logger;
@@ -34,11 +34,11 @@ export class FileLocationStore {
   /**
    * Returns the singleton instance of FileLocationStore.
    */
-  public static getInstance(): FileLocationStore {
-    if (!FileLocationStore.instance) {
-      FileLocationStore.instance = new FileLocationStore();
+  public static getInstance(): FileStore {
+    if (!FileStore.instance) {
+      FileStore.instance = new FileStore();
     }
-    return FileLocationStore.instance;
+    return FileStore.instance;
   }
 
   /**

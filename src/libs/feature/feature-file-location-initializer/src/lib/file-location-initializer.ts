@@ -1,7 +1,7 @@
 import { ExtensionContext } from 'vscode';
 
 import { CodeTranslationKeyStore } from '@i18n-weave/store/store-code-translation-key-store';
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+import { FileStore } from '@i18n-weave/store/store-file-store';
 
 import {
   ConfigurationStoreManager,
@@ -43,11 +43,9 @@ export class FileLocationInitializer {
       } as FileSearchLocation,
     ];
 
-    await FileLocationStore.getInstance().scanWorkspaceAsync(
-      fileSearchLocations
-    );
+    await FileStore.getInstance().scanWorkspaceAsync(fileSearchLocations);
 
-    const codeFileUris = FileLocationStore.getInstance()
+    const codeFileUris = FileStore.getInstance()
       .getCodeFiles()
       .map(file => file.metaData.uri);
 

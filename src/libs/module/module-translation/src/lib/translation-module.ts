@@ -14,8 +14,8 @@ import { TranslationService } from '@i18n-weave/feature/feature-translation-serv
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 import { FileWriter } from '@i18n-weave/file-io/file-io-file-writer';
 
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
+import { FileStore } from '@i18n-weave/store/store-file-store';
 import { TranslationStore } from '@i18n-weave/store/store-translation-store';
 
 import {
@@ -55,7 +55,7 @@ export class TranslationModule extends BaseActionModule {
       return;
     }
 
-    await FileLocationStore.getInstance().addOrUpdateFile(context.inputPath);
+    await FileStore.getInstance().addOrUpdateFile(context.inputPath);
 
     const changesToTranslate = this.extractRelevantChanges(diffs);
     if (changesToTranslate.length === 0) {
@@ -128,7 +128,7 @@ export class TranslationModule extends BaseActionModule {
   }
 
   private findRelatedFiles(currentFilePath: string) {
-    return FileLocationStore.getInstance()
+    return FileStore.getInstance()
       .getTranslationFiles()
       .map(file => file.metaData.uri)
       .filter(
@@ -250,7 +250,7 @@ export class TranslationModule extends BaseActionModule {
         });
 
         TranslationStore.getInstance().updateEntry(fileUri, stringifiedContent);
-        FileLocationStore.getInstance().addOrUpdateFile(fileUri);
+        FileStore.getInstance().addOrUpdateFile(fileUri);
       }
     }
   }

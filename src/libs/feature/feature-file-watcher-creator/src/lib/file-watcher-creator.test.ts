@@ -5,8 +5,8 @@ import sinon from 'sinon';
 import { FileChangeHandlerFactory } from '@i18n-weave/feature/feature-file-change-handler-factory';
 import { FileWatcherCreator } from '@i18n-weave/feature/feature-file-watcher-creator';
 
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
+import { FileStore } from '@i18n-weave/store/store-file-store';
 
 import {
   ConfigurationStore,
@@ -106,7 +106,7 @@ suite('FileWatcherCreator', () => {
       createFileSystemWatcherStub.returns(mockFileWatcher);
       hasFileLockStub.returns(false);
 
-      FileLocationStore.getInstance().addOrUpdateFile(mockUri);
+      FileStore.getInstance().addOrUpdateFile(mockUri);
 
       await fileWatcherCreator.createFileWatchersForFileTypeAsync(
         FileType.Code,

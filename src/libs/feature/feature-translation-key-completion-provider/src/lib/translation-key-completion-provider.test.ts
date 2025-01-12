@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as sinon from 'sinon';
 import * as vscode from 'vscode';
 
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+import { FileStore } from '@i18n-weave/store/store-file-store';
 
 import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
 
@@ -12,17 +12,17 @@ import { TranslationKeyCompletionProvider } from './translation-key-completion-p
 // Tests for TranslationKeyCompletionProvider
 suite('TranslationKeyCompletionProvider Tests', () => {
   let provider: TranslationKeyCompletionProvider;
-  let fileLocationStoreStub: sinon.SinonStubbedInstance<FileLocationStore>;
+  let fileLocationStoreStub: sinon.SinonStubbedInstance<FileStore>;
   let configurationStoreManagerStub: sinon.SinonStubbedInstance<ConfigurationStoreManager>;
 
   setup(() => {
     provider = TranslationKeyCompletionProvider.getInstance();
-    fileLocationStoreStub = sinon.createStubInstance(FileLocationStore);
+    fileLocationStoreStub = sinon.createStubInstance(FileStore);
     configurationStoreManagerStub = sinon.createStubInstance(
       ConfigurationStoreManager
     );
 
-    sinon.stub(FileLocationStore, 'getInstance').returns(fileLocationStoreStub);
+    sinon.stub(FileStore, 'getInstance').returns(fileLocationStoreStub);
     sinon
       .stub(ConfigurationStoreManager, 'getInstance')
       .returns(configurationStoreManagerStub);
