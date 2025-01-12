@@ -9,11 +9,11 @@ import { TranslationService } from '@i18n-weave/feature/feature-translation-serv
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 import { FileWriter } from '@i18n-weave/file-io/file-io-file-writer';
 
-import {
-  FileLocationStore,
-  type TranslationFile,
-} from '@i18n-weave/store/store-file-location-store';
 import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
+import {
+  FileStore,
+  type TranslationFile,
+} from '@i18n-weave/store/store-file-store';
 import { TranslationStore } from '@i18n-weave/store/store-translation-store';
 
 import { ConfigurationStoreManager } from '@i18n-weave/util/util-configuration';
@@ -26,7 +26,7 @@ suite('TranslationModule', () => {
   let translationModule: TranslationModule;
   let context: TranslationModuleContext;
   let translationStoreStub: sinon.SinonStubbedInstance<TranslationStore>;
-  let fileLocationStoreStub: sinon.SinonStubbedInstance<FileLocationStore>;
+  let fileLocationStoreStub: sinon.SinonStubbedInstance<FileStore>;
   let translationServiceStub: sinon.SinonStubbedInstance<TranslationService>;
   let fileReaderStub: sinon.SinonStubbedInstance<typeof FileReader>;
   let fileWriterStub: sinon.SinonStubbedInstance<typeof FileWriter>;
@@ -52,7 +52,7 @@ suite('TranslationModule', () => {
       updateEntry: sinon.stub(),
     });
 
-    fileLocationStoreStub = sinon.createStubInstance(FileLocationStore, {
+    fileLocationStoreStub = sinon.createStubInstance(FileStore, {
       getTranslationFiles: sinon.stub<[], TranslationFile[]>().returns([
         {
           metaData: { uri: Uri.file('/path/to/file.json') },

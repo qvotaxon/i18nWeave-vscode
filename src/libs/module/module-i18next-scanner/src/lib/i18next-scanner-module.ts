@@ -2,8 +2,8 @@ import { BaseActionModule } from '@i18n-weave/module/module-base-action';
 
 import { I18nextScannerService } from '@i18n-weave/feature/feature-i18next-scanner-service';
 
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
 import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
+import { FileStore } from '@i18n-weave/store/store-file-store';
 
 import {
   ConfigurationStoreManager,
@@ -39,7 +39,7 @@ export class I18nextScannerModule extends BaseActionModule {
         return;
       }
 
-      const translationFileUris = FileLocationStore.getInstance()
+      const translationFileUris = FileStore.getInstance()
         .getTranslationFiles()
         .map(file => file.metaData.uri);
 

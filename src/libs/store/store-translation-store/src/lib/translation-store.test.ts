@@ -4,10 +4,7 @@ import { Uri } from 'vscode';
 
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
-import {
-  FileLocationStore,
-  TranslationFile,
-} from '@i18n-weave/store/store-file-location-store';
+import { FileStore, TranslationFile } from '@i18n-weave/store/store-file-store';
 
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 
@@ -16,13 +13,13 @@ import { TranslationStore } from './translation-store';
 suite('TranslationStore', () => {
   let translationStore: TranslationStore;
   let fileReaderStub: sinon.SinonStub;
-  let fileLocationStoreStub: sinon.SinonStubbedInstance<FileLocationStore>;
+  let fileLocationStoreStub: sinon.SinonStubbedInstance<FileStore>;
   let loggerStub: sinon.SinonStub;
 
   setup(() => {
     translationStore = TranslationStore.getInstance();
     fileReaderStub = sinon.stub(FileReader.prototype, 'readWorkspaceFileAsync');
-    fileLocationStoreStub = sinon.createStubInstance(FileLocationStore, {
+    fileLocationStoreStub = sinon.createStubInstance(FileStore, {
       getTranslationFiles: sinon.stub<[], TranslationFile[]>().returns([
         {
           metaData: { uri: Uri.file('/path/to/file.json') },

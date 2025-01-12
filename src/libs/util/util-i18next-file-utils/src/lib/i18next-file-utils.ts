@@ -1,7 +1,7 @@
 import { Node, parseTree } from 'jsonc-parser';
 import { Location, Range, Uri, workspace } from 'vscode';
 
-import { type TranslationKeyData } from '@i18n-weave/store/store-file-location-store';
+import { type TranslationKeyData } from '@i18n-weave/store/store-file-store';
 
 /**
  * Extracts translation keys and their locations from an i18next JSON file.

@@ -5,7 +5,7 @@ import { DiagnosticsManager } from '@i18n-weave/feature/feature-diagnostics-mana
 import { EmptyJsonValueSymbolProvider } from '@i18n-weave/feature/feature-empty-json-value-symbol-provider';
 import { WebviewService } from '@i18n-weave/feature/feature-webview-service';
 
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+import { FileStore } from '@i18n-weave/store/store-file-store';
 
 import {
   ConfigurationStoreManager,
@@ -21,7 +21,7 @@ suite('ActiveTextEditorChangedHandler', () => {
   let diagnosticsManagerStub: sinon.SinonStubbedInstance<DiagnosticsManager>;
   let providerStub: sinon.SinonStubbedInstance<EmptyJsonValueSymbolProvider>;
   let webviewServiceStub: sinon.SinonStubbedInstance<WebviewService>;
-  let fileLocationStoreStub: sinon.SinonStubbedInstance<FileLocationStore>;
+  let fileLocationStoreStub: sinon.SinonStubbedInstance<FileStore>;
   let configurationStoreManagerStub: sinon.SinonStubbedInstance<ConfigurationStoreManager>;
 
   setup(() => {
@@ -30,7 +30,7 @@ suite('ActiveTextEditorChangedHandler', () => {
     diagnosticsManagerStub = sandbox.createStubInstance(DiagnosticsManager);
     providerStub = sandbox.createStubInstance(EmptyJsonValueSymbolProvider);
     webviewServiceStub = sandbox.createStubInstance(WebviewService);
-    fileLocationStoreStub = sandbox.createStubInstance(FileLocationStore);
+    fileLocationStoreStub = sandbox.createStubInstance(FileStore);
     configurationStoreManagerStub = sandbox.createStubInstance(
       ConfigurationStoreManager
     );
@@ -38,9 +38,7 @@ suite('ActiveTextEditorChangedHandler', () => {
     sandbox
       .stub(DiagnosticsManager, 'getInstance')
       .returns(diagnosticsManagerStub);
-    sandbox
-      .stub(FileLocationStore, 'getInstance')
-      .returns(fileLocationStoreStub);
+    sandbox.stub(FileStore, 'getInstance').returns(fileLocationStoreStub);
     sandbox
       .stub(ConfigurationStoreManager, 'getInstance')
       .returns(configurationStoreManagerStub);

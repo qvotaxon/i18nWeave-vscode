@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 
 import { FileChangeHandlerFactory } from '@i18n-weave/feature/feature-file-change-handler-factory';
 
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+import { FileStore } from '@i18n-weave/store/store-file-store';
 
 import { FileType } from '@i18n-weave/util/util-enums';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
@@ -51,7 +51,7 @@ export class FileWatcherCreator {
 
     fileWatcher.onDidDelete(async uri => {
       if (!disableFlags.some(flag => flag())) {
-        if (FileLocationStore.getInstance().hasFile(uri)) {
+        if (FileStore.getInstance().hasFile(uri)) {
           await fileChangeHandler?.handleFileDeletionAsync(uri);
         }
       }
@@ -67,7 +67,7 @@ export class FileWatcherCreator {
         this.debounceMap.set(
           uriString,
           setTimeout(async () => {
-            if (FileLocationStore.getInstance().hasFile(uri)) {
+            if (FileStore.getInstance().hasFile(uri)) {
               await fileChangeHandler?.handleFileChangeAsync(uri);
             }
             this.debounceMap.delete(uriString);

@@ -2,7 +2,7 @@ import { Uri } from 'vscode';
 
 import { FileReader } from '@i18n-weave/file-io/file-io-file-reader';
 
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+import { FileStore } from '@i18n-weave/store/store-file-store';
 
 import { diffJsonObjects } from '@i18n-weave/util/util-file-diff';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
@@ -34,7 +34,7 @@ export class TranslationStore {
       this._className
     );
 
-    const fileLocations = FileLocationStore.getInstance()
+    const fileLocations = FileStore.getInstance()
       .getTranslationFiles()
       .map(file => file.metaData.uri);
 

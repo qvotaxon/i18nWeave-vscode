@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-import { FileLocationStore } from '@i18n-weave/store/store-file-location-store';
+import { FileStore } from '@i18n-weave/store/store-file-store';
 
 import {
   ConfigurationStoreManager,
@@ -31,7 +31,7 @@ export class TranslationKeyCompletionProvider
     item: vscode.CompletionItem,
     _: vscode.CancellationToken
   ): vscode.ProviderResult<vscode.CompletionItem> {
-    const fileLocationStore = FileLocationStore.getInstance();
+    const fileLocationStore = FileStore.getInstance();
     const configuration =
       ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
         'i18nextScannerModule'
@@ -61,7 +61,7 @@ export class TranslationKeyCompletionProvider
     document: vscode.TextDocument,
     position: vscode.Position
   ): vscode.ProviderResult<vscode.CompletionItem[]> {
-    const fileLocationStore = FileLocationStore.getInstance();
+    const fileLocationStore = FileStore.getInstance();
     const configuration =
       ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
         'i18nextScannerModule'
