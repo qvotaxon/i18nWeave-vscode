@@ -58,10 +58,15 @@
         "id": "translationModule",
         "title": "Translation Module",
         "properties": {
+          "i18nWeave.translationModule.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable the translation module."
+          },
           "i18nWeave.translationModule.googleTranslate.enabled": {
             "type": "boolean",
             "default": "",
-            "description": "Enable translation using DeepL."
+            "description": "Enable translation using googleTranslate."
           },
           "i18nWeave.translationModule.deepL.enabled": {
             "type": "boolean",

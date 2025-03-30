@@ -58,7 +58,7 @@ suite('StatusBarManager', () => {
   //   suite('updateState', () => {
   //     test('should update the status bar item state and tooltip', () => {
   //       const state = StatusBarState.Idle;
-  //       const tooltip = 'Idle';
+  //       const tooltip = 'Idle - Click to pause';
   //       statusBarManager.updateState(state, tooltip);
   //       assert.strictEqual(statusBarManager['statusBarItem'].text, `$(idle)`);
   //       assert.strictEqual(

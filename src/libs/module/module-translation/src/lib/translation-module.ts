@@ -39,6 +39,14 @@ export class TranslationModule extends BaseActionModule {
       ConfigurationStoreManager.getInstance().getConfig<GeneralConfiguration>(
         'general'
       );
+    if (this.extensionContext.globalState.get('i18nWeave.isPaused')) {
+      this.logger.log(
+        LogLevel.INFO,
+        'Extension is paused. Skipping translation module.',
+        this._className
+      );
+      return;
+    }
     if (!context.jsonContent) {
       return;
     }

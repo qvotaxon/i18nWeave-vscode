@@ -25,6 +25,8 @@ import { isProduction } from '@i18n-weave/util/util-environment-utilities';
 import { LogLevel, Logger } from '@i18n-weave/util/util-logger';
 import { FileSearchLocation } from '@i18n-weave/util/util-types';
 
+let _extensionContext: ExtensionContext;
+let _fileLocationInitializer: FileLocationInitializer;
 const publisherExtensionName = 'qvotaxon.i18nWeave';
 const extensionName = 'i18nWeave';
 const extensionStacktraceFrameFilters = [
@@ -87,6 +89,9 @@ export async function activate(
   ),
   textDocumentChangedHandler: TextDocumentChangedHandler = new TextDocumentChangedHandler()
 ) {
+  _fileLocationInitializer = fileLocationInitializer;
+  _extensionContext = context;
+  _extensionContext.globalState.update('i18nWeave.isPaused', false);
   const translationStore: TranslationStore = TranslationStore.getInstance();
   const configurationManager: ConfigurationStoreManager =
     ConfigurationStoreManager.getInstance();
@@ -144,6 +149,20 @@ export async function activate(
         fileWatcherCreator,
         context
       );
+
+    const commandName = 'i18nWeave.pauseResume';
+    const extensionPauseResumeDisposable = vscode.commands.registerCommand(
+      commandName,
+      async () => {
+        if (_extensionContext.globalState.get('i18nWeave.isPaused')) {
+          await resumeExtensionAsync();
+        } else {
+          await pauseExtensionAsync();
+        }
+      }
+    );
+
+    statusBarManager.setClickHandler(commandName);
 
     // -------------------------------------
 
@@ -206,10 +225,11 @@ export async function activate(
       configurationWatcherDisposable,
       translationKeyCompletionProviderDisposable,
       translationKeyHoverProviderDisposable,
-      i18nextDefinitionProviderDisposable
+      i18nextDefinitionProviderDisposable,
+      extensionPauseResumeDisposable
     );
 
-    statusBarManager.updateState(StatusBarState.Idle, 'Idle');
+    statusBarManager.updateState(StatusBarState.Idle, 'Idle - Click to pause');
     logger.log(LogLevel.INFO, 'i18nWeave is watching your files... 🌍', 'Core');
   } catch (error) {
     Logger.getInstance().log(
@@ -328,6 +348,22 @@ async function reinitialize(
   );
 
   context.subscriptions.push(...codeFileWatchers, ...jsonFileWatchers);
+}
+
+async function pauseExtensionAsync() {
+  _extensionContext.globalState.update('i18nWeave.isPaused', true);
+
+  const statusBarManager = StatusBarManager.getInstance();
+  statusBarManager.updateState(StatusBarState.Paused, 'i18nWeave paused');
+}
+
+async function resumeExtensionAsync() {
+  _extensionContext.globalState.update('i18nWeave.isPaused', false);
+
+  await _fileLocationInitializer.initializeFileLocations();
+
+  const statusBarManager = StatusBarManager.getInstance();
+  statusBarManager.updateState(StatusBarState.Idle, 'Idle - Click to pause');
 }
 
 export async function deactivate() {

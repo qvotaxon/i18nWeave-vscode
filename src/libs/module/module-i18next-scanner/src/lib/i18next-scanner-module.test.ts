@@ -23,7 +23,17 @@ suite('I18nextScannerModule', () => {
     getConfigStub.withArgs('i18nextScannerModule').returns({ enabled: true });
     extensionContext = {} as vscode.ExtensionContext;
 
-    extensionContext = {} as vscode.ExtensionContext;
+    extensionContext = {
+      globalState: {
+        get: sinon.stub().callsFake((key: string) => {
+          if (key === 'i18nWeave.isPaused') {
+            return false;
+          }
+          return undefined;
+        }),
+        update: sinon.stub().resolves(),
+      },
+    } as unknown as vscode.ExtensionContext;
     scannerModule = new I18nextScannerModule(extensionContext);
     scannerServiceStub = sinon.createStubInstance(I18nextScannerService);
     scannerServiceScanCodeStub = scannerServiceStub.scanCode = sinon.stub();
