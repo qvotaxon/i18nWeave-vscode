@@ -146,7 +146,8 @@
       ],
       "@i18n-weave/util/util-i18next-file-utils": [
         "src/libs/util/util-i18next-file-utils/src"
-      ]
+      ],
+      "@i18n-weave/util/util-util-never": ["src/libs/util/util-util-never/src"]
     },
     "module": "CommonJS",
     "target": "ES2022",
@@ -161,7 +162,7 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "inlineSources": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
   }
 }

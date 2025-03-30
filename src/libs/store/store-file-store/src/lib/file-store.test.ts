@@ -38,7 +38,7 @@ suite('FileLocationStore Tests', function () {
     sandbox.stub(vscode.workspace, 'findFiles').resolves(mockFiles);
     const addOrUpdateFileStub = sandbox.stub<any, any>(
       store,
-      'addOrUpdateFile'
+      'addOrUpdateFileAsync'
     );
 
     const fileSearchLocations = [

@@ -25,7 +25,7 @@ export class StatusBarManager {
     this.statusBarItem = vscode.window.createStatusBarItem(
       vscode.StatusBarAlignment.Left
     );
-    this.updateState(StatusBarState.Idle, 'Idle');
+    this.updateState(StatusBarState.Idle, 'Idle - Click to pause');
     this.statusBarItem.show();
 
     context.subscriptions.push(this.statusBarItem);
@@ -63,10 +63,24 @@ export class StatusBarManager {
 
   /**
    * Sets the status bar to the idle state.
-   * This method updates the status bar state to `Idle` and displays 'Idle' as the status text.
+   * This method updates the status bar state to `Idle` and displays 'Idle - Click to pause' as the status text.
    */
   public setIdle() {
-    this.updateState(StatusBarState.Idle, 'Idle');
+    this.updateState(StatusBarState.Idle, 'Idle - Click to pause');
+  }
+
+  /**
+   * Sets a click handler for the status bar item.
+   *
+   * @param commandLabel - A descriptive label for the command, used in the tooltip.
+   * @param commandName - The name of the command to be executed when the status bar item is clicked.
+   * @param handler - A callback function to be executed when the command is triggered.
+   */
+  public setClickHandler(commandName: string) {
+    this.statusBarItem.command = {
+      title: this.extensionName,
+      command: commandName,
+    };
   }
 
   public static disposeInstance() {

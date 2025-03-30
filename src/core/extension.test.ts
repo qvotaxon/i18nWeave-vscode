@@ -25,7 +25,13 @@ suite('Extension Activation', () => {
   setup(() => {
     ConfigurationStoreManager.getInstance().initialize(extensionName);
 
-    context = { subscriptions: [] } as any;
+    context = {
+      subscriptions: [],
+      globalState: {
+        get: sinon.stub(),
+        update: sinon.stub(),
+      },
+    } as any;
     fileWatcherCreator = sinon.createStubInstance(FileWatcherCreator);
     configurationStoreManagerStub = sinon
       .stub(ConfigurationStoreManager, 'getInstance')
