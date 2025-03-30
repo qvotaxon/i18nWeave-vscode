@@ -27,54 +27,65 @@ export class I18nextScannerModule extends BaseActionModule {
     i18nextScannerModuleContext: I18nextScannerModuleContext
   ): Promise<void> {
     if (
-      ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+      !ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
         'i18nextScannerModule'
       ).enabled
     ) {
-      if (
-        !i18nextScannerModuleContext.hasDeletions &&
-        !i18nextScannerModuleContext.hasRenames &&
-        !i18nextScannerModuleContext.hasChanges
-      ) {
-        return;
-      }
+      return;
+    }
 
-      const translationFileUris = FileStore.getInstance()
-        .getTranslationFiles()
-        .map(file => file.metaData.uri);
+    if (this.extensionContext.globalState.get('i18nWeave.isPaused')) {
+      this.logger.log(
+        LogLevel.VERBOSE,
+        'Extension is paused. Skipping i18next scanner module.',
+        this._className
+      );
+      return;
+    }
 
-      const onScanCodeComplete = async () => {
+    if (
+      !i18nextScannerModuleContext.hasDeletions &&
+      !i18nextScannerModuleContext.hasRenames &&
+      !i18nextScannerModuleContext.hasChanges
+    ) {
+      return;
+    }
+
+    const translationFileUris = FileStore.getInstance()
+      .getTranslationFiles()
+      .map(file => file.metaData.uri);
+
+    const onScanCodeComplete = async () => {
+      this.logger.log(
+        LogLevel.INFO,
+        'Done scanning code files.',
+        'I18nextScannerModule'
+      );
+
+      setTimeout(() => {
+        FileLockStore.getInstance().deleteLocks(translationFileUris);
         this.logger.log(
-          LogLevel.INFO,
-          'Done scanning code files.',
+          LogLevel.VERBOSE,
+          'Deleted file locks.',
           'I18nextScannerModule'
         );
+      }, 1000);
 
-        setTimeout(() => {
-          FileLockStore.getInstance().deleteLocks(translationFileUris);
-          this.logger.log(
-            LogLevel.VERBOSE,
-            'Deleted file locks.',
-            'I18nextScannerModule'
-          );
-        }, 1000);
+      FileStore.getInstance().addOrUpdateFilesAsync(translationFileUris);
+    };
 
-        FileStore.getInstance().addOrUpdateFilesAsync(translationFileUris);
-      };
+    if (
+      i18nextScannerModuleContext.hasDeletions ||
+      i18nextScannerModuleContext.hasRenames
+    ) {
+      FileLockStore.getInstance().addLocks(translationFileUris);
 
-      if (
-        i18nextScannerModuleContext.hasDeletions ||
-        i18nextScannerModuleContext.hasRenames
-      ) {
-        FileLockStore.getInstance().addLocks(translationFileUris);
-
-        I18nextScannerService.getInstance().scanCode(onScanCodeComplete);
-      } else if (i18nextScannerModuleContext.hasChanges) {
-        I18nextScannerService.getInstance().scanFile(
-          i18nextScannerModuleContext.inputPath,
-          onScanCodeComplete
-        );
-      }
+      I18nextScannerService.getInstance().scanCode(onScanCodeComplete);
+    } else if (i18nextScannerModuleContext.hasChanges) {
+      I18nextScannerService.getInstance().scanFile(
+        i18nextScannerModuleContext.inputPath,
+        onScanCodeComplete
+      );
     }
   }
 }
