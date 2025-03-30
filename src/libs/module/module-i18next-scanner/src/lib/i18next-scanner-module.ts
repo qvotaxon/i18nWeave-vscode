@@ -18,6 +18,8 @@ import I18nextScannerModuleContext from './i18next-scanner-module-context';
  * Module for handling i18next scanner execution.
  */
 export class I18nextScannerModule extends BaseActionModule {
+  private readonly _className = 'I18nextScannerModule';
+
   /**
    * Executes the i18next scanner module.
    * @param context The context for the i18next scanner module.
@@ -27,65 +29,62 @@ export class I18nextScannerModule extends BaseActionModule {
     i18nextScannerModuleContext: I18nextScannerModuleContext
   ): Promise<void> {
     if (
-      !ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
+      ConfigurationStoreManager.getInstance().getConfig<I18nextScannerModuleConfiguration>(
         'i18nextScannerModule'
       ).enabled
     ) {
-      return;
-    }
-
-    if (this.extensionContext.globalState.get('i18nWeave.isPaused')) {
-      this.logger.log(
-        LogLevel.VERBOSE,
-        'Extension is paused. Skipping i18next scanner module.',
-        this._className
-      );
-      return;
-    }
-
-    if (
-      !i18nextScannerModuleContext.hasDeletions &&
-      !i18nextScannerModuleContext.hasRenames &&
-      !i18nextScannerModuleContext.hasChanges
-    ) {
-      return;
-    }
-
-    const translationFileUris = FileStore.getInstance()
-      .getTranslationFiles()
-      .map(file => file.metaData.uri);
-
-    const onScanCodeComplete = async () => {
-      this.logger.log(
-        LogLevel.INFO,
-        'Done scanning code files.',
-        'I18nextScannerModule'
-      );
-
-      setTimeout(() => {
-        FileLockStore.getInstance().deleteLocks(translationFileUris);
+      if (
+        !i18nextScannerModuleContext.hasDeletions &&
+        !i18nextScannerModuleContext.hasRenames &&
+        !i18nextScannerModuleContext.hasChanges
+      ) {
+        return;
+      }
+      if (this.extensionContext.globalState.get('i18nWeave.isPaused')) {
         this.logger.log(
-          LogLevel.VERBOSE,
-          'Deleted file locks.',
+          LogLevel.INFO,
+          'Extension is paused. Skipping i18next scanner module.',
+          this._className
+        );
+        return;
+      }
+
+      const translationFileUris = FileStore.getInstance()
+        .getTranslationFiles()
+        .map(file => file.metaData.uri);
+
+      const onScanCodeComplete = async () => {
+        this.logger.log(
+          LogLevel.INFO,
+          'Done scanning code files.',
           'I18nextScannerModule'
         );
-      }, 1000);
 
-      FileStore.getInstance().addOrUpdateFilesAsync(translationFileUris);
-    };
+        setTimeout(() => {
+          FileLockStore.getInstance().deleteLocks(translationFileUris);
+          this.logger.log(
+            LogLevel.VERBOSE,
+            'Deleted file locks.',
+            'I18nextScannerModule'
+          );
+        }, 1000);
 
-    if (
-      i18nextScannerModuleContext.hasDeletions ||
-      i18nextScannerModuleContext.hasRenames
-    ) {
-      FileLockStore.getInstance().addLocks(translationFileUris);
+        FileStore.getInstance().addOrUpdateFilesAsync(translationFileUris);
+      };
 
-      I18nextScannerService.getInstance().scanCode(onScanCodeComplete);
-    } else if (i18nextScannerModuleContext.hasChanges) {
-      I18nextScannerService.getInstance().scanFile(
-        i18nextScannerModuleContext.inputPath,
-        onScanCodeComplete
-      );
+      if (
+        i18nextScannerModuleContext.hasDeletions ||
+        i18nextScannerModuleContext.hasRenames
+      ) {
+        FileLockStore.getInstance().addLocks(translationFileUris);
+
+        I18nextScannerService.getInstance().scanCode(onScanCodeComplete);
+      } else if (i18nextScannerModuleContext.hasChanges) {
+        I18nextScannerService.getInstance().scanFile(
+          i18nextScannerModuleContext.inputPath,
+          onScanCodeComplete
+        );
+      }
     }
   }
 }
