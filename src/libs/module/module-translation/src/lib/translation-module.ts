@@ -17,10 +17,10 @@ import { FileWriter } from '@i18n-weave/file-io/file-io-file-writer';
 import { FileLockStore } from '@i18n-weave/store/store-file-lock-store';
 import { FileStore } from '@i18n-weave/store/store-file-store';
 
-// import { TranslationStore } from '@i18n-weave/store/store-translation-store';
 import {
   ConfigurationStoreManager,
   GeneralConfiguration,
+  TranslationModuleConfiguration,
 } from '@i18n-weave/util/util-configuration';
 import { applyChange, diffJsonObjects } from '@i18n-weave/util/util-file-diff';
 import { extractLocaleFromFileUri } from '@i18n-weave/util/util-file-path-utilities';
@@ -101,7 +101,7 @@ export class TranslationModule extends BaseActionModule {
       await this.applyTranslationsToFiles(
         otherFiles,
         translationsByLanguage,
-        config
+        generalConfig
       );
       // TranslationStore.getInstance().updateEntry(
       //   context.inputPath,
