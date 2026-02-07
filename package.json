@@ -298,7 +298,7 @@
     "tsc-alias": "^1.8.10",
     "tsconfig-paths-webpack-plugin": "^4.1.0",
     "typescript": "^5.6.3",
-    "webpack": "^5.94.0",
+    "webpack": "^5.105.0",
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
