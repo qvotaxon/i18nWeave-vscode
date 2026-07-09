@@ -21,6 +21,7 @@ import { CodeFile, TranslationFile } from './file-store.types';
 
 export class FileStore {
   private readonly _className = 'FileLocationStore';
+  private readonly _maxParallelFileReads = 25;
   private static instance: FileStore;
   private readonly files: Map<string, TranslationFile | CodeFile> = new Map();
   private readonly _logger: Logger;
@@ -54,7 +55,7 @@ export class FileStore {
         fileSearchLocation.filePattern,
         fileSearchLocation.ignorePattern
       );
-      files.forEach(file => this.addOrUpdateFileAsync(file));
+      await this.addOrUpdateFilesAsync(files);
       this._logger.log(
         LogLevel.INFO,
         `Found ${files.length} number of files for search pattern ${fileSearchLocation.filePattern as string}, ignoring ${fileSearchLocation.ignorePattern as string} and .gitignore patterns.`,
@@ -76,7 +77,10 @@ export class FileStore {
    * @param uri The URIs of the files.
    */
   public async addOrUpdateFilesAsync(uri: vscode.Uri[]) {
-    uri.forEach(file => this.addOrUpdateFileAsync(file));
+    for (let i = 0; i < uri.length; i += this._maxParallelFileReads) {
+      const batch = uri.slice(i, i + this._maxParallelFileReads);
+      await Promise.all(batch.map(file => this.addOrUpdateFileAsync(file)));
+    }
   }
 
   /**

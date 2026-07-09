@@ -35,11 +35,12 @@ export class FileLocationInitializer {
     const fileSearchLocations = [
       {
         filePattern: `**${translationFilesLocation}/**/*.json`,
-        ignorePattern: '{**/dist/**}',
+        ignorePattern: '{**/dist/**,**/node_modules/**}',
       } as FileSearchLocation,
       {
         filePattern: `**/{${codeFileLocations}}/**/*.{${codeFileExtensions}}`,
-        ignorePattern: '{**/*.spec.*,**/*.test.*,**/dist/**}',
+        ignorePattern:
+          '{**/*.spec.*,**/*.test.*,**/dist/**,**/node_modules/**}',
       } as FileSearchLocation,
     ];
 
